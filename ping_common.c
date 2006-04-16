@@ -809,10 +809,10 @@ void finish(void)
 		tmdev = llsqrt(tsum2 - tsum * tsum);
 
 		printf("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms",
-		       tmin/1000, tmin%1000,
+		       (long)tmin/1000, (long)tmin%1000,
 		       (unsigned long)(tsum/1000), (long)(tsum%1000),
-		       tmax/1000, tmax%1000,
-		       tmdev/1000, tmdev%1000
+		       (long)tmax/1000, (long)tmax%1000,
+		       (long)tmdev/1000, (long)tmdev%1000
 		       );
 	}
 	if (pipesize > 1)
@@ -843,10 +843,10 @@ void status(void)
 		tavg = tsum / (nreceived + nrepeats);
 
 		fprintf(stderr, ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms",
-		       tmin/1000, tmin%1000,
+		       (long)tmin/1000, (long)tmin%1000,
 		       tavg/1000, tavg%1000,
 		       rtt/8000, (rtt/8)%1000,
-		       tmax/1000, tmax%1000
+		       (long)tmax/1000, (long)tmax%1000
 		       );
 	}
 	fprintf(stderr, "\n");
