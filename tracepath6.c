@@ -113,10 +113,16 @@ restart:
 
 	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
 		if (cmsg->cmsg_level == SOL_IPV6) {
-			if (cmsg->cmsg_type == IPV6_RECVERR) {
+			switch(cmsg->cmsg_type) {
+			case IPV6_RECVERR:
 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
-			} else if (cmsg->cmsg_type == IPV6_HOPLIMIT) {
+				break;
+			case IPV6_HOPLIMIT:
+#ifdef IPV6_2292HOPLIMIT
+			case IPV6_2292HOPLIMIT:
+#endif
 				rethops = *(int*)CMSG_DATA(cmsg);
+				break;
 			}
 		} else if (cmsg->cmsg_level == SOL_IP) {
 			if (cmsg->cmsg_type == IP_TTL) {
@@ -358,7 +364,14 @@ int main(int argc, char **argv)
 		perror("IP_RECVERR");
 		exit(1);
 	}
-	if (setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on))) {
+	if (
+#ifdef IPV6_RECVHOPLIMIT
+	    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on)) &&
+	    setsockopt(fd, SOL_IPV6, IPV6_2292HOPLIMIT, &on, sizeof(on))
+#else
+	    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on))
+#endif
+	    ) {
 		perror("IPV6_HOPLIMIT");
 		exit(1);
 	}

@@ -491,8 +491,17 @@ int main(int argc, char *argv[])
 
 	if (1) {
 		int on = 1;
-		if (setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_HOPLIMIT,
-			       &on, sizeof(on)) == -1) {
+		if (
+#ifdef IPV6_RECVHOPLIMIT
+		    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_RECVHOPLIMIT,
+			       &on, sizeof(on)) == -1 &&
+		    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_2292HOPLIMIT,
+			       &on, sizeof(on)) == -1
+#else
+		    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_HOPLIMIT,
+			       &on, sizeof(on)) == -1
+#endif
+		   ){
 			perror ("can't receive hop limit");
 			exit(2);
 		}
@@ -708,12 +717,17 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	int hops = -1;
 
 	for (c = CMSG_FIRSTHDR(msg); c; c = CMSG_NXTHDR(msg, c)) {
-		if (c->cmsg_level != SOL_IPV6 ||
-		    c->cmsg_type != IPV6_HOPLIMIT)
+		if (c->cmsg_level != SOL_IPV6)
 			continue;
-		if (c->cmsg_len < CMSG_LEN(sizeof(int)))
-			continue;
-		hops = *(int*)CMSG_DATA(c);
+		switch(c->cmsg_type) {
+		case IPV6_HOPLIMIT:
+#ifdef IPV6_2292HOPLIMIT
+		case IPV6_2292HOPLIMIT:
+#endif
+			if (c->cmsg_len < CMSG_LEN(sizeof(int)))
+				continue;
+			hops = *(int*)CMSG_DATA(c);
+		}
 	}
 
 

@@ -469,7 +469,12 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
+#ifdef IPV6_RECVPKTINFO
+	setsockopt(icmp_sock, SOL_IPV6, IPV6_RECVPKTINFO, &on, sizeof(on));
+	setsockopt(icmp_sock, SOL_IPV6, IPV6_2292PKTINFO, &on, sizeof(on));
+#else
 	setsockopt(icmp_sock, SOL_IPV6, IPV6_PKTINFO, &on, sizeof(on));
+#endif
 
 	if (options & SO_DEBUG)
 		setsockopt(icmp_sock, SOL_SOCKET, SO_DEBUG,
@@ -672,6 +677,9 @@ wait_for_reply(sock, from, to, reset_timer)
 					continue;
 				switch (cmsg->cmsg_type) {
 				case IPV6_PKTINFO:
+#ifdef IPV6_2292PKTINFO
+				case IPV6_2292PKTINFO:
+#endif
 					ipi = (struct in6_pktinfo *)CMSG_DATA(cmsg);
 					memcpy(to, ipi, sizeof(*to));
 				}
