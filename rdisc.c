@@ -1504,5 +1504,5 @@ logperror(char *str)
 	if (logging)
 		syslog(LOG_ERR, "%s: %m", str);
 	else
-		(void) fprintf(stderr, "%s: %s\n", str, sys_errlist[errno]);
+		(void) fprintf(stderr, "%s: %s\n", str, strerror(errno));
 }
