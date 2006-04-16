@@ -25,6 +25,10 @@
 #include <sys/uio.h>
 #include <arpa/inet.h>
 
+#ifndef SOL_IPV6
+#define SOL_IPV6 IPPROTO_IPV6
+#endif
+
 int overhead = 48;
 int mtu = 128000;
 int hops_to = -1;

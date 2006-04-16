@@ -262,6 +262,10 @@ char copyright[] =
 
 #include "SNAPSHOT.h"
 
+#ifndef SOL_IPV6
+#define SOL_IPV6 IPPROTO_IPV6
+#endif
+ 
 #define	MAXPACKET	65535
 #ifndef MAXHOSTNAMELEN
 #define MAXHOSTNAMELEN	64
