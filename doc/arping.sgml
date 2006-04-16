@@ -174,6 +174,9 @@ probes are answered.
 <command/arping/ was written by
 <ulink url="mailto:kuznet@ms2.inr.ac.ru">Alexey Kuznetsov
 &lt;kuznet@ms2.inr.ac.ru&gt;</ulink>.
+It is now maintained by
+<ulink url="mailto:yoshfuji@skbuff.net">YOSHIFUJI Hideaki
+&lt;yoshfuji@skbuff.net&gt;</ulink>.
 </para>
 </refsect1>
 
@@ -188,9 +191,9 @@ because it allows user to modify ARP caches of neighbour hosts.
 <refsect1><title>AVAILABILITY</title>
 <para>
 <command/arping/ is part of <filename/iputils/ package
-and the latest versions are  available in source form for anonymous ftp
-<ulink url="ftp://ftp.inr.ac.ru/ip-routing/iputils-current.tar.gz">
-ftp://ftp.inr.ac.ru/ip-routing/iputils-current.tar.gz</ulink>.
+and the latest versions are  available in source form at
+<ulink url="http://www.skbuff.net/iputils/iputils-current.tar.bz2">
+http://www.skbuff.net/iputils/iputils-current.tar.bz2</ulink>.
 </para>
 </refsect1>
 

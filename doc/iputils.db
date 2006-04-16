@@ -190,9 +190,9 @@ bare reports are deemed to be routed to <filename>/dev/null</filename>.
 
 <para>
 The collection of documents is part of <filename/iputils/ package
-and the latest versions are  available in source form for anonymous ftp
-<ulink url="ftp://ftp.inr.ac.ru/ip-routing/iputils-current.tar.gz">
-ftp://ftp.inr.ac.ru/ip-routing/iputils-current.tar.gz</ulink>.
+and the latest versions are  available in source form at
+<ulink url="http://www.skbuff.net/iputils/iputils-current.tar.bz2">
+http://www.skbuff.net/iputils/iputils-current.tar.bz2</ulink>.
 </para>
 </sect1>
 

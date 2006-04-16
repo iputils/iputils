@@ -141,6 +141,9 @@ This program was developed by Sun Microsystems (see copyright
 notice in source file). It was ported to Linux by
 <ulink url="mailto:kuznet@ms2.inr.ac.ru">Alexey Kuznetsov
 &lt;kuznet@ms2.inr.ac.ru&gt;</ulink>.
+It is now maintained by
+<ulink url="mailto:yoshfuji@skbuff.net">YOSHIFUJI Hideaki
+&lt;yoshfuji@skbuff.net&gt;</ulink>.
 </para>
 </refsect1>
 
@@ -174,9 +177,9 @@ to update routing tables.
 <refsect1><title>AVAILABILITY</title>
 <para>
 <command/rdisc/ is part of <filename/iputils/ package
-and the latest versions are  available in source form for anonymous ftp
-<ulink url="ftp://ftp.inr.ac.ru/ip-routing/iputils-current.tar.gz">
-ftp://ftp.inr.ac.ru/ip-routing/iputils-current.tar.gz</ulink>.
+and the latest versions are  available in source form at
+<ulink url="http://www.skbuff.net/iputils/iputils-current.tar.bz2">
+http://www.skbuff.net/iputils/iputils-current.tar.bz2</ulink>.
 </para>
 </refsect1>
 
