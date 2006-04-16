@@ -1,0 +1,23 @@
+#! /bin/bash
+
+modprobe pg3
+
+function pgset() {
+    local result
+
+    echo $1 > /proc/net/pg
+
+    result=`cat /proc/net/pg | fgrep "Result: OK:"`
+    if [ "$result" = "" ]; then
+         cat /proc/net/pg | fgrep Result:
+    fi
+}
+
+function pg() {
+    echo inject > /proc/net/pg
+    cat /proc/net/pg
+}
+
+pgset "odev eth0"
+pgset "dst 0.0.0.0"
+
