@@ -534,7 +534,7 @@ int main(int argc, char *argv[])
 	} else {
 		(void) bzero((char *)&saddr, sizeof(saddr));
 		saddr.sin6_family = AF_INET6;
-		if (inet_pton(AF_INET6, source, &saddr.sin6_addr) < 0)
+		if (inet_pton(AF_INET6, source, &saddr.sin6_addr) <= 0)
 		{
 			Printf("traceroute: unknown addr %s\n", source);
 			exit(1);
