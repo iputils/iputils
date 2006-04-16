@@ -444,15 +444,15 @@ int main(int argc, char *argv[])
 		/* Message for rpm maintainers: have _shame_. If you want
 		 * to fix something send the patch to me for sanity checking.
 		 * "datalen" patch is a shit. */
-		if ((unsigned int)datalen == 0)
+		if (datalen == 0)
 			datalen = sizeof(struct pkt_format);
-	}
-
-	if (datalen < (int)sizeof(struct pkt_format) || datalen >= MAXPACKET) {
-		Fprintf(stderr,
-		    "traceroute: packet size must be %d <= s < %d.\n",
-			(int)sizeof(struct pkt_format), MAXPACKET);
-		exit(1);
+		else if (datalen < (int)sizeof(struct pkt_format) ||
+			 datalen >= MAXPACKET) {
+			Fprintf(stderr,
+			    "traceroute: packet size must be %d <= s < %d.\n",
+				(int)sizeof(struct pkt_format), MAXPACKET);
+			exit(1);
+		}
 	}
 
 	ident = getpid();
