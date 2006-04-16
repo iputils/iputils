@@ -186,7 +186,7 @@ restart:
 
 	if (rettv) {
 		int diff = (tv.tv_sec-rettv->tv_sec)*1000000+(tv.tv_usec-rettv->tv_usec);
-		printf("%3d.%3dms ", diff/1000, diff%1000);
+		printf("%3d.%03dms ", diff/1000, diff%1000);
 		if (broken_router)
 			printf("(This broken router returned corrupted payload) ");
 	}
