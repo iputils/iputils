@@ -285,9 +285,9 @@ char copyright[] =
 
 u_char	packet[512];		/* last inbound (icmp) packet */
 
-int	wait_for_reply(int, struct sockaddr_in6 *, int);
-int	packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from, int seq,
-		  struct timeval *);
+int	wait_for_reply(int, struct sockaddr_in6 *, struct in6_addr *, int);
+int	packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
+		  struct in6_addr *to, int seq, struct timeval *);
 void	send_probe(int seq, int ttl);
 double	deltaT (struct timeval *, struct timeval *);
 void	print(unsigned char *buf, int cc, struct sockaddr_in6 *from);
@@ -469,6 +469,8 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
+	setsockopt(icmp_sock, SOL_IPV6, IPV6_PKTINFO, &on, sizeof(on));
+
 	if (options & SO_DEBUG)
 		setsockopt(icmp_sock, SOL_SOCKET, SO_DEBUG,
 			   (char *)&on, sizeof(on));
@@ -561,14 +563,15 @@ int main(int argc, char *argv[])
 			int cc, reset_timer;
 			struct timeval t1, t2;
 			struct timezone tz;
+			struct in6_addr to;
 
 			gettimeofday(&t1, &tz);
 			send_probe(++seq, ttl);
 			reset_timer = 1;
 
-			while ((cc = wait_for_reply(icmp_sock, &from, reset_timer)) != 0) {
+			while ((cc = wait_for_reply(icmp_sock, &from, &to, reset_timer)) != 0) {
 				gettimeofday(&t2, &tz);
-				if (cc > 0 && (i = packet_ok(packet, cc, &from, seq, &t1))) {
+				if ((i = packet_ok(packet, cc, &from, &to, seq, &t1))) {
 					reset_timer = 1;
 					if (memcmp(&from.sin6_addr, &lastaddr, sizeof(from.sin6_addr))) {
 						print(packet, cc, &from);
@@ -614,15 +617,16 @@ int main(int argc, char *argv[])
 }
 
 int
-wait_for_reply(sock, from, reset_timer)
+wait_for_reply(sock, from, to, reset_timer)
 	int sock;
 	struct sockaddr_in6 *from;
+	struct in6_addr *to;
 	int reset_timer;
 {
 	fd_set fds;
 	static struct timeval wait;
 	int cc = 0;
-	int fromlen = sizeof (*from);
+	char cbuf[512];
 
 	FD_ZERO(&fds);
 	FD_SET(sock, &fds);
@@ -644,8 +648,35 @@ wait_for_reply(sock, from, reset_timer)
 	}
 
 	if (select(sock+1, &fds, (fd_set *)0, (fd_set *)0, &wait) > 0) {
-		cc=recvfrom(icmp_sock, (char *)packet, sizeof(packet), 0,
-			    (struct sockaddr *)from, &fromlen);
+		struct iovec iov;
+		struct msghdr msg;
+		iov.iov_base = packet;
+		iov.iov_len = sizeof(packet);
+		msg.msg_name = (void *)from;
+		msg.msg_namelen = sizeof(*from);
+		msg.msg_iov = &iov;
+		msg.msg_iovlen = 1;
+		msg.msg_flags = 0;
+		msg.msg_control = cbuf;
+		msg.msg_controllen = sizeof(cbuf);
+
+		cc = recvmsg(icmp_sock, &msg, 0);
+		if (cc >= 0) {
+			struct cmsghdr *cmsg;
+			struct in6_pktinfo *ipi;
+
+			for (cmsg = CMSG_FIRSTHDR(&msg);
+			     cmsg;
+			     cmsg = CMSG_NXTHDR(&msg, cmsg)) {
+				if (cmsg->cmsg_level != SOL_IPV6)
+					continue;
+				switch (cmsg->cmsg_type) {
+				case IPV6_PKTINFO:
+					ipi = (struct in6_pktinfo *)CMSG_DATA(cmsg);
+					memcpy(to, ipi, sizeof(*to));
+				}
+			}
+		}
 	}
 
 	return(cc);
@@ -750,7 +781,8 @@ char * pr_type(unsigned char t)
 }
 
 
-int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from, int seq,
+int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from, 
+	      struct in6_addr *to, int seq,
 	      struct timeval *tv)
 {
 	struct icmp6hdr *icp;
@@ -793,23 +825,31 @@ int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from, int seq,
 	}
 
 	if (verbose) {
-		struct ipv6hdr *hip;
-		__u32 *lp;
+		unsigned char *p;
 		char pa1[MAXHOSTNAMELEN];
 		char pa2[MAXHOSTNAMELEN];
 		int i;
-		hip = (struct ipv6hdr *) (icp + 1);
-		lp = (__u32 *) (icp + 1);
+
+		p = (unsigned char *) (icp + 1);
 
 		Printf("\n%d bytes from %s to %s", cc,
-		       inet_ntop(AF_INET6, &hip->saddr, pa1, sizeof(pa1)),
-		       inet_ntop(AF_INET6, &hip->daddr, pa2, sizeof(pa2)));
+		       inet_ntop(AF_INET6, &from->sin6_addr, pa1, sizeof(pa1)),
+		       inet_ntop(AF_INET6, to, pa2, sizeof(pa2)));
 		
 		Printf(": icmp type %d (%s) code %d\n", type, pr_type(type),
 		       icp->icmp6_code);
 
-		for (i = sizeof(struct ipv6hdr); i < cc ; i += 4)
-			Printf("%2d: x%8.8x\n", i, *lp++);
+		cc -= sizeof(struct icmp6hdr);
+		for (i = 0; i < cc ; i++) {
+			if (i % 16 == 0)
+				Printf("%04x:", i);
+			if (i % 4 == 0)
+				Printf(" ");
+			Printf("%02x", 0xff & (unsigned)p[i]);
+			if (i % 16 == 15 && i + 1 < cc)
+				Printf("\n");
+		}
+		Printf("\n");
 	}
 
 	return(0);
