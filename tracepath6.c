@@ -291,8 +291,10 @@ int main(int argc, char **argv)
 	struct sockaddr_in6 sin;
 	int ttl;
 	char *p;
-	struct hostent *he;
+	struct addrinfo hints, *ai, *ai0;
 	int ch;
+	int gai;
+	char pbuf[NI_MAXSERV];
 
 	while ((ch = getopt(argc, argv, "nbh?")) != EOF) {
 		switch(ch) {
@@ -313,31 +315,45 @@ int main(int argc, char **argv)
 	if (argc != 1)
 		usage();
 
-
-	fd = socket(AF_INET6, SOCK_DGRAM, 0);
-	if (fd < 0) {
-		perror("socket");
-		exit(1);
-	}
-	sin.sin6_family = AF_INET6;
-
+	memset(&sin, 0, sizeof(sin));
+	
 	p = strchr(argv[0], '/');
 	if (p) {
 		*p = 0;
-		sin.sin6_port = htons(atoi(p+1));
-	} else
-		sin.sin6_port = htons(0x8000 | getpid());
-	he = gethostbyname2(argv[0], AF_INET6);
-	if (he == NULL) {
-		herror("gethostbyname2");
-		exit(1);
+		sprintf(pbuf, "%u", (unsigned)atoi(p+1));
+	} else {
+		sprintf(pbuf, "%u", (0x8000 | getpid()) & 0xffff);
 	}
-	memcpy(&sin.sin6_addr, he->h_addr, 16);
 
-	if (connect(fd, (struct sockaddr*)&sin, sizeof(sin)) < 0) {
-		perror("connect");
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET6;
+	hints.ai_socktype = SOCK_DGRAM;
+	hints.ai_protocol = IPPROTO_UDP;
+	hints.ai_flags = no_resolve ? AI_NUMERICHOST : 0;
+	gai = getaddrinfo(argv[0], pbuf, &hints, &ai0);
+	if (gai) {
+		herror("getaddrinfo");	/*XXX*/
 		exit(1);
 	}
+
+	fd = -1;
+	for (ai = ai0; ai; ai = ai->ai_next) {
+		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+		if (fd < 0)
+			continue;
+		if (connect(fd, ai->ai_addr, ai->ai_addrlen) < 0) {
+			close(fd);
+			fd = -1;
+			continue;
+		}
+		memcpy(&sin, ai->ai_addr, sizeof(sin));
+		break;
+	}
+	if (fd < 0) {
+		perror("socket/connect");
+		exit(1);
+	}
+	freeaddrinfo(ai0);
 
 	if (!sin.sin6_addr.s6_addr32[0] && !sin.sin6_addr.s6_addr32[1]
 	    && sin.sin6_addr.s6_addr32[2] == htonl(0xFFFF)) {
