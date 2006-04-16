@@ -725,6 +725,21 @@ char * pr_type(unsigned char t)
 	case 132:
 		/* ICMP6_MEMBERSHIP_REDUCTION */
 		return "Membership Reduction";
+	case 133:
+		/* ND_ROUTER_SOLICIT */
+		return "Router Solicitation";
+	case 134:
+		/* ND_ROUTER_ADVERT */
+		return "Router Advertisement";
+	case 135:
+		/* ND_NEIGHBOR_SOLICIT */
+		return "Neighbor Solicitation";
+	case 136:
+		/* ND_NEIGHBOR_ADVERT */
+		return "Neighbor Advertisement";
+	case 137:
+		/* ND_REDIRECT */
+		return "Redirect";
 	}
 
 	return("OUT-OF-RANGE");
