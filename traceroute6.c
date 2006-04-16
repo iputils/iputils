@@ -694,30 +694,37 @@ double deltaT(struct timeval *t1p, struct timeval *t2p)
  */
 char * pr_type(unsigned char t)
 {
-	static char *ttab1[] = {
-		"Error",
-		"Destination Unreachable",
-		"Packet Too Big",
-		"Time Exceeded in Transit",
-		"Parameter Problem"
-	};
-
-	static char *ttab2[] = {
-		"Echo Reply",
-		"Echo Request",
-		"Membership Query",
-		"Membership Report",
-		"Membership Reduction",
-	};
-
-	if (t < 5)
-	{
-		return (ttab1[t]);
-	}
-
-	if (t >= 128 && t <= 132)
-	{
-		return (ttab2[t]);
+	switch(t) {
+	/* Unknown */
+	case 0:
+		return "Error";
+	case 1:
+		/* ICMP6_DST_UNREACH: */
+		return "Destination Unreachable";
+	case 2:
+		/* ICMP6_PACKET_TOO_BIG: */
+		return "Packet Too Big";
+	case 3:
+		/* ICMP6_TIME_EXCEEDED */
+		return "Time Exceeded in Transit";
+	case 4:
+		/* ICMP6_PARAM_PROB */
+		return "Parameter Problem";
+	case 128:
+		/* ICMP6_ECHO_REQUEST */
+		return "Echo Request";
+	case 129:
+		/* ICMP6_ECHO_REPLY */
+		return "Echo Reply";
+	case 130:
+		/* ICMP6_MEMBERSHIP_QUERY */
+		return "Membership Query";
+	case 131:
+		/* ICMP6_MEMBERSHIP_REPORT */
+		return "Membership Report";
+	case 132:
+		/* ICMP6_MEMBERSHIP_REDUCTION */
+		return "Membership Reduction";
 	}
 
 	return("OUT-OF-RANGE");
