@@ -584,6 +584,7 @@ void main_loop(int icmp_sock, __u8 *packet, int packlen)
 					   * destined to other running pings. */
 
 			iov.iov_len = packlen;
+			memset(&msg, 0, sizeof(msg));
 			msg.msg_name = addrbuf;
 			msg.msg_namelen = sizeof(addrbuf);
 			msg.msg_iov = &iov;
