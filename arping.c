@@ -304,7 +304,10 @@ main(int argc, char **argv)
 	s = socket(PF_PACKET, SOCK_DGRAM, 0);
 	socket_errno = errno;
 
-	setuid(uid);
+	if (setuid(uid)) {
+		perror("arping: setuid");
+		exit(-1);
+	}
 
 	while ((ch = getopt(argc, argv, "h?bfDUAqc:w:s:I:V")) != EOF) {
 		switch(ch) {

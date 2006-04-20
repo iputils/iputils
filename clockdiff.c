@@ -540,14 +540,20 @@ main(int argc, char *argv[])
 	int s_errno = 0;
 
 	if (argc < 2) {
-		setuid(getuid());
+		if (setuid(getuid())) {
+			perror("clockdiff: setuid");
+			exit(-1);
+		}
 		usage();
 	}
 
 	sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	s_errno = errno;
 
-	setuid(getuid());
+	if (setuid(getuid())) {
+		perror("clockdiff: setuid");
+		exit(-1);
+	}
 
 	if (argc == 3) {
 		if (strcmp(argv[1], "-o") == 0) {

@@ -195,7 +195,10 @@ int main(int argc, char *argv[])
 	socket_errno = errno;
 
 	uid = getuid();
-	setuid(uid);
+	if (setuid(uid)) {
+		perror("ping: setuid");
+		exit(-1);
+	}
 
 	source.sin6_family = AF_INET6;
 	memset(&firsthop, 0, sizeof(firsthop));

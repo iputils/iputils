@@ -341,7 +341,10 @@ int main(int argc, char *argv[])
 	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 	socket_errno = errno;
 
-	setuid(getuid());
+	if (setuid(getuid())) {
+		perror("traceroute6: setuid");
+		exit(-1);
+	}
 
 	on = 1;
 	seq = tos = 0;
