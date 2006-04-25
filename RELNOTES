@@ -1,3 +1,26 @@
+[s20060425]
+
+YOSHIFUJI Hideaki:
+      [TRACEROUTE6] Fix ICMPv6 type printing with -v option
+      [TRACEROUTE6] Mark ICMPv6 messages as known
+      [DOC] Maintainer / Contact change
+      [PING6,TRACEPATH6,TRACEROUTE6] Define SOL_IPV6,SOL_ICMPV6 where needed
+      [TRACEROUTE6] Fix source/destination address with -v option
+      [PING6,TRACEPATH6,TRACEROUTE6] Use new RFC3542 advanced API if available
+      [RDISC] Use proper type for is_directly_connected()
+      [PING,PING6] Use proper type for printf()
+      [TRACEROUTE6] Fix inet_pton() error handling
+      [TRACEROUTE6] Use minimum format if 0 is specified for datalen
+      [TRACEROUTE6] Optimize datalen sanity checking code
+      [TRACEPATH6] Use getaddrinfo() to allow scoped addresses
+      [RDISC] Use strerror(errno) instead of sys_errlist[errno]
+      [PING,PING6] Avoid using __constant_htons() if it is really needed
+      [TRACEPATH6] Fix format for subseconds
+      [ARPING,CLOCKDIFF,PING,PING6,TRACEROUTE6] Check return value from setuid().
+      [PING,PING6] ensure to initialize msg.
+      [MAKEFILE] Make snapshot using git
+
+
 [020927]
 * arping.sgml, some options were forgotten.
 * send seqno in network byte order. Me.
