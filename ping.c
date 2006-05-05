@@ -63,6 +63,13 @@ char copyright[] =
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 
+#ifndef ICMP_FILTER
+#define ICMP_FILTER	1
+struct icmp_filter {
+	__u32	data;
+};
+#endif
+
 
 #define	MAXIPLEN	60
 #define	MAXICMPLEN	76

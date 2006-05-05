@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <linux/types.h>
 #include <linux/errqueue.h>
 #include <errno.h>
 #include <string.h>

@@ -14,8 +14,9 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/icmp6.h>
 
-#include <linux/in6.h>
+#include <linux/types.h>
 #include <linux/errqueue.h>
 #include <errno.h>
 #include <string.h>

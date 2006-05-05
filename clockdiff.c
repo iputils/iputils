@@ -19,6 +19,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <linux/types.h>
 
 void usage(void) __attribute__((noreturn));
 

@@ -19,6 +19,7 @@
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <linux/types.h>
 #include <linux/errqueue.h>
 
 #include "SNAPSHOT.h"

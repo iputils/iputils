@@ -57,7 +57,6 @@ char copyright[] =
 
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <linux/in6.h>
 #include <netdb.h>
 
 #include <setjmp.h>
