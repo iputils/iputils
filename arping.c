@@ -18,7 +18,9 @@
 #include <sys/signal.h>
 #include <sys/ioctl.h>
 #include <linux/if.h>
-#include <linux/if_arp.h>
+#include <linux/if_packet.h>
+#include <linux/if_ether.h>
+#include <net/if_arp.h>
 #include <sys/uio.h>
 
 #include <netdb.h>

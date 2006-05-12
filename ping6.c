@@ -68,7 +68,7 @@ char copyright[] =
  */
 #include "ping_common.h"
 
-#include <net/bpf.h>
+#include <linux/filter.h>
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
 
