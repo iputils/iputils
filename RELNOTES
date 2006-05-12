@@ -1,3 +1,10 @@
+[s20060512]
+
+YOSHIFUJI Hideaki:
+      [BUILD] Build with standard headers.
+      [ARPING,PING6] Build fix for some old systems.
+
+
 [s20060425]
 
 YOSHIFUJI Hideaki:
