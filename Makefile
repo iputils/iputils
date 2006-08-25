@@ -14,7 +14,7 @@ CC=gcc
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
 #CCOPT=-D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -g -Werror
 CCOPT=-D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -g
-CFLAGS=$(CCOPT) $(GLIBCFIX) -I../include $(DEFINES) 
+CFLAGS=$(CCOPT) $(GLIBCFIX) $(DEFINES) 
 
 IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
 IPV6_TARGETS=tracepath6 traceroute6 ping6
