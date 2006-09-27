@@ -210,7 +210,7 @@ empty:
 
 			if ((count = select(FD_SETSIZE, &ready, (fd_set *)0,
 			    (fd_set *)0, &tout)) <= 0)
-				goto send_next;
+				break;
 
 			(void)gettimeofday(&tv1, (struct timezone *)0);
 			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0, 
@@ -287,7 +287,6 @@ empty:
         		}
                       }
 		}
-send_next: ;
 	}
 
 good_exit:
@@ -392,7 +391,7 @@ empty:
 
 			if ((count = select(FD_SETSIZE, &ready, (fd_set *)0,
 			    (fd_set *)0, &tout)) <= 0)
-				goto send_next;
+				break;
 
 			(void)gettimeofday(&tv1, (struct timezone *)0);
 			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0, 
@@ -495,7 +494,6 @@ empty:
 				}
 			}
 		}
-send_next: ;
 	}
 
 good_exit:
