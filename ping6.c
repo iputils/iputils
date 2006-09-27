@@ -197,6 +197,8 @@ int main(int argc, char *argv[])
 	int ch, hold, packlen;
 	u_char *packet;
 	char *target;
+	struct addrinfo hints, *ai;
+	int gai;
 	struct sockaddr_in6 firsthop;
 	int socket_errno;
 	struct icmp6_filter filter;
@@ -311,26 +313,28 @@ int main(int argc, char *argv[])
 		usage();
 	target = *argv;
 
-	memset(&whereto, 0, sizeof(struct sockaddr_in6));
-	whereto.sin6_family = AF_INET6;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET6;
+	gai = getaddrinfo(target, NULL, &hints, &ai);
+	if (gai) {
+		fprintf(stderr, "unknown host\n");
+		exit(2);
+	}
+
+	memcpy(&whereto, ai->ai_addr, sizeof(whereto));
 	whereto.sin6_port = htons(IPPROTO_ICMPV6);
 
-	if (inet_pton(AF_INET6, target, &whereto.sin6_addr) <= 0) {
-		struct hostent *hp;
-
-		hp = gethostbyname2(target, AF_INET6);
-
-		if (hp == NULL) {
-			fprintf(stderr, "unknown host\n");
-			exit(2);
-		}
-		
-		memcpy(&whereto.sin6_addr, hp->h_addr_list[0], 16);
-	} else {
+	if (memchr(target, strlen(target), ':'))
 		options |= F_NUMERIC;
-	}
-	if (ipv6_addr_any(&firsthop.sin6_addr))
+
+	freeaddrinfo(ai);
+
+	if (ipv6_addr_any(&firsthop.sin6_addr)) {
 		memcpy(&firsthop.sin6_addr, &whereto.sin6_addr, 16);
+#ifdef HAVE_SIN6_SCOPEID
+		firsthop.sin6_scope_id = whereto.sin6_scope_id;
+#endif
+	}
 
 	hostname = target;
 
