@@ -284,7 +284,8 @@ main(int argc, char **argv)
 		case 'n':	
 			no_resolve = 1;
 			break;
-		default: ;	
+		default:
+			usage();
 		}
 	}
 
