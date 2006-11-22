@@ -80,6 +80,11 @@ char copyright[] =
 #define SOL_ICMPV6 IPPROTO_ICMPV6
 #endif
 
+/* RFC3542 */
+#ifndef ICMP6_DST_UNREACH_BEYONDSCOPE
+#define ICMP6_DST_UNREACH_BEYONDSCOPE ICMP6_DST_UNREACH_NOTNEIGHBOR
+#endif
+
 #ifndef IPV6_SRCRT_TYPE_0
 #define IPV6_SRCRT_TYPE_0	0
 #endif
@@ -833,8 +838,8 @@ int pr_icmph(__u8 type, __u8 code, __u32 info)
 		case ICMP6_DST_UNREACH_ADMIN:
 			printf("Administratively prohibited");
 			break;
-		case ICMP6_DST_UNREACH_NOTNEIGHBOR:
-			printf("Not neighbour");
+		case ICMP6_DST_UNREACH_BEYONDSCOPE:
+			printf("Beyond scope of source address");
 			break;
 		case ICMP6_DST_UNREACH_ADDR:
 			printf("Address unreachable");
