@@ -451,7 +451,7 @@ next:
 	for (;;) {
 		u_char	packet[MAXPACKET];
 		int len = sizeof (packet);
-		int fromlen = sizeof (from);
+		socklen_t fromlen = sizeof (from);
 		int cc;
 
 		cc=recvfrom(s, (char *)packet, len, 0, 

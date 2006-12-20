@@ -417,7 +417,7 @@ void serve_it(int fd)
 {
 	unsigned char buf[1024];
 	struct sockaddr_ll sll;
-	int sll_len = sizeof(sll);
+	socklen_t sll_len = sizeof(sll);
 	struct arphdr *a = (struct arphdr*)buf;
 	struct rarp_map *rmap;
 	unsigned char *ptr;

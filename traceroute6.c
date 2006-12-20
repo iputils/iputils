@@ -510,7 +510,7 @@ int main(int argc, char *argv[])
 				  (char *)&on, sizeof(on));
 
 	if (source == NULL) {
-		int alen;
+		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
 		if (probe_fd < 0) {

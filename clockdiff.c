@@ -121,7 +121,7 @@ long rtt_sigma = 0;
 int
 measure(struct sockaddr_in * addr)
 {
-	int length;
+	socklen_t length;
 	int msgcount;
 	int cc, count;
 	fd_set ready;
@@ -299,7 +299,7 @@ char *myname, *hisname;
 int
 measure_opt(struct sockaddr_in * addr)
 {
-	int length;
+	socklen_t length;
 	int msgcount;
 	int cc, count;
 	fd_set ready;
@@ -602,7 +602,7 @@ main(int argc, char *argv[])
 	}
 	if (ip_opt_len) {
 		struct sockaddr_in myaddr;
-		int addrlen = sizeof(myaddr);
+		socklen_t addrlen = sizeof(myaddr);
 		unsigned char rspace[ip_opt_len];
 
 	        bzero(rspace, sizeof(rspace));

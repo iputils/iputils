@@ -67,7 +67,7 @@ static void fill(char *patp)
 	int ii, jj, kk;
 	int pat[16];
 	char *cp;
-	char *bp = outpack+8;
+	u_char *bp = outpack+8;
 
 	for (cp = patp; *cp; cp++) {
 		if (!isxdigit(*cp)) {
@@ -393,7 +393,7 @@ resend:
 void sock_setbufs(int icmp_sock, int alloc)
 {
 	int rcvbuf, hold;
-	int tmplen = sizeof(hold);
+	socklen_t tmplen = sizeof(hold);
 
 	if (!sndbuf)
 		sndbuf = alloc;
@@ -464,7 +464,7 @@ void setup(int icmp_sock)
 
 	if (!(options & F_PINGFILLED)) {
 		int i;
-		char *p = outpack+8;
+		u_char *p = outpack+8;
 
 		/* Do not forget about case of small datalen,
 		 * fill timestamp area too!

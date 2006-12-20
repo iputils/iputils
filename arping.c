@@ -439,7 +439,7 @@ main(int argc, char **argv)
 			}
 		} else if (!dad) {
 			int on = 1;
-			int alen = sizeof(saddr);
+			socklen_t alen = sizeof(saddr);
 
 			saddr.sin_port = htons(1025);
 			saddr.sin_addr = dst;
@@ -468,7 +468,7 @@ main(int argc, char **argv)
 	}
 
 	if (1) {
-		int alen = sizeof(me);
+		socklen_t alen = sizeof(me);
 		if (getsockname(s, (struct sockaddr*)&me, &alen) == -1) {
 			perror("getsockname");
 			exit(2);
@@ -500,9 +500,9 @@ main(int argc, char **argv)
 
 	while(1) {
 		sigset_t sset, osset;
-		char packet[4096];
+		unsigned char packet[4096];
 		struct sockaddr_ll from;
-		int alen = sizeof(from);
+		socklen_t alen = sizeof(from);
 		int cc;
 
 		if ((cc = recvfrom(s, packet, sizeof(packet), 0,

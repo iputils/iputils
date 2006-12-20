@@ -88,7 +88,7 @@ union {
 	struct	sockaddr_in  sin;
 	struct	sockaddr_in6 sin6;
 } from;
-int	fromlen;
+socklen_t	fromlen;
 
 #define MAXARG	1
 char	*dirs[MAXARG+1];
@@ -148,7 +148,8 @@ int main(int ac, char **av)
 	 */
 	{
 		int pid;
-		int i, j;
+		int i;
+		socklen_t j;
 
 		for (i = 1; i < 20; i++) {
 		    pid = fork();

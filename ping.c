@@ -259,7 +259,7 @@ main(int argc, char **argv)
 	}
 
 	if (source.sin_addr.s_addr == 0) {
-		int alen;
+		socklen_t alen;
 		struct sockaddr_in dst = whereto;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
