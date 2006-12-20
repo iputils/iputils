@@ -1,21 +1,32 @@
 #! /bin/bash
 
-modprobe pg3
+if [ -e /proc/modules ] ; then
+	modprobe pg3 >& /dev/null
+	modprobe pktgen >& /dev/null
+fi
+
+for PGDEV in /proc/net/pg /proc/net/pktgen/pg0 / ; do
+	[ -e ${PGDEV} ] && break
+done
+if [ "${PGDEV}" = "/" ] ; then
+	echo "Could not locate pg in /proc/net" 1>&2
+	exit 1
+fi
 
 function pgset() {
     local result
 
-    echo $1 > /proc/net/pg
+    echo $1 > ${PGDEV}
 
-    result=`cat /proc/net/pg | fgrep "Result: OK:"`
+    result=`cat ${PGDEV} | fgrep "Result: OK:"`
     if [ "$result" = "" ]; then
-         cat /proc/net/pg | fgrep Result:
+         cat ${PGDEV} | fgrep Result:
     fi
 }
 
 function pg() {
-    echo inject > /proc/net/pg
-    cat /proc/net/pg
+    echo inject > ${PGDEV}
+    cat ${PGDEV}
 }
 
 pgset "odev eth0"
