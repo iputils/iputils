@@ -208,6 +208,7 @@ int main(int argc, char *argv[])
 	int socket_errno;
 	struct icmp6_filter filter;
 	int err, csum_offset, sz_opt;
+	static uint32_t scope_id = 0;
 
 	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 	socket_errno = errno;
@@ -270,7 +271,7 @@ int main(int argc, char *argv[])
 	argv += optind;
 
 	while (argc > 1) {
-		struct in6_addr addr;
+		struct in6_addr *addr;
 
 		if (srcrt == NULL) {
 			int space;
@@ -293,22 +294,29 @@ int main(int argc, char *argv[])
 
 		target = *argv;
 
-		if (inet_pton(AF_INET6, target, &addr) <= 0) {
-			struct hostent *hp;
-
-			hp = gethostbyname2(target, AF_INET6);
-
-			if (hp == NULL)	{
-				fprintf(stderr, "unknown host %s\n", target);
-				exit(2);
-			}
-
-			memcpy(&addr, hp->h_addr_list[0], 16);
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_family = AF_INET6;
+		gai = getaddrinfo(target, NULL, &hints, &ai);
+		if (gai) {
+			fprintf(stderr, "unknown host\n");
+			exit(2);
 		}
-
-		inet6_srcrt_add(srcrt, &addr);
-		if (ipv6_addr_any(&firsthop.sin6_addr))
-			memcpy(&firsthop.sin6_addr, &addr, 16);
+		addr = &((struct sockaddr_in6 *)(ai->ai_addr))->sin6_addr;
+		inet6_srcrt_add(srcrt, addr);
+		if (ipv6_addr_any(&firsthop.sin6_addr)) {
+			memcpy(&firsthop.sin6_addr, addr, 16);
+#ifdef HAVE_SIN6_SCOPEID
+			firsthop.sin6_scope_id = ((struct sockaddr_in6 *)(ai->ai_addr))->sin6_scope_id;
+			/* Verify scope_id is the same as previous nodes */
+			if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id) {
+				fprintf(stderr, "scope discrepancy among the nodes\n");
+				exit(2);
+			} else if (!scope_id) {
+				scope_id = firsthop.sin6_scope_id;
+			}
+#endif
+		}
+		freeaddrinfo(ai);
 
 		argv++;
 		argc--;
@@ -338,6 +346,13 @@ int main(int argc, char *argv[])
 		memcpy(&firsthop.sin6_addr, &whereto.sin6_addr, 16);
 #ifdef HAVE_SIN6_SCOPEID
 		firsthop.sin6_scope_id = whereto.sin6_scope_id;
+		/* Verify scope_id is the same as intermediate nodes */
+		if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id) {
+			fprintf(stderr, "scope discrepancy among the nodes\n");
+			exit(2);
+		} else if (!scope_id) {
+			scope_id = firsthop.sin6_scope_id;
+		}
 #endif
 	}
 
