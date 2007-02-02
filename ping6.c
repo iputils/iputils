@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
 	memcpy(&whereto, ai->ai_addr, sizeof(whereto));
 	whereto.sin6_port = htons(IPPROTO_ICMPV6);
 
-	if (memchr(target, strlen(target), ':'))
+	if (memchr(target, ':', strlen(target)))
 		options |= F_NUMERIC;
 
 	freeaddrinfo(ai);
