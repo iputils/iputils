@@ -1,3 +1,25 @@
+[s20070202]
+
+Mike Frysinger (2):
+      Use socklen_t in all the right places.
+      [IPG]: handle pktgen setup in newer kernels.
+
+Mitsuru Chinen (2):
+      [CLOCKDIFF]: Fix compilation errors about labels at end of compound statements.
+      [PING6]: Use getaddrinfo() for the name resolution of intermediate nodes.
+
+YOSHIFUJI Hideaki (9):
+      [MAKEFILE] Remove unused -I../include
+      [TRACEPATH] Print usage if we met incorrect option.
+      
+      [PING6]: Fix compilation error with glibc-2.4 and later.
+      [TRACEPATH] Print usage if we met incorrect option.
+      [PING6]: Fix compilation error with glibc-2.4 and later.
+      [PING6]: Use getaddrinfo() to allow scoped addresses
+      Merge branch 'miscommit-20060927'
+      [PING6]: Ensure not to reverse-lookup if target is numeric address.
+
+
 [s20060512]
 
 YOSHIFUJI Hideaki:
