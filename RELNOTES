@@ -11,9 +11,6 @@ Mitsuru Chinen (2):
 YOSHIFUJI Hideaki (9):
       [MAKEFILE] Remove unused -I../include
       [TRACEPATH] Print usage if we met incorrect option.
-      
-      [PING6]: Fix compilation error with glibc-2.4 and later.
-      [TRACEPATH] Print usage if we met incorrect option.
       [PING6]: Fix compilation error with glibc-2.4 and later.
       [PING6]: Use getaddrinfo() to allow scoped addresses
       Merge branch 'miscommit-20060927'
