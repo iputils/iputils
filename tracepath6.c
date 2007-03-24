@@ -30,6 +30,10 @@
 #define SOL_IPV6 IPPROTO_IPV6
 #endif
 
+#ifndef IPV6_PMTUDISC_PROBE
+#define IPV6_PMTUDISC_PROBE	3
+#endif
+
 int overhead = 48;
 int mtu = 128000;
 int hops_to = -1;
@@ -369,8 +373,10 @@ int main(int argc, char **argv)
 		mapped = 1;
 	}
 
-	on = IPV6_PMTUDISC_DO;
-	if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on))) {
+	on = IPV6_PMTUDISC_PROBE;
+	if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
+	    (on = IPV6_PMTUDISC_DO,
+	     setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)))) {
 		perror("IPV6_MTU_DISCOVER");
 		exit(1);
 	}

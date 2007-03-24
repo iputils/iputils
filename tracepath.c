@@ -24,6 +24,10 @@
 #include <sys/uio.h>
 #include <arpa/inet.h>
 
+#ifndef IP_PMTUDISC_PROBE
+#define IP_PMTUDISC_PROBE	3
+#endif
+
 struct hhistory
 {
 	int	hops;
@@ -322,8 +326,10 @@ main(int argc, char **argv)
 	}
 	memcpy(&target.sin_addr, he->h_addr, 4);
 
-	on = IP_PMTUDISC_DO;
-	if (setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on))) {
+	on = IP_PMTUDISC_PROBE;
+	if (setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on)) &&
+	    (on = IP_PMTUDISC_DO,
+	     setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on)))) {
 		perror("IP_MTU_DISCOVER");
 		exit(1);
 	}
