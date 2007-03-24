@@ -265,7 +265,7 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath [-n] <destination>[/<port>]\n");
+	fprintf(stderr, "Usage: tracepath [-n] [-l <len>] <destination>[/<port>]\n");
 	exit(-1);
 }
 
@@ -279,10 +279,16 @@ main(int argc, char **argv)
 	char *p;
 	int ch;
 
-	while ((ch = getopt(argc, argv, "nh?")) != EOF) {
+	while ((ch = getopt(argc, argv, "nh?l:")) != EOF) {
 		switch(ch) {
 		case 'n':	
 			no_resolve = 1;
+			break;
+		case 'l':
+			if ((mtu = atoi(optarg)) <= overhead) {
+				fprintf(stderr, "Error: length must be >= %d\n", overhead);
+				exit(1);
+			}
 			break;
 		default:
 			usage();

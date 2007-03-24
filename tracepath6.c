@@ -280,7 +280,7 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath6 [-n] [-b] <destination>[/<port>]\n");
+	fprintf(stderr, "Usage: tracepath6 [-n] [-b] [-l <len>] <destination>[/<port>]\n");
 	exit(-1);
 }
 
@@ -297,13 +297,19 @@ int main(int argc, char **argv)
 	int gai;
 	char pbuf[NI_MAXSERV];
 
-	while ((ch = getopt(argc, argv, "nbh?")) != EOF) {
+	while ((ch = getopt(argc, argv, "nbh?l:")) != EOF) {
 		switch(ch) {
 		case 'n':	
 			no_resolve = 1;
 			break;
 		case 'b':	
 			show_both = 1;
+			break;
+		case 'l':
+			if ((mtu = atoi(optarg)) <= overhead) {
+				fprintf(stderr, "Error: length must be >= %d\n", overhead);
+				exit(1);
+			}
 			break;
 		default:
 			usage();
