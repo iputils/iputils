@@ -352,8 +352,14 @@ main(int argc, char **argv)
 			exit(1);
 		}
 
+restart:
 		for (i=0; i<3; i++) {
+			int old_mtu;
+
+			old_mtu = mtu;
 			res = probe_ttl(fd, ttl);
+			if (mtu != old_mtu)
+				goto restart;
 			if (res == 0)
 				goto done;
 			if (res > 0)
