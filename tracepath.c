@@ -163,19 +163,6 @@ restart:
 		}
 	}
 
-	if (rethops>=0) {
-		if (rethops<=64)
-			rethops = 65-rethops;
-		else if (rethops<=128)
-			rethops = 129-rethops;
-		else
-			rethops = 256-rethops;
-		if (sndhops>=0 && rethops != sndhops)
-			printf("asymm %2d ", rethops);
-		else if (sndhops<0 && rethops != ttl)
-			printf("asymm %2d ", rethops);
-	}
-
 	if (rettv) {
 		int diff = (tv.tv_sec-rettv->tv_sec)*1000000+(tv.tv_usec-rettv->tv_usec);
 		printf("%3d.%03dms ", diff/1000, diff%1000);
@@ -204,6 +191,18 @@ restart:
 		if (e->ee_origin == SO_EE_ORIGIN_ICMP &&
 		    e->ee_type == 11 &&
 		    e->ee_code == 0) {
+			if (rethops>=0) {
+				if (rethops<=64)
+					rethops = 65-rethops;
+				else if (rethops<=128)
+					rethops = 129-rethops;
+				else
+					rethops = 256-rethops;
+				if (sndhops>=0 && rethops != sndhops)
+					printf("asymm %2d ", rethops);
+				else if (sndhops<0 && rethops != ttl)
+					printf("asymm %2d ", rethops);
+			}
 			printf("\n");
 			break;
 		}
