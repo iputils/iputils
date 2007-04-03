@@ -15,6 +15,7 @@ traces path to a network host discovering MTU along this path</refpurpose>
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>tracepath</command>
+<arg choice="opt">-l <replaceable/pktlen/</arg>
 <arg choice="req"><replaceable/destination/</arg>
 <arg choice="opt"><replaceable/port/</arg>
 </cmdsynopsis>
@@ -37,6 +38,18 @@ Probably, it will change, when they will be updated.
 For now it uses Van Jacobson's trick, sweeping a range
 of UDP ports to maintain trace history.
 </para>
+</refsect1>
+
+<refsect1><title>OPTIONS</title>
+<variablelist>
+ <varlistentry>
+  <term><option/-l/</term>
+  <listitem><para>
+Sets the initial packet length to <replaceable/pktlen/ instead of
+65536 for <command/tracepath/ or 128000 for <command/tracepath6/.
+  </para></listitem>
+ </varlistentry>
+</variablelist>
 </refsect1>
 
 <refsect1><title>OUTPUT</title>
