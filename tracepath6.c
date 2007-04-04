@@ -302,10 +302,10 @@ int main(int argc, char **argv)
 
 	while ((ch = getopt(argc, argv, "nbh?l:")) != EOF) {
 		switch(ch) {
-		case 'n':	
+		case 'n':
 			no_resolve = 1;
 			break;
-		case 'b':	
+		case 'b':
 			show_both = 1;
 			break;
 		case 'l':
@@ -326,7 +326,7 @@ int main(int argc, char **argv)
 		usage();
 
 	memset(&sin, 0, sizeof(sin));
-	
+
 	p = strchr(argv[0], '/');
 	if (p) {
 		*p = 0;

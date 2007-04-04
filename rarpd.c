@@ -547,7 +547,7 @@ void catch_signal(int sig, void (*handler)(int))
 	sa.sa_handler = handler;
 #ifdef SA_INTERRUPT
 	sa.sa_flags = SA_INTERRUPT;
-#endif	
+#endif
 	sigaction(sig, &sa, NULL);
 }
 
@@ -611,7 +611,7 @@ int main(int argc, char **argv)
 	psize = 1;
 	pset[0].fd = socket(PF_PACKET, SOCK_DGRAM, 0);
 
-        if (ifname) {
+	if (ifname) {
 		struct ifreq ifr;
 		memset(&ifr, 0, sizeof(ifr));
 		strncpy(ifr.ifr_name, ifname, IFNAMSIZ);

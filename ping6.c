@@ -185,7 +185,7 @@ extern struct cmsghdr *	inet6_srcrt_init(void *bp, int type)
 int inet6_srcrt_add(struct cmsghdr *cmsg, const struct in6_addr *addr)
 {
 	struct ip6_rthdr0 *hdr;
-	
+
 	hdr = (struct ip6_rthdr0 *) CMSG_DATA(cmsg);
 
 	cmsg->cmsg_len += sizeof(struct in6_addr);
@@ -193,7 +193,7 @@ int inet6_srcrt_add(struct cmsghdr *cmsg, const struct in6_addr *addr)
 
 	memcpy(&hdr->ip6r0_addr[hdr->ip6r0_segleft++], addr,
 	       sizeof(struct in6_addr));
-		
+
 	return 0;
 }
 
@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
 
 		if (srcrt == NULL) {
 			int space;
-			
+
 			space = inet6_srcrt_space(IPV6_SRCRT_TYPE_0, argc - 1);
 
 			if (space == 0)	{
@@ -407,7 +407,7 @@ int main(int argc, char *argv[])
 		struct ifreq ifr;
 		struct cmsghdr *cmsg;
 		struct in6_pktinfo *ipi;
-				
+
 		memset(&ifr, 0, sizeof(ifr));
 		strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
 		if (ioctl(icmp_sock, SIOCGIFINDEX, &ifr) < 0) {
@@ -419,7 +419,7 @@ int main(int argc, char *argv[])
 		cmsg->cmsg_len = CMSG_LEN(sizeof(*ipi));
 		cmsg->cmsg_level = SOL_IPV6;
 		cmsg->cmsg_type = IPV6_PKTINFO;
-				
+
 		ipi = (struct in6_pktinfo*)CMSG_DATA(cmsg);
 		memset(ipi, 0, sizeof(*ipi));
 		ipi->ipi6_ifindex = ifr.ifr_ifindex;
@@ -862,7 +862,7 @@ int pr_icmph(__u8 type, __u8 code, __u32 info)
 		case ICMP6_DST_UNREACH_NOPORT:
 			printf("Port unreachable");
 			break;
-		default:	
+		default:
 			printf("Unknown code %d", code);
 			break;
 		}
@@ -910,7 +910,7 @@ int pr_icmph(__u8 type, __u8 code, __u32 info)
 		break;
 	default:
 		printf("unknown icmp type");
-		
+
 	}
 	return 0;
 }

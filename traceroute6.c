@@ -264,7 +264,7 @@ char copyright[] =
 #ifndef SOL_IPV6
 #define SOL_IPV6 IPPROTO_IPV6
 #endif
- 
+
 #define	MAXPACKET	65535
 #ifndef MAXHOSTNAMELEN
 #define MAXHOSTNAMELEN	64
@@ -791,7 +791,7 @@ char * pr_type(unsigned char t)
 }
 
 
-int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from, 
+int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
 	      struct in6_addr *to, int seq,
 	      struct timeval *tv)
 {
@@ -821,7 +821,7 @@ int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
 		if (nexthdr == IPPROTO_UDP)
 		{
 			struct pkt_format *pkt;
-			
+
 			pkt = (struct pkt_format *) (up + 1);
 
 			if (ntohl(pkt->ident) == ident &&
@@ -845,7 +845,7 @@ int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
 		Printf("\n%d bytes from %s to %s", cc,
 		       inet_ntop(AF_INET6, &from->sin6_addr, pa1, sizeof(pa1)),
 		       inet_ntop(AF_INET6, to, pa2, sizeof(pa2)));
-		
+
 		Printf(": icmp type %d (%s) code %d\n", type, pr_type(type),
 		       icp->icmp6_code);
 
@@ -877,13 +877,13 @@ void print(unsigned char *buf, int cc, struct sockaddr_in6 *from)
 	{
 		const char *hostname;
 		struct hostent *hp;
-		
+
 		hostname = inet_ntop(AF_INET6, &from->sin6_addr, pa, sizeof(pa));
 
 		if ((hp = gethostbyaddr((char *)&from->sin6_addr,
 					sizeof(from->sin6_addr), AF_INET6)))
 			hostname = hp->h_name;
-		
+
 		Printf(" %s (%s)", hostname, pa);
 	}
 }

@@ -8,15 +8,15 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * 
+ *
  *
  */
 
 /*
 
-A tool for loading a network with a preconfigurated packets. The tool is 
-implemented as a linux module. Parameters as output device IPG interpacket 
-packet, number of packets can be configured. pg uses already intalled 
+A tool for loading a network with a preconfigurated packets. The tool is
+implemented as a linux module. Parameters as output device IPG interpacket
+packet, number of packets can be configured. pg uses already intalled
 device driver output routine.
 
 
@@ -45,12 +45,12 @@ HOWTO:
       pgset "frags 5"         packet will consist of 5 fragments
       pgset "count 200000"    sets number of packets to send
       pgset "ipg 5000"        sets artificial gap inserted between packets
-                              to 5000 nanoseconds
+			      to 5000 nanoseconds
       pgset "dst 10.0.0.1"    sets IP destination address
-                              (BEWARE! This generator is very aggressive!)
+			      (BEWARE! This generator is very aggressive!)
       pgset "dstmac 00:00:00:00:00:00"    sets MAC destination address
       pgset stop    	      aborts injection
-      
+
   Also, ^C aborts generator.
 
 ---- cut here
@@ -66,7 +66,7 @@ function pgset() {
 
     result=`cat /proc/net/pg | fgrep "Result: OK:"`
     if [ "$result" = "" ]; then
-         cat /proc/net/pg | fgrep Result:
+	 cat /proc/net/pg | fgrep Result:
     fi
 }
 
@@ -111,7 +111,7 @@ pgset "dst 0.0.0.0"
 #include <linux/if_arp.h>
 #include <net/checksum.h>
 
-static char version[] __initdata = 
+static char version[] __initdata =
   "pg3.c: v1.0 010812: Packet Generator for packet performance testing.\n";
 
 
@@ -131,8 +131,8 @@ int forced_stop;
 int pg_cpu_speed;
 int pg_busy;
 
-static __u8 hh[14] = { 
-    0x00, 0x80, 0xC8, 0x79, 0xB3, 0xCB, 
+static __u8 hh[14] = {
+    0x00, 0x80, 0xC8, 0x79, 0xB3, 0xCB,
 
     /* We fill in SRC address later */
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -430,9 +430,9 @@ static void pg_inject(void)
 
 	idle = (((idle_acc_hi<<20)/pg_cpu_speed)<<12)+idle_acc_lo/pg_cpu_speed;
 
-        if (1) {
+	if (1) {
 		char *p = pg_result;
-    
+
 		p += sprintf(p, "OK: %u(c%u+d%u) usec, %u (%dbyte,%dfrags) %upps %uMB/sec",
 			     total, total-idle, idle,
 			     pc, skb->len, skb_shinfo(skb)->nr_frags,
@@ -444,7 +444,7 @@ static void pg_inject(void)
 out_relskb:
 	kfree_skb(skb);
 out_reldev:
-        dev_put(odev);
+	dev_put(odev);
 	return;
 
 out_intr:
@@ -461,11 +461,11 @@ int proc_pg_busy_read(char *buf , char **start, off_t offset,
 		      int len, int *eof, void *data)
 {
 	char *p;
-  
+
 	p = buf;
 	p += sprintf(p, "%d\n", pg_busy);
 	*eof = 1;
-  
+
 	return p-buf;
 }
 
@@ -474,7 +474,7 @@ int proc_pg_read(char *buf , char **start, off_t offset,
 {
 	char *p;
 	int i;
-  
+
 	p = buf;
 	p += sprintf(p, "Params: count=%u pkt_size=%u frags %d ipg %u odev \"%s\" dst %s dstmac ",
 		     pg_count, pkt_size, nfrags, pg_ipg,
@@ -511,12 +511,12 @@ done:
 	return i;
 }
 
-unsigned long num_arg(const char *buffer, unsigned long maxlen, 
+unsigned long num_arg(const char *buffer, unsigned long maxlen,
 		      unsigned long *num)
 {
 	int i=0;
 	*num = 0;
-  
+
 	for(; i<maxlen;i++) {
 		if( (buffer[i] >= '0') && (buffer[i] <= '9')) {
 			*num *= 10;
@@ -552,22 +552,22 @@ int proc_pg_write(struct file *file, const char *buffer,
 	int i=0, max, len;
 	char name[16], valstr[32];
 	unsigned long value = 0;
-  
+
 	if (count < 1) {
 		sprintf(pg_result, "Wrong command format");
 		return -EINVAL;
 	}
-  
+
 	max = count -i;
 	i += count_trail_chars(&buffer[i], max);
-  
+
 	/* Read variable name */
 
 	len = strn_len(&buffer[i], sizeof(name)-1);
 	memset(name, 0, sizeof(name));
 	strncpy(name, &buffer[i], len);
 	i += len;
-  
+
 	max = count -i;
 	len = count_trail_chars(&buffer[i], max);
 	i += len;
@@ -576,7 +576,7 @@ int proc_pg_write(struct file *file, const char *buffer,
 		printk("pg: %s,%lu\n", name, count);
 
 	/* Only stop is allowed when we are running */
-  
+
 	if(!strcmp(name, "stop")) {
 		forced_stop=1;
 		if (pg_busy)
@@ -663,7 +663,7 @@ int proc_pg_write(struct file *file, const char *buffer,
 				m++;
 				*m = 0;
 			}
-		}	  
+		}
 		sprintf(pg_result, "OK: dstmac");
 		return count;
 	}
@@ -684,11 +684,11 @@ int proc_pg_write(struct file *file, const char *buffer,
 
 static int pg_init(void)
 {
-        printk(version);
- 	cycles_calibrate();
- 	if (pg_cpu_speed == 0) {
+	printk(version);
+	cycles_calibrate();
+	if (pg_cpu_speed == 0) {
 		printk("pg3: Error: your machine does not have working cycle counter.\n");
- 		return -EINVAL;
+		return -EINVAL;
 	}
 	if(!pg_proc_ent) {
 		pg_proc_ent = create_proc_entry("net/pg", 0600, 0);

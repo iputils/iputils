@@ -80,7 +80,7 @@ int recverr(int fd, int ttl)
 	int sndhops;
 	int progress = -1;
 	int broken_router;
-	
+
 restart:
 	memset(&rcvbuf, -1, sizeof(rcvbuf));
 	iov.iov_base = &rcvbuf;
@@ -129,8 +129,8 @@ restart:
 				e = (struct sock_extended_err *) CMSG_DATA(cmsg);
 			} else if (cmsg->cmsg_type == IP_TTL) {
 				rethops = *(int*)CMSG_DATA(cmsg);
-			} else { 
-				printf("cmsg:%d\n ", cmsg->cmsg_type); 
+			} else {
+				printf("cmsg:%d\n ", cmsg->cmsg_type);
 			}
 		}
 	}
@@ -284,7 +284,7 @@ main(int argc, char **argv)
 
 	while ((ch = getopt(argc, argv, "nh?l:")) != EOF) {
 		switch(ch) {
-		case 'n':	
+		case 'n':
 			no_resolve = 1;
 			break;
 		case 'l':

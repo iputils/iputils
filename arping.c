@@ -64,10 +64,10 @@ int received, brd_recv, req_recv;
 void usage(void)
 {
 	fprintf(stderr,
- 		"Usage: arping [-fqbDUAV] [-c count] [-w timeout] [-I device] [-s source] destination\n"
- 		"  -f : quit on first reply\n"
+		"Usage: arping [-fqbDUAV] [-c count] [-w timeout] [-I device] [-s source] destination\n"
+		"  -f : quit on first reply\n"
 		"  -q : be quiet\n"
- 		"  -b : keep broadcasting, don't go unicast\n"
+		"  -b : keep broadcasting, don't go unicast\n"
 		"  -D : duplicate address detection mode\n"
 		"  -U : Unsolicited ARP mode, update your neighbours\n"
 		"  -A : ARP answer mode, update your neighbours\n"
@@ -77,7 +77,7 @@ void usage(void)
 		"  -I device : which ethernet device to use (eth0)\n"
 		"  -s source : source ip address\n"
 		"  destination : ask for what ip address\n"
- 		);
+		);
 	exit(2);
 }
 
@@ -337,10 +337,10 @@ main(int argc, char **argv)
 			timeout = atoi(optarg);
 			break;
 		case 'I':
- 			device = optarg;
- 			break;
- 		case 'f':
- 			quit_on_reply=1;
+			device = optarg;
+			break;
+		case 'f':
+			quit_on_reply=1;
 			break;
 		case 's':
 			source = optarg;
@@ -416,7 +416,7 @@ main(int argc, char **argv)
 
 	if (!dad && unsolicited && src.s_addr == 0)
 		src = dst;
-	
+
 	if (!dad || src.s_addr) {
 		struct sockaddr_in saddr;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);

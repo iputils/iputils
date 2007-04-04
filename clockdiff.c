@@ -29,7 +29,7 @@ void usage(void) __attribute__((noreturn));
  *
  * This routine is very heavily used in the network
  * code and should be modified for each CPU to be as fast as possible.
- * 
+ *
  * This implementation is TAHOE version.
  */
 
@@ -66,7 +66,7 @@ int in_cksum(u_short *addr, int len)
 		}
 		if (len == -1)
 			/*
-			 * Odd number of bytes. 
+			 * Odd number of bytes.
 			 */
 			u.c[0] = *(u_char *)addr;
 	}
@@ -147,7 +147,7 @@ empty:
 	FD_SET(sock_raw, &ready);
 	if (select(FD_SETSIZE, &ready, (fd_set *)0, (fd_set *)0, &tout)) {
 		length = sizeof(struct sockaddr_in);
-		cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0, 
+		cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
 		    (struct sockaddr *)NULL, &length);
 		if (cc < 0)
 			return -1;
@@ -174,46 +174,46 @@ empty:
 	FD_ZERO(&ready);
 	msgcount = 0;
 
-        acked = seqno = seqno0 = 0;
+	acked = seqno = seqno0 = 0;
 
 	for (msgcount = 0; msgcount < MSGS; ) {
 
 	/*
-	 * If no answer is received for TRIALS consecutive times, 
+	 * If no answer is received for TRIALS consecutive times,
 	 * the machine is assumed to be down
 	 */
-	        if (seqno - acked > TRIALS)
+		if (seqno - acked > TRIALS)
 			return HOSTDOWN;
 
 		oicp->un.echo.sequence = ++seqno;
 		oicp->checksum = 0;
 
-    		(void)gettimeofday (&tv1, (struct timezone *)0);
-		*(__u32*)(oicp+1) = htonl((tv1.tv_sec % (24*60*60)) * 1000 
+		(void)gettimeofday (&tv1, (struct timezone *)0);
+		*(__u32*)(oicp+1) = htonl((tv1.tv_sec % (24*60*60)) * 1000
 					  + tv1.tv_usec / 1000);
 		oicp->checksum = in_cksum((u_short *)oicp, sizeof(*oicp) + 12);
-	
-		count = sendto(sock_raw, (char *)opacket, sizeof(*oicp)+12, 0, 
+
+		count = sendto(sock_raw, (char *)opacket, sizeof(*oicp)+12, 0,
 			       (struct sockaddr *)addr, sizeof(struct sockaddr_in));
 
 		if (count < 0)
 			return UNREACHABLE;
 
 		for (;;) {
-		        FD_ZERO(&ready);
+			FD_ZERO(&ready);
 			FD_SET(sock_raw, &ready);
-			{ 
-                          long tmo = rtt + rtt_sigma;
-		          tout.tv_sec =  tmo/1000;
-		          tout.tv_usec = (tmo - (tmo/1000)*1000)*1000;
-                        }
+			{
+			  long tmo = rtt + rtt_sigma;
+			  tout.tv_sec =  tmo/1000;
+			  tout.tv_usec = (tmo - (tmo/1000)*1000)*1000;
+			}
 
 			if ((count = select(FD_SETSIZE, &ready, (fd_set *)0,
 			    (fd_set *)0, &tout)) <= 0)
 				break;
 
 			(void)gettimeofday(&tv1, (struct timezone *)0);
-			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0, 
+			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
 			    (struct sockaddr *)NULL, &length);
 
 			if (cc < 0)
@@ -222,31 +222,31 @@ empty:
 			icp = (struct icmphdr *)(packet + (ip->ihl << 2));
 			if( icp->type == ICMP_TIMESTAMPREPLY &&
 			    icp->un.echo.id == id && icp->un.echo.sequence >= seqno0 &&
-                                                  icp->un.echo.sequence <= seqno) {
+						  icp->un.echo.sequence <= seqno) {
 			  if (acked < icp->un.echo.sequence)
 			    acked = icp->un.echo.sequence;
 
-		          recvtime = (tv1.tv_sec % (24*60*60)) * 1000 +
-		                     tv1.tv_usec / 1000;
-                          sendtime = ntohl(*(__u32*)(icp+1));
-		          diff = recvtime - sendtime;
+			  recvtime = (tv1.tv_sec % (24*60*60)) * 1000 +
+				     tv1.tv_usec / 1000;
+			  sendtime = ntohl(*(__u32*)(icp+1));
+			  diff = recvtime - sendtime;
 		/*
 		 * diff can be less than 0 aroud midnight
 		 */
-		          if (diff < 0)
+			  if (diff < 0)
 			    continue;
 			  rtt = (rtt * 3 + diff)/4;
 			  rtt_sigma = (rtt_sigma *3 + abs(diff-rtt))/4;
-		          msgcount++;
-		          histime = ntohl(((__u32*)(icp+1))[1]);
-		          histime1 = ntohl(((__u32*)(icp+1))[2]);
+			  msgcount++;
+			  histime = ntohl(((__u32*)(icp+1))[1]);
+			  histime1 = ntohl(((__u32*)(icp+1))[2]);
 		/*
-		 * a hosts using a time format different from 
+		 * a hosts using a time format different from
 		 * ms. since midnight UT (as per RFC792) should
 		 * set the high order bit of the 32-bit time
 		 * value it transmits.
 		 */
-		        if ((histime & 0x80000000) != 0)
+			if ((histime & 0x80000000) != 0)
 			  return NONSTDTIME;
 
 			if (interactive) {
@@ -256,36 +256,36 @@ empty:
 
 			delta1 = histime - sendtime;
 		/*
-		 * Handles wrap-around to avoid that around 
-		 * midnight small time differences appear 
+		 * Handles wrap-around to avoid that around
+		 * midnight small time differences appear
 		 * enormous. However, the two machine's clocks
 		 * must be within 12 hours from each other.
 		 */
-        		if (delta1 < BIASN)
-        			delta1 += MODULO;
-        		else if (delta1 > BIASP)
-        			delta1 -= MODULO;
+			if (delta1 < BIASN)
+				delta1 += MODULO;
+			else if (delta1 > BIASP)
+				delta1 -= MODULO;
 
-        		delta2 = recvtime - histime;
-        		if (delta2 < BIASN)
-        			delta2 += MODULO;
-        		else if (delta2 > BIASP)
-        			delta2 -= MODULO;
+			delta2 = recvtime - histime;
+			if (delta2 < BIASN)
+				delta2 += MODULO;
+			else if (delta2 > BIASP)
+				delta2 -= MODULO;
 
-        		if (delta1 < min1)  
-        			min1 = delta1;
-        		if (delta2 < min2)
-        			min2 = delta2;
+			if (delta1 < min1)
+				min1 = delta1;
+			if (delta2 < min2)
+				min2 = delta2;
 			if (delta1 + delta2 < min_rtt) {
 			  min_rtt  = delta1 + delta2;
 			  measure_delta1 = (delta1 - delta2)/2 + PROCESSING_TIME;
 			}
-        		if (diff < RANGE) {
-        			min1 = delta1;
-        			min2 = delta2;
-        			goto good_exit;
-        		}
-                      }
+			if (diff < RANGE) {
+				min1 = delta1;
+				min2 = delta2;
+				goto good_exit;
+			}
+		      }
 		}
 	}
 
@@ -324,7 +324,7 @@ empty:
 	FD_SET(sock_raw, &ready);
 	if (select(FD_SETSIZE, &ready, (fd_set *)0, (fd_set *)0, &tout)) {
 		length = sizeof(struct sockaddr_in);
-		cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0, 
+		cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
 		    (struct sockaddr *)NULL, &length);
 		if (cc < 0)
 			return -1;
@@ -352,27 +352,27 @@ empty:
 	FD_ZERO(&ready);
 	msgcount = 0;
 
-        acked = seqno = seqno0 = 0;
+	acked = seqno = seqno0 = 0;
 
 	for (msgcount = 0; msgcount < MSGS; ) {
 
 	/*
-	 * If no answer is received for TRIALS consecutive times, 
+	 * If no answer is received for TRIALS consecutive times,
 	 * the machine is assumed to be down
 	 */
-	        if ( seqno - acked > TRIALS) {
+		if ( seqno - acked > TRIALS) {
 			errno = EHOSTDOWN;
 			return HOSTDOWN;
-                }
+		}
 		oicp->un.echo.sequence = ++seqno;
 		oicp->checksum = 0;
 
-    		gettimeofday (&tv1, NULL);
-		((__u32*)(oicp+1))[0] = htonl((tv1.tv_sec % (24*60*60)) * 1000 
+		gettimeofday (&tv1, NULL);
+		((__u32*)(oicp+1))[0] = htonl((tv1.tv_sec % (24*60*60)) * 1000
 					      + tv1.tv_usec / 1000);
 		oicp->checksum = in_cksum((u_short *)oicp, sizeof(*oicp)+12);
 
-		count = sendto(sock_raw, (char *)opacket, sizeof(*oicp)+12, 0, 
+		count = sendto(sock_raw, (char *)opacket, sizeof(*oicp)+12, 0,
 			       (struct sockaddr *)addr, sizeof(struct sockaddr_in));
 
 		if (count < 0) {
@@ -381,20 +381,20 @@ empty:
 		}
 
 		for (;;) {
-		        FD_ZERO(&ready);
+			FD_ZERO(&ready);
 			FD_SET(sock_raw, &ready);
-			{ 
+			{
 				long tmo = rtt + rtt_sigma;
 				tout.tv_sec =  tmo/1000;
 				tout.tv_usec = (tmo - (tmo/1000)*1000)*1000;
-                        }
+			}
 
 			if ((count = select(FD_SETSIZE, &ready, (fd_set *)0,
 			    (fd_set *)0, &tout)) <= 0)
 				break;
 
 			(void)gettimeofday(&tv1, (struct timezone *)0);
-			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0, 
+			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
 				      (struct sockaddr *)NULL, &length);
 
 			if (cc < 0)
@@ -463,8 +463,8 @@ empty:
 
 				delta1 = histime - sendtime;
 				/*
-				 * Handles wrap-around to avoid that around 
-				 * midnight small time differences appear 
+				 * Handles wrap-around to avoid that around
+				 * midnight small time differences appear
 				 * enormous. However, the two machine's clocks
 				 * must be within 12 hours from each other.
 				 */
@@ -479,7 +479,7 @@ empty:
 				else if (delta2 > BIASP)
 					delta2 -= MODULO;
 
-				if (delta1 < min1)  
+				if (delta1 < min1)
 					min1 = delta1;
 				if (delta2 < min2)
 					min2 = delta2;
@@ -503,22 +503,22 @@ good_exit:
 
 
 /*
- * Clockdiff computes the difference between the time of the machine on 
+ * Clockdiff computes the difference between the time of the machine on
  * which it is called and the time of the machines given as argument.
  * The time differences measured by clockdiff are obtained using a sequence
  * of ICMP TSTAMP messages which are returned to the sender by the IP module
  * in the remote machine.
- * In order to compare clocks of machines in different time zones, the time 
- * is transmitted (as a 32-bit value) in milliseconds since midnight UT. 
+ * In order to compare clocks of machines in different time zones, the time
+ * is transmitted (as a 32-bit value) in milliseconds since midnight UT.
  * If a hosts uses a different time format, it should set the high order
  * bit of the 32-bit quantity it transmits.
  * However, VMS apparently transmits the time in milliseconds since midnight
- * local time (rather than GMT) without setting the high order bit. 
- * Furthermore, it does not understand daylight-saving time.  This makes 
+ * local time (rather than GMT) without setting the high order bit.
+ * Furthermore, it does not understand daylight-saving time.  This makes
  * clockdiff behaving inconsistently with hosts running VMS.
  *
- * In order to reduce the sensitivity to the variance of message transmission 
- * time, clockdiff sends a sequence of messages.  Yet, measures between 
+ * In order to reduce the sensitivity to the variance of message transmission
+ * time, clockdiff sends a sequence of messages.  Yet, measures between
  * two `distant' hosts can be affected by a small error. The error can, however,
  * be reduced by increasing the number of messages sent in each measurement.
  */
@@ -594,7 +594,7 @@ main(int argc, char *argv[])
 
 	memset(&server, 0, sizeof(server));
 	server.sin_family = hp->h_addrtype;
-	bcopy(hp->h_addr, &(server.sin_addr.s_addr), 4); 
+	bcopy(hp->h_addr, &(server.sin_addr.s_addr), 4);
 
 	if (connect(sock_raw, (struct sockaddr*)&server, sizeof(server)) == -1) {
 		perror("connect");
@@ -605,7 +605,7 @@ main(int argc, char *argv[])
 		socklen_t addrlen = sizeof(myaddr);
 		unsigned char rspace[ip_opt_len];
 
-	        bzero(rspace, sizeof(rspace));
+		bzero(rspace, sizeof(rspace));
 		rspace[0] = IPOPT_TIMESTAMP;
 		rspace[1] = ip_opt_len;
 		rspace[2] = 5;

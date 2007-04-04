@@ -388,7 +388,7 @@ send_data:
 
 			if (ap->th_opcode == ERROR)
 				goto abort;
-			
+
 			if (ap->th_opcode == ACK) {
 				if (ap->th_block == block) {
 					confirmed = MSG_CONFIRM;
