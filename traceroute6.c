@@ -276,7 +276,7 @@ char copyright[] =
 #define FD_SET(n, p)    ((p)->fds_bits[(n)/NFDBITS] |= (1 << ((n) % NFDBITS)))
 #define FD_CLR(n, p)    ((p)->fds_bits[(n)/NFDBITS] &= ~(1 << ((n) % NFDBITS)))
 #define FD_ISSET(n, p)  ((p)->fds_bits[(n)/NFDBITS] & (1 << ((n) % NFDBITS)))
-#define FD_ZERO(p)      bzero((char *)(p), sizeof(*(p)))
+#define FD_ZERO(p)      memset((char *)(p), 0, sizeof(*(p)))
 #endif
 
 #define Fprintf (void)fprintf
@@ -422,7 +422,7 @@ int main(int argc, char *argv[])
 
 	setlinebuf (stdout);
 
-	(void) bzero((char *)&whereto, sizeof(whereto));
+	(void) memset((char *)&whereto, 0, sizeof(whereto));
 
 	to->sin6_family = AF_INET6;
 	to->sin6_port = htons(port);
@@ -534,7 +534,7 @@ int main(int argc, char *argv[])
 		saddr.sin6_port = 0;
 		close(probe_fd);
 	} else {
-		(void) bzero((char *)&saddr, sizeof(saddr));
+		(void) memset((char *)&saddr, 0, sizeof(saddr));
 		saddr.sin6_family = AF_INET6;
 		if (inet_pton(AF_INET6, source, &saddr.sin6_addr) <= 0)
 		{

@@ -235,7 +235,7 @@ main(int argc, char **argv)
 	while (argc > 0) {
 		target = *argv;
 
-		bzero((char *)&whereto, sizeof(whereto));
+		memset((char *)&whereto, 0, sizeof(whereto));
 		whereto.sin_family = AF_INET;
 		if (inet_aton(target, &whereto.sin_addr) == 1) {
 			hostname = target;
@@ -393,7 +393,7 @@ main(int argc, char **argv)
 
 	/* record route option */
 	if (options & F_RROUTE) {
-		bzero(rspace, sizeof(rspace));
+		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_NOP;
 		rspace[1+IPOPT_OPTVAL] = IPOPT_RR;
 		rspace[1+IPOPT_OLEN] = sizeof(rspace)-1;
@@ -405,7 +405,7 @@ main(int argc, char **argv)
 		}
 	}
 	if (options & F_TIMESTAMP) {
-		bzero(rspace, sizeof(rspace));
+		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_TIMESTAMP;
 		rspace[1] = (ts_type==IPOPT_TS_TSONLY ? 40 : 36);
 		rspace[2] = 5;
@@ -427,7 +427,7 @@ main(int argc, char **argv)
 	}
 	if (options & F_SOURCEROUTE) {
 		int i;
-		bzero(rspace, sizeof(rspace));
+		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_NOOP;
 		rspace[1+IPOPT_OPTVAL] = (options & F_SO_DONTROUTE) ? IPOPT_SSRR
 			: IPOPT_LSRR;
@@ -1009,7 +1009,7 @@ void pr_options(unsigned char * cp, int hlen)
 			if (i <= 0)
 				continue;
 			if (i == old_rrlen
-			    && !bcmp((char *)cp, old_rr, i)
+			    && !strncmp((char *)cp, old_rr, i)
 			    && !(options & F_FLOOD)) {
 				printf("\t(same route)");
 				i = ((i + 3) / 4) * 4;
@@ -1017,7 +1017,7 @@ void pr_options(unsigned char * cp, int hlen)
 				break;
 			}
 			old_rrlen = i;
-			bcopy((char *)cp, old_rr, i);
+			memcpy(old_rr, (char *)cp, i);
 			printf("\nRR: ");
 			cp++;
 			for (;;) {

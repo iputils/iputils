@@ -408,11 +408,11 @@ next:
 		forever = 1;
 	}
 
-	bzero( (char *)&whereto, sizeof(struct sockaddr_in) );
+	memset( (char *)&whereto, 0, sizeof(struct sockaddr_in) );
 	to->sin_family = AF_INET;
 	to->sin_addr.s_addr = inet_addr(sendaddress);
 
-	bzero( (char *)&joinaddr, sizeof(struct sockaddr_in) );
+	memset( (char *)&joinaddr, 0, sizeof(struct sockaddr_in) );
 	joinaddr.sin_family = AF_INET;
 	joinaddr.sin_addr.s_addr = inet_addr(recvaddress);
 
@@ -1467,7 +1467,7 @@ rtioctl(struct in_addr addr, int op)
 	struct rtentry rt;
 	struct sockaddr_in *sin;
 
-	bzero((char *)&rt, sizeof(struct rtentry));
+	memset((char *)&rt, 0, sizeof(struct rtentry));
 	rt.rt_dst.sa_family = AF_INET;
 	rt.rt_gateway.sa_family = AF_INET;
 	rt.rt_genmask.sa_family = AF_INET;

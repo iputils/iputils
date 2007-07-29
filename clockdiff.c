@@ -594,7 +594,7 @@ main(int argc, char *argv[])
 
 	memset(&server, 0, sizeof(server));
 	server.sin_family = hp->h_addrtype;
-	bcopy(hp->h_addr, &(server.sin_addr.s_addr), 4);
+	memcpy(&(server.sin_addr.s_addr), hp->h_addr, 4);
 
 	if (connect(sock_raw, (struct sockaddr*)&server, sizeof(server)) == -1) {
 		perror("connect");
@@ -605,7 +605,7 @@ main(int argc, char *argv[])
 		socklen_t addrlen = sizeof(myaddr);
 		unsigned char rspace[ip_opt_len];
 
-		bzero(rspace, sizeof(rspace));
+		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_TIMESTAMP;
 		rspace[1] = ip_opt_len;
 		rspace[2] = 5;
