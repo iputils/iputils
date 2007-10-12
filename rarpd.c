@@ -51,7 +51,7 @@ struct iflink
 	int	       	index;
 	int		hatype;
 	unsigned char	lladdr[16];
-	unsigned char	name[IFNAMSIZ];
+	char		name[IFNAMSIZ];
 	struct ifaddr 	*ifa_list;
 } *ifl_list;
 
@@ -67,11 +67,11 @@ struct rarp_map
 {
 	struct rarp_map *next;
 
-	int	ifindex;
-	int	arp_type;
-	int	lladdr_len;
-	char	lladdr[16];
-	__u32	ipaddr;
+	int		ifindex;
+	int		arp_type;
+	int		lladdr_len;
+	unsigned char	lladdr[16];
+	__u32		ipaddr;
 } *rarp_db;
 
 void usage()
