@@ -174,6 +174,7 @@ main(int argc, char **argv)
 			break;
 		case 'I':
 		{
+#if 0
 			char dummy;
 			int i1, i2, i3, i4;
 
@@ -189,6 +190,12 @@ main(int argc, char **argv)
 			} else {
 				device = optarg;
 			}
+#else
+			if (inet_pton(AF_INET, optarg, &source.sin_addr) > 0)
+				options |= F_STRICTSOURCE;
+			else
+				device = optarg;
+#endif
 			break;
 		}
 		case 'M':
