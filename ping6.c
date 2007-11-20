@@ -372,8 +372,8 @@ int main(int argc, char *argv[])
 			strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
 			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 #ifdef HAVE_SIN6_SCOPEID
-				if ((firsthop.sin6_addr.s6_addr16[0]&htons(0xffc0)) == htons (0xfe80) ||
-				    (firsthop.sin6_addr.s6_addr16[0]&htons(0xffff)) == htons (0xff02)) {
+				if (IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) ||
+				    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr)) {
 					if (ioctl(probe_fd, SIOCGIFINDEX, &ifr) < 0) {
 						fprintf(stderr, "ping: unknown iface %s\n", device);
 						exit(2);
