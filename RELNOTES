@@ -1,3 +1,24 @@
+[s20071127]
+
+John Heffner (6):
+      [iputils] tracepath: Add length flag to set initial MTU.
+      [iputils] tracepath: Add documentation for the -l flag.
+      [iputils] tracepath: Use PMTUDISC_PROBE mode if it exists.
+      [iputils] tracepath: Document -n flag.
+      [iputils] tracepath: Fix asymm messages.
+      [iputils] tracepath: Re-probe at same TTL after MTU reduction.
+
+YOSHIFUJI Hideaki (8):
+      [DOC]: Delete duplicated lines in RELNOTES.
+      Fix white space errors.
+      [CLOCKDIFF,PING,RDISC,TRACEROUTE6]: Support uClibc.
+      [RARPD]: Fixed several signedness issues for char strings.
+      [PING]: Use inet_pton() instead of sscan().
+      [PING6]: Use IN6_IS_ADDR_xxx() macro.
+      [MAKEFILE]: Change authorized host to push snapshots.
+      [MAKEFILE]: Use git-archive instead of git-tar-tree.
+
+
 [s20070202]
 
 Mike Frysinger (2):
