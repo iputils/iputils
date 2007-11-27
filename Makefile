@@ -62,7 +62,7 @@ clean:
 	@$(MAKE) -C doc clean
 
 snapshot:
-	@if [ "`uname -n`" != "berry" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
+	@if [ "`uname -n`" != "beatrice" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
 	@date "+[$(TAG)]" > RELNOTES.NEW
 	@echo >>RELNOTES.NEW
 	@git-log $(LASTTAG).. | git-shortlog >> RELNOTES.NEW
