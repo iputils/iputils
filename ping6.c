@@ -207,7 +207,10 @@ int main(int argc, char *argv[])
 	struct sockaddr_in6 firsthop;
 	int socket_errno;
 	struct icmp6_filter filter;
-	int err, csum_offset, sz_opt;
+	int err;
+#ifdef __linux__
+	int csum_offset, sz_opt;
+#endif
 	static uint32_t scope_id = 0;
 
 	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
@@ -474,14 +477,18 @@ int main(int argc, char *argv[])
 	hold += ((hold+511)/512)*(40+16+64+160);
 	sock_setbufs(icmp_sock, hold);
 
+#ifdef __linux__
 	csum_offset = 2;
 	sz_opt = sizeof(int);
 
 	err = setsockopt(icmp_sock, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
 	if (err < 0) {
-		perror("setsockopt(RAW_CHECKSUM)");
-		exit(2);
+		/* checksum should be enabled by default and setting this
+		 * option might fail anyway.
+		 */
+		fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
 	}
+#endif
 
 	/*
 	 *	select icmp echo reply as icmp type to receive

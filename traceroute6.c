@@ -484,11 +484,16 @@ int main(int argc, char *argv[])
 	if (options & SO_DONTROUTE)
 		setsockopt(icmp_sock, SOL_SOCKET, SO_DONTROUTE,
 			   (char *)&on, sizeof(on));
+
+#ifdef __linux__
 	on = 2;
 	if (setsockopt(icmp_sock, SOL_RAW, IPV6_CHECKSUM, &on, sizeof(on)) < 0) {
-		perror("setsockopt(RAW_CHECKSUM)");
-		exit(2);
+		/* checksum should be enabled by default and setting this
+		 * option might fail anyway.
+		 */
+		fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
 	}
+#endif
 
 	if ((sndsock = socket(AF_INET6, SOCK_DGRAM, 0)) < 0) {
 		perror("traceroute: UDP socket");
