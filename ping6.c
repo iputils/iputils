@@ -197,6 +197,16 @@ int inet6_srcrt_add(struct cmsghdr *cmsg, const struct in6_addr *addr)
 	return 0;
 }
 
+unsigned int if_name2index(const char *ifname)
+{
+	unsigned int i = if_nametoindex(ifname);
+	if (!i) {
+		fprintf(stderr, "ping: unknown iface %s\n", ifname);
+		exit(2);
+	}
+	return i;
+}
+
 int main(int argc, char *argv[])
 {
 	int ch, hold, packlen;
@@ -370,19 +380,11 @@ int main(int argc, char *argv[])
 			exit(2);
 		}
 		if (device) {
-			struct ifreq ifr;
-			memset(&ifr, 0, sizeof(ifr));
-			strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
 			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 #ifdef HAVE_SIN6_SCOPEID
 				if (IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) ||
-				    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr)) {
-					if (ioctl(probe_fd, SIOCGIFINDEX, &ifr) < 0) {
-						fprintf(stderr, "ping: unknown iface %s\n", device);
-						exit(2);
-					}
-					firsthop.sin6_scope_id = ifr.ifr_ifindex;
-				}
+				    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
+					firsthop.sin6_scope_id = if_name2index(device);
 #endif
 			}
 		}
@@ -407,16 +409,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (device) {
-		struct ifreq ifr;
 		struct cmsghdr *cmsg;
 		struct in6_pktinfo *ipi;
 
-		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
-		if (ioctl(icmp_sock, SIOCGIFINDEX, &ifr) < 0) {
-			fprintf(stderr, "ping: unknown iface %s\n", device);
-			exit(2);
-		}
 		cmsg = (struct cmsghdr*)cmsgbuf;
 		cmsglen += CMSG_SPACE(sizeof(*ipi));
 		cmsg->cmsg_len = CMSG_LEN(sizeof(*ipi));
@@ -425,7 +420,7 @@ int main(int argc, char *argv[])
 
 		ipi = (struct in6_pktinfo*)CMSG_DATA(cmsg);
 		memset(ipi, 0, sizeof(*ipi));
-		ipi->ipi6_ifindex = ifr.ifr_ifindex;
+		ipi->ipi6_ifindex = if_name2index(device);
 	}
 
 	if ((whereto.sin6_addr.s6_addr16[0]&htons(0xff00)) == htons (0xff00)) {
