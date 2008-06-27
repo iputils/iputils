@@ -125,6 +125,9 @@ char copyright[] =
 #define HAVE_SIN6_SCOPEID 1
 #endif
 
+#ifndef SCOPE_DELIMITER
+# define SCOPE_DELIMITER '%'
+#endif
 
 __u32 flowlabel;
 __u32 tclass;
@@ -249,11 +252,27 @@ int main(int argc, char *argv[])
 			break;
 		case 'I':
 			if (strchr(optarg, ':')) {
-				if (inet_pton(AF_INET6, optarg, (char*)&source.sin6_addr) <= 0) {
+				char *p, *addr = strdup(optarg);
+
+				if (!addr) {
+					fprintf(stderr, "ping: out of memory\n");
+					exit(2);
+				}
+
+				p = strchr(addr, SCOPE_DELIMITER);
+				if (p) {
+					*p = '\0';
+					device = optarg + (p - addr) + 1;
+				}
+
+				if (inet_pton(AF_INET6, addr, (char*)&source.sin6_addr) <= 0) {
 					fprintf(stderr, "ping: invalid source address %s\n", optarg);
 					exit(2);
 				}
+
 				options |= F_STRICTSOURCE;
+
+				free(addr);
 			} else {
 				device = optarg;
 			}
@@ -401,6 +420,11 @@ int main(int argc, char *argv[])
 		source.sin6_port = 0;
 		close(probe_fd);
 	}
+#ifdef HAVE_SIN6_SCOPEID
+	else if (device && (IN6_IS_ADDR_LINKLOCAL(&source.sin6_addr) ||
+			    IN6_IS_ADDR_MC_LINKLOCAL(&source.sin6_addr)))
+		source.sin6_scope_id = if_name2index(device);
+#endif
 
 	if (icmp_sock < 0) {
 		errno = socket_errno;
