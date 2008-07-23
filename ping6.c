@@ -399,12 +399,27 @@ int main(int argc, char *argv[])
 			exit(2);
 		}
 		if (device) {
-			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
-#ifdef HAVE_SIN6_SCOPEID
-				if (IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) ||
-				    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
-					firsthop.sin6_scope_id = if_name2index(device);
+#if defined(IPV6_RECVPKTINFO) || defined(HAVE_SIN6_SCOPEID)
+			unsigned int iface = if_name2index(device);
 #endif
+#ifdef IPV6_RECVPKTINFO
+			struct in6_pktinfo ipi;
+
+			memset(&ipi, 0, sizeof(ipi));
+			ipi.ipi6_ifindex = iface;
+#endif
+
+#ifdef HAVE_SIN6_SCOPEID
+			if (IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) ||
+			    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
+				firsthop.sin6_scope_id = iface;
+#endif
+			if (
+#ifdef IPV6_RECVPKTINFO
+			    setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof(ipi)) == -1 &&
+#endif
+			    setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
+				perror("setsockopt(SO_BINDTODEVICE)");
 			}
 		}
 		firsthop.sin6_port = htons(1025);
