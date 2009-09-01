@@ -494,7 +494,7 @@ void setup(int icmp_sock)
 			*p++ = i;
 	}
 
-	ident = getpid() & 0xFFFF;
+	ident = htons(getpid() & 0xFFFF);
 
 	set_signal(SIGINT, sigexit);
 	set_signal(SIGALRM, sigexit);
