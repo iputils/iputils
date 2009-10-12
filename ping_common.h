@@ -60,6 +60,7 @@ extern int options;
 #define	F_STRICTSOURCE	0x8000
 #define F_NOLOOP	0x10000
 #define F_TTL		0x20000
+#define F_MARK		0x40000
 
 /*
  * MAX_DUP_CHK is the number of bits in received table, i.e. the maximum
@@ -118,9 +119,9 @@ case 'a': case 'U': case 'c': case 'd': \
 case 'f': case 'i': case 'w': case 'l': \
 case 'S': case 'n': case 'p': case 'q': \
 case 'r': case 's': case 'v': case 'L': \
-case 't': case 'A': case 'W': case 'B':
+case 't': case 'A': case 'W': case 'B': case 'm':
 
-#define COMMON_OPTSTR "h?VQ:I:M:aUc:dfi:w:l:S:np:qrs:vLt:AW:B"
+#define COMMON_OPTSTR "h?VQ:I:M:aUc:dfi:w:l:S:np:qrs:vLt:AW:Bm:"
 
 
 /*

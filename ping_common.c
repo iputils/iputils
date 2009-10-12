@@ -4,6 +4,7 @@
 
 int options;
 
+int mark;
 int sndbuf;
 int ttl;
 int rtt;
@@ -139,6 +140,17 @@ void common_options(int ch)
 			exit(2);
 		}
 		options |= F_INTERVAL;
+		break;
+	}
+	case 'm':
+	{
+		char *endp;
+		mark = (int)strtoul(optarg, &endp, 10);
+		if (mark < 0 || *endp != '\0') {
+			fprintf(stderr, "mark cannot be negative");
+			exit(2);
+		}
+		options |= F_MARK;
 		break;
 	}
 	case 'w':
@@ -442,6 +454,15 @@ void setup(int icmp_sock)
 			fprintf(stderr, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP\n");
 	}
 #endif
+	if (options & F_MARK) {
+		if (setsockopt(icmp_sock, SOL_SOCKET, SO_MARK,
+				&mark, sizeof(mark)) == -1) {
+			/* we probably dont wanna exit since old kernels
+			 * dont support mark ..
+			*/
+			fprintf(stderr, "Warning: Failed to set mark %d\n", mark);
+		}
+	}
 
 	/* Set some SNDTIMEO to prevent blocking forever
 	 * on sends, when device is too slow or stalls. Just put limit
