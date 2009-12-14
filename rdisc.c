@@ -76,6 +76,9 @@ struct interface
 	char		name[IFNAMSIZ];
 };
 
+#ifndef OPEN_MAX
+# define OPEN_MAX FOPEN_MAX
+#endif
 
 /*
  * TBD
