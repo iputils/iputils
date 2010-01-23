@@ -451,7 +451,7 @@ int main(int argc, char *argv[])
 		struct cmsghdr *cmsg;
 		struct in6_pktinfo *ipi;
 
-		cmsg = (struct cmsghdr*)cmsgbuf;
+		cmsg = (struct cmsghdr*)(cmsgbuf+cmsglen);
 		cmsglen += CMSG_SPACE(sizeof(*ipi));
 		cmsg->cmsg_len = CMSG_LEN(sizeof(*ipi));
 		cmsg->cmsg_level = SOL_IPV6;
