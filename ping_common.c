@@ -780,6 +780,7 @@ static long llsqrt(long long a)
 void finish(void)
 {
 	struct timeval tv = cur_time;
+	char *comma = "";
 
 	tvsub(&tv, &start_time);
 
@@ -815,13 +816,16 @@ void finish(void)
 		       (long)tmax/1000, (long)tmax%1000,
 		       (long)tmdev/1000, (long)tmdev%1000
 		       );
+		comma = ", ";
 	}
-	if (pipesize > 1)
-		printf(", pipe %d", pipesize);
+	if (pipesize > 1) {
+		printf("%spipe %d", comma, pipesize);
+		comma = ", ";
+	}
 	if (ntransmitted > 1 && (!interval || (options&(F_FLOOD|F_ADAPTIVE)))) {
 		int ipg = (1000000*(long long)tv.tv_sec+tv.tv_usec)/(ntransmitted-1);
-		printf(", ipg/ewma %d.%03d/%d.%03d ms",
-		       ipg/1000, ipg%1000, rtt/8000, (rtt/8)%1000);
+		printf("%sipg/ewma %d.%03d/%d.%03d ms",
+		       comma, ipg/1000, ipg%1000, rtt/8000, (rtt/8)%1000);
 	}
 	putchar('\n');
 	exit(!nreceived || (deadline && nreceived < npackets));
