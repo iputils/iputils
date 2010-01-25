@@ -99,7 +99,7 @@ with TTL of 2 was rejected at the first hop due to Path MTU Discovery.
 </para>
 
 <para>
-Te last line summarizes information about all the path to the destination,
+The last line summarizes information about all the path to the destination,
 it shows detected Path MTU, amount of hops to the destination and our
 guess about amount of hops from the destination to us, which can be
 different when the path is asymmetric.
