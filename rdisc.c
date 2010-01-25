@@ -76,10 +76,6 @@ struct interface
 	char		name[IFNAMSIZ];
 };
 
-#ifndef OPEN_MAX
-# define OPEN_MAX FOPEN_MAX
-#endif
-
 /*
  * TBD
  *	Use 255.255.255.255 for broadcasts - not the interface broadcast
@@ -243,14 +239,25 @@ void do_fork(void)
 {
 	int t;
 	pid_t pid;
+	long open_max;
 
 	if (trace)
 		return;
+	if ((open_max = sysconf(_SC_OPEN_MAX)) == -1) {
+		if (errno == 0) {
+			(void) fprintf(stderr, "OPEN_MAX is not supported\n");
+		} 
+		else {
+			(void) fprintf(stderr, "sysconf() error\n");
+		}
+		exit(1);
+	}
+
 
 	if ((pid=fork()) != 0)
 		exit(0);
 
-	for (t = 0; t < OPEN_MAX; t++)
+	for (t = 0; t < open_max; t++)
 		if (t != s)
 			close(t);
 
