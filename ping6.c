@@ -713,6 +713,7 @@ int receive_error_msg()
 		if (options & F_FLOOD) {
 			write(STDOUT_FILENO, "\bE", 2);
 		} else {
+			print_timestamp();
 			printf("From %s icmp_seq=%u ", pr_addr(&sin6->sin6_addr), ntohs(icmph.icmp6_seq));
 			pr_icmph(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
@@ -862,11 +863,13 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 				write(STDOUT_FILENO, "\bE", 2);
 				return 0;
 			}
+			print_timestamp();
 			printf("From %s: icmp_seq=%u ", pr_addr(&from->sin6_addr), ntohs(icmph1->icmp6_seq));
 		} else {
 			/* We've got something other than an ECHOREPLY */
 			if (!(options & F_VERBOSE) || uid)
 				return 1;
+			print_timestamp();
 			printf("From %s: ", pr_addr(&from->sin6_addr));
 		}
 		pr_icmph(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
@@ -1012,7 +1015,7 @@ char * pr_addr_n(struct in6_addr *addr)
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: ping6 [-LUdfnqrvVaA] [-c count] [-i interval] [-w deadline]\n"
+"Usage: ping6 [-LUdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
 "             [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
 "             [-M mtu discovery hint] [-S sndbuf]\n"
 "             [-F flow label] [-Q traffic class] [hop1 ...] destination\n");
