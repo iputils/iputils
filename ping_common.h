@@ -61,6 +61,7 @@ extern int options;
 #define F_NOLOOP	0x10000
 #define F_TTL		0x20000
 #define F_MARK		0x40000
+#define F_PTIMEOFDAY	0x80000
 
 /*
  * MAX_DUP_CHK is the number of bits in received table, i.e. the maximum
@@ -119,9 +120,10 @@ case 'a': case 'U': case 'c': case 'd': \
 case 'f': case 'i': case 'w': case 'l': \
 case 'S': case 'n': case 'p': case 'q': \
 case 'r': case 's': case 'v': case 'L': \
-case 't': case 'A': case 'W': case 'B': case 'm':
+case 't': case 'A': case 'W': case 'B': case 'm': \
+case 'D':
 
-#define COMMON_OPTSTR "h?VQ:I:M:aUc:dfi:w:l:S:np:qrs:vLt:AW:Bm:"
+#define COMMON_OPTSTR "h?VQ:I:M:aUc:dfi:w:l:S:np:qrs:vLt:AW:Bm:D"
 
 
 /*
@@ -201,3 +203,4 @@ extern void status(void);
 extern void common_options(int ch);
 extern int gather_statistics(__u8 *ptr, int cc, __u16 seq, int hops,
 			     int csfailed, struct timeval *tv, char *from);
+extern void print_timestamp(void);

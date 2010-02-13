@@ -595,6 +595,7 @@ int receive_error_msg()
 		if (options & F_FLOOD) {
 			write(STDOUT_FILENO, "\bE", 2);
 		} else {
+			print_timestamp();
 			printf("From %s icmp_seq=%u ", pr_addr(sin->sin_addr.s_addr), ntohs(icmph.un.echo.sequence));
 			pr_icmph(e->ee_type, e->ee_code, e->ee_info, NULL);
 			fflush(stdout);
@@ -761,6 +762,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 						write(STDOUT_FILENO, "\bE", 2);
 					return !error_pkt;
 				}
+				print_timestamp();
 				printf("From %s: icmp_seq=%u ",
 				       pr_addr(from->sin_addr.s_addr),
 				       ntohs(icp1->un.echo.sequence));
@@ -782,6 +784,11 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		}
 		if (!(options & F_VERBOSE) || uid)
 			return 0;
+		if (options & F_PTIMEOFDAY) {
+			struct timeval recv_time;
+			gettimeofday(&recv_time, NULL);
+			printf("%lu.%06lu ", (unsigned long)recv_time.tv_sec, (unsigned long)recv_time.tv_usec);
+		}
 		printf("From %s: ", pr_addr(from->sin_addr.s_addr));
 		if (csfailed) {
 			printf("(BAD CHECKSUM)\n");
@@ -1214,7 +1221,7 @@ void install_filter(void)
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: ping [-LRUbdfnqrvVaA] [-c count] [-i interval] [-w deadline]\n"
+"Usage: ping [-LRUbdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
 "            [-p pattern] [-s packetsize] [-t ttl] [-I interface or address]\n"
 "            [-M mtu discovery hint] [-m mark] [-S sndbuf]\n"
 "            [ -T timestamp option ] [ -Q tos ] [hop1 ...] destination\n");
