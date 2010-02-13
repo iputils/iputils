@@ -1,3 +1,26 @@
+[s20100214]
+
+Jamal Hadi Salim (2):
+      ping: ping by mark
+      ping: ping by mark doc update
+
+Jamie Le Tual (1):
+      ping: set un.echo.id to network byte order
+
+YOSHIFUJI Hideaki (11):
+      [PING6,TRACEROUTE6]: Ignore error in setting IPV6_CHECKSUM socket option for ICMPv6 socket.
+      [PING6]: Use if_nametoindex() to convert ifname to ifindex.
+      [PING6]: Allow to specify source address with interface in a single -I option.
+      ping6: Try using IPV6_PKTINFO sticky option to specify outgoing interface.
+      rdisc: Use FOPEN_MAX if OPEN_MAX is undefined.
+      ping6: Fix source routing with source interface set.
+      ping,ping6: Don't print extra ', ' in finish().
+      tracepath: Fix documentation typo.
+      Use sysconf(_SC_OPEN_MAX) instead of OPEN_MAX.
+      ping,ping6: Add -D option to print timestamp.
+      Merge branch 'timestamp'
+
+
 [s20071127]
 
 John Heffner (6):

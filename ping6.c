@@ -880,6 +880,9 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 			putchar('\a');
 		putchar('\n');
 		fflush(stdout);
+	} else {
+		putchar('\a');
+		fflush(stdout);
 	}
 	return 0;
 }
