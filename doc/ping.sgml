@@ -16,6 +16,7 @@
 <command>ping</command>
 <arg choice="opt"><option>-LRUbdfnqrvVaAB</option></arg>
 <arg choice="opt">-c <replaceable/count/</arg>
+<arg choice="opt">-m <replaceable/mark/</arg>
 <arg choice="opt">-i <replaceable/interval/</arg>
 <arg choice="opt">-l <replaceable/preload/</arg>
 <arg choice="opt">-p <replaceable/pattern/</arg>
@@ -73,6 +74,14 @@ Allow pinging a broadcast address.
   <listitem><para>
 Do not allow <command/ping/ to change source address of probes.
 The address is bound to one selected when <command/ping/ starts.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option>-m <replaceable/mark/</option></term>
+  <listitem><para>
+use <replaceable/mark/ to tag the packets going out. This is useful
+for variety of reasons within the kernel such as using policy
+routing to select specific outbound processing.
   </para></listitem>
  </varlistentry>
  <varlistentry>
