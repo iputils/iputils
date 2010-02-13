@@ -114,6 +114,9 @@ void common_options(int ch)
 	case 'd':
 		options |= F_SO_DEBUG;
 		break;
+	case 'D':
+		options |= F_PTIMEOFDAY;
+		break;
 	case 'f':
 		options |= F_FLOOD;
 		setbuf(stdout, (char *)NULL);
@@ -269,6 +272,19 @@ static inline void update_interval(void)
 	interval = (est+rtt_addend+500)/1000;
 	if (uid && interval < MINUSERINTERVAL)
 		interval = MINUSERINTERVAL;
+}
+
+/*
+ * Print timestamp
+ */
+void print_timestamp(void)
+{
+	if (options & F_PTIMEOFDAY) {
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		printf("[%lu.%06lu] ",
+		       (unsigned long)tv.tv_sec, (unsigned long)tv.tv_usec);
+	}
 }
 
 /*
@@ -711,6 +727,8 @@ restamp:
 	} else {
 		int i;
 		__u8 *cp, *dp;
+
+		print_timestamp();
 		printf("%d bytes from %s: icmp_seq=%u", cc, from, seq);
 
 		if (hops >= 0)

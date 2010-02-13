@@ -160,6 +160,13 @@ to be filled with all ones.
   </para></listitem>
  </varlistentry>
  <varlistentry>
+  <term><option/-D/</term>
+  <listitem><para>
+Print timestamp (unix time + microseconds as in gettimeofday) before
+each line.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
   <term><option>-Q <replaceable/tos/</option></term>
   <listitem><para>
 Set Quality of Service -related bits in ICMP datagrams.  
