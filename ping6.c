@@ -586,7 +586,22 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (options & F_TCLASS) {
+#ifdef IPV6_TCLASS
+		if (setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_TCLASS,
+			       &tclass, sizeof(tclass)) == -1) {
+			perror ("setsockopt(IPV6_TCLASS)");
+			exit(2);
+		}
+#else
+		fprintf(stderr, "Traffic class is not supported.\n");
+#endif
+	}
+
 	if (options&F_FLOWINFO) {
+#ifdef IPV6_FLOWINFO_SEND
+		int on = 1;
+#endif
 #ifdef IPV6_FLOWLABEL_MGR
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
@@ -615,11 +630,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Flow labels are not supported.\n");
 		exit(2);
 #endif
-	}
-	if (options&(F_FLOWINFO|F_TCLASS)) {
+
 #ifdef IPV6_FLOWINFO_SEND
-		int on = 1;
-		whereto.sin6_flowinfo = flowlabel | htonl((tclass&0xFF)<<20);
+		whereto.sin6_flowinfo = flowlabel;
 		if (setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_FLOWINFO_SEND,
 			       &on, sizeof(on)) == -1) {
 			perror ("can't send flowinfo");
