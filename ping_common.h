@@ -201,6 +201,8 @@ extern void main_loop(int icmp_sock, __u8 *buf, int buflen) __attribute__((noret
 extern void finish(void) __attribute__((noreturn));
 extern void status(void);
 extern void common_options(int ch);
-extern int gather_statistics(__u8 *ptr, int cc, __u16 seq, int hops,
-			     int csfailed, struct timeval *tv, char *from);
+extern int gather_statistics(__u8 *ptr, int icmplen,
+			     int cc, __u16 seq, int hops,
+			     int csfailed, struct timeval *tv, char *from,
+			     void (*pr_reply)(__u8 *ptr, int cc));
 extern void print_timestamp(void);

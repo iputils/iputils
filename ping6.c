@@ -747,20 +747,17 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int send_probe(void)
+int build_echo(__u8 *_icmph)
 {
 	struct icmp6_hdr *icmph;
 	int cc;
-	int i;
 
-	icmph = (struct icmp6_hdr *)outpack;
+	icmph = (struct icmp6_hdr *)_icmph;
 	icmph->icmp6_type = ICMP6_ECHO_REQUEST;
 	icmph->icmp6_code = 0;
 	icmph->icmp6_cksum = 0;
 	icmph->icmp6_seq = htons(ntransmitted+1);
 	icmph->icmp6_id = ident;
-
-	CLR((ntransmitted+1) % mx_dup_ck);
 
 	if (timing)
 		gettimeofday((struct timeval *)&outpack[8],
@@ -768,15 +765,26 @@ int send_probe(void)
 
 	cc = datalen + 8;			/* skips ICMP portion */
 
+	return cc;
+}
+
+int send_probe(void)
+{
+	int len, cc;
+
+	CLR((ntransmitted+1) % mx_dup_ck);
+
+	len = build_echo(outpack);
+
 	if (cmsglen == 0) {
-		i = sendto(icmp_sock, (char *)outpack, cc, confirm,
-			   (struct sockaddr *) &whereto,
-			   sizeof(struct sockaddr_in6));
+		cc = sendto(icmp_sock, (char *)outpack, len, confirm,
+			    (struct sockaddr *) &whereto,
+			    sizeof(struct sockaddr_in6));
 	} else {
 		struct msghdr mhdr;
 		struct iovec iov;
 
-		iov.iov_len  = cc;
+		iov.iov_len  = len;
 		iov.iov_base = outpack;
 
 		mhdr.msg_name = &whereto;
@@ -786,11 +794,17 @@ int send_probe(void)
 		mhdr.msg_control = cmsgbuf;
 		mhdr.msg_controllen = cmsglen;
 
-		i = sendmsg(icmp_sock, &mhdr, confirm);
+		cc = sendmsg(icmp_sock, &mhdr, confirm);
 	}
 	confirm = 0;
 
-	return (cc == i ? 0 : i);
+	return (cc == len ? 0 : cc);
+}
+
+void pr_echo_reply(__u8 *_icmph, int cc)
+{
+	struct icmp6_hdr *icmph = (struct icmp6_hdr *) _icmph;
+	printf(" icmp_seq=%u", ntohs(icmph->icmp6_seq));
 }
 
 /*
@@ -836,9 +850,10 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
 		if (icmph->icmp6_id != ident)
 			return 1;
-		if (gather_statistics((__u8*)(icmph+1), cc,
+		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
-				      hops, 0, tv, pr_addr(&from->sin6_addr)))
+				      hops, 0, tv, pr_addr(&from->sin6_addr),
+				      pr_echo_reply))
 			return 0;
 	} else {
 		int nexthdr;

@@ -679,6 +679,12 @@ int send_probe()
  * which arrive ('tis only fair).  This permits multiple copies of this
  * program to be run without having intermingled output (or statistics!).
  */
+void pr_echo_reply(__u8 *_icp, int len)
+{
+	struct icmphdr *icp = (struct icmphdr *)_icp;
+	printf(" icmp_req=%u", ntohs(icp->un.echo.sequence));
+}
+
 int
 parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 {
@@ -707,9 +713,10 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	if (icp->type == ICMP_ECHOREPLY) {
 		if (icp->un.echo.id != ident)
 			return 1;			/* 'Twas not our ECHO */
-		if (gather_statistics((__u8*)(icp+1), cc,
+		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      ip->ttl, 0, tv, pr_addr(from->sin_addr.s_addr)))
+				      ip->ttl, 0, tv, pr_addr(from->sin_addr.s_addr),
+				      pr_echo_reply))
 			return 0;
 	} else {
 		/* We fall here when a redirect or source quench arrived.

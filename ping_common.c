@@ -682,11 +682,14 @@ void main_loop(int icmp_sock, __u8 *packet, int packlen)
 	finish();
 }
 
-int gather_statistics(__u8 *ptr, int cc, __u16 seq, int hops,
-		      int csfailed, struct timeval *tv, char *from)
+int gather_statistics(__u8 *icmph, int icmplen,
+		      int cc, __u16 seq, int hops,
+		      int csfailed, struct timeval *tv, char *from,
+		      void (*pr_reply)(__u8 *icmph, int cc))
 {
 	int dupflag = 0;
 	long triptime = 0;
+	__u8 *ptr = icmph + icmplen;
 
 	++nreceived;
 	if (!csfailed)
@@ -750,7 +753,10 @@ restamp:
 		__u8 *cp, *dp;
 
 		print_timestamp();
-		printf("%d bytes from %s: icmp_seq=%u", cc, from, seq);
+		printf("%d bytes from %s:", cc, from);
+
+		if (pr_reply)
+			pr_reply(icmph, cc);
 
 		if (hops >= 0)
 			printf(" ttl=%d", hops);
