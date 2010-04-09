@@ -71,6 +71,9 @@ char copyright[] =
 #include <linux/filter.h>
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
+#include <resolv.h>
+
+#include "ping6_niquery.h"
 
 #ifndef SOL_IPV6
 #define SOL_IPV6 IPPROTO_IPV6
@@ -151,7 +154,23 @@ int pmtudisc=-1;
 
 static int icmp_sock;
 
+#ifdef ENABLE_NODEINFO
+/* Node Information query */
+#define F_FQDN		0x0004
+#define F_NIFLAGS	(F_FQDN)
 
+int ni_opts, naflags;
+
+void *ni_subject = NULL;
+int ni_subject_len = 0;
+int ni_subject_type = 0;
+
+__u8 ni_nonce[8];
+
+#define NODEINFO_OPTSTR "N"
+#else
+#define NODEINFO_OPTSTR
+#endif
 
 static struct in6_addr in6_anyaddr;
 static __inline__ int ipv6_addr_any(struct in6_addr *addr)
@@ -240,7 +259,7 @@ int main(int argc, char *argv[])
 	firsthop.sin6_family = AF_INET6;
 
 	preload = 1;
-	while ((ch = getopt(argc, argv, COMMON_OPTSTR "F:")) != EOF) {
+	while ((ch = getopt(argc, argv, COMMON_OPTSTR "F:" NODEINFO_OPTSTR)) != EOF) {
 		switch(ch) {
 		case 'F':
 			sscanf(optarg, "%x", &flowlabel);
@@ -292,6 +311,11 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf("ping6 utility, iputils-ss%s\n", SNAPSHOT);
 			exit(0);
+#ifdef ENABLE_NODEINFO
+		case 'N':
+			ni_opts |= F_FQDN;
+			break;
+#endif
 		COMMON_OPTIONS
 			common_options(ch);
 			break;
@@ -356,6 +380,20 @@ int main(int argc, char *argv[])
 
 	if (argc != 1)
 		usage();
+
+#ifdef ENABLE_NODEINFO
+	if (ni_opts & F_NIFLAGS) {
+		int i;
+		for (i = 0; i < 8; i++)
+			ni_nonce[i] = rand();
+
+		if (!ni_subject) {
+			ni_subject = &whereto.sin6_addr;
+			ni_subject_len = sizeof(whereto.sin6_addr);
+			ni_subject_type = NI_SUBJ_IPV6;
+		}
+	}
+#endif
 	target = *argv;
 
 	memset(&hints, 0, sizeof(hints));
@@ -490,8 +528,14 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
-	if (datalen >= sizeof(struct timeval))	/* can we time transfer */
+	if (datalen >= sizeof(struct timeval)
+#ifdef ENABLE_NODEINFO
+	    && !(ni_opts & F_NIFLAGS)
+#endif
+	   ) {
+		/* can we time transfer */
 		timing = 1;
+	}
 	packlen = datalen + 8 + 4096 + 40 + 8; /* 4096 for rthdr */
 	if (!(packet = (u_char *)malloc((u_int)packlen))) {
 		fprintf(stderr, "ping: out of memory.\n");
@@ -537,7 +581,12 @@ int main(int argc, char *argv[])
 		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
 	}
 
-	ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
+#ifdef ENABLE_NODEINFO
+	if (ni_opts & F_NIFLAGS)
+		ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
+	else
+#endif
+		ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
 
 	err = setsockopt(icmp_sock, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
 			 sizeof(struct icmp6_filter));
@@ -768,13 +817,49 @@ int build_echo(__u8 *_icmph)
 	return cc;
 }
 
+#ifdef ENABLE_NODEINFO
+int build_niquery(__u8 *_nih)
+{
+	struct ni_hdr *nih;
+	int cc;
+
+	nih = (struct ni_hdr *)_nih;
+	nih->ni_cksum = 0;
+
+	CLR(ntohs((*(__u16*)(nih->ni_nonce))) % mx_dup_ck);
+
+	nih->ni_type = ICMPV6_NI_QUERY;
+	cc = sizeof(*nih);
+	datalen = 0;
+
+	memcpy(nih->ni_nonce, ni_nonce, sizeof(nih->ni_nonce));
+	*(__u16*)(nih->ni_nonce) = htons(ntransmitted + 1);
+
+	switch(ni_opts & F_NIFLAGS) {
+	case F_FQDN:
+		nih->ni_code = ni_subject_type;
+		nih->ni_qtype = htons(NI_QTYPE_FQDN);
+		nih->ni_flags = 0;
+		memcpy(nih + 1, ni_subject, ni_subject_len);
+		cc += ni_subject_len;
+	}
+
+	return cc;
+}
+#endif
+
 int send_probe(void)
 {
 	int len, cc;
 
 	CLR((ntransmitted+1) % mx_dup_ck);
 
-	len = build_echo(outpack);
+#ifdef ENABLE_NODEINFO
+	if (ni_opts & F_NIFLAGS)
+		len = build_niquery(outpack);
+	else
+#endif
+		len = build_echo(outpack);
 
 	if (cmsglen == 0) {
 		cc = sendto(icmp_sock, (char *)outpack, len, confirm,
@@ -805,7 +890,75 @@ void pr_echo_reply(__u8 *_icmph, int cc)
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *) _icmph;
 	printf(" icmp_seq=%u", ntohs(icmph->icmp6_seq));
+};
+
+#ifdef ENABLE_NODEINFO
+static void putchar_safe(char c)
+{
+	if (isprint(c))
+		putchar(c);
+	else
+		printf("\\%03o", c);
 }
+
+void pr_niquery_reply(__u8 *_nih, int len)
+{
+	struct ni_hdr *nih = (struct ni_hdr *)_nih;
+	__u8 *end = _nih + len;
+	__u8 *h, *p;
+	int ret;
+	char buf[1024];
+	int i;
+	int continued;
+
+	h = (__u8 *)(nih + 1);
+	p = h + 4;
+	len -= sizeof(struct ni_hdr) + 4;
+
+	if (len < 0) {
+		printf(" parse error (too short)");
+		goto out;
+	}
+
+	continued = 0;
+
+	switch (ntohs(nih->ni_qtype)) {
+	case NI_QTYPE_FQDN:
+		while (p < end) {
+			int fqdn = 1;
+			int len;
+			memset(buf, 0xff, sizeof(buf));
+
+			if (continued)
+				printf(", ");
+
+			ret = dn_expand(h, end, p, buf, sizeof(buf));
+	 		if (ret < 0) {
+				printf(" parse error (truncated)");
+				goto out;
+			}
+			if (p + ret < end && *(p + ret) == '\0')
+				fqdn = 0;
+			len = strlen(buf);
+
+			putchar(' ');
+			for (i = 0; i < strlen(buf); i++)
+				putchar_safe(buf[i]);
+			if (fqdn)
+				putchar('.');
+
+			p += ret + !fqdn;
+
+			continued = 1;
+		}
+		break;
+	default:
+		printf(" unknown qtype(0x%02x)", ntohs(nih->ni_qtype));
+	}
+out:
+	putchar(';');
+}
+#endif
 
 /*
  * parse_reply --
@@ -855,6 +1008,18 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 				      hops, 0, tv, pr_addr(&from->sin6_addr),
 				      pr_echo_reply))
 			return 0;
+#ifdef ENABLE_NODEINFO
+	} else if (icmph->icmp6_type == ICMPV6_NI_REPLY) {
+		struct ni_hdr *nih = (struct ni_hdr *)icmph;
+		__u16 seq = ntohs(*(__u16 *)nih->ni_nonce);
+		if (memcmp(&nih->ni_nonce[2], &ni_nonce[2], sizeof(ni_nonce) - sizeof(__u16)))
+			return 1;
+		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
+				      seq,
+				      hops, 0, tv, pr_addr(&from->sin6_addr),
+				      pr_niquery_reply))
+			return 0;
+#endif
 	} else {
 		int nexthdr;
 		struct ip6_hdr *iph1 = (struct ip6_hdr*)(icmph+1);
