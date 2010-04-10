@@ -974,18 +974,18 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	int continued;
 
 	h = (__u8 *)(nih + 1);
-	p = h + 4;
-	len -= sizeof(struct ni_hdr) + 4;
-
-	if (len < 0) {
-		printf(" parse error (too short)");
-		goto out;
-	}
 
 	continued = 0;
 
 	switch (ntohs(nih->ni_qtype)) {
 	case NI_QTYPE_NAME:
+		p = h + 4;
+		len -= sizeof(struct ni_hdr) + 4;
+
+		if (len < 0) {
+			printf(" parse error (too short)");
+			break;
+		}
 		while (p < end) {
 			int fqdn = 1;
 			int len;
@@ -997,7 +997,7 @@ void pr_niquery_reply(__u8 *_nih, int len)
 			ret = dn_expand(h, end, p, buf, sizeof(buf));
 	 		if (ret < 0) {
 				printf(" parse error (truncated)");
-				goto out;
+				break;
 			}
 			if (p + ret < end && *(p + ret) == '\0')
 				fqdn = 0;
@@ -1017,7 +1017,6 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	default:
 		printf(" unknown qtype(0x%02x)", ntohs(nih->ni_qtype));
 	}
-out:
 	putchar(';');
 }
 #endif
