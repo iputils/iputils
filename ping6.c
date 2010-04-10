@@ -154,7 +154,6 @@ int pmtudisc=-1;
 
 static int icmp_sock;
 
-#ifdef ENABLE_NODEINFO
 #include <openssl/md5.h>
 
 /* Node Information query */
@@ -166,11 +165,6 @@ int ni_subject_type = 0;
 char *ni_group;
 
 __u8 ni_nonce[8];
-
-#define NODEINFO_OPTSTR "N:"
-#else
-#define NODEINFO_OPTSTR
-#endif
 
 static struct in6_addr in6_anyaddr;
 static __inline__ int ipv6_addr_any(struct in6_addr *addr)
@@ -229,7 +223,6 @@ unsigned int if_name2index(const char *ifname)
 	return i;
 }
 
-#ifdef ENABLE_NODEINFO
 struct niquery_option {
 	char *name;
 	int namelen;
@@ -519,7 +512,6 @@ char *ni_groupaddr(const char *name)
 		strcat(nigroup_buf, q);
 	return nigroup_buf;
 }
-#endif
 
 int main(int argc, char *argv[])
 {
@@ -551,7 +543,7 @@ int main(int argc, char *argv[])
 	firsthop.sin6_family = AF_INET6;
 
 	preload = 1;
-	while ((ch = getopt(argc, argv, COMMON_OPTSTR "F:" NODEINFO_OPTSTR)) != EOF) {
+	while ((ch = getopt(argc, argv, COMMON_OPTSTR "F:N:")) != EOF) {
 		switch(ch) {
 		case 'F':
 			sscanf(optarg, "%x", &flowlabel);
@@ -603,14 +595,12 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf("ping6 utility, iputils-ss%s\n", SNAPSHOT);
 			exit(0);
-#ifdef ENABLE_NODEINFO
 		case 'N':
 			if (niquery_option_handler(optarg) < 0) {
 				usage();
 				break;
 			}
 			break;
-#endif
 		COMMON_OPTIONS
 			common_options(ch);
 			break;
@@ -673,7 +663,6 @@ int main(int argc, char *argv[])
 		argc--;
 	}
 
-#ifdef ENABLE_NODEINFO
 	if (ni_query >= 0) {
 		int i;
 		for (i = 0; i < 8; i++)
@@ -695,12 +684,6 @@ int main(int argc, char *argv[])
 			usage();
 		target = ni_group;
 	}
-#else
-	if (argc != 1)
-		usage();
-
-	target = *argv;
-#endif
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET6;
@@ -834,11 +817,7 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
-	if (datalen >= sizeof(struct timeval)
-#ifdef ENABLE_NODEINFO
-	    && (ni_query < 0)
-#endif
-	   ) {
+	if (datalen >= sizeof(struct timeval) && (ni_query < 0)) {
 		/* can we time transfer */
 		timing = 1;
 	}
@@ -887,11 +866,9 @@ int main(int argc, char *argv[])
 		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
 	}
 
-#ifdef ENABLE_NODEINFO
 	if (ni_query >= 0)
 		ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
 	else
-#endif
 		ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
 
 	err = setsockopt(icmp_sock, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
@@ -1123,7 +1100,6 @@ int build_echo(__u8 *_icmph)
 	return cc;
 }
 
-#ifdef ENABLE_NODEINFO
 int build_niquery(__u8 *_nih)
 {
 	struct ni_hdr *nih;
@@ -1149,7 +1125,6 @@ int build_niquery(__u8 *_nih)
 
 	return cc;
 }
-#endif
 
 int send_probe(void)
 {
@@ -1157,11 +1132,9 @@ int send_probe(void)
 
 	CLR((ntransmitted+1) % mx_dup_ck);
 
-#ifdef ENABLE_NODEINFO
 	if (ni_query >= 0)
 		len = build_niquery(outpack);
 	else
-#endif
 		len = build_echo(outpack);
 
 	if (cmsglen == 0) {
@@ -1195,7 +1168,6 @@ void pr_echo_reply(__u8 *_icmph, int cc)
 	printf(" icmp_seq=%u", ntohs(icmph->icmp6_seq));
 };
 
-#ifdef ENABLE_NODEINFO
 static void putchar_safe(char c)
 {
 	if (isprint(c))
@@ -1332,7 +1304,6 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	}
 	putchar(';');
 }
-#endif
 
 /*
  * parse_reply --
@@ -1382,7 +1353,6 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 				      hops, 0, tv, pr_addr(&from->sin6_addr),
 				      pr_echo_reply))
 			return 0;
-#ifdef ENABLE_NODEINFO
 	} else if (icmph->icmp6_type == ICMPV6_NI_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
 		__u16 seq = ntohs(*(__u16 *)nih->ni_nonce);
@@ -1393,7 +1363,6 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 				      hops, 0, tv, pr_addr(&from->sin6_addr),
 				      pr_niquery_reply))
 			return 0;
-#endif
 	} else {
 		int nexthdr;
 		struct ip6_hdr *iph1 = (struct ip6_hdr*)(icmph+1);
@@ -1588,9 +1557,7 @@ void usage(void)
 "Usage: ping6 [-LUdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
 "             [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
 "             [-M pmtudisc-hint] [-S sndbuf] [-F flowlabel] [-Q tclass]\n"
-#ifdef ENABLE_NODEINFO
 "             [[-N nodeinfo-option] ...]\n"
-#endif
 "             [hop1 ...] destination\n");
 	exit(2);
 }
