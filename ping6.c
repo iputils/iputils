@@ -1112,16 +1112,28 @@ void pr_niquery_reply(__u8 *_nih, int len)
 {
 	struct ni_hdr *nih = (struct ni_hdr *)_nih;
 
-	switch (ntohs(nih->ni_qtype)) {
-	case NI_QTYPE_NAME:
-		pr_niquery_reply_name(nih, len);
+	switch (nih->ni_code) {
+	case NI_SUCCESS:
+		switch (ntohs(nih->ni_qtype)) {
+		case NI_QTYPE_NAME:
+			pr_niquery_reply_name(nih, len);
+			break;
+		case NI_QTYPE_IPV4ADDR:
+		case NI_QTYPE_IPV6ADDR:
+			pr_niquery_reply_addr(nih, len);
+			break;
+		default:
+			printf(" unknown qtype(0x%02x)", ntohs(nih->ni_qtype));
+		}
 		break;
-	case NI_QTYPE_IPV4ADDR:
-	case NI_QTYPE_IPV6ADDR:
-		pr_niquery_reply_addr(nih, len);
+	case NI_REFUSED:
+		printf(" refused");
+		break;
+	case NI_UNKNOWN:
+		printf(" unknown");
 		break;
 	default:
-		printf(" unknown qtype(0x%02x)", ntohs(nih->ni_qtype));
+		printf(" unknown code(%02x)", ntohs(nih->ni_code));
 	}
 	putchar(';');
 }
