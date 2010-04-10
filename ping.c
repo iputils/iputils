@@ -1235,6 +1235,6 @@ void usage(void)
 "Usage: ping [-LRUbdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
 "            [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
 "            [-M pmtudisc-hint] [-m mark] [-S sndbuf]\n"
-"            [ -T tstamp-options ] [ -Q tos ] [hop1 ...] destination\n");
+"            [-T tstamp-options] [-Q tos] [hop1 ...] destination\n");
 	exit(2);
 }
