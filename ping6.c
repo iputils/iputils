@@ -992,7 +992,7 @@ void pr_niquery_reply(__u8 *_nih, int len)
 			memset(buf, 0xff, sizeof(buf));
 
 			if (continued)
-				printf(", ");
+				putchar(',');
 
 			ret = dn_expand(h, end, p, buf, sizeof(buf));
 	 		if (ret < 0) {
