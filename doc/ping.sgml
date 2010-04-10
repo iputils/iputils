@@ -163,7 +163,50 @@ Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
    <variablelist>
     <varlistentry>
      <term><option>name</option></term>
-     <listitem><para>Queries for Node Names.
+     <listitem><para>Queries for Node Names.</para></listitem>
+    </varlistentry>
+   </variablelist>
+   <variablelist>
+    <varlistentry>
+     <term><option>ipv6</option></term>
+     <listitem><para>Queries for IPv6 Addresses. There are several IPv6 specific flags.
+      <variablelist>
+       <varlistentry>
+        <term><option>ipv6-global</option></term>
+        <listitem><para>Request IPv6 global-scope addresses.</para></listitem> 
+       </varlistentry>
+      </variablelist>
+      <variablelist>
+       <varlistentry>
+        <term><option>ipv6-sitelocal</option></term>
+        <listitem><para>Request IPv6 site-local addresses.</para></listitem> 
+       </varlistentry>
+      </variablelist>
+      <variablelist>
+       <varlistentry>
+        <term><option>ipv6-linklocal</option></term>
+        <listitem><para>Request IPv6 link-local addresses.</para></listitem> 
+       </varlistentry>
+      </variablelist>
+      <variablelist>
+       <varlistentry>
+        <term><option>ipv6-all</option></term>
+        <listitem><para>Request IPv6 addresses on other interfaces.</para></listitem> 
+       </varlistentry>
+      </variablelist>
+     </para></listitem>
+    </varlistentry>
+   </variablelist>
+   <variablelist>
+    <varlistentry>
+     <term><option>ipv4</option></term>
+     <listitem><para>Queries for IPv4 Addresses.  There is one IPv4 specific flag.
+      <variablelist>
+       <varlistentry>
+        <term><option>ipv4-all</option></term>
+        <listitem><para>Request IPv4 addresses on other interfaces.</para></listitem>
+       </varlistentry>
+      </variablelist>
      </para></listitem>
     </varlistentry>
    </variablelist>

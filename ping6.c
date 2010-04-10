@@ -157,6 +157,7 @@ static int icmp_sock;
 #ifdef ENABLE_NODEINFO
 /* Node Information query */
 int ni_query = -1;
+int ni_flag = 0;
 void *ni_subject = NULL;
 int ni_subject_len = 0;
 int ni_subject_type = 0;
@@ -234,13 +235,34 @@ struct niquery_option {
 	int (*handler)(int index, const char *arg);
 };
 
-#define NIQUERY_OPTION(_name, _has_arg, _handler)		\
+#define NIQUERY_OPTION(_name, _has_arg, _data, _handler)	\
 	{							\
 		.name = _name,					\
 		.namelen = sizeof(_name) - 1,			\
 		.has_arg = _has_arg,				\
+		.data = _data,					\
 		.handler = _handler				\
 	}
+
+static int niquery_option_name_handler(int index, const char *arg);
+static int niquery_option_ipv6_handler(int index, const char *arg);
+static int niquery_option_ipv6_flag_handler(int index, const char *arg);
+static int niquery_option_ipv4_handler(int index, const char *arg);
+static int niquery_option_ipv4_flag_handler(int index, const char *arg);
+
+struct niquery_option niquery_options[] = {
+	NIQUERY_OPTION("name",			0,	0,				niquery_option_name_handler),
+	NIQUERY_OPTION("fqdn",			0,	0,				niquery_option_name_handler),
+	NIQUERY_OPTION("ipv6",			0,	0,				niquery_option_ipv6_handler),
+	NIQUERY_OPTION("ipv6-all",		0,	NI_IPV6ADDR_F_ALL,		niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-compatible",	0,	NI_IPV6ADDR_F_COMPAT,		niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-linklocal",	0,	NI_IPV6ADDR_F_LINKLOCAL,	niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-sitelocal",	0,	NI_IPV6ADDR_F_SITELOCAL,	niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-global",		0,	NI_IPV6ADDR_F_GLOBAL,		niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv4",			0,	0,				niquery_option_ipv4_handler),
+	NIQUERY_OPTION("ipv4-all",		0,	NI_IPV4ADDR_F_ALL,		niquery_option_ipv4_flag_handler),
+	{},
+};
 
 static int niquery_set_qtype(int type)
 {
@@ -259,11 +281,35 @@ static int niquery_option_name_handler(int index, const char *arg)
 	return 0;
 }
 
-struct niquery_option niquery_options[] = {
-	NIQUERY_OPTION("name",		0, niquery_option_name_handler),
-	NIQUERY_OPTION("fqdn",		0, niquery_option_name_handler),
-	{},
-};
+static int niquery_option_ipv6_handler(int index, const char *arg)
+{
+	if (niquery_set_qtype(NI_QTYPE_IPV6ADDR) < 0)
+		return -1;
+	return 0;
+}
+
+static int niquery_option_ipv6_flag_handler(int index, const char *arg)
+{
+	if (niquery_set_qtype(NI_QTYPE_IPV6ADDR) < 0)
+		return -1;
+	ni_flag |= niquery_options[index].data;
+	return 0;
+}
+
+static int niquery_option_ipv4_handler(int index, const char *arg)
+{
+	if (niquery_set_qtype(NI_QTYPE_IPV4ADDR) < 0)
+		return -1;
+	return 0;
+}
+
+static int niquery_option_ipv4_flag_handler(int index, const char *arg)
+{
+	if (niquery_set_qtype(NI_QTYPE_IPV4ADDR) < 0)
+		return -1;
+	ni_flag |= niquery_options[index].data;
+	return 0;
+}
 
 int niquery_option_handler(const char *opt_arg)
 {
@@ -902,7 +948,7 @@ int build_niquery(__u8 *_nih)
 
 	nih->ni_code = ni_subject_type;
 	nih->ni_qtype = htons(ni_query);
-	nih->ni_flags = 0;
+	nih->ni_flags = ni_flag;
 	memcpy(nih + 1, ni_subject, ni_subject_len);
 	cc += ni_subject_len;
 
@@ -971,11 +1017,9 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	int ret;
 	char buf[1024];
 	int i;
-	int continued;
+	int continued = 0;
 
 	h = (__u8 *)(nih + 1);
-
-	continued = 0;
 
 	switch (ntohs(nih->ni_qtype)) {
 	case NI_QTYPE_NAME:
@@ -1014,6 +1058,55 @@ void pr_niquery_reply(__u8 *_nih, int len)
 			continued = 1;
 		}
 		break;
+	case NI_QTYPE_IPV4ADDR:
+	case NI_QTYPE_IPV6ADDR:
+	    {
+		int af;
+		int aflen;
+		int truncated;
+
+		switch (ntohs(nih->ni_qtype)) {
+		case NI_QTYPE_IPV4ADDR:
+			af = AF_INET;
+			aflen = sizeof(struct in_addr);
+			truncated = nih->ni_flags & NI_IPV6ADDR_F_TRUNCATE;
+			break;
+		case NI_QTYPE_IPV6ADDR:
+			af = AF_INET6;
+			aflen = sizeof(struct in6_addr);
+			truncated = nih->ni_flags & NI_IPV4ADDR_F_TRUNCATE;
+			break;
+		default:
+			/* should not happen */
+			af = aflen = truncated = 0;
+		}
+		p = h;
+		if (len < 0) {
+			printf(" parse error (too short)");
+			break;
+		}
+
+		while (p < end) {
+			if (continued)
+				putchar(',');
+
+			if (p + sizeof(__u32) + aflen > end) {
+				printf(" parse error (truncated)");
+				break;
+			}
+			if (!inet_ntop(af, p + sizeof(__u32), buf, sizeof(buf)))
+				printf(" unexpeced error in inet_ntop(%s)",
+				       strerror(errno));
+			else
+				printf(" %s", buf);
+			p += sizeof(__u32) + aflen;
+
+			continued = 1;
+		}
+		if (truncated)
+			printf(" (truncated)");
+		break;
+	    }
 	default:
 		printf(" unknown qtype(0x%02x)", ntohs(nih->ni_qtype));
 	}
