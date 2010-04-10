@@ -374,6 +374,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 		if (!p)
 			continue;
 		memcpy(p, (__u8 *)ai->ai_addr + offset, ni_subject_len);
+		free(ni_subject);
 		ni_subject = p;
 		break;
 	}
@@ -442,6 +443,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	if (fqdn < 0)
 		buf[n] = 0;
 
+	free(ni_subject);
 	ni_subject = buf;
 	ni_subject_len = n + (fqdn < 0);
 
