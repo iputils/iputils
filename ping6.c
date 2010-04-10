@@ -1213,7 +1213,7 @@ void usage(void)
 	fprintf(stderr,
 "Usage: ping6 [-LUdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
 "             [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
-"             [-M mtu discovery hint] [-S sndbuf]\n"
-"             [-F flow label] [-Q traffic class] [hop1 ...] destination\n");
+"             [-M pmtudisc-hint] [-S sndbuf] [-F flowlabel] [-Q tclass]\n"
+"             [hop1 ...] destination\n");
 	exit(2);
 }

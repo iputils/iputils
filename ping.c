@@ -1232,8 +1232,8 @@ void usage(void)
 {
 	fprintf(stderr,
 "Usage: ping [-LRUbdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
-"            [-p pattern] [-s packetsize] [-t ttl] [-I interface or address]\n"
-"            [-M mtu discovery hint] [-m mark] [-S sndbuf]\n"
-"            [ -T timestamp option ] [ -Q tos ] [hop1 ...] destination\n");
+"            [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
+"            [-M pmtudisc-hint] [-m mark] [-S sndbuf]\n"
+"            [ -T tstamp-options ] [ -Q tos ] [hop1 ...] destination\n");
 	exit(2);
 }
