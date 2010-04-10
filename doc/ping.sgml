@@ -26,6 +26,7 @@
 <arg choice="opt">-F <replaceable/flowlabel/</arg>
 <arg choice="opt">-I <replaceable/interface/</arg>
 <arg choice="opt">-M <replaceable/hint/</arg>
+<arg choice="opt">-N <replaceable/nioption/</arg>
 <arg choice="opt">-Q <replaceable/tos/</arg>
 <arg choice="opt">-S <replaceable/sndbuf/</arg>
 <arg choice="opt">-T <replaceable/timestamp option/</arg>
@@ -42,6 +43,9 @@ datagram to elicit an ICMP ECHO_RESPONSE from a host or gateway.
 ECHO_REQUEST datagrams (``pings'') have an IP and ICMP
 header, followed by a <structname/struct timeval/ and then an arbitrary
 number of ``pad'' bytes used to fill out the packet.
+</para>
+<para>
+<command/ping6/ can also send Node Information Queries (RFC4620).
 </para>
 </refsect1>
 
@@ -150,6 +154,19 @@ Only the super-user may select preload more than 3.
   <listitem><para>
 Suppress loopback of multicast packets.  This flag only applies if the ping
 destination is a multicast address.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option>-N <replaceable/nioption/</option></term>
+  <listitem><para>
+Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
+   <variablelist>
+    <varlistentry>
+     <term><option>name</option></term>
+     <listitem><para>Queries for Node Names.
+     </para></listitem>
+    </varlistentry>
+   </variablelist>
   </para></listitem>
  </varlistentry>
  <varlistentry>

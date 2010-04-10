@@ -156,18 +156,14 @@ static int icmp_sock;
 
 #ifdef ENABLE_NODEINFO
 /* Node Information query */
-#define F_NAME		0x0004
-#define F_NIFLAGS	(F_NAME)
-
-int ni_opts, naflags;
-
+int ni_query = -1;
 void *ni_subject = NULL;
 int ni_subject_len = 0;
 int ni_subject_type = 0;
 
 __u8 ni_nonce[8];
 
-#define NODEINFO_OPTSTR "N"
+#define NODEINFO_OPTSTR "N:"
 #else
 #define NODEINFO_OPTSTR
 #endif
@@ -228,6 +224,72 @@ unsigned int if_name2index(const char *ifname)
 	}
 	return i;
 }
+
+#ifdef ENABLE_NODEINFO
+struct niquery_option {
+	char *name;
+	int namelen;
+	int has_arg;
+	int data;
+	int (*handler)(int index, const char *arg);
+};
+
+#define NIQUERY_OPTION(_name, _has_arg, _handler)		\
+	{							\
+		.name = _name,					\
+		.namelen = sizeof(_name) - 1,			\
+		.has_arg = _has_arg,				\
+		.handler = _handler				\
+	}
+
+static int niquery_set_qtype(int type)
+{
+	if (ni_query >= 0 && ni_query != type) {
+		printf("Qtype conflict\n");
+		return -1;
+	}
+	ni_query = type;
+	return 0;
+}
+
+static int niquery_option_name_handler(int index, const char *arg)
+{
+	if (niquery_set_qtype(NI_QTYPE_NAME) < 0)
+		return -1;
+	return 0;
+}
+
+struct niquery_option niquery_options[] = {
+	NIQUERY_OPTION("name",		0, niquery_option_name_handler),
+	NIQUERY_OPTION("fqdn",		0, niquery_option_name_handler),
+	{},
+};
+
+int niquery_option_handler(const char *opt_arg)
+{
+	struct niquery_option *p;
+	int i;
+	int ret = -1;
+	for (i = 0, p = niquery_options; p->name; i++, p++) {
+		if (strncmp(p->name, opt_arg, p->namelen))
+			continue;
+		if (!p->has_arg) {
+			if (opt_arg[p->namelen] == '\0') {
+				ret = p->handler(i, NULL);
+				if (ret >= 0)
+					break;
+			}
+		} else {
+			if (opt_arg[p->namelen] == '=') {
+				ret = p->handler(i, &opt_arg[p->namelen] + 1);
+				if (ret >= 0)
+					break;
+			}
+		}
+	}
+	return ret;
+}
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -313,7 +375,10 @@ int main(int argc, char *argv[])
 			exit(0);
 #ifdef ENABLE_NODEINFO
 		case 'N':
-			ni_opts |= F_FQDN;
+			if (niquery_option_handler(optarg) < 0) {
+				usage();
+				break;
+			}
 			break;
 #endif
 		COMMON_OPTIONS
@@ -382,7 +447,7 @@ int main(int argc, char *argv[])
 		usage();
 
 #ifdef ENABLE_NODEINFO
-	if (ni_opts & F_NIFLAGS) {
+	if (ni_query >= 0) {
 		int i;
 		for (i = 0; i < 8; i++)
 			ni_nonce[i] = rand();
@@ -530,7 +595,7 @@ int main(int argc, char *argv[])
 
 	if (datalen >= sizeof(struct timeval)
 #ifdef ENABLE_NODEINFO
-	    && !(ni_opts & F_NIFLAGS)
+	    && (ni_query < 0)
 #endif
 	   ) {
 		/* can we time transfer */
@@ -582,7 +647,7 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef ENABLE_NODEINFO
-	if (ni_opts & F_NIFLAGS)
+	if (ni_query >= 0)
 		ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
 	else
 #endif
@@ -835,14 +900,11 @@ int build_niquery(__u8 *_nih)
 	memcpy(nih->ni_nonce, ni_nonce, sizeof(nih->ni_nonce));
 	*(__u16*)(nih->ni_nonce) = htons(ntransmitted + 1);
 
-	switch(ni_opts & F_NIFLAGS) {
-	case F_FQDN:
-		nih->ni_code = ni_subject_type;
-		nih->ni_qtype = htons(NI_QTYPE_FQDN);
-		nih->ni_flags = 0;
-		memcpy(nih + 1, ni_subject, ni_subject_len);
-		cc += ni_subject_len;
-	}
+	nih->ni_code = ni_subject_type;
+	nih->ni_qtype = htons(ni_query);
+	nih->ni_flags = 0;
+	memcpy(nih + 1, ni_subject, ni_subject_len);
+	cc += ni_subject_len;
 
 	return cc;
 }
@@ -855,7 +917,7 @@ int send_probe(void)
 	CLR((ntransmitted+1) % mx_dup_ck);
 
 #ifdef ENABLE_NODEINFO
-	if (ni_opts & F_NIFLAGS)
+	if (ni_query >= 0)
 		len = build_niquery(outpack);
 	else
 #endif
@@ -1214,6 +1276,9 @@ void usage(void)
 "Usage: ping6 [-LUdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
 "             [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
 "             [-M pmtudisc-hint] [-S sndbuf] [-F flowlabel] [-Q tclass]\n"
+#ifdef ENABLE_NODEINFO
+"             [[-N nodeinfo-option] ...]\n"
+#endif
 "             [hop1 ...] destination\n");
 	exit(2);
 }
