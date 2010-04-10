@@ -222,6 +222,20 @@ Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
      <listitem><para>IPv4 subject address.</para></listitem>
     </varlistentry>
    </variablelist>
+   <variablelist>
+    <varlistentry>
+     <term><option>subject-name=<replaceable/nodename/</option></term>
+     <listitem><para>Subject name.  If it contains more than one dot,
+	fully-qualified domain name is assumed.</para></listitem>
+    </varlistentry>
+   </variablelist>
+   <variablelist>
+    <varlistentry>
+     <term><option>subject-fqdn=<replaceable/nodename/</option></term>
+     <listitem><para>Subject name.  Fully-qualified domain name is
+	always assumed.</para></listitem>
+    </varlistentry>
+   </variablelist>
   </para></listitem>
  </varlistentry>
  <varlistentry>

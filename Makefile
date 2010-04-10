@@ -4,7 +4,7 @@ LIBC_INCLUDE=/usr/include
 DEFINES= 
 
 #options if you have a bind>=4.9.4 libresolv (or, maybe, glibc)
-LDLIBS=-lresolv
+LDLIBS=-lresolv -lcrypto
 ADDLIB=
 
 #options if you compile with libc5, and without a bind>=4.9.4 libresolv

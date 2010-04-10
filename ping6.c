@@ -155,12 +155,15 @@ int pmtudisc=-1;
 static int icmp_sock;
 
 #ifdef ENABLE_NODEINFO
+#include <openssl/md5.h>
+
 /* Node Information query */
 int ni_query = -1;
 int ni_flag = 0;
 void *ni_subject = NULL;
 int ni_subject_len = 0;
 int ni_subject_type = 0;
+char *ni_group;
 
 __u8 ni_nonce[8];
 
@@ -250,6 +253,8 @@ static int niquery_option_ipv6_flag_handler(int index, const char *arg);
 static int niquery_option_ipv4_handler(int index, const char *arg);
 static int niquery_option_ipv4_flag_handler(int index, const char *arg);
 static int niquery_option_subject_addr_handler(int index, const char *arg);
+static int niquery_option_subject_name_handler(int index, const char *arg);
+char *ni_groupaddr(const char *name);
 
 struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("name",			0,	0,				niquery_option_name_handler),
@@ -264,6 +269,8 @@ struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("ipv4-all",		0,	NI_IPV4ADDR_F_ALL,		niquery_option_ipv4_flag_handler),
 	NIQUERY_OPTION("subject-ipv6",		1,	NI_SUBJ_IPV6,			niquery_option_subject_addr_handler),
 	NIQUERY_OPTION("subject-ipv4",		1,	NI_SUBJ_IPV4,			niquery_option_subject_addr_handler),
+	NIQUERY_OPTION("subject-name",		1,	0,				niquery_option_subject_name_handler),
+	NIQUERY_OPTION("subject-fqdn",		1,	-1,				niquery_option_subject_name_handler),
 	{},
 };
 
@@ -324,6 +331,7 @@ static int niquery_set_subject_type(int type)
 	return 0;
 }
 
+#define ARRAY_SIZE(array)	(sizeof(array) / sizeof(array[0]))
 #define OFFSET_OF(type,elem)	((size_t)&((type *)0)->elem)
 
 static int niquery_option_subject_addr_handler(int index, const char *arg)
@@ -366,11 +374,78 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 		if (!p)
 			continue;
 		memcpy(p, (__u8 *)ai->ai_addr + offset, ni_subject_len);
+		ni_subject = p;
 		break;
 	}
 	freeaddrinfo(ai0);
 
-	ni_subject = p;
+	return 0;
+}
+
+static int niquery_count_dots(const char *arg)
+{
+	const char *p;
+	int count = 0;
+	for (p = arg; *p; p++) {
+		if (*p == '.')
+			count++;
+	}
+	return count;
+}
+
+static int niquery_option_subject_name_handler(int index, const char *arg)
+{
+	unsigned char *dnptrs[2], **dpp, **lastdnptr;
+	int n;
+	char *name, *p;
+	unsigned char *buf;
+	size_t buflen = strlen(arg) + 1;
+	int fqdn = niquery_options[index].data;
+
+	if (niquery_set_subject_type(NI_SUBJ_NAME) < 0)
+		return -1;
+
+	if (fqdn == 0) {
+		/* guess if hostname is FQDN */
+		fqdn = niquery_count_dots(arg) ? 1 : -1;
+	}
+
+	name = strdup(arg);
+	buf = malloc(buflen + 1);
+	if (!name || !buf) {
+		free(name);
+		free(buf);
+		fprintf(stderr, "ping6: out of memory.\n");
+		exit(1);
+	}
+
+	ni_group = ni_groupaddr(name);
+
+	p = strchr(name, '%');
+	if (p)
+		*p = '\0';
+
+	dpp = dnptrs;
+	lastdnptr = &dnptrs[ARRAY_SIZE(dnptrs)];
+
+	*dpp++ = (unsigned char *)buf;
+	*dpp++ = NULL;
+
+	n = dn_comp(name, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
+	if (n < 0) {
+		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", buf);
+		free(name);
+		free(buf);
+		exit(1);
+	}
+
+	if (fqdn < 0)
+		buf[n] = 0;
+
+	ni_subject = buf;
+	ni_subject_len = n + (fqdn < 0);
+
+	free(name);
 	return 0;
 }
 
@@ -397,6 +472,50 @@ int niquery_option_handler(const char *opt_arg)
 		}
 	}
 	return ret;
+}
+
+char *ni_groupaddr(const char *name)
+{
+	MD5_CTX ctxt;
+	__u8 digest[16];
+	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
+	size_t len;
+	char buf[64], *p = buf, *q;
+	int i;
+
+	if (!p) {
+		fprintf(stderr, "ping6: memory allocation failure.\n");
+		exit(1);
+	}
+
+	len = strcspn(name, ".%");
+	if (len & ~0x3f) {
+		fprintf(stderr, "ping6: label too long for subject: %s\n",
+			name);
+		exit(1);
+	}
+
+	q = strrchr(name, '%');
+	if (q && strlen(q + 1) >= IFNAMSIZ) {
+		fprintf(stderr, "ping6: scope too long: %s\n",
+			q + 1);
+		exit(1);
+	}
+
+	*p++ = len;
+	for (i = 0; i < len; i++)
+		*p++ = isupper(name[i]) ? tolower(name[i]) : name[i];
+
+	MD5_Init(&ctxt);
+	MD5_Update(&ctxt, buf, len + 1);
+	MD5_Final(digest, &ctxt);
+
+	sprintf(nigroup_buf, "ff02::2:%02x%02x:%02x%02x",
+		digest[0], digest[1], digest[2], digest[3]);
+
+	if (q)
+		strcat(nigroup_buf, q);
+	return nigroup_buf;
 }
 #endif
 
@@ -552,9 +671,6 @@ int main(int argc, char *argv[])
 		argc--;
 	}
 
-	if (argc != 1)
-		usage();
-
 #ifdef ENABLE_NODEINFO
 	if (ni_query >= 0) {
 		int i;
@@ -567,8 +683,22 @@ int main(int argc, char *argv[])
 			ni_subject_type = NI_SUBJ_IPV6;
 		}
 	}
-#endif
+
+	if (argc > 1)
+		usage();
+	else if (argc == 1) {
+		target = *argv;
+	} else {
+		if (ni_query < 0 && ni_subject_type != NI_SUBJ_NAME)
+			usage();
+		target = ni_group;
+	}
+#else
+	if (argc != 1)
+		usage();
+
 	target = *argv;
+#endif
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET6;
