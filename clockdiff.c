@@ -23,6 +23,7 @@
 
 void usage(void) __attribute__((noreturn));
 
+#define MAX_HOSTNAMELEN	NI_MAXHOST
 
 /*
  * Checksum routine for Internet Protocol family headers.
@@ -535,7 +536,7 @@ main(int argc, char *argv[])
 {
 	int measure_status;
 	struct hostent * hp;
-	char hostname[MAXHOSTNAMELEN];
+	char hostname[MAX_HOSTNAMELEN];
 	int s_errno = 0;
 
 	if (argc < 2) {

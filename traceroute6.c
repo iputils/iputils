@@ -266,9 +266,7 @@ char copyright[] =
 #endif
 
 #define	MAXPACKET	65535
-#ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN	64
-#endif
+#define MAX_HOSTNAMELEN	NI_MAXHOST
 
 #ifndef FD_SET
 #define NFDBITS         (8*sizeof(fd_set))
@@ -329,7 +327,7 @@ int datalen = sizeof(struct pkt_format);
 
 int main(int argc, char *argv[])
 {
-	char pa[MAXHOSTNAMELEN];
+	char pa[MAX_HOSTNAMELEN];
 	extern char *optarg;
 	extern int optind;
 	struct hostent *hp;
@@ -841,8 +839,8 @@ int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
 
 	if (verbose) {
 		unsigned char *p;
-		char pa1[MAXHOSTNAMELEN];
-		char pa2[MAXHOSTNAMELEN];
+		char pa1[MAX_HOSTNAMELEN];
+		char pa2[MAX_HOSTNAMELEN];
 		int i;
 
 		p = (unsigned char *) (icp + 1);
@@ -873,7 +871,7 @@ int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
 
 void print(unsigned char *buf, int cc, struct sockaddr_in6 *from)
 {
-	char pa[MAXHOSTNAMELEN];
+	char pa[MAX_HOSTNAMELEN];
 
 	if (nflag)
 		Printf(" %s", inet_ntop(AF_INET6, &from->sin6_addr,

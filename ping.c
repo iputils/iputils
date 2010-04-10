@@ -75,6 +75,7 @@ struct icmp_filter {
 #define	MAXICMPLEN	76
 #define	NROUTES		9		/* number of record route slots */
 #define TOS_MAX		255		/* 8-bit TOS field */
+#define MAX_HOSTNAMELEN	NI_MAXHOST
 
 
 static int ts_type;
@@ -119,7 +120,7 @@ main(int argc, char **argv)
 	int ch, hold, packlen;
 	int socket_errno;
 	u_char *packet;
-	char *target, hnamebuf[MAXHOSTNAMELEN];
+	char *target, hnamebuf[MAX_HOSTNAMELEN];
 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 
 	icmp_sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
