@@ -202,6 +202,11 @@ void common_options(int ch)
 			fprintf(stderr, "ping: illegal negative packet size %d.\n", datalen);
 			exit(2);
 		}
+		if (datalen > maxpacket - 8) {
+			fprintf(stderr, "ping: packet size too large: %d\n",
+				datalen);
+			exit(2);
+		}
 		break;
 	case 'v':
 		options |= F_VERBOSE;
