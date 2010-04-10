@@ -1009,104 +1009,117 @@ static void putchar_safe(char c)
 		printf("\\%03o", c);
 }
 
+void pr_niquery_reply_name(struct ni_hdr *nih, int len)
+{
+	__u8 *h = (__u8 *)(nih + 1);
+	__u8 *p = h + 4;
+	__u8 *end = (__u8 *)nih + len;
+	int continued = 0;
+	char buf[1024];
+	int ret;
+
+	len -= sizeof(struct ni_hdr) + 4;
+
+	if (len < 0) {
+		printf(" parse error (too short)");
+		return;
+	}
+	while (p < end) {
+		int fqdn = 1;
+		int len;
+		int i;
+
+		memset(buf, 0xff, sizeof(buf));
+
+		if (continued)
+			putchar(',');
+
+		ret = dn_expand(h, end, p, buf, sizeof(buf));
+		if (ret < 0) {
+			printf(" parse error (truncated)");
+			break;
+		}
+		if (p + ret < end && *(p + ret) == '\0')
+			fqdn = 0;
+		len = strlen(buf);
+
+		putchar(' ');
+		for (i = 0; i < strlen(buf); i++)
+			putchar_safe(buf[i]);
+		if (fqdn)
+			putchar('.');
+
+		p += ret + !fqdn;
+
+		continued = 1;
+	}
+}
+
+void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
+{
+	__u8 *h = (__u8 *)(nih + 1);
+	__u8 *p = h + 4;
+	__u8 *end = (__u8 *)nih + len;
+	int af;
+	int aflen;
+	int continued = 0;
+	int truncated;
+	char buf[1024];
+
+	switch (ntohs(nih->ni_qtype)) {
+	case NI_QTYPE_IPV4ADDR:
+		af = AF_INET;
+		aflen = sizeof(struct in_addr);
+		truncated = nih->ni_flags & NI_IPV6ADDR_F_TRUNCATE;
+		break;
+	case NI_QTYPE_IPV6ADDR:
+		af = AF_INET6;
+		aflen = sizeof(struct in6_addr);
+		truncated = nih->ni_flags & NI_IPV4ADDR_F_TRUNCATE;
+		break;
+	default:
+		/* should not happen */
+		af = aflen = truncated = 0;
+	}
+	p = h;
+	if (len < 0) {
+		printf(" parse error (too short)");
+		return;
+	}
+
+	while (p < end) {
+		if (continued)
+			putchar(',');
+
+		if (p + sizeof(__u32) + aflen > end) {
+			printf(" parse error (truncated)");
+			break;
+		}
+		if (!inet_ntop(af, p + sizeof(__u32), buf, sizeof(buf)))
+			printf(" unexpeced error in inet_ntop(%s)",
+			       strerror(errno));
+		else
+			printf(" %s", buf);
+		p += sizeof(__u32) + aflen;
+
+		continued = 1;
+	}
+	if (truncated)
+		printf(" (truncated)");
+}
+
 void pr_niquery_reply(__u8 *_nih, int len)
 {
 	struct ni_hdr *nih = (struct ni_hdr *)_nih;
-	__u8 *end = _nih + len;
-	__u8 *h, *p;
-	int ret;
-	char buf[1024];
-	int i;
-	int continued = 0;
-
-	h = (__u8 *)(nih + 1);
 
 	switch (ntohs(nih->ni_qtype)) {
 	case NI_QTYPE_NAME:
-		p = h + 4;
-		len -= sizeof(struct ni_hdr) + 4;
-
-		if (len < 0) {
-			printf(" parse error (too short)");
-			break;
-		}
-		while (p < end) {
-			int fqdn = 1;
-			int len;
-			memset(buf, 0xff, sizeof(buf));
-
-			if (continued)
-				putchar(',');
-
-			ret = dn_expand(h, end, p, buf, sizeof(buf));
-	 		if (ret < 0) {
-				printf(" parse error (truncated)");
-				break;
-			}
-			if (p + ret < end && *(p + ret) == '\0')
-				fqdn = 0;
-			len = strlen(buf);
-
-			putchar(' ');
-			for (i = 0; i < strlen(buf); i++)
-				putchar_safe(buf[i]);
-			if (fqdn)
-				putchar('.');
-
-			p += ret + !fqdn;
-
-			continued = 1;
-		}
+		pr_niquery_reply_name(nih, len);
 		break;
 	case NI_QTYPE_IPV4ADDR:
 	case NI_QTYPE_IPV6ADDR:
-	    {
-		int af;
-		int aflen;
-		int truncated;
-
-		switch (ntohs(nih->ni_qtype)) {
-		case NI_QTYPE_IPV4ADDR:
-			af = AF_INET;
-			aflen = sizeof(struct in_addr);
-			truncated = nih->ni_flags & NI_IPV6ADDR_F_TRUNCATE;
-			break;
-		case NI_QTYPE_IPV6ADDR:
-			af = AF_INET6;
-			aflen = sizeof(struct in6_addr);
-			truncated = nih->ni_flags & NI_IPV4ADDR_F_TRUNCATE;
-			break;
-		default:
-			/* should not happen */
-			af = aflen = truncated = 0;
-		}
-		p = h;
-		if (len < 0) {
-			printf(" parse error (too short)");
-			break;
-		}
-
-		while (p < end) {
-			if (continued)
-				putchar(',');
-
-			if (p + sizeof(__u32) + aflen > end) {
-				printf(" parse error (truncated)");
-				break;
-			}
-			if (!inet_ntop(af, p + sizeof(__u32), buf, sizeof(buf)))
-				printf(" unexpeced error in inet_ntop(%s)",
-				       strerror(errno));
-			else
-				printf(" %s", buf);
-			p += sizeof(__u32) + aflen;
-
-			continued = 1;
-		}
-		if (truncated)
-			printf(" (truncated)");
+		pr_niquery_reply_addr(nih, len);
 		break;
-	    }
 	default:
 		printf(" unknown qtype(0x%02x)", ntohs(nih->ni_qtype));
 	}
