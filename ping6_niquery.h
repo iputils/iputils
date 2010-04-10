@@ -18,7 +18,7 @@ struct ni_hdr {
 
 /* Query Codes */
 #define NI_SUBJ_IPV6			0
-#define NI_SUBJ_FQDN			1
+#define NI_SUBJ_NAME			1
 #define NI_SUBJ_IPV4			2
 
 /* Reply Codes */
@@ -28,7 +28,7 @@ struct ni_hdr {
 
 /* Qtypes */
 #define NI_QTYPE_NOOP			0
-#define NI_QTYPE_FQDN			2
+#define NI_QTYPE_NAME			2
 #define NI_QTYPE_IPV6ADDR		3
 #define NI_QTYPE_IPV4ADDR		4
 

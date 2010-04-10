@@ -156,8 +156,8 @@ static int icmp_sock;
 
 #ifdef ENABLE_NODEINFO
 /* Node Information query */
-#define F_FQDN		0x0004
-#define F_NIFLAGS	(F_FQDN)
+#define F_NAME		0x0004
+#define F_NIFLAGS	(F_NAME)
 
 int ni_opts, naflags;
 
@@ -923,7 +923,7 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	continued = 0;
 
 	switch (ntohs(nih->ni_qtype)) {
-	case NI_QTYPE_FQDN:
+	case NI_QTYPE_NAME:
 		while (p < end) {
 			int fqdn = 1;
 			int len;
