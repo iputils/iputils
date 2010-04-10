@@ -397,7 +397,7 @@ next:
 		argc--;
 	}
 	if (argc != 0) {
-		(void) fprintf(stderr, "Extra paramaters\n");
+		(void) fprintf(stderr, "Extra parameters\n");
 		prusage();
 		/* NOTREACHED */
 	}
