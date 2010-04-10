@@ -1,3 +1,5 @@
+#include <asm/byteorder.h>
+
 /* Node Information Query */
 struct ni_hdr {
 	struct icmp6_hdr		ni_u;
