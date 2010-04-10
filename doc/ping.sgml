@@ -210,6 +210,18 @@ Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
      </para></listitem>
     </varlistentry>
    </variablelist>
+   <variablelist>
+    <varlistentry>
+     <term><option>subject-ipv6=<replaceable/ipv6addr/</option></term>
+     <listitem><para>IPv6 subject address.</para></listitem>
+    </varlistentry>
+   </variablelist>
+   <variablelist>
+    <varlistentry>
+     <term><option>subject-ipv4=<replaceable/ipv4addr/</option></term>
+     <listitem><para>IPv4 subject address.</para></listitem>
+    </varlistentry>
+   </variablelist>
   </para></listitem>
  </varlistentry>
  <varlistentry>

@@ -249,6 +249,7 @@ static int niquery_option_ipv6_handler(int index, const char *arg);
 static int niquery_option_ipv6_flag_handler(int index, const char *arg);
 static int niquery_option_ipv4_handler(int index, const char *arg);
 static int niquery_option_ipv4_flag_handler(int index, const char *arg);
+static int niquery_option_subject_addr_handler(int index, const char *arg);
 
 struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("name",			0,	0,				niquery_option_name_handler),
@@ -261,6 +262,8 @@ struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("ipv6-global",		0,	NI_IPV6ADDR_F_GLOBAL,		niquery_option_ipv6_flag_handler),
 	NIQUERY_OPTION("ipv4",			0,	0,				niquery_option_ipv4_handler),
 	NIQUERY_OPTION("ipv4-all",		0,	NI_IPV4ADDR_F_ALL,		niquery_option_ipv4_flag_handler),
+	NIQUERY_OPTION("subject-ipv6",		1,	NI_SUBJ_IPV6,			niquery_option_subject_addr_handler),
+	NIQUERY_OPTION("subject-ipv4",		1,	NI_SUBJ_IPV4,			niquery_option_subject_addr_handler),
 	{},
 };
 
@@ -308,6 +311,66 @@ static int niquery_option_ipv4_flag_handler(int index, const char *arg)
 	if (niquery_set_qtype(NI_QTYPE_IPV4ADDR) < 0)
 		return -1;
 	ni_flag |= niquery_options[index].data;
+	return 0;
+}
+
+static int niquery_set_subject_type(int type)
+{
+	if (ni_subject_type && ni_subject_type != type) {
+		printf("Subject type conflict\n");
+		return -1;
+	}
+	ni_subject_type = type;
+	return 0;
+}
+
+#define OFFSET_OF(type,elem)	((size_t)&((type *)0)->elem)
+
+static int niquery_option_subject_addr_handler(int index, const char *arg)
+{
+	struct addrinfo hints, *ai0, *ai;
+	int offset;
+	int gai;
+
+	if (niquery_set_subject_type(niquery_options[index].data) < 0)
+		return -1;
+
+	ni_subject_type = niquery_options[index].data;
+
+	switch (niquery_options[index].data) {
+	case NI_SUBJ_IPV6:
+		ni_subject_len = sizeof(struct in6_addr);
+		offset = OFFSET_OF(struct sockaddr_in6, sin6_addr);
+		hints.ai_family = AF_INET6;
+		break;
+	case NI_SUBJ_IPV4:
+		ni_subject_len = sizeof(struct in_addr);
+		offset = OFFSET_OF(struct sockaddr_in, sin_addr);
+		hints.ai_family = AF_INET;
+		break;
+	default:
+		/* should not happen. */
+		offset = -1;
+	}
+
+	hints.ai_socktype = SOCK_DGRAM;
+
+	gai = getaddrinfo(arg, 0, &hints, &ai0);
+	if (!gai) {
+		fprintf(stderr, "Unknown host: %s\n", arg);
+		return -1;
+	}
+
+	for (ai = ai0; ai; ai = ai->ai_next) {
+		void *p = malloc(ni_subject_len);
+		if (!p)
+			continue;
+		memcpy(p, (__u8 *)ai->ai_addr + offset, ni_subject_len);
+		break;
+	}
+	freeaddrinfo(ai0);
+
+	ni_subject = p;
 	return 0;
 }
 
