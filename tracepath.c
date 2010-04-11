@@ -45,6 +45,9 @@ int mtu = 65535;
 int hops_to = -1;
 int hops_from = -1;
 int no_resolve = 0;
+int show_both = 0;
+
+#define HOST_COLUMN_SIZE	52
 
 struct probehdr
 {
@@ -61,6 +64,20 @@ void data_wait(int fd)
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
 	select(fd+1, &fds, NULL, NULL, &tv);
+}
+
+void print_host(const char *a, const char *b, int both)
+{
+	size_t plen = 0;
+	printf("%s", a);
+	plen = strlen(a);
+	if (both) {
+		printf(" (%s)", b);
+		plen += strlen(b) + 3;
+	}
+	if (plen >= HOST_COLUMN_SIZE)
+		plen = HOST_COLUMN_SIZE - 1;
+	printf("%*s", HOST_COLUMN_SIZE - plen, "");
 }
 
 int recverr(int fd, int ttl)
@@ -139,10 +156,11 @@ restart:
 		return 0;
 	}
 	if (e->ee_origin == SO_EE_ORIGIN_LOCAL) {
-		printf("%2d?: %-15s ", ttl, "[LOCALHOST]");
+		printf("%2d?: %*s ", ttl, -(HOST_COLUMN_SIZE - 1), "[LOCALHOST]");
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
 		char abuf[128];
 		struct sockaddr_in *sin = (struct sockaddr_in*)(e+1);
+		struct hostent *h = NULL;
 
 		inet_ntop(AF_INET, &sin->sin_addr, abuf, sizeof(abuf));
 
@@ -151,16 +169,15 @@ restart:
 		else
 			printf("%2d?: ", ttl);
 
-		if(!no_resolve) {
-			char fabuf[256];
-			struct hostent *h;
+		if (!no_resolve || show_both) {
 			fflush(stdout);
 			h = gethostbyaddr((char *) &sin->sin_addr, sizeof(sin->sin_addr), AF_INET);
-			snprintf(fabuf, sizeof(fabuf), "%s (%s)", h ? h->h_name : abuf, abuf);
-			printf("%-52s ", fabuf);
-		} else {
-			printf("%-15s ", abuf);
 		}
+
+		if (no_resolve)
+			print_host(abuf, h ? h->h_name : abuf, show_both);
+		else
+			print_host(h ? h->h_name : abuf, abuf, show_both);
 	}
 
 	if (rettv) {
@@ -268,7 +285,7 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath [-n] [-l <len>] <destination>[/<port>]\n");
+	fprintf(stderr, "Usage: tracepath [-n] [-b] [-l <len>] <destination>[/<port>]\n");
 	exit(-1);
 }
 
@@ -282,10 +299,13 @@ main(int argc, char **argv)
 	char *p;
 	int ch;
 
-	while ((ch = getopt(argc, argv, "nh?l:")) != EOF) {
+	while ((ch = getopt(argc, argv, "nbh?l:")) != EOF) {
 		switch(ch) {
 		case 'n':
 			no_resolve = 1;
+			break;
+		case 'b':
+			show_both = 1;
 			break;
 		case 'l':
 			if ((mtu = atoi(optarg)) <= overhead) {

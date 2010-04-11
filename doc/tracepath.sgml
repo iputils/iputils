@@ -16,6 +16,7 @@ traces path to a network host discovering MTU along this path</refpurpose>
 <cmdsynopsis>
 <command>tracepath</command>
 <arg choice="opt">-n</arg>
+<arg choice="opt">-b</arg>
 <arg choice="opt">-l <replaceable/pktlen/</arg>
 <arg choice="req"><replaceable/destination/</arg>
 <arg choice="opt"><replaceable/port/</arg>
@@ -33,7 +34,7 @@ privileges and has no fancy options.
 <para>
 <command/tracepath6/ is good replacement for <command/traceroute6/
 and classic example of application of Linux error queues.
-The situation with <command/tracepath/ is worse, because commercial
+The situation with IPv4 is worse, because commercial
 IP routers do not return enough information in icmp error messages.
 Probably, it will change, when they will be updated.
 For now it uses Van Jacobson's trick, sweeping a range
@@ -47,7 +48,14 @@ of UDP ports to maintain trace history.
  <varlistentry>
   <term><option/-n/</term>
   <listitem><para>
-Do not look up host names.  Only print IP addresses numerically.
+Print primarily IP addresses numerically.
+  </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+  <term><option/-b/</term>
+  <listitem><para>
+Print both of host names and IP addresses.
   </para></listitem>
  </varlistentry>
 
