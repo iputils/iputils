@@ -1223,14 +1223,24 @@ initifs()
 int
 join(int sock, struct sockaddr_in *sin)
 {
-	int i;
+	int i, j;
 	struct ip_mreqn mreq;
+	int joined[num_interfaces];
+
+	memset(joined, 0, sizeof(joined));
 
 	if (isbroadcast(sin))
 		return (0);
 
 	mreq.imr_multiaddr = sin->sin_addr;
 	for (i = 0; i < num_interfaces; i++) {
+		for (j = 0; j < i; j++) {
+			if (joined[j] == interfaces[i].ifindex)
+				break;
+		}
+		if (j != i)
+			continue;
+
 		mreq.imr_ifindex = interfaces[i].ifindex;
 		mreq.imr_address.s_addr = 0;
 
@@ -1239,6 +1249,8 @@ join(int sock, struct sockaddr_in *sin)
 			logperror("setsockopt (IP_ADD_MEMBERSHIP)");
 			return (-1);
 		}
+
+		joined[i] = interfaces[i].ifindex;
 	}
 	return (0);
 }
