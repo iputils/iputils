@@ -32,6 +32,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <sysfs/libsysfs.h>
+
 #include "SNAPSHOT.h"
 
 static void usage(void) __attribute__((noreturn));
@@ -50,8 +52,8 @@ int unicasting;
 int s;
 int broadcast_only;
 
-struct sockaddr_ll me;
-struct sockaddr_ll he;
+struct sockaddr_storage me;
+struct sockaddr_storage he;
 
 struct timeval start, last;
 
@@ -60,6 +62,18 @@ int received, brd_recv, req_recv;
 
 #define MS_TDIFF(tv1,tv2) ( ((tv1).tv_sec-(tv2).tv_sec)*1000 + \
 			   ((tv1).tv_usec-(tv2).tv_usec)/1000 )
+
+#define OFFSET_OF(name,ele)	((size_t)(((name *)0)->ele))
+
+static inline socklen_t sll_len(size_t halen)
+{
+	socklen_t len = OFFSET_OF(struct sockaddr_ll, sll_addr) + halen;
+	if (len < sizeof(struct sockaddr_ll))
+		len = sizeof(struct sockaddr_ll);
+	return len;
+}
+
+#define SLL_LEN(hln)		sll_len(hln)
 
 void usage(void)
 {
@@ -124,7 +138,7 @@ int send_pack(int s, struct in_addr src, struct in_addr dst,
 	p+=4;
 
 	gettimeofday(&now, NULL);
-	err = sendto(s, buf, p-buf, 0, (struct sockaddr*)HE, sizeof(*HE));
+	err = sendto(s, buf, p-buf, 0, (struct sockaddr*)HE, SLL_LEN(ah->ar_hln));
 	if (err == p-buf) {
 		last = now;
 		sent++;
@@ -172,7 +186,8 @@ void catcher(void)
 		finish();
 
 	if (last.tv_sec==0 || MS_TDIFF(tv,last) > 500) {
-		send_pack(s, src, dst, &me, &he);
+		send_pack(s, src, dst,
+			  (struct sockaddr_ll *)&me, (struct sockaddr_ll *)&he);
 		if (count == 0 && unsolicited)
 			finish();
 	}
@@ -219,7 +234,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 		return 0;
 	if (ah->ar_pln != 4)
 		return 0;
-	if (ah->ar_hln != me.sll_halen)
+	if (ah->ar_hln != ((struct sockaddr_ll *)&me)->sll_halen)
 		return 0;
 	if (len < sizeof(*ah) + 2*(4 + ah->ar_hln))
 		return 0;
@@ -230,7 +245,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 			return 0;
 		if (src.s_addr != dst_ip.s_addr)
 			return 0;
-		if (memcmp(p+ah->ar_hln+4, &me.sll_addr, ah->ar_hln))
+		if (memcmp(p+ah->ar_hln+4, ((struct sockaddr_ll *)&me)->sll_addr, ah->ar_hln))
 			return 0;
 	} else {
 		/* DAD packet was:
@@ -248,7 +263,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 		 */
 		if (src_ip.s_addr != dst.s_addr)
 			return 0;
-		if (memcmp(p, &me.sll_addr, me.sll_halen) == 0)
+		if (memcmp(p, ((struct sockaddr_ll *)&me)->sll_addr, ((struct sockaddr_ll *)&me)->sll_halen) == 0)
 			return 0;
 		if (src.s_addr && src.s_addr != dst_ip.s_addr)
 			return 0;
@@ -264,7 +279,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 			printf("for %s ", inet_ntoa(dst_ip));
 			s_printed = 1;
 		}
-		if (memcmp(p+ah->ar_hln+4, me.sll_addr, ah->ar_hln)) {
+		if (memcmp(p+ah->ar_hln+4, ((struct sockaddr_ll *)&me)->sll_addr, ah->ar_hln)) {
 			if (!s_printed)
 				printf("for ");
 			printf("[");
@@ -290,10 +305,40 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 	if (quit_on_reply)
 		finish();
 	if(!broadcast_only) {
-		memcpy(he.sll_addr, p, me.sll_halen);
+		memcpy(((struct sockaddr_ll *)&he)->sll_addr, p, ((struct sockaddr_ll *)&me)->sll_halen);
 		unicasting=1;
 	}
 	return 1;
+}
+
+void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
+{
+	struct sysfs_class_device *dev;
+	struct sysfs_attribute *brdcast;
+	unsigned char *p;
+	int ch;
+
+	dev = sysfs_open_class_device("net", device);
+	if (!dev) {
+		perror("sysfs_open_class_device(net)");
+		exit(2);
+	}
+
+	brdcast = sysfs_get_classdev_attr(dev, "broadcast");
+	if (!brdcast) {
+		perror("sysfs_get_classdev_attr(broadcast)");
+		exit(2);
+	}
+
+	if (sysfs_read_attribute(brdcast)) {
+		perror("sysfs_read_attribute");
+		exit(2);
+	}
+
+	for (p = ba, ch = 0; p < ba + balen; p++, ch += 3)
+		*p++ = strtoul(brdcast->value + ch * 3, NULL, 16);
+
+	return;
 }
 
 int
@@ -459,9 +504,9 @@ main(int argc, char **argv)
 		close(probe_fd);
 	};
 
-	me.sll_family = AF_PACKET;
-	me.sll_ifindex = ifindex;
-	me.sll_protocol = htons(ETH_P_ARP);
+	((struct sockaddr_ll *)&me)->sll_family = AF_PACKET;
+	((struct sockaddr_ll *)&me)->sll_ifindex = ifindex;
+	((struct sockaddr_ll *)&me)->sll_protocol = htons(ETH_P_ARP);
 	if (bind(s, (struct sockaddr*)&me, sizeof(me)) == -1) {
 		perror("bind");
 		exit(2);
@@ -474,14 +519,20 @@ main(int argc, char **argv)
 			exit(2);
 		}
 	}
-	if (me.sll_halen == 0) {
+	if (((struct sockaddr_ll *)&me)->sll_halen == 0) {
 		if (!quiet)
 			printf("Interface \"%s\" is not ARPable (no ll address)\n", device);
 		exit(dad?0:2);
 	}
 
 	he = me;
-	memset(he.sll_addr, -1, he.sll_halen);
+
+#if 1
+	set_device_broadcast(device, ((struct sockaddr_ll *)&he)->sll_addr,
+			     ((struct sockaddr_ll *)&he)->sll_halen);
+#else
+	memset(((struct sockaddr_ll *)&he)->sll_addr, -1, ((struct sockaddr_ll *)&he)->sll_halen);
+#endif
 
 	if (!quiet) {
 		printf("ARPING %s ", inet_ntoa(dst));
@@ -501,7 +552,7 @@ main(int argc, char **argv)
 	while(1) {
 		sigset_t sset, osset;
 		unsigned char packet[4096];
-		struct sockaddr_ll from;
+		struct sockaddr_storage from;
 		socklen_t alen = sizeof(from);
 		int cc;
 
@@ -510,11 +561,12 @@ main(int argc, char **argv)
 			perror("arping: recvfrom");
 			continue;
 		}
+
 		sigemptyset(&sset);
 		sigaddset(&sset, SIGALRM);
 		sigaddset(&sset, SIGINT);
 		sigprocmask(SIG_BLOCK, &sset, &osset);
-		recv_pack(packet, cc, &from);
+		recv_pack(packet, cc, (struct sockaddr_ll *)&from);
 		sigprocmask(SIG_SETMASK, &osset, NULL);
 	}
 }

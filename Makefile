@@ -27,6 +27,7 @@ all: $(TARGETS)
 
 
 tftpd: tftpd.o tftpsubs.o
+arping: arping.o -lsysfs
 ping: ping.o ping_common.o
 ping6: ping6.o ping_common.o -lresolv -lcrypto
 ping.o ping6.o ping_common.o: ping_common.h
