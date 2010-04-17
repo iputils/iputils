@@ -30,8 +30,11 @@
 #define SOL_IPV6 IPPROTO_IPV6
 #endif
 
-#ifndef IPV6_PMTUDISC_PROBE
-#define IPV6_PMTUDISC_PROBE	3
+#ifndef IP_PMTUDISC_DO
+#define IP_PMTUDISC_DO		3
+#endif
+#ifndef IPV6_PMTUDISC_DO
+#define IPV6_PMTUDISC_DO	3
 #endif
 
 struct hhistory
@@ -43,7 +46,9 @@ struct hhistory
 struct hhistory his[64];
 int hisptr;
 
-struct sockaddr_in6 target;
+sa_family_t family = AF_INET6;
+struct sockaddr_storage target;
+socklen_t targetlen;
 __u16 base_port;
 
 int overhead = 48;
@@ -96,10 +101,10 @@ int recverr(int fd, int ttl)
 	struct msghdr msg;
 	struct cmsghdr *cmsg;
 	struct sock_extended_err *e;
-	struct sockaddr_in6 addr;
+	struct sockaddr_storage addr;
 	struct timeval tv;
 	struct timeval *rettv;
-	int slot;
+	int slot = 0;
 	int rethops;
 	int sndhops;
 	int progress = -1;
@@ -131,7 +136,17 @@ restart:
 	sndhops = -1;
 	e = NULL;
 	rettv = NULL;
-	slot = ntohs(addr.sin6_port) - base_port;
+
+	slot = -base_port;
+	switch (family) {
+	case AF_INET6:
+		slot += ntohs(((struct sockaddr_in6 *)&addr)->sin6_port);
+		break;
+	case AF_INET:
+		slot += ntohs(((struct sockaddr_in *)&addr)->sin_port);
+		break;
+	}
+
 	if (slot >= 0 && slot < 63 && his[slot].hops) {
 		sndhops = his[slot].hops;
 		rettv = &his[slot].sendtime;
@@ -148,7 +163,8 @@ restart:
 	}
 
 	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
-		if (cmsg->cmsg_level == SOL_IPV6) {
+		switch (cmsg->cmsg_level) {
+		case SOL_IPV6:
 			switch(cmsg->cmsg_type) {
 			case IPV6_RECVERR:
 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
@@ -160,13 +176,20 @@ restart:
 				rethops = *(int*)CMSG_DATA(cmsg);
 				break;
 			default:
-				printf("cmsg:%d\n ", cmsg->cmsg_type);
+				printf("cmsg6:%d\n ", cmsg->cmsg_type);
 			}
-		} else if (cmsg->cmsg_level == SOL_IP) {
-			if (cmsg->cmsg_type == IP_TTL) {
+			break;
+		case SOL_IP:
+			switch(cmsg->cmsg_type) {
+			case IP_RECVERR:
+				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
+				break;
+			case IP_TTL:
 				rethops = *(__u8*)CMSG_DATA(cmsg);
-			} else
-				printf("cmsg:%d\n ", cmsg->cmsg_type);
+				break;
+			default:
+				printf("cmsg4:%d\n ", cmsg->cmsg_type);
+			}
 		}
 	}
 	if (e == NULL) {
@@ -297,11 +320,18 @@ restart:
 		int res;
 
 		hdr->ttl = ttl;
-		target.sin6_port = htons(base_port + hisptr);
+		switch (family) {
+		case AF_INET6:
+			((struct sockaddr_in6 *)&target)->sin6_port = htons(base_port + hisptr);
+			break;
+		case AF_INET:
+			((struct sockaddr_in *)&target)->sin_port = htons(base_port + hisptr);
+			break;
+		}
 		gettimeofday(&hdr->tv, NULL);
 		his[hisptr].hops = ttl;
 		his[hisptr].sendtime = hdr->tv;
-		if (sendto(fd, sndbuf, mtu-overhead, 0, (struct sockaddr *)&target, sizeof(target)) > 0)
+		if (sendto(fd, sndbuf, mtu-overhead, 0, (struct sockaddr *)&target, targetlen) > 0)
 			break;
 		res = recverr(fd, ttl);
 		his[hisptr].hops = 0;
@@ -380,7 +410,7 @@ int main(int argc, char **argv)
 	sprintf(pbuf, "%u", base_port);
 
 	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET6;
+	hints.ai_family = family;
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = IPPROTO_UDP;
 	hints.ai_flags = 0;
@@ -392,10 +422,15 @@ int main(int argc, char **argv)
 
 	fd = -1;
 	for (ai = ai0; ai; ai = ai->ai_next) {
+		/* sanity check */
+		if (family && ai->ai_family != family)
+			continue;
+		family = ai->ai_family;
 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 		if (fd < 0)
 			continue;
 		memcpy(&target, ai->ai_addr, sizeof(target));
+		targetlen = ai->ai_addrlen;
 		break;
 	}
 	if (fd < 0) {
@@ -404,47 +439,54 @@ int main(int argc, char **argv)
 	}
 	freeaddrinfo(ai0);
 
-	if (!target.sin6_addr.s6_addr32[0] && !target.sin6_addr.s6_addr32[1]
-	    && target.sin6_addr.s6_addr32[2] == htonl(0xFFFF)) {
+	switch (family) {
+	case AF_INET6:
+		mtu = 128000;
+		overhead = 48;
+		on = IPV6_PMTUDISC_DO;
+		if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
+		    (on = IPV6_PMTUDISC_DO,
+		     setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)))) {
+			perror("IPV6_MTU_DISCOVER");
+			exit(1);
+		}
+		on = 1;
+		if (setsockopt(fd, SOL_IPV6, IPV6_RECVERR, &on, sizeof(on))) {
+			perror("IPV6_RECVERR");
+			exit(1);
+		}
+		if (
+#ifdef IPV6_RECVHOPLIMIT
+		    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on)) &&
+		    setsockopt(fd, SOL_IPV6, IPV6_2292HOPLIMIT, &on, sizeof(on))
+#else
+		    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on))
+#endif
+		    ) {
+			perror("IPV6_HOPLIMIT");
+			exit(1);
+		}
+		if (!IN6_IS_ADDR_V4MAPPED(&(((struct sockaddr_in6 *)&target)->sin6_addr)))
+			break;
+		mapped = 1;
+		/*FALLTHROUGH*/
+	case AF_INET:
 		mtu = 65535;
 		overhead = 28;
-		mapped = 1;
-	}
-
-	on = IPV6_PMTUDISC_PROBE;
-	if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
-	    (on = IPV6_PMTUDISC_DO,
-	     setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)))) {
-		perror("IPV6_MTU_DISCOVER");
-		exit(1);
-	}
-	if (mapped && setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on))) {
-		perror("IP_MTU_DISCOVER");
-		exit(1);
-	}
-	on = 1;
-	if (setsockopt(fd, SOL_IPV6, IPV6_RECVERR, &on, sizeof(on))) {
-		perror("IPV6_RECVERR");
-		exit(1);
-	}
-	if (mapped && setsockopt(fd, SOL_IP, IP_RECVERR, &on, sizeof(on))) {
-		perror("IP_RECVERR");
-		exit(1);
-	}
-	if (
-#ifdef IPV6_RECVHOPLIMIT
-	    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on)) &&
-	    setsockopt(fd, SOL_IPV6, IPV6_2292HOPLIMIT, &on, sizeof(on))
-#else
-	    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on))
-#endif
-	    ) {
-		perror("IPV6_HOPLIMIT");
-		exit(1);
-	}
-	if (mapped && setsockopt(fd, SOL_IP, IP_RECVTTL, &on, sizeof(on))) {
-		perror("IP_RECVTTL");
-		exit(1);
+		on = IP_PMTUDISC_DO;
+		if (setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on))) {
+			perror("IP_MTU_DISCOVER");
+			exit(1);
+		}
+		on = 1;
+		if (setsockopt(fd, SOL_IP, IP_RECVERR, &on, sizeof(on))) {
+			perror("IP_RECVERR");
+			exit(1);
+		}
+		if (setsockopt(fd, SOL_IP, IP_RECVTTL, &on, sizeof(on))) {
+			perror("IP_RECVTTL");
+			exit(1);
+		}
 	}
 
 	for (ttl=1; ttl<32; ttl++) {
@@ -452,13 +494,20 @@ int main(int argc, char **argv)
 		int i;
 
 		on = ttl;
-		if (setsockopt(fd, SOL_IPV6, IPV6_UNICAST_HOPS, &on, sizeof(on))) {
-			perror("IPV6_UNICAST_HOPS");
-			exit(1);
-		}
-		if (mapped && setsockopt(fd, SOL_IP, IP_TTL, &on, sizeof(on))) {
-			perror("IP_TTL");
-			exit(1);
+		switch (family) {
+		case AF_INET6:
+			if (setsockopt(fd, SOL_IPV6, IPV6_UNICAST_HOPS, &on, sizeof(on))) {
+				perror("IPV6_UNICAST_HOPS");
+				exit(1);
+			}
+			if (!mapped)
+				break;
+			/*FALLTHROUGH*/
+		case AF_INET:
+			if (setsockopt(fd, SOL_IP, IP_TTL, &on, sizeof(on))) {
+				perror("IP_TTL");
+				exit(1);
+			}
 		}
 
 restart:
