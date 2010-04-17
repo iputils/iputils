@@ -339,7 +339,7 @@ int main(int argc, char **argv)
 	hints.ai_family = AF_INET6;
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = IPPROTO_UDP;
-	hints.ai_flags = no_resolve ? AI_NUMERICHOST : 0;
+	hints.ai_flags = 0;
 	gai = getaddrinfo(argv[0], pbuf, &hints, &ai0);
 	if (gai) {
 		herror("getaddrinfo");	/*XXX*/
