@@ -1,3 +1,36 @@
+[s20100418]
+
+YOSHIFUJI Hideaki (28):
+      Merge branch 'timestamp'
+      Merge branch 'miscommit-20100210'
+      ping6: Use IPV6_TCLASS to set outgoing traffic class if available.
+      ping: Make build_echo(), gather_statistics() more generic.
+      ping6: Experimental support for Node Information Queries (RFC4620).
+      ping: simplify usage hint.
+      ping: Rename constant names
+      Extend -N option for NI Query options.
+      ping6: Make length-check qtype-specific.
+      ping6: Remove too many spaces between names.
+      ping6: ping6_niquery.h needs asm/byteorder.h.
+      ping6: Support Qtypes for IPv6/IPv4 Addresses.
+      ping6: Split pr_niquery_reply().
+      ping6: Handle ICMPv6 code in NI Reply.
+      ping6: Add subject-ipv6 and subject-ipv4 NI sub-option for subject address.
+      ping6: Support subject name.
+      ping6: Free old memory when reassign pointers.
+      ping6: Always enable IPv6 Node Information Queries.
+      makefile: Do not always link libresolv and libcrypto.
+      ping,traceroute6,clockdiff: Enlarge hostname buffer.
+      ping6: do not allow too large packet size by -s option.
+      ping: needless space when printing usage.
+      rdisc: Fix typo in error message.
+      rdisc: Allow multiple addresses on one interface.
+      arping: Support link-layer type with larger link-layer address.
+      tracepath6: resolve target even if -n option is supplied.
+      tracepath,tracepath6: sync tracepath and tracepath6.
+      tracepath6: Make it more protocol independent.
+
+
 [s20100214]
 
 Jamal Hadi Salim (2):
