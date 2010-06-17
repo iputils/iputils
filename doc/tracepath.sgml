@@ -27,7 +27,7 @@ traces path to a network host discovering MTU along this path</refpurpose>
 <para>
 It traces path to <replaceable/destination/ discovering MTU along this path.
 It uses UDP port <replaceable/port/ or some random port.
-It is similar to <command/traceroute/, only does not not require superuser
+It is similar to <command/traceroute/, only does not require superuser
 privileges and has no fancy options.
 </para>
 
@@ -101,7 +101,7 @@ Additionally, it can show Path MTU, when it changes.
 If the path is asymmetric
 or the probe finishes before it reach prescribed hop, difference
 between number of hops in forward and backward direction is shown
-folloing keyword <literal/async/. This information is not reliable.
+following keyword <literal/async/. This information is not reliable.
 F.e. the third line shows asymmetry of 1, it is because the first probe
 with TTL of 2 was rejected at the first hop due to Path MTU Discovery.
 </para>
