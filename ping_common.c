@@ -118,10 +118,6 @@ void common_options(int ch)
 	case 'D':
 		options |= F_PTIMEOFDAY;
 		break;
-	case 'f':
-		options |= F_FLOOD;
-		setbuf(stdout, (char *)NULL);
-		break;
 	case 'i':		/* wait between sending packets */
 	{
 		if (strchr(optarg, '.')) {
@@ -183,6 +179,10 @@ void common_options(int ch)
 			exit(2);
 		}
 		break;
+	case 'f':
+		options |= F_FLOOD;
+		setbuf(stdout, (char *)NULL);
+		/* fallthrough to numeric - avoid gethostbyaddr during flood */
 	case 'n':
 		options |= F_NUMERIC;
 		break;
