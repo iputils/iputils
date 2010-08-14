@@ -73,13 +73,10 @@ void data_wait(int fd)
 
 void print_host(const char *a, const char *b, int both)
 {
-	int plen = 0;
-	printf("%s", a);
-	plen = strlen(a);
-	if (both) {
-		printf(" (%s)", b);
-		plen += strlen(b) + 3;
-	}
+	int plen;
+	plen = printf("%s", a);
+	if (both)
+		plen += printf(" (%s)", b);
 	if (plen >= HOST_COLUMN_SIZE)
 		plen = HOST_COLUMN_SIZE - 1;
 	printf("%*s", HOST_COLUMN_SIZE - plen, "");
