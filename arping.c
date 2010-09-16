@@ -336,7 +336,7 @@ void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
 	}
 
 	for (p = ba, ch = 0; p < ba + balen; p++, ch += 3)
-		*p++ = strtoul(brdcast->value + ch * 3, NULL, 16);
+		*p = strtoul(brdcast->value + ch, NULL, 16);
 
 	return;
 }
