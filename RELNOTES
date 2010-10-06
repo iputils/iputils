@@ -1,3 +1,18 @@
+[s20101006]
+
+Chris Caputo (1):
+      ping,ping6: avoid gethostbyaddr during ping flood.
+
+Paul Martin (1):
+      arping: Set correct broadcast address.
+
+YOSHIFUJI Hideaki (4):
+      tracepath: Fix some small typos in tracepath.sgml.
+      ping: Fix resource consumption triggered by specially crafted ICMP Echo Reply (CVE-2010-2529)
+      Makefile: migrate main machine from beatrice to takos.
+      Makefile: Use newer git subcommand style instead of git-subcommand.
+
+
 [s20100418]
 
 YOSHIFUJI Hideaki (28):
