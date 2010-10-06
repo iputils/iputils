@@ -1032,7 +1032,7 @@ void pr_options(unsigned char * cp, int hlen)
 				i = j;
 			i -= IPOPT_MINOFF;
 			if (i <= 0)
-				continue;
+				break;
 			if (i == old_rrlen
 			    && !strncmp((char *)cp, old_rr, i)
 			    && !(options & F_FLOOD)) {
@@ -1069,7 +1069,7 @@ void pr_options(unsigned char * cp, int hlen)
 				i = j;
 			i -= 5;
 			if (i <= 0)
-				continue;
+				break;
 			flags = *++cp;
 			printf("\nTS: ");
 			cp++;
