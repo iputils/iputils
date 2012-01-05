@@ -14,7 +14,7 @@
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>ping</command>
-<arg choice="opt"><option>-LRUbdfnqrvVaABD</option></arg>
+<arg choice="opt"><option>-LRUbdfnqrvVaABDO</option></arg>
 <arg choice="opt">-c <replaceable/count/</arg>
 <arg choice="opt">-m <replaceable/mark/</arg>
 <arg choice="opt">-i <replaceable/interval/</arg>
@@ -243,6 +243,14 @@ Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
   <listitem><para>
 Numeric output only.
 No attempt will be made to lookup symbolic names for host addresses.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option/-O/</term>
+  <listitem><para>
+Report outstanding ICMP ECHO reply before sending next packet.
+This is useful together with the timestamp <option>-D</option> to
+log output to a diagnostic file and search for missing answers.
   </para></listitem>
  </varlistentry>
  <varlistentry>

@@ -172,6 +172,9 @@ void common_options(int ch)
 			exit(2);
 		}
 		break;
+	case 'O':
+		options |= F_OUTSTANDING;
+		break;
 	case 'S':
 		sndbuf = atoi(optarg);
 		if (sndbuf <= 0) {
@@ -347,6 +350,14 @@ int pinger(void)
 
 		cur_time = tv;
 		tokens = ntokens - interval;
+	}
+
+	if (options & F_OUTSTANDING) {
+		if (ntransmitted > 0 && !TST(ntransmitted % mx_dup_ck)) {
+			print_timestamp();
+			printf("no answer yet for icmp_seq=%lu\n", (ntransmitted % mx_dup_ck));
+			fflush(stdout);
+		}
 	}
 
 resend:

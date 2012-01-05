@@ -1554,7 +1554,7 @@ char * pr_addr_n(struct in6_addr *addr)
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: ping6 [-LUdfnqrvVaAD] [-c count] [-i interval] [-w deadline]\n"
+"Usage: ping6 [-LUdfnqrvVaADO] [-c count] [-i interval] [-w deadline]\n"
 "             [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
 "             [-M pmtudisc-hint] [-S sndbuf] [-F flowlabel] [-Q tclass]\n"
 "             [[-N nodeinfo-option] ...]\n"
