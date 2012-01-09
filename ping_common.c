@@ -883,7 +883,7 @@ void finish(void)
 		printf("%spipe %d", comma, pipesize);
 		comma = ", ";
 	}
-	if (ntransmitted > 1 && (!interval || (options&(F_FLOOD|F_ADAPTIVE)))) {
+	if (nreceived && (!interval || (options&(F_FLOOD|F_ADAPTIVE))) && ntransmitted > 1) {
 		int ipg = (1000000*(long long)tv.tv_sec+tv.tv_usec)/(ntransmitted-1);
 		printf("%sipg/ewma %d.%03d/%d.%03d ms",
 		       comma, ipg/1000, ipg%1000, rtt/8000, (rtt/8)%1000);
