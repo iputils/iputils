@@ -883,8 +883,35 @@ void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp)
 		case ICMP_SR_FAILED:
 			printf("Source Route Failed\n");
 			break;
+		case ICMP_NET_UNKNOWN:
+			printf("Destination Net Unknown\n");
+			break;
+		case ICMP_HOST_UNKNOWN:
+			printf("Destination Host Unknown\n");
+			break;
+		case ICMP_HOST_ISOLATED:
+			printf("Source Host Isolated\n");
+			break;
+		case ICMP_NET_ANO:
+			printf("Destination Net Prohibited\n");
+			break;
+		case ICMP_HOST_ANO:
+			printf("Destination Host Prohibited\n");
+			break;
+		case ICMP_NET_UNR_TOS:
+			printf("Destination Net Unreachable for Type of Service\n");
+			break;
+		case ICMP_HOST_UNR_TOS:
+			printf("Destination Host Unreachable for Type of Service\n");
+			break;
 		case ICMP_PKT_FILTERED:
 			printf("Packet filtered\n");
+			break;
+		case ICMP_PREC_VIOLATION:
+			printf("Precedence Violation\n");
+			break;
+		case ICMP_PREC_CUTOFF:
+			printf("Precedence Cutoff\n");
 			break;
 		default:
 			printf("Dest Unreachable, Bad Code: %d\n", code);
