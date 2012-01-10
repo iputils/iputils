@@ -1193,7 +1193,6 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 	}
 	while (p < end) {
 		int fqdn = 1;
-		int len;
 		int i;
 
 		memset(buf, 0xff, sizeof(buf));
@@ -1208,7 +1207,6 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 		}
 		if (p + ret < end && *(p + ret) == '\0')
 			fqdn = 0;
-		len = strlen(buf);
 
 		putchar(' ');
 		for (i = 0; i < strlen(buf); i++)
