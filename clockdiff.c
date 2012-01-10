@@ -538,6 +538,7 @@ main(int argc, char *argv[])
 	struct hostent * hp;
 	char hostname[MAX_HOSTNAMELEN];
 	int s_errno = 0;
+	int n_errno = 0;
 
 	if (argc < 2) {
 		if (setuid(getuid())) {
@@ -549,6 +550,10 @@ main(int argc, char *argv[])
 
 	sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	s_errno = errno;
+
+	errno = 0;
+	if (nice(-16) == -1)
+		n_errno = errno;
 
 	if (setuid(getuid())) {
 		perror("clockdiff: setuid");
@@ -570,6 +575,12 @@ main(int argc, char *argv[])
 	if (sock_raw < 0)  {
 		errno = s_errno;
 		perror("clockdiff: socket");
+		exit(1);
+	}
+
+	if (n_errno < 0) {
+		errno = n_errno;
+		perror("clockdiff: nice");
 		exit(1);
 	}
 
@@ -628,8 +639,6 @@ main(int argc, char *argv[])
 			ip_opt_len = 0;
 		}
 	}
-
-	nice(-16);
 
 	if ((measure_status = (ip_opt_len ? measure_opt : measure)(&server)) < 0) {
 		if (errno)
