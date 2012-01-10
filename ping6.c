@@ -247,6 +247,7 @@ static int niquery_option_ipv4_handler(int index, const char *arg);
 static int niquery_option_ipv4_flag_handler(int index, const char *arg);
 static int niquery_option_subject_addr_handler(int index, const char *arg);
 static int niquery_option_subject_name_handler(int index, const char *arg);
+static int niquery_option_help_handler(int index, const char *arg);
 char *ni_groupaddr(const char *name);
 
 struct niquery_option niquery_options[] = {
@@ -264,6 +265,7 @@ struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("subject-ipv4",		1,	NI_SUBJ_IPV4,			niquery_option_subject_addr_handler),
 	NIQUERY_OPTION("subject-name",		1,	0,				niquery_option_subject_name_handler),
 	NIQUERY_OPTION("subject-fqdn",		1,	-1,				niquery_option_subject_name_handler),
+	NIQUERY_OPTION("help",			0,	0,				niquery_option_help_handler),
 	{},
 };
 
@@ -442,6 +444,21 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 
 	free(name);
 	return 0;
+}
+
+int niquery_option_help_handler(int index, const char *arg)
+{
+	fprintf(stderr, "ping6 -N suboptions\n"
+			"\tQuery:\n"
+			"\t\tname,\n"
+			"\t\tipv6,ipv6-all,ipv6-compatible,ipv6-linklocal,ipv6-sitelocal,ipv6-global,\n"
+			"\t\tipv4,ipv4-all,\n"
+			"\tSubject:\n"
+			"\t\tsubject-ipv6=addr,subject-ipv4=addr,subject-name=name,subject-fqdn=name,\n"
+			"\tHelp:\n"
+			"\t\thelp\n"
+		);
+	exit(2);
 }
 
 int niquery_option_handler(const char *opt_arg)
@@ -1555,7 +1572,7 @@ void usage(void)
 "Usage: ping6 [-LUdfnqrvVaADO] [-c count] [-i interval] [-w deadline]\n"
 "             [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
 "             [-M pmtudisc-hint] [-S sndbuf] [-F flowlabel] [-Q tclass]\n"
-"             [[-N nodeinfo-option] ...]\n"
+"             [-N nodeinfo-suboptions]\n"
 "             [hop1 ...] destination\n");
 	exit(2);
 }
