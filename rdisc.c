@@ -161,11 +161,12 @@ static int interfaces_size;			/* Number of elements in interfaces */
 /* fraser */
 int debugfile;
 
-char usage[] =
-"Usage:	rdisc [-b] [-d] [-s] [-v] [-f] [-a] [-V] [send_address] [receive_address]\n"
+const char usage[] =
+"Usage:	rdisc [-b] [-d] [-s] [-v] [-f] [-a] [-V] [send_address] [receive_address]"
 #ifdef RDISC_SERVER
-"       rdisc -r [-b] [-d] [-s] [-v] [-f] [-a] [-V] [-p <preference>] [-T <secs>] \n"
-"		 [send_address] [receive_address]\n"
+"\n"
+"       rdisc -r [-b] [-d] [-s] [-v] [-f] [-a] [-V] [-p <preference>] [-T <secs>]\n"
+"		 [send_address] [receive_address]"
 #endif
 ;
 
@@ -231,7 +232,7 @@ static __inline__ int ismulticast(struct sockaddr_in *sin)
 
 static void prusage(void)
 {
-	(void) fprintf(stderr, usage);
+	fputs(usage, stderr);
 	exit(1);
 }
 
