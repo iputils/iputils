@@ -80,7 +80,7 @@ void data_wait(int fd)
 
 void print_host(const char *a, const char *b, int both)
 {
-	size_t plen = 0;
+	int plen = 0;
 	printf("%s", a);
 	plen = strlen(a);
 	if (both) {
