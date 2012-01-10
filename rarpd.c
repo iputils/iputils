@@ -674,7 +674,11 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 
-		chdir("/");
+		if (chdir("/") < 0) {
+			perror("rarpd: chdir");
+			exit(1);
+		}
+
 		fd = open("/dev/null", O_RDWR);
 		if (fd >= 0) {
 			dup2(fd, 0);
