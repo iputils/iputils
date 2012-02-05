@@ -22,6 +22,9 @@
 #include <linux/if_ether.h>
 #include <net/if_arp.h>
 #include <sys/uio.h>
+#ifdef CAPABILITIES
+#include <sys/capability.h>
+#endif
 
 #include <netdb.h>
 #include <unistd.h>
@@ -355,6 +358,17 @@ main(int argc, char **argv)
 		perror("arping: setuid");
 		exit(-1);
 	}
+
+#ifdef CAPABILITIES
+	{
+		cap_t caps = cap_init();
+		if (cap_set_proc(caps)) {
+			perror("arping: cap_set_proc");
+			exit(-1);
+		}
+		cap_free(caps);
+	}
+#endif
 
 	while ((ch = getopt(argc, argv, "h?bfDUAqc:w:s:I:V")) != EOF) {
 		switch(ch) {

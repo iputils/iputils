@@ -20,6 +20,9 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <linux/types.h>
+#ifdef CAPABILITIES
+#include <sys/capability.h>
+#endif
 
 void usage(void) __attribute__((noreturn));
 
@@ -530,6 +533,20 @@ usage() {
   exit(1);
 }
 
+void drop_rights(void) {
+#ifdef CAPABILITIES
+	cap_t caps = cap_init();
+	if (cap_set_proc(caps)) {
+		perror("clockdiff: cap_set_proc");
+		exit(-1);
+	}
+	cap_free(caps);
+#endif
+	if (setuid(getuid())) {
+		perror("clockdiff: setuid");
+		exit(-1);
+	}
+}
 
 int
 main(int argc, char *argv[])
@@ -541,10 +558,7 @@ main(int argc, char *argv[])
 	int n_errno = 0;
 
 	if (argc < 2) {
-		if (setuid(getuid())) {
-			perror("clockdiff: setuid");
-			exit(-1);
-		}
+		drop_rights();
 		usage();
 	}
 
@@ -554,11 +568,7 @@ main(int argc, char *argv[])
 	errno = 0;
 	if (nice(-16) == -1)
 		n_errno = errno;
-
-	if (setuid(getuid())) {
-		perror("clockdiff: setuid");
-		exit(-1);
-	}
+	drop_rights();
 
 	if (argc == 3) {
 		if (strcmp(argv[1], "-o") == 0) {

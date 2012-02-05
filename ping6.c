@@ -72,6 +72,9 @@ char copyright[] =
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
 #include <resolv.h>
+#ifdef CAPABILITIES
+#include <sys/capability.h>
+#endif
 
 #include "ping6_niquery.h"
 
@@ -551,9 +554,19 @@ int main(int argc, char *argv[])
 
 	uid = getuid();
 	if (setuid(uid)) {
-		perror("ping: setuid");
+		perror("ping6: setuid");
 		exit(-1);
 	}
+#ifdef CAPABILITIES
+	{
+		cap_t caps = cap_init();
+		if (cap_set_proc(caps)) {
+			perror("ping6: cap_set_proc");
+			exit(-1);
+		}
+		cap_free(caps);
+	}
+#endif
 
 	source.sin6_family = AF_INET6;
 	memset(&firsthop, 0, sizeof(firsthop));

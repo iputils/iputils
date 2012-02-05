@@ -62,6 +62,9 @@ char copyright[] =
 
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
+#ifdef CAPABILITIES
+#include <sys/capability.h>
+#endif
 
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
@@ -131,6 +134,16 @@ main(int argc, char **argv)
 		perror("ping: setuid");
 		exit(-1);
 	}
+#ifdef CAPABILITIES
+	{
+		cap_t caps = cap_init();
+		if (cap_set_proc(caps)) {
+			perror("ping: cap_set_proc");
+			exit(-1);
+		}
+		cap_free(caps);
+	}
+#endif
 
 	source.sin_family = AF_INET;
 

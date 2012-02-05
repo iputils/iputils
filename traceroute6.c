@@ -249,6 +249,9 @@ char copyright[] =
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
 #include <linux/types.h>
+#ifdef CAPABILITIES
+#include <sys/capability.h>
+#endif
 
 #include <arpa/inet.h>
 
@@ -342,6 +345,16 @@ int main(int argc, char *argv[])
 		perror("traceroute6: setuid");
 		exit(-1);
 	}
+#ifdef CAPABILITIES
+	{
+		cap_t caps = cap_init();
+		if (cap_set_proc(caps)) {
+			perror("traceroute6: cap_set_proc");
+			exit(-1);
+		}
+		cap_free(caps);
+	}
+#endif
 
 	on = 1;
 	seq = tos = 0;
