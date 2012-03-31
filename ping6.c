@@ -1573,8 +1573,12 @@ char * pr_addr(struct in6_addr *addr)
 {
 	struct hostent *hp = NULL;
 
-	if (!(options&F_NUMERIC))
+	in_pr_addr = !setjmp(pr_addr_jmp);
+
+	if (!(exiting || options&F_NUMERIC))
 		hp = gethostbyaddr((__u8*)addr, sizeof(struct in6_addr), AF_INET6);
+
+	in_pr_addr = 0;
 
 	return hp ? hp->h_name : pr_addr_n(addr);
 }

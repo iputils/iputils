@@ -1186,12 +1186,17 @@ pr_addr(__u32 addr)
 	struct hostent *hp;
 	static char buf[4096];
 
-	if ((options & F_NUMERIC) ||
+	in_pr_addr = !setjmp(pr_addr_jmp);
+
+	if (exiting || (options & F_NUMERIC) ||
 	    !(hp = gethostbyaddr((char *)&addr, 4, AF_INET)))
 		sprintf(buf, "%s", inet_ntoa(*(struct in_addr *)&addr));
 	else
 		snprintf(buf, sizeof(buf), "%s (%s)", hp->h_name,
 			 inet_ntoa(*(struct in_addr *)&addr));
+
+	in_pr_addr = 0;
+
 	return(buf);
 }
 

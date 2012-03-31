@@ -30,6 +30,8 @@ struct timeval start_time, cur_time;
 volatile int exiting;
 volatile int status_snapshot;
 int confirm = 0;
+int in_pr_addr = 0;		/* pr_addr() is executing */
+jmp_buf pr_addr_jmp;
 
 /* Stupid workarounds for bugs/missing functionality in older linuces.
  * confirm_flag fixes refusing service of kernels without MSG_CONFIRM.
@@ -360,6 +362,8 @@ void common_options(int ch)
 static void sigexit(int signo)
 {
 	exiting = 1;
+	if (in_pr_addr)
+		longjmp(pr_addr_jmp, 0);
 }
 
 static void sigstatus(int signo)

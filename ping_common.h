@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
+#include <setjmp.h>
 
 #ifdef CAPABILITIES
 #include <sys/prctl.h>
@@ -243,3 +244,6 @@ extern int gather_statistics(__u8 *ptr, int icmplen,
 			     int csfailed, struct timeval *tv, char *from,
 			     void (*pr_reply)(__u8 *ptr, int cc));
 extern void print_timestamp(void);
+
+extern int in_pr_addr;
+extern jmp_buf pr_addr_jmp;
