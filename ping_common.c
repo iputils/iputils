@@ -493,6 +493,10 @@ void setup(int icmp_sock)
 			 * dont support mark ..
 			*/
 			fprintf(stderr, "Warning: Failed to set mark %d\n", mark);
+#ifdef CAPABILITIES
+			/* in case we deferred dropping capabilities because of SO_MARK */
+			drop_capabilities();
+#endif
 		}
 	}
 

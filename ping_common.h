@@ -17,6 +17,10 @@
 #include <string.h>
 #include <netdb.h>
 
+#ifdef CAPABILITIES
+#include <sys/capability.h>
+#endif
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <linux/types.h>
@@ -189,6 +193,15 @@ static inline void advance_ntransmitted(void)
 		acked = (__u16)ntransmitted + 1;
 }
 
+static inline void drop_capabilities(void)
+{
+	cap_t cap = cap_init();
+	if (cap_set_proc(cap) < 0) {
+		perror("ping: cap_set_proc");
+		exit(-1);
+	}
+	cap_free(cap);
+}
 
 extern int send_probe(void);
 extern int receive_error_msg(void);

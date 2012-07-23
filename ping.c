@@ -62,9 +62,6 @@ char copyright[] =
 
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
-#ifdef CAPABILITIES
-#include <sys/capability.h>
-#endif
 
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
@@ -136,12 +133,24 @@ main(int argc, char **argv)
 	}
 #ifdef CAPABILITIES
 	{
-		cap_t caps = cap_init();
-		if (cap_set_proc(caps)) {
-			perror("ping: cap_set_proc");
+		cap_t cap;
+		cap_flag_value_t net_admin_set = CAP_CLEAR;
+
+		/* check for cap_net_admin because it may be needed to set packet marks */
+		if ((cap = cap_get_proc()) == NULL) {
+			perror("ping: cap_get_proc");
 			exit(-1);
 		}
-		cap_free(caps);
+		if (cap_get_flag(cap, CAP_NET_ADMIN, CAP_EFFECTIVE, &net_admin_set) != 0) {
+			perror("ping: cap_get_flag");
+			exit(-1);
+		}
+		cap_free(cap);
+
+		/* if CAP_NET_ADMIN is not set, drop all capabilities now, otherwise defer
+		 * dropping after the SO_MARK sock opt is set */
+		if (net_admin_set == CAP_CLEAR)
+			drop_capabilities();
 	}
 #endif
 
