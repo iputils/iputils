@@ -705,7 +705,7 @@ int send_probe()
 void pr_echo_reply(__u8 *_icp, int len)
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
-	printf(" icmp_req=%u", ntohs(icp->un.echo.sequence));
+	printf(" icmp_seq=%u", ntohs(icp->un.echo.sequence));
 }
 
 int
