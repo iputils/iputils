@@ -361,10 +361,14 @@ static void do_daemonize(void)
 	if (opt_p) {
 		if (!access(opt_p, R_OK)) {
 			if ((fp = fopen(opt_p, "r"))) {
-				fscanf(fp, "%d", &pid);
+				if (fscanf(fp, "%d", &pid) != 1) {
+					DEBUG(LOG_ERR, "pid file '%s' exists, but read failed.\n",
+					      opt_p, pid);
+				} else {
+					DEBUG(LOG_ERR, "pid file '%s' exists : %d\n",
+					      opt_p, pid);
+				}
 				fclose(fp);
-				DEBUG(LOG_ERR, "pid file '%s' exists : %d\n",
-						opt_p, pid);
 				exit(1);
 			}
 		}
