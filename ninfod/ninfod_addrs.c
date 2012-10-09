@@ -158,7 +158,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 
 	if (subject && subjlen != sizeof(struct in6_addr)) {
 		DEBUG(LOG_INFO,
-		      "%s(): invalid subject length %u for IPv6 Address Subject\n",
+		      "%s(): invalid subject length %zu for IPv6 Address Subject\n",
 		      __FUNCTION__, subjlen);
 		return 1;
 	}
@@ -327,7 +327,7 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 
 	if (subject && subjlen != sizeof(struct in_addr)) {
 		DEBUG(LOG_INFO,
-		      "%s(): invalid subject length %u for IPv4 Address Subject\n",
+		      "%s(): invalid subject length %zu for IPv4 Address Subject\n",
 		      __FUNCTION__, subjlen);
 		return 1;
 	}

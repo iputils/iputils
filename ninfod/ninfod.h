@@ -103,7 +103,7 @@ void stderrlog(int priority, char *format, ...);
 #define ni_malloc(size)	({										\
 				size_t _size = (size);							\
 				void *p = malloc(_size);						\
-				DEBUG(LOG_DEBUG, "%s(): malloc(%d) = %p\n", __FUNCTION__, _size, p);	\
+				DEBUG(LOG_DEBUG, "%s(): malloc(%zu) = %p\n", __FUNCTION__, _size, p);	\
 				p;									\
 			})
 #define ni_free(p)	({										\

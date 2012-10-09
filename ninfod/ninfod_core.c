@@ -245,7 +245,7 @@ int pr_nodeinfo_noop(CHECKANDFILL_ARGS)
 
 	if (subjlen) {
 		DEBUG(LOG_WARNING,
-		      "%s(): invalid subject length(%d)\n",
+		      "%s(): invalid subject length(%zu)\n",
 		      __FUNCTION__, subjlen);
 		return 1;
 	}
@@ -273,7 +273,7 @@ int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS)
 	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
 
 	if (subjlen) {
-		DEBUG(LOG_WARNING, "%s(): invalid subject length(%d)\n",
+		DEBUG(LOG_WARNING, "%s(): invalid subject length(%zu)\n",
 		      __FUNCTION__, subjlen);
 		return 1;
 	}
