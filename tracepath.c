@@ -145,7 +145,7 @@ restart:
 			if (cmsg->cmsg_type == IP_RECVERR) {
 				e = (struct sock_extended_err *) CMSG_DATA(cmsg);
 			} else if (cmsg->cmsg_type == IP_TTL) {
-				rethops = *(int*)CMSG_DATA(cmsg);
+				memcpy(&rethops, CMSG_DATA(cmsg), sizeof(rethops));
 			} else {
 				printf("cmsg:%d\n ", cmsg->cmsg_type);
 			}

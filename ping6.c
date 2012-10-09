@@ -1138,22 +1138,32 @@ int build_echo(__u8 *_icmph)
 	return cc;
 }
 
+static inline int ntohsp(__u16 *p)
+{
+	__u16 v;
+	memcpy(&v, p, sizeof(v));
+	return ntohs(v);
+}
+
 int build_niquery(__u8 *_nih)
 {
 	struct ni_hdr *nih;
 	int cc;
+	__u16 v;
 
 	nih = (struct ni_hdr *)_nih;
 	nih->ni_cksum = 0;
 
-	CLR(ntohs((*(__u16*)(nih->ni_nonce))) % mx_dup_ck);
+	CLR(ntohsp((__u16*)(nih->ni_nonce)) % mx_dup_ck);
 
 	nih->ni_type = ICMPV6_NI_QUERY;
 	cc = sizeof(*nih);
 	datalen = 0;
 
-	memcpy(nih->ni_nonce, ni_nonce, sizeof(nih->ni_nonce));
-	*(__u16*)(nih->ni_nonce) = htons(ntransmitted + 1);
+	memcpy(&nih->ni_nonce, ni_nonce, sizeof(nih->ni_nonce));
+
+	v = htons(ntransmitted + 1);
+	memcpy(&nih->ni_nonce[0], &v, sizeof(v));
 
 	nih->ni_code = ni_subject_type;
 	nih->ni_qtype = htons(ni_query);
@@ -1367,7 +1377,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 #endif
 			if (c->cmsg_len < CMSG_LEN(sizeof(int)))
 				continue;
-			hops = *(int*)CMSG_DATA(c);
+			memcpy(&hops, CMSG_DATA(c), sizeof(hops));
 		}
 	}
 
@@ -1391,7 +1401,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 			return 0;
 	} else if (icmph->icmp6_type == ICMPV6_NI_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
-		__u16 seq = ntohs(*(__u16 *)nih->ni_nonce);
+		__u16 seq = ntohsp((__u16 *)nih->ni_nonce);
 		if (memcmp(&nih->ni_nonce[2], &ni_nonce[2], sizeof(ni_nonce) - sizeof(__u16)))
 			return 1;
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,

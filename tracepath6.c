@@ -173,7 +173,7 @@ restart:
 #ifdef IPV6_2292HOPLIMIT
 			case IPV6_2292HOPLIMIT:
 #endif
-				rethops = *(int*)CMSG_DATA(cmsg);
+				memcpy(&rethops, CMSG_DATA(cmsg), sizeof(rethops));
 				break;
 			default:
 				printf("cmsg6:%d\n ", cmsg->cmsg_type);
