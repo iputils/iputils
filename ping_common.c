@@ -371,7 +371,7 @@ resend:
 			 * high preload or pipe size is very confusing. */
 			if ((preload < screen_width && pipesize < screen_width) ||
 			    in_flight() < screen_width)
-				write(STDOUT_FILENO, ".", 1);
+				write_stdout(".", 1);
 		}
 		return interval - tokens;
 	}
@@ -424,7 +424,7 @@ resend:
 
 	if (i == 0 && !(options & F_QUIET)) {
 		if (options & F_FLOOD)
-			write(STDOUT_FILENO, "E", 1);
+			write_stdout("E", 1);
 		else
 			perror("ping: sendmsg");
 	}
@@ -765,9 +765,9 @@ restamp:
 
 	if (options & F_FLOOD) {
 		if (!csfailed)
-			write(STDOUT_FILENO, "\b \b", 3);
+			write_stdout("\b \b", 3);
 		else
-			write(STDOUT_FILENO, "\bC", 1);
+			write_stdout("\bC", 1);
 	} else {
 		int i;
 		__u8 *cp, *dp;

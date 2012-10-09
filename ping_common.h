@@ -130,6 +130,18 @@ case 'D': case 'O':
 
 #define COMMON_OPTSTR "h?VQ:I:M:aUc:dfi:w:l:S:np:qrs:vLt:AW:Bm:DO"
 
+/*
+ * Write to stdout
+ */
+static inline void write_stdout(const char *str, size_t len)
+{
+	size_t o = 0;
+	ssize_t cc;
+	do {
+		cc = write(STDOUT_FILENO, str + o, len - o);
+		o += cc;
+	} while (len >= o || cc < 0);
+}
 
 /*
  * tvsub --

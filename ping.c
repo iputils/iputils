@@ -580,7 +580,7 @@ int receive_error_msg()
 		if (options & F_QUIET)
 			goto out;
 		if (options & F_FLOOD)
-			write(STDOUT_FILENO, "E", 1);
+			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
 			fprintf(stderr, "ping: local error: %s\n", strerror(e->ee_errno));
 		else
@@ -616,7 +616,7 @@ int receive_error_msg()
 		if (options & F_QUIET)
 			goto out;
 		if (options & F_FLOOD) {
-			write(STDOUT_FILENO, "\bE", 2);
+			write_stdout("\bE", 2);
 		} else {
 			print_timestamp();
 			printf("From %s icmp_seq=%u ", pr_addr(sin->sin_addr.s_addr), ntohs(icmph.un.echo.sequence));
@@ -789,7 +789,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 					return !error_pkt;
 				if (options & F_FLOOD) {
 					if (error_pkt)
-						write(STDOUT_FILENO, "\bE", 2);
+						write_stdout("\bE", 2);
 					return !error_pkt;
 				}
 				print_timestamp();
@@ -807,9 +807,9 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		}
 		if ((options & F_FLOOD) && !(options & (F_VERBOSE|F_QUIET))) {
 			if (!csfailed)
-				write(STDOUT_FILENO, "!E", 2);
+				write_stdout("!E", 2);
 			else
-				write(STDOUT_FILENO, "!EC", 3);
+				write_stdout("!EC", 3);
 			return 0;
 		}
 		if (!(options & F_VERBOSE) || uid)
