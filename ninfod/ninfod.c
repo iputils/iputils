@@ -342,7 +342,7 @@ static void sig_handler(int sig)
 	DEBUG(LOG_INFO, "singnal(%d) received, quit.\n", sig);
 	err = unlink(opt_p);
 	if (err < 0) {
-		DEBUG(LOG_ERR, "failed to unlink file '%s' : %d\n",
+		DEBUG(LOG_ERR, "failed to unlink file '%s' : %s\n",
 				opt_p, strerror(errno));
 		exit(1);
 	}
