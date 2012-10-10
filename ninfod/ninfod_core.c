@@ -112,6 +112,8 @@
 # define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
 #endif
 
+#define ARRAY_SIZE(a)		(sizeof(a) / sizeof(a[0]))
+
 /* ---------- */
 /* ID */
 static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_core.c,v 1.29 2003-07-16 09:49:01 yoshfuji Exp $";
@@ -162,7 +164,7 @@ static struct subjinfo subjinfo_null = {
 
 static __inline__ struct subjinfo *subjinfo_lookup(int code)
 {
-	if (code >= sizeof(subjinfo_table)/sizeof(subjinfo_table[0]))
+	if (code >= ARRAY_SIZE(subjinfo_table))
 		return NULL;
 	if (subjinfo_table[code].name == NULL)
 		return NULL;
@@ -228,7 +230,7 @@ static struct qtypeinfo qtypeinfo_refused = {
 
 static __inline__ struct qtypeinfo *qtypeinfo_lookup(int qtype)
 {
-	if (qtype >= sizeof(qtypeinfo_table)/sizeof(qtypeinfo_table[0]))
+	if (qtype >= ARRAY_SIZE(qtypeinfo_table))
 		return &qtypeinfo_unknown;
 	if (qtypeinfo_table[qtype].name == NULL)
 		return &qtypeinfo_unknown;
@@ -308,7 +310,7 @@ void init_nodeinfo_suptypes(INIT_ARGS)
 	memset(suptypes, 0, sizeof(suptypes));
 	suptypes_len = 0;
 
-	for (i=0; i<sizeof(qtypeinfo_table)/sizeof(qtypeinfo_table[0]); i++) {
+	for (i=0; i < ARRAY_SIZE(qtypeinfo_table); i++) {
 		unsigned short qtype;
 
 		if (qtypeinfo_table[i].name == NULL)
@@ -316,7 +318,7 @@ void init_nodeinfo_suptypes(INIT_ARGS)
 		qtype = qtypeinfo_table[i].qtype;
 		w = qtype>>5;
 		b = qtype&0x1f;
-		if (w >= sizeof(suptypes)/sizeof(suptypes[0])) {
+		if (w > ARRAY_SIZE(suptypes)) {
 			/* This is programming error. */
 			DEBUG(LOG_ERR, "Warning: Too Large Supported Types\n");
 			exit(1);
@@ -399,14 +401,14 @@ void init_core(int forced)
 #endif
 	}
 
-	for (i=0; i<sizeof(subjinfo_table)/sizeof(subjinfo_table[0]); i++) {
+	for (i=0; i < ARRAY_SIZE(subjinfo_table); i++) {
 		if (subjinfo_table[i].name == NULL)
 			continue;
 		if (subjinfo_table[i].init)
 			subjinfo_table[i].init(forced);
 	}
 
-	for (i=0; i<sizeof(qtypeinfo_table)/sizeof(qtypeinfo_table[0]); i++) {
+	for (i=0; i < ARRAY_SIZE(qtypeinfo_table); i++) {
 		if (qtypeinfo_table[i].name == NULL)
 			continue;
 		if (qtypeinfo_table[i].init)
