@@ -118,6 +118,8 @@ static int opt_h = 0;	/* help */
 static char *opt_p = NINFOD_PIDFILE;	/* pidfile */
 int opt_v = 0;		/* verbose */
 
+static int ipv6_pktinfo = IPV6_PKTINFO;
+
 /* --------- */
 #if ENABLE_DEBUG
 static const __inline__ char * log_level(int priority) {
@@ -150,6 +152,47 @@ static int __inline__ open_sock(void)
 	return socket(PF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 }
 
+static int set_recvpktinfo(int sock)
+{
+	int on, ret;
+
+	on = 1;
+
+#if defined(IPV6_RECVPKTINFO)
+	ret = setsockopt(sock,
+			 IPPROTO_IPV6, IPV6_RECVPKTINFO,
+			 &on, sizeof(on));
+	if (!ret)
+		return 0;
+# if defined(IPV6_2292PKTINFO)
+	ret = setsockopt(sock,
+			 IPPROTO_IPV6, IPV6_2292PKTINFO,
+			 &on, sizeof(on));
+	if (!ret) {
+		ipv6_pktinfo = IPV6_2292PKTINFO;
+		return 0;
+	}
+
+	DEBUG(LOG_ERR, "setsockopt(IPV6_RECVPKTINFO/IPV6_2292PKTINFO): %s\n",
+	      strerror(errno));
+# else
+	DEBUG(LOG_ERR, "setsockopt(IPV6_RECVPKTINFO): %s\n",
+	      strerror(errno));
+# endif
+#else
+	ret = setsockopt(sock,
+			 IPPROTO_IPV6, IPV6_PKTINFO,
+			 &on, sizeof(on));
+	if (!ret)
+		return 0;
+
+	DEBUG(LOG_ERR, "setsockopt(IPV6_PKTINFO): %s\n",
+	      strerror(errno));
+#endif
+
+	return -1;
+}
+
 static int __inline__ init_sock(int sock)
 {
 	struct icmp6_filter filter;
@@ -176,14 +219,8 @@ static int __inline__ init_sock(int sock)
 		return -1;
 	}
 
-	i = 1;
-	if (setsockopt(sock,
-		       IPPROTO_IPV6, IPV6_PKTINFO,
-		       &i, sizeof(i)) < 0) {
-		DEBUG(LOG_ERR, "setsockopt(IPV6_PKTINFO): %s\n",
-		      strerror(errno));
+	if (set_recvpktinfo(sock) < 0)
 		return -1;
-	}
 
 	return 0;
 }
@@ -223,7 +260,11 @@ int ni_recv(struct packetcontext *p)
 	for (cmsg = CMSG_FIRSTHDR(&msgh); cmsg;
 	     cmsg = CMSG_NXTHDR(&msgh, cmsg)) {
 		if (cmsg->cmsg_level == IPPROTO_IPV6 &&
-		    cmsg->cmsg_type == IPV6_PKTINFO) {
+		    (cmsg->cmsg_type == IPV6_PKTINFO
+#if defined(IPV6_2292PKTINFO)
+		     || cmsg->cmsg_type == IPV6_2292PKTINFO
+#endif
+		    )) {
 			memcpy(&p->pktinfo, CMSG_DATA(cmsg), sizeof(p->pktinfo));
 			break;
 		}
@@ -260,7 +301,7 @@ int ni_send(struct packetcontext *p)
 
 	cmsg = CMSG_FIRSTHDR(&msgh);
 	cmsg->cmsg_level = IPPROTO_IPV6;
-	cmsg->cmsg_type = IPV6_PKTINFO;
+	cmsg->cmsg_type = ipv6_pktinfo;
 	cmsg->cmsg_len = CMSG_LEN(sizeof(p->pktinfo));
 	memcpy(CMSG_DATA(cmsg), &p->pktinfo, sizeof(p->pktinfo));
 
