@@ -3,6 +3,9 @@
 /* Enable debugging */
 #undef ENABLE_DEBUG
 
+/* Enable ttl support for qtypes (deprecated) */
+#undef ENABLE_SUPTYPES
+
 /* Enable threads */
 #undef ENABLE_THREADS
 
