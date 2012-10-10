@@ -316,7 +316,8 @@ void init_nodeinfo_suptypes(INIT_ARGS)
 		qtype = qtypeinfo_table[i].qtype;
 		w = qtype>>5;
 		b = qtype&0x1f;
-		if (w > sizeof(suptypes)/sizeof(suptypes[0])) {
+		if (w >= sizeof(suptypes)/sizeof(suptypes[0])) {
+			/* This is programming error. */
 			DEBUG(LOG_ERR, "Warning: Too Large Supported Types\n");
 			exit(1);
 		}
