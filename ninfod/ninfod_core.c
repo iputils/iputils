@@ -241,12 +241,12 @@ int pr_nodeinfo_noop(CHECKANDFILL_ARGS)
 {
 	struct icmp6_nodeinfo *replybuf = NULL;
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (subjlen) {
 		DEBUG(LOG_WARNING,
 		      "%s(): invalid subject length(%zu)\n",
-		      __FUNCTION__, subjlen);
+		      __func__, subjlen);
 		return 1;
 	}
 
@@ -270,11 +270,11 @@ int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS)
 {
 	size_t replylen = sizeof(struct icmp6_nodeinfo) + (suptypes_len<<2);
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (subjlen) {
 		DEBUG(LOG_WARNING, "%s(): invalid subject length(%zu)\n",
-		      __FUNCTION__, subjlen);
+		      __func__, subjlen);
 		return 1;
 	}
 
@@ -372,7 +372,7 @@ void init_core(int forced)
 {
 	int i;
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (!initialized || forced) {
 		struct timeval tv;
@@ -380,7 +380,7 @@ void init_core(int forced)
 		pid_t pid;
 
 		if (gettimeofday(&tv, NULL) < 0) {
-			DEBUG(LOG_WARNING, "%s(): failed to gettimeofday()\n", __FUNCTION__);
+			DEBUG(LOG_WARNING, "%s(): failed to gettimeofday()\n", __func__);
 		} else {
 			seed = (tv.tv_usec & 0xffffffff);
 		}
@@ -422,9 +422,9 @@ void init_core(int forced)
 static void *ni_send_thread(void *data)
 {
 	int ret;
-	DEBUG(LOG_DEBUG, "%s(): thread=%ld\n", __FUNCTION__, pthread_self());
+	DEBUG(LOG_DEBUG, "%s(): thread=%ld\n", __func__, pthread_self());
 	ret = ni_send(data);
-	DEBUG(LOG_DEBUG, "%s(): thread=%ld => %d\n", __FUNCTION__, pthread_self(), ret);
+	DEBUG(LOG_DEBUG, "%s(): thread=%ld => %d\n", __func__, pthread_self(), ret);
 	return NULL;
 }
 #else
@@ -440,10 +440,10 @@ static int ni_send_fork(struct packetcontext *p)
 		if (grandchild == 0) {
 			int ret;
 			DEBUG(LOG_DEBUG, "%s(): worker=%d\n",
-			      __FUNCTION__, getpid());
+			      __func__, getpid());
 			ret = ni_send(p);
 			DEBUG(LOG_DEBUG, "%s(): worker=%d => %d\n",
-			      __FUNCTION__, getpid(), ret);
+			      __func__, getpid(), ret);
 		}
 		ni_free(p->replydata);
 		ni_free(p);
@@ -464,7 +464,7 @@ static int ni_ratelimit(void)
 
 	if (gettimeofday(&tv, NULL) < 0) {
 		DEBUG(LOG_WARNING, "%s(): gettimeofday(): %s\n",
-		      __FUNCTION__, strerror(errno));
+		      __func__, strerror(errno));
 		return -1;
 	}
 
@@ -514,7 +514,7 @@ int pr_nodeinfo(struct packetcontext *p)
 		cp += sprintf(cp, " %02x", query->icmp6_ni_nonce[i]);
 	}
 	DEBUG(LOG_DEBUG, "%s(): qtype=%d, flags=0x%04x, nonce[] = {%s }\n",
-	      __FUNCTION__,
+	      __func__,
 	      ntohs(query->ni_qtype), ntohs(query->ni_flags), printbuf);
 #endif
 
@@ -527,7 +527,7 @@ int pr_nodeinfo(struct packetcontext *p)
 		if (query->ni_code != ICMP6_NI_SUBJ_FQDN) {
 			DEBUG(LOG_WARNING,
 			      "%s(): invalid/unknown code %u\n",
-			      __FUNCTION__, query->ni_code);
+			      __func__, query->ni_code);
 			subjlen = 0;
 		}
 		subjinfo = &subjinfo_null;
@@ -537,7 +537,7 @@ int pr_nodeinfo(struct packetcontext *p)
 		if (!subjinfo) {
 			DEBUG(LOG_WARNING,
 			      "%s(): unknown code %u\n",
-			      __FUNCTION__, query->ni_code);
+			      __func__, query->ni_code);
 			ni_free(p);
 			return -1;
 		}

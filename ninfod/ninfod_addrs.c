@@ -129,7 +129,7 @@ static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_addrs.c,v 1.18 200
 /* ipv6 address */
 void init_nodeinfo_ipv6addr(INIT_ARGS)
 {
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 	return;
 }
 
@@ -154,12 +154,12 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 	struct ni_ifaddrs *ifa0;
 	unsigned int ifindex = 0;
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (subject && subjlen != sizeof(struct in6_addr)) {
 		DEBUG(LOG_INFO,
 		      "%s(): invalid subject length %zu for IPv6 Address Subject\n",
-		      __FUNCTION__, subjlen);
+		      __func__, subjlen);
 		return 1;
 	}
 	if (ni_ifaddrs(&ifa0, AF_INET6))
@@ -309,7 +309,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 /* ipv4 address */
 void init_nodeinfo_ipv4addr(INIT_ARGS)
 {
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 	return;
 }
 
@@ -323,12 +323,12 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 	struct ni_ifaddrs *ifa0;
 	unsigned int ifindex = 0;
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (subject && subjlen != sizeof(struct in_addr)) {
 		DEBUG(LOG_INFO,
 		      "%s(): invalid subject length %zu for IPv4 Address Subject\n",
-		      __FUNCTION__, subjlen);
+		      __func__, subjlen);
 		return 1;
 	}
 	if (ni_ifaddrs(&ifa0, AF_INET))

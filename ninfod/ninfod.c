@@ -235,7 +235,7 @@ int ni_recv(struct packetcontext *p)
 	struct cmsghdr *cmsg;
 	int cc;
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	memset(&iov, 0, sizeof(iov));
 	iov[0].iov_base = p->query;
@@ -282,7 +282,7 @@ int ni_send(struct packetcontext *p)
 	struct cmsghdr *cmsg;
 	int cc;
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	memset(&iov, 0, sizeof(iov));
 	iov[0].iov_base = &p->reply;
@@ -511,7 +511,7 @@ int main (int argc, char **argv)
 		p = ni_malloc(sizeof(*p));
 		if (!p) {
 			DEBUG(LOG_WARNING, "%s(): failed to allocate packet context; sleep 1 sec.\n",
-			      __FUNCTION__);
+			      __func__);
 			sleep(1);
 			continue;
 		}

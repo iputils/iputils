@@ -103,13 +103,13 @@ void stderrlog(int priority, char *format, ...);
 #define ni_malloc(size)	({										\
 				size_t _size = (size);							\
 				void *p = malloc(_size);						\
-				DEBUG(LOG_DEBUG, "%s(): malloc(%zu) = %p\n", __FUNCTION__, _size, p);	\
+				DEBUG(LOG_DEBUG, "%s(): malloc(%zu) = %p\n", __func__, _size, p);	\
 				p;									\
 			})
 #define ni_free(p)	({										\
 				void *_p = (p);								\
 				int saved_errno = errno;						\
-				DEBUG(LOG_DEBUG, "%s(): free(%p)\n", __FUNCTION__, _p);			\
+				DEBUG(LOG_DEBUG, "%s(): free(%p)\n", __func__, _p);			\
 				free(_p);								\
 				errno = saved_errno;							\
 			})

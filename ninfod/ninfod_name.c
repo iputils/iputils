@@ -285,7 +285,7 @@ void init_nodeinfo_nodename(int forced)
 	int len;
 	int changed = 0;
 
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	uname(&newname);
 	changed = strcmp(newname.nodename, utsname.nodename);
@@ -305,7 +305,7 @@ void init_nodeinfo_nodename(int forced)
 #endif
 			DEBUG(LOG_WARNING,
 			      "%s(): failed to leave group %s.\n",
-			      __FUNCTION__, niaddrbuf);
+			      __func__, niaddrbuf);
 			memset(&nigroup, 0, sizeof(nigroup));
 		}
 	}
@@ -332,7 +332,7 @@ void init_nodeinfo_nodename(int forced)
 #endif
 				DEBUG(LOG_WARNING,
 				      "%s(): failed to join group %s.\n",
-				      __FUNCTION__, niaddrbuf);
+				      __func__, niaddrbuf);
 				memset(&nigroup, 0, sizeof(nigroup));
 			}
 		} else {
@@ -347,7 +347,7 @@ void init_nodeinfo_nodename(int forced)
 /* nodename */
 int pr_nodeinfo_nodename(CHECKANDFILL_ARGS)
 {
-	DEBUG(LOG_DEBUG, "%s()\n", __FUNCTION__);
+	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (subject) {
 		if (!nodenamelen ||
