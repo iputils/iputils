@@ -1,3 +1,50 @@
+[s20121011]
+
+Jan Synacek (2):
+      ping,ping6: Defer the dropping if the "-m" is specified and correct capability is set.
+      ping: Fix typo in echo reply
+
+Ole Bjorn Hessen (1):
+      ping: report outstanding packets before sending next packet
+
+YOSHIFUJI Hideaki (32):
+      ping,ping6: Add -D to synopsis.
+      ping: More icmp code descriptions.
+      ping,ping6: Hide ipg/ewma info without packets received.
+      ping6: Remove unused variable.
+      ping6: Help for -N suboptions.
+      tracepath,tracepath6: Use argument type of int for field width specifier.
+      clockdiff: Call nice() before changing effective uid.
+      rdisc: Use fputs() instead of fprintf() to shut up gcc warning.
+      rarpd: Check return value of chdir().
+      makefile: Introduce new variable for capability support.
+      ping,ping6: Check return value of write(2) for stdout.
+      ping6,tracepath,tracepath6: Do not dereference type-punned pointer directly.
+      Makefile: host changed from takos to pleiades.
+      ping6: Provide enough buffer for dn_comp() and make NI Query with Name subject work.
+      ping6: Consolidate error path of niquery_option_subject_name_handler().
+      ninfod: Node Information Query (RFC4620) daemon from USAGI Project.
+      ninfod: struct in6_pktinfo requires -D_GNU_SOURCE.
+      ninfod: Use %zu format string for size_t variable.
+      ninfod: Add missing entry for ENABLE_SUPTYPES in config.h.in.
+      ninfod: Support newer environment supporting RFC3542.
+      ninfod: Fix format string for string returned from strerror(3).
+      ninfod: Check return value of fscanf(3).
+      ninfod: Fix off-by-one error to check possible programming error.
+      ninfod: Add datarootdir.
+      ninfod: Use __func__ instead of __FUNCTION__.
+      ninfod: Introduce ARRAY_SIZE macro for counting number of elements in an array.
+      ninfod: Delete ninfod.sh by make distclean, not by make clean.
+      ping6: Do not try to use result buffer when dn_comp(3) failed.
+      ping,ping6: ifdef guard for inline function for capability support and fix build with USE_CAP=no.
+      makefile: Do not use "-llib" dependency.
+      arping: build without sysfs support (USE_SYSFS=no).
+      Merge branch 'ninfod'
+
+Ángel González (1):
+      iputils: Add capability dropping
+
+
 [s20101006]
 
 Chris Caputo (1):
