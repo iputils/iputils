@@ -411,10 +411,8 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	name = strdup(arg);
 	buf = malloc(buflen);
 	if (!name || !buf) {
-		free(name);
-		free(buf);
 		fprintf(stderr, "ping6: out of memory.\n");
-		exit(1);
+		goto errexit;
 	}
 
 	ni_group = ni_groupaddr(name);
@@ -432,14 +430,10 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	n = dn_comp(name, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
 	if (n < 0) {
 		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", buf);
-		free(name);
-		free(buf);
-		exit(1);
+		goto errexit;
 	} else if (n >= buflen) {
 		fprintf(stderr, "ping6: dn_comp() returned loo long result.\n");
-		free(name);
-		free(buf);
-		exit(1);
+		goto errexit;
 	}
 
 	if (fqdn < 0)
@@ -451,6 +445,11 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 
 	free(name);
 	return 0;
+
+errexit:
+	free(name);
+	free(buf);
+	exit(1);
 }
 
 int niquery_option_help_handler(int index, const char *arg)
