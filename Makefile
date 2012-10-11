@@ -33,12 +33,19 @@ TAG:=`date +s%Y%m%d`
 
 all: $(TARGETS)
 
-clockdiff: $(LIB_CAP)
-traceroute6: $(LIB_CAP)
+clockdiff: clockdiff.o
+	$(LINK.o) -o $@ $^ $(LIB_CAP)
+traceroute6: traceroute6.o
+	$(LINK.o) -o $@ $^ $(LIB_CAP)
 tftpd: tftpd.o tftpsubs.o
-arping: arping.o -lsysfs $(LIB_CAP)
-ping: ping.o ping_common.o $(LIB_CAP)
-ping6: ping6.o ping_common.o -lresolv -lcrypto $(LIB_CAP)
+	$(LINK.o) -o $@ $^ $(LIB_CAP)
+arping: arping.o
+	$(LINK.o) -o $@ $^ -lsysfs $(LIB_CAP)
+ping: ping.o ping_common.o
+	$(LINK.o) -o $@ $^ $(LIB_CAP)
+ping6: ping6.o ping_common.o
+	$(LINK.o) -o $@ $^ -lresolv -lcrypto $(LIB_CAP)
+
 ping.o ping6.o ping_common.o: ping_common.h
 tftpd.o tftpsubs.o: tftp.h
 
