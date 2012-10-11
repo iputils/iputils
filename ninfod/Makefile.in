@@ -62,11 +62,12 @@ INSTALL = @INSTALL@
 # ----------------
 all: ninfod
 clean:
-	-rm -f *.o ninfod ninfod.sh
+	-rm -f *.o ninfod
 distclean: clean
 	-rm -f *~ *.bak #*
 	-rm -fr autom4te.cache
 	-rm -f Makefile config.h config.cache config.status config.log
+	-rm -f ninfod.sh
 install: all
 	@INSTALL_DIR@ @sbindir@
 	@INSTALL@ ninfod -o root @sbindir@
