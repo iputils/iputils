@@ -205,6 +205,7 @@ static inline void advance_ntransmitted(void)
 		acked = (__u16)ntransmitted + 1;
 }
 
+#ifdef CAPABILITIES
 static inline void drop_capabilities(void)
 {
 	cap_t cap = cap_init();
@@ -214,6 +215,7 @@ static inline void drop_capabilities(void)
 	}
 	cap_free(cap);
 }
+#endif
 
 extern int send_probe(void);
 extern int receive_error_msg(void);
