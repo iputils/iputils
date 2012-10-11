@@ -35,7 +35,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#ifdef USE_SYSFS
 #include <sysfs/libsysfs.h>
+#endif
 
 #include "SNAPSHOT.h"
 
@@ -316,6 +318,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 
 void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
 {
+#if USE_SYSFS
 	struct sysfs_class_device *dev;
 	struct sysfs_attribute *brdcast;
 	unsigned char *p;
@@ -340,7 +343,9 @@ void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
 
 	for (p = ba, ch = 0; p < ba + balen; p++, ch += 3)
 		*p = strtoul(brdcast->value + ch, NULL, 16);
-
+#else
+	memset(ba, -1, balen);
+#endif
 	return;
 }
 
@@ -541,12 +546,8 @@ main(int argc, char **argv)
 
 	he = me;
 
-#if 1
 	set_device_broadcast(device, ((struct sockaddr_ll *)&he)->sll_addr,
 			     ((struct sockaddr_ll *)&he)->sll_halen);
-#else
-	memset(((struct sockaddr_ll *)&he)->sll_addr, -1, ((struct sockaddr_ll *)&he)->sll_halen);
-#endif
 
 	if (!quiet) {
 		printf("ARPING %s ", inet_ntoa(dst));

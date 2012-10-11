@@ -12,10 +12,16 @@ ADDLIB=
 
 # Capability support
 USE_CAP=yes
+USE_SYSFS=yes
 
 ifneq ($(USE_CAP),no)
 	DEFINES += -DCAPABILITIES
 	LIB_CAP = -lcap
+endif
+
+ifneq ($(USE_SYSFS),no)
+	DEFINES += -DUSE_SYSFS
+	LIB_SYSFS = -lsysfs
 endif
 
 CC=gcc
@@ -40,7 +46,7 @@ traceroute6: traceroute6.o
 tftpd: tftpd.o tftpsubs.o
 	$(LINK.o) -o $@ $^ $(LIB_CAP)
 arping: arping.o
-	$(LINK.o) -o $@ $^ -lsysfs $(LIB_CAP)
+	$(LINK.o) -o $@ $^ $(LIB_SYSFS) $(LIB_CAP)
 ping: ping.o ping_common.o
 	$(LINK.o) -o $@ $^ $(LIB_CAP)
 ping6: ping6.o ping_common.o
