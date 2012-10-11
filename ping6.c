@@ -395,7 +395,9 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	int n;
 	char *name, *p;
 	unsigned char *buf;
-	size_t buflen = strlen(arg) + 1;
+	size_t namelen = strlen(arg);
+	size_t buflen = namelen + 3 + 1;	/* dn_comp() requrires strlen() + 3,
+						   plus non-fqdn indicator. */
 	int fqdn = niquery_options[index].data;
 
 	if (niquery_set_subject_type(NI_SUBJ_NAME) < 0)
@@ -407,7 +409,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	}
 
 	name = strdup(arg);
-	buf = malloc(buflen + 1);
+	buf = malloc(buflen);
 	if (!name || !buf) {
 		free(name);
 		free(buf);
@@ -430,6 +432,11 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	n = dn_comp(name, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
 	if (n < 0) {
 		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", buf);
+		free(name);
+		free(buf);
+		exit(1);
+	} else if (n >= buflen) {
+		fprintf(stderr, "ping6: dn_comp() returned loo long result.\n");
 		free(name);
 		free(buf);
 		exit(1);
