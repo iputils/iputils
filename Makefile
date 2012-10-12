@@ -1,18 +1,31 @@
+#
+# Configuration
+#
+
+# CC
+CC=gcc
 # Path to parent kernel include files directory
 LIBC_INCLUDE=/usr/include
+# Libraries
+ADDLIB=-lm
 
-DEFINES= 
+#
+# Options
+#
 
-#options if you have a bind>=4.9.4 libresolv (or, maybe, glibc)
-LDLIBS=
-ADDLIB=
-
-#options if you compile with libc5, and without a bind>=4.9.4 libresolv
-# NOT AVAILABLE. Please, use libresolv.
-
-# Capability support
+# Capability support (with libcap)
 USE_CAP=yes
+# sysfs support (with libsysfs)
 USE_SYSFS=yes
+
+# -------------------------------------
+# What a pity, all new gccs are buggy and -Werror does not work. Sigh.
+#CCOPT=-Wstrict-prototypes -Wall -g -Werror
+CCOPT=-Wstrict-prototypes -Wall -g
+CCOPTOPT=-O2
+GLIBCFIX=-D_GNU_SOURCE
+DEFINES=
+LDLIB=
 
 ifneq ($(USE_CAP),no)
 	DEFINES += -DCAPABILITIES
@@ -24,43 +37,57 @@ ifneq ($(USE_SYSFS),no)
 	LIB_SYSFS = -lsysfs
 endif
 
-CC=gcc
-# What a pity, all new gccs are buggy and -Werror does not work. Sigh.
-#CCOPT=-D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -g -Werror
-CCOPT=-D_GNU_SOURCE -O2 -Wstrict-prototypes -Wall -g
-CFLAGS=$(CCOPT) $(GLIBCFIX) $(DEFINES)
-
+# -------------------------------------
 IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
 IPV6_TARGETS=tracepath6 traceroute6 ping6
 TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
 
+CFLAGS=$(CCOPTOPT) $(CCOPT) $(GLIBCFIX) $(DEFINES)
+LDLIBS=$(LDLIB) $(ADDLIB)
+
 LASTTAG:=`git describe HEAD | sed -e 's/-.*//'`
 TAG:=`date +s%Y%m%d`
 
+# -------------------------------------
+.PHONY: all clean man html check-kernel modules snapshot
+
 all: $(TARGETS)
 
-clockdiff: clockdiff.o
-	$(LINK.o) -o $@ $^ $(LIB_CAP)
-traceroute6: traceroute6.o
-	$(LINK.o) -o $@ $^ $(LIB_CAP)
-tftpd: tftpd.o tftpsubs.o
-	$(LINK.o) -o $@ $^ $(LIB_CAP)
+# arping
 arping: arping.o
-	$(LINK.o) -o $@ $^ $(LIB_SYSFS) $(LIB_CAP)
+	$(LINK.o) $^ $(LIB_SYSFS) $(LIB_CAP) $(LDLIBS) -o $@
+
+# clockdiff
+clockdiff: clockdiff.o
+	$(LINK.o) $^ $(LIB_CAP) $(LDLIBS) -o $@
+
+# ping / ping6
 ping: ping.o ping_common.o
-	$(LINK.o) -o $@ $^ $(LIB_CAP)
+	$(LINK.o) $^ $(LIB_CAP) $(LDLIBS) -o $@
 ping6: ping6.o ping_common.o
-	$(LINK.o) -o $@ $^ -lresolv -lcrypto $(LIB_CAP)
-
+	$(LINK.o) $^ -lresolv -lcrypto $(LIB_CAP) $(LDLIBS) -o $@
 ping.o ping6.o ping_common.o: ping_common.h
-tftpd.o tftpsubs.o: tftp.h
 
-rdisc_srv: rdisc_srv.o
+# rarpd
 
+# rdisc_srv
 rdisc_srv.o: rdisc.c
 	$(CC) $(CFLAGS) -DRDISC_SERVER -o rdisc_srv.o rdisc.c
 
+# tracepath
 
+# tracepath6
+
+# traceroute6
+traceroute6: traceroute6.o
+	$(LINK.o) $^ $(LIB_CAP) $(LDLIBS) -o $@
+
+# tftpd
+tftpd: tftpd.o tftpsubs.o
+tftpd.o tftpsubs.o: tftp.h
+
+# -------------------------------------
+# modules / check-kernel are only for ancient kernels; obsolete
 check-kernel:
 ifeq ($(KERNEL_INCLUDE),)
 	@echo "Please, set correct KERNEL_INCLUDE"; false
@@ -73,6 +100,7 @@ endif
 modules: check-kernel
 	$(MAKE) KERNEL_INCLUDE=$(KERNEL_INCLUDE) -C Modules
 
+# -------------------------------------
 man:
 	$(MAKE) -C doc man
 
@@ -84,6 +112,7 @@ clean:
 	@$(MAKE) -C Modules clean
 	@$(MAKE) -C doc clean
 
+# -------------------------------------
 snapshot:
 	@if [ "`uname -n`" != "pleiades" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
 	@date "+[$(TAG)]" > RELNOTES.NEW
