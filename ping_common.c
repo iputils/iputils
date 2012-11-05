@@ -767,7 +767,7 @@ restamp:
 		if (!csfailed)
 			write_stdout("\b \b", 3);
 		else
-			write_stdout("\bC", 1);
+			write_stdout("\bC", 2);
 	} else {
 		int i;
 		__u8 *cp, *dp;
