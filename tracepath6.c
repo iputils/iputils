@@ -416,7 +416,7 @@ int main(int argc, char **argv)
 	hints.ai_flags = 0;
 	gai = getaddrinfo(argv[0], pbuf, &hints, &ai0);
 	if (gai) {
-		herror("getaddrinfo");	/*XXX*/
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gai));
 		exit(1);
 	}
 
