@@ -1,3 +1,13 @@
+[s20121106]
+
+YOSHIFUJI Hideaki (5):
+      ninfod: Attatch configure and renew config.h.in.
+      makefile: clean-up
+      tracepath6: Print reason on getadrinfo() failure.
+      ping,ping6: Fix hang with -f option.
+      ping: Make sure to print C if checksum failed with -f option.
+
+
 [s20121011]
 
 Jan Synacek (2):
