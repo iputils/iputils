@@ -123,36 +123,13 @@ main(int argc, char **argv)
 	char *target, hnamebuf[MAX_HOSTNAMELEN];
 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 
+	limit_capabilities();
+	enable_capability_raw();
+
 	icmp_sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	socket_errno = errno;
 
-	uid = getuid();
-	if (setuid(uid)) {
-		perror("ping: setuid");
-		exit(-1);
-	}
-#ifdef CAPABILITIES
-	{
-		cap_t cap;
-		cap_flag_value_t net_admin_set = CAP_CLEAR;
-
-		/* check for cap_net_admin because it may be needed to set packet marks */
-		if ((cap = cap_get_proc()) == NULL) {
-			perror("ping: cap_get_proc");
-			exit(-1);
-		}
-		if (cap_get_flag(cap, CAP_NET_ADMIN, CAP_EFFECTIVE, &net_admin_set) != 0) {
-			perror("ping: cap_get_flag");
-			exit(-1);
-		}
-		cap_free(cap);
-
-		/* if CAP_NET_ADMIN is not set, drop all capabilities now, otherwise defer
-		 * dropping after the SO_MARK sock opt is set */
-		if (net_admin_set == CAP_CLEAR)
-			drop_capabilities();
-	}
-#endif
+	disable_capability_raw();
 
 	source.sin_family = AF_INET;
 

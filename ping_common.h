@@ -18,6 +18,7 @@
 #include <netdb.h>
 
 #ifdef CAPABILITIES
+#include <sys/prctl.h>
 #include <sys/capability.h>
 #endif
 
@@ -205,17 +206,25 @@ static inline void advance_ntransmitted(void)
 		acked = (__u16)ntransmitted + 1;
 }
 
+extern void limit_capabilities(void);
+static int enable_capability_raw(void);
+static int disable_capability_raw(void);
+static int enable_capability_admin(void);
+static int disable_capability_admin(void);
 #ifdef CAPABILITIES
-static inline void drop_capabilities(void)
-{
-	cap_t cap = cap_init();
-	if (cap_set_proc(cap) < 0) {
-		perror("ping: cap_set_proc");
-		exit(-1);
-	}
-	cap_free(cap);
-}
+extern int modify_capability(cap_value_t, cap_flag_value_t);
+static inline int enable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_SET);   };
+static inline int disable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_CLEAR); };
+static inline int enable_capability_admin(void)		{ return modify_capability(CAP_NET_ADMIN, CAP_SET);   };
+static inline int disable_capability_admin(void)	{ return modify_capability(CAP_NET_ADMIN, CAP_CLEAR); };
+#else
+extern int modify_capability(int);
+static inline int enable_capability_raw(void)		{ return modify_capability(1); };
+static inline int disable_capability_raw(void)		{ return modify_capability(0); };
+static inline int enable_capability_admin(void)		{ return modify_capability(1); };
+static inline int disable_capability_admin(void)	{ return modify_capability(0); };
 #endif
+extern void drop_capabilities(void);
 
 extern int send_probe(void);
 extern int receive_error_msg(void);

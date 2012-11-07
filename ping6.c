@@ -552,35 +552,14 @@ int main(int argc, char *argv[])
 #endif
 	static uint32_t scope_id = 0;
 
+	limit_capabilities();
+
+	enable_capability_raw();
+
 	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 	socket_errno = errno;
 
-	uid = getuid();
-	if (setuid(uid)) {
-		perror("ping6: setuid");
-		exit(-1);
-	}
-#ifdef CAPABILITIES
-	{
-		cap_t cap;
-		cap_flag_value_t net_admin_set = CAP_CLEAR;
-		/* check for cap_net_admin because it may be needed to set packet marks */
-		if ((cap = cap_get_proc()) == NULL) {
-			perror("ping6: cap_get_proc");
-			exit(-1);
-		}
-		if (cap_get_flag(cap, CAP_NET_ADMIN, CAP_EFFECTIVE, &net_admin_set) != 0) {
-			perror("ping6: cap_get_flag");
-			exit(-1);
-		}
-		cap_free(cap);
-
-		/* if CAP_NET_ADMIN is not set, drop all capabilities now, otherwise defer
-		 * dropping after the SO_MARK sock opt is set */
-		if (net_admin_set == CAP_CLEAR)
-			drop_capabilities();
-	}
-#endif
+	disable_capability_raw();
 
 	source.sin6_family = AF_INET6;
 	memset(&firsthop, 0, sizeof(firsthop));
@@ -785,6 +764,7 @@ int main(int argc, char *argv[])
 			    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
 				firsthop.sin6_scope_id = iface;
 #endif
+			enable_capability_raw();
 			if (
 #ifdef IPV6_RECVPKTINFO
 			    setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof(ipi)) == -1 &&
@@ -792,6 +772,7 @@ int main(int argc, char *argv[])
 			    setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 				perror("setsockopt(SO_BINDTODEVICE)");
 			}
+			disable_capability_raw();
 		}
 		firsthop.sin6_port = htons(1025);
 		if (connect(probe_fd, (struct sockaddr*)&firsthop, sizeof(firsthop)) == -1) {
@@ -1030,6 +1011,8 @@ int main(int argc, char *argv[])
 	printf("%d data bytes\n", datalen);
 
 	setup(icmp_sock);
+
+	drop_capabilities();
 
 	main_loop(icmp_sock, packet, packlen);
 }

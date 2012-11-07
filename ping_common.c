@@ -56,9 +56,118 @@ int datalen = DEFDATALEN;
 
 char *hostname;
 int uid;
+uid_t euid;
 int ident;			/* process id to identify our packets */
 
 static int screen_width = INT_MAX;
+
+#define ARRAY_SIZE(a)	(sizeof(a) / sizeof(a[0]))
+
+void limit_capabilities(void)
+{
+#ifdef CAPABILITIES
+	cap_t cap_p;
+	const cap_value_t caps[] = {
+		CAP_NET_ADMIN,
+		CAP_NET_RAW,
+	};
+	int i;
+
+	cap_p = cap_init();
+	if (!cap_p) {
+		perror("ping: cap_get_proc");
+		exit(-1);
+	}
+
+	for (i = 0; i < ARRAY_SIZE(caps); i++) {
+		if (cap_clear(cap_p) < 0) {
+			perror("ping: cap_clear");
+			exit(-1);
+		}
+
+		if (cap_set_flag(cap_p, CAP_PERMITTED, ARRAY_SIZE(caps) - i, caps + i, CAP_SET) < 0) {
+			perror("ping: cap_set_flag");
+			exit(-1);
+		}
+
+		if (cap_set_proc(cap_p) < 0)
+			continue;
+
+		break;
+	}
+
+	if (i == ARRAY_SIZE(caps)) {
+		perror("ping: cap_set_proc");
+		exit(-1);
+	}
+
+	cap_free(cap_p);
+#endif
+	uid = getuid();
+	euid = geteuid();
+#ifndef CAPABILITIES
+	if (seteuid(uid)) {
+		perror("ping: setuid");
+		exit(-1);
+	}
+#endif
+}
+
+#ifdef CAPABILITIES
+int modify_capability(cap_value_t cap, cap_flag_value_t on)
+{
+	cap_t cap_p = cap_get_proc();
+
+	if (!cap_p) {
+		perror("ping: cap_get_proc");
+		return -1;
+	}
+
+	if (cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap, on) < 0) {
+		perror("ping: cap_set_flag");
+		return -1;
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
+		perror("ping: cap_set_proc");
+		return -1;
+	}
+
+	if (cap_free(cap_p) < 0) {
+		perror("ping: cap_free");
+		return -1;
+	}
+
+	return 0;
+}
+#else
+int modify_capability(int on)
+{
+	if (seteuid(on ? euid : getuid())) {
+		perror("seteuid");
+		return -1;
+	}
+
+	return 0;
+}
+#endif
+
+void drop_capabilities(void)
+{
+#ifdef CAPABILITIES
+	cap_t cap = cap_init();
+	if (cap_set_proc(cap) < 0) {
+		perror("ping: cap_set_proc");
+		exit(-1);
+	}
+	cap_free(cap);
+#else
+	if (setuid(getuid())) {
+		perror("ping: setuid");
+		exit(-1);
+	}
+#endif
+}
 
 /* Fills all the outpack, excluding ICMP header, but _including_
  * timestamp area with supplied pattern.
@@ -487,16 +596,17 @@ void setup(int icmp_sock)
 	}
 #endif
 	if (options & F_MARK) {
-		if (setsockopt(icmp_sock, SOL_SOCKET, SO_MARK,
-				&mark, sizeof(mark)) == -1) {
+		int ret;
+
+		enable_capability_admin();
+		ret = setsockopt(icmp_sock, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
+		disable_capability_admin();
+
+		if (ret == -1) {
 			/* we probably dont wanna exit since old kernels
 			 * dont support mark ..
 			*/
 			fprintf(stderr, "Warning: Failed to set mark %d\n", mark);
-#ifdef CAPABILITIES
-			/* in case we deferred dropping capabilities because of SO_MARK */
-			drop_capabilities();
-#endif
 		}
 	}
 
