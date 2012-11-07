@@ -35,7 +35,7 @@ privileges and has no fancy options.
 <command/tracepath6/ is good replacement for <command/traceroute6/
 and classic example of application of Linux error queues.
 The situation with IPv4 is worse, because commercial
-IP routers do not return enough information in icmp error messages.
+IP routers do not return enough information in ICMP error messages.
 Probably, it will change, when they will be updated.
 For now it uses Van Jacobson's trick, sweeping a range
 of UDP ports to maintain trace history.
@@ -96,7 +96,7 @@ the probe was not sent to the network.
 
 <para>
 The rest of line shows miscellaneous information about path to
-the correspinding hetwork hop. As rule it contains value of RTT.
+the correspinding network hop. As rule it contains value of RTT.
 Additionally, it can show Path MTU, when it changes.
 If the path is asymmetric
 or the probe finishes before it reach prescribed hop, difference

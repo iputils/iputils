@@ -62,8 +62,8 @@ Audible ping.
   <term><option/-A/</term>
   <listitem><para>
 Adaptive ping. Interpacket interval adapts to round-trip time, so that
-effectively not more than one (or more, if preload is set) unanswered probes
-present in the network. Minimal interval is 200msec for not super-user.
+effectively not more than one (or more, if preload is set) unanswered probe
+is present in the network. Minimal interval is 200msec for not super-user.
 On networks with low rtt this mode is essentially equivalent to flood mode.  
   </para></listitem>
  </varlistentry>
@@ -402,7 +402,7 @@ probes are answered or for some error notification from network.
   <term><option>-W <replaceable/timeout/</option></term>
   <listitem><para>
 Time to wait for a response, in seconds. The option affects only timeout
-in absense of any responses, otherwise <command/ping/ waits for two RTTs.
+in absence of any responses, otherwise <command/ping/ waits for two RTTs.
   </para></listitem>
  </varlistentry>
 </variablelist>
@@ -543,7 +543,7 @@ or
 </para>
 
 <para>
-In normal operation ping prints the ttl value from the packet it receives.
+In normal operation ping prints the TTL value from the packet it receives.
 When a remote system receives a ping packet, it can do one of three things
 with the TTL field in its response:
 </para>
