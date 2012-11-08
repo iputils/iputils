@@ -715,7 +715,7 @@ void main_loop(int icmp_sock, __u8 *packet, int packlen)
 
 			/* If we are here, recvmsg() is unable to wait for
 			 * required timeout. */
-			if (1000*next <= 1000000/(int)HZ) {
+			if (1000 % HZ == 0 ? next <= 1000 / HZ : (next < INT_MAX / HZ && next * HZ <= 1000)) {
 				/* Very short timeout... So, if we wait for
 				 * something, we sleep for MININTERVAL.
 				 * Otherwise, spin! */
