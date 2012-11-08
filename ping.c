@@ -1060,7 +1060,7 @@ void pr_options(unsigned char * cp, int hlen)
 			if (i <= 0)
 				break;
 			if (i == old_rrlen
-			    && !strncmp((char *)cp, old_rr, i)
+			    && !memcmp(cp, old_rr, i)
 			    && !(options & F_FLOOD)) {
 				printf("\t(same route)");
 				i = ((i + 3) / 4) * 4;
