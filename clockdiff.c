@@ -98,7 +98,7 @@ int in_cksum(u_short *addr, int len)
 
 
 int interactive = 0;
-int id;
+uint16_t id;
 int sock;
 int sock_raw;
 struct sockaddr_in server;
