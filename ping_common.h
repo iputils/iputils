@@ -107,6 +107,9 @@ extern int confirm;
 extern int confirm_flag;
 extern int working_recverr;
 
+extern volatile int in_pr_addr;		/* pr_addr() is executing */
+extern jmp_buf pr_addr_jmp;
+
 #ifndef MSG_CONFIRM
 #define MSG_CONFIRM 0
 #endif
@@ -244,6 +247,3 @@ extern int gather_statistics(__u8 *ptr, int icmplen,
 			     int csfailed, struct timeval *tv, char *from,
 			     void (*pr_reply)(__u8 *ptr, int cc));
 extern void print_timestamp(void);
-
-extern int in_pr_addr;
-extern jmp_buf pr_addr_jmp;

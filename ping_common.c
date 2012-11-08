@@ -30,7 +30,7 @@ struct timeval start_time, cur_time;
 volatile int exiting;
 volatile int status_snapshot;
 int confirm = 0;
-int in_pr_addr = 0;		/* pr_addr() is executing */
+volatile int in_pr_addr = 0;	/* pr_addr() is executing */
 jmp_buf pr_addr_jmp;
 
 /* Stupid workarounds for bugs/missing functionality in older linuces.
