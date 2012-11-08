@@ -180,17 +180,24 @@ void finish(void)
 
 void catcher(void)
 {
-	struct timeval tv;
+	struct timeval tv, tv_s, tv_o;
 
 	gettimeofday(&tv, NULL);
 
 	if (start.tv_sec==0)
 		start = tv;
 
-	if (count-- == 0 || (timeout && MS_TDIFF(tv,start) > timeout*1000 + 500))
+	timersub(&tv, &start, &tv_s);
+	tv_o.tv_sec = timeout;
+	tv_o.tv_usec = 500 * 1000;
+
+	if (count-- == 0 || (timeout && timercmp(&tv_s, &tv_o, >)))
 		finish();
 
-	if (last.tv_sec==0 || MS_TDIFF(tv,last) > 500) {
+	timersub(&tv, &last, &tv_s);
+	tv_o.tv_sec = 0;
+
+	if (last.tv_sec==0 || timercmp(&tv_s, &tv_o, >)) {
 		send_pack(s, src, dst,
 			  (struct sockaddr_ll *)&me, (struct sockaddr_ll *)&he);
 		if (count == 0 && unsolicited)
