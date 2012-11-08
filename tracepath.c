@@ -23,6 +23,10 @@
 #include <sys/time.h>
 #include <sys/uio.h>
 #include <arpa/inet.h>
+#ifdef USE_IDN
+#include <idna.h>
+#include <locale.h>
+#endif
 
 #ifndef IP_PMTUDISC_PROBE
 #define IP_PMTUDISC_PROBE	3
@@ -161,6 +165,7 @@ restart:
 		char abuf[128];
 		struct sockaddr_in *sin = (struct sockaddr_in*)(e+1);
 		struct hostent *h = NULL;
+		char *idn = NULL;
 
 		inet_ntop(AF_INET, &sin->sin_addr, abuf, sizeof(abuf));
 
@@ -174,10 +179,18 @@ restart:
 			h = gethostbyaddr((char *) &sin->sin_addr, sizeof(sin->sin_addr), AF_INET);
 		}
 
+#ifdef USE_IDN
+		if (h && idna_to_unicode_lzlz(h->h_name, &idn, 0) != IDNA_SUCCESS)
+			idn = NULL;
+#endif
 		if (no_resolve)
-			print_host(abuf, h ? h->h_name : abuf, show_both);
+			print_host(abuf, h ? (idn ? idn : h->h_name) : abuf, show_both);
 		else
-			print_host(h ? h->h_name : abuf, abuf, show_both);
+			print_host(h ? (idn ? idn : h->h_name) : abuf, abuf, show_both);
+
+#ifdef USE_IDN
+		free(idn);
+#endif
 	}
 
 	if (rettv) {
@@ -298,6 +311,10 @@ main(int argc, char **argv)
 	int ttl;
 	char *p;
 	int ch;
+#ifdef USE_IDN
+	int rc;
+	setlocale(LC_ALL, "");
+#endif
 
 	while ((ch = getopt(argc, argv, "nbh?l:")) != EOF) {
 		switch(ch) {
@@ -338,11 +355,26 @@ main(int argc, char **argv)
 		base_port = atoi(p+1);
 	} else
 		base_port = 44444;
-	he = gethostbyname(argv[0]);
+
+	p = argv[0];
+#ifdef USE_IDN
+	rc = idna_to_ascii_lz(argv[0], &p, 0);
+	if (rc != IDNA_SUCCESS) {
+		fprintf(stderr, "IDNA encoding failed: %s\n", idna_strerror(rc));
+		exit(2);
+	}
+#endif
+
+	he = gethostbyname(p);
 	if (he == NULL) {
 		herror("gethostbyname");
 		exit(1);
 	}
+
+#ifdef USE_IDN
+	free(p);
+#endif
+
 	memcpy(&target.sin_addr, he->h_addr, 4);
 
 	on = IP_PMTUDISC_PROBE;

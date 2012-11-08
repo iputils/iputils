@@ -23,6 +23,11 @@
 #include <sys/capability.h>
 #endif
 
+#ifdef USE_IDN
+#include <locale.h>
+#include <idna.h>
+#endif
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <linux/types.h>

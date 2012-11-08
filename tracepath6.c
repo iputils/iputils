@@ -26,6 +26,11 @@
 #include <sys/uio.h>
 #include <arpa/inet.h>
 
+#ifdef USE_IDN
+#include <idna.h>
+#include <locale.h>
+#endif
+
 #ifndef SOL_IPV6
 #define SOL_IPV6 IPPROTO_IPV6
 #endif
@@ -232,7 +237,11 @@ restart:
 			fflush(stdout);
 			if (getnameinfo(sa, salen,
 					hbuf, sizeof(hbuf), NULL, 0,
-					0))
+					0
+#ifdef USE_IDN
+					| NI_IDN
+#endif
+				        ))
 				strcpy(hbuf, "???");
 		} else
 			hbuf[0] = 0;
@@ -375,6 +384,10 @@ int main(int argc, char **argv)
 	int gai;
 	char pbuf[NI_MAXSERV];
 
+#ifdef USE_IDN
+	setlocale(LC_ALL, "");
+#endif
+
 	while ((ch = getopt(argc, argv, "nbh?l:")) != EOF) {
 		switch(ch) {
 		case 'n':
@@ -413,7 +426,9 @@ int main(int argc, char **argv)
 	hints.ai_family = family;
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = IPPROTO_UDP;
-	hints.ai_flags = 0;
+#ifdef USE_IDN
+	hints.ai_flags = AI_IDN;
+#endif
 	gai = getaddrinfo(argv[0], pbuf, &hints, &ai0);
 	if (gai) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gai));

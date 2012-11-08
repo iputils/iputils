@@ -356,6 +356,9 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	}
 
 	hints.ai_socktype = SOCK_DGRAM;
+#ifdef USE_IDN
+	hints.ai_flags = AI_IDN;
+#endif
 
 	gai = getaddrinfo(arg, 0, &hints, &ai0);
 	if (!gai) {
@@ -525,6 +528,10 @@ int main(int argc, char *argv[])
 
 	limit_capabilities();
 
+#ifdef USE_IDN
+	setlocale(LC_ALL, "");
+#endif
+
 	enable_capability_raw();
 
 	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
@@ -631,6 +638,9 @@ int main(int argc, char *argv[])
 
 		memset(&hints, 0, sizeof(hints));
 		hints.ai_family = AF_INET6;
+#ifdef USE_IDN
+		hints.ai_flags = AI_IDN;
+#endif
 		gai = getaddrinfo(target, NULL, &hints, &ai);
 		if (gai) {
 			fprintf(stderr, "unknown host\n");
@@ -681,6 +691,9 @@ int main(int argc, char *argv[])
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET6;
+#ifdef USE_IDN
+	hints.ai_flags = AI_IDN;
+#endif
 	gai = getaddrinfo(target, NULL, &hints, &ai);
 	if (gai) {
 		fprintf(stderr, "unknown host\n");
@@ -1543,6 +1556,11 @@ void install_filter(void)
 char * pr_addr(struct in6_addr *addr)
 {
 	struct hostent *hp = NULL;
+	static char *s;
+
+#ifdef USE_IDN
+	free(s);
+#endif
 
 	in_pr_addr = !setjmp(pr_addr_jmp);
 
@@ -1551,7 +1569,14 @@ char * pr_addr(struct in6_addr *addr)
 
 	in_pr_addr = 0;
 
-	return hp ? hp->h_name : pr_addr_n(addr);
+	if (!hp
+#ifdef USE_IDN
+	    || idna_to_unicode_lzlz(hp->h_name, &s, 0) != IDNA_SUCCESS
+#endif
+	    )
+		s = NULL;
+
+	return hp ? (s ? s : hp->h_name) : pr_addr_n(addr);
 }
 
 char * pr_addr_n(struct in6_addr *addr)

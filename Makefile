@@ -17,6 +17,8 @@ ADDLIB=-lm
 USE_CAP=yes
 # sysfs support (with libsysfs - deprecated)
 USE_SYSFS=no
+# IDN support (experimental
+USE_IDN=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
@@ -37,6 +39,11 @@ ifneq ($(USE_SYSFS),no)
 	LIB_SYSFS = -lsysfs
 endif
 
+ifneq ($(USE_IDN),no)
+	DEFINES += -DUSE_IDN
+	LIB_IDN = -lidn
+endif
+
 # -------------------------------------
 IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
 IPV6_TARGETS=tracepath6 traceroute6 ping6
@@ -55,7 +62,7 @@ all: $(TARGETS)
 
 # arping
 arping: arping.o
-	$(LINK.o) $^ $(LIB_SYSFS) $(LIB_CAP) $(LDLIBS) -o $@
+	$(LINK.o) $^ $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
 
 # clockdiff
 clockdiff: clockdiff.o
@@ -63,9 +70,9 @@ clockdiff: clockdiff.o
 
 # ping / ping6
 ping: ping.o ping_common.o
-	$(LINK.o) $^ $(LIB_CAP) $(LDLIBS) -o $@
+	$(LINK.o) $^ $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
 ping6: ping6.o ping_common.o
-	$(LINK.o) $^ -lresolv -lcrypto $(LIB_CAP) $(LDLIBS) -o $@
+	$(LINK.o) $^ -lresolv -lcrypto $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
 ping.o ping6.o ping_common.o: ping_common.h
 
 # rarpd
@@ -75,12 +82,14 @@ rdisc_srv.o: rdisc.c
 	$(CC) $(CFLAGS) -DRDISC_SERVER -o rdisc_srv.o rdisc.c
 
 # tracepath
+tracepath: tracepath.o
+	$(LINK.o) $^ $(LIB_IDN) $(LDLIBS) -o $@
 
 # tracepath6
 
 # traceroute6
 traceroute6: traceroute6.o
-	$(LINK.o) $^ $(LIB_CAP) $(LDLIBS) -o $@
+	$(LINK.o) $^ $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
 
 # tftpd
 tftpd: tftpd.o tftpsubs.o

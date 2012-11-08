@@ -181,6 +181,10 @@ static void fill(char *patp)
 	char *cp;
 	u_char *bp = outpack+8;
 
+#ifdef USE_IDN
+	setlocale(LC_ALL, "C");
+#endif
+
 	for (cp = patp; *cp; cp++) {
 		if (!isxdigit(*cp)) {
 			fprintf(stderr,
@@ -205,6 +209,10 @@ static void fill(char *patp)
 			printf("%02x", bp[jj] & 0xFF);
 		printf("\n");
 	}
+
+#ifdef USE_IDN
+	setlocale(LC_ALL, "");
+#endif
 }
 
 void common_options(int ch)

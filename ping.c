@@ -120,10 +120,20 @@ main(int argc, char **argv)
 	int ch, hold, packlen;
 	int socket_errno;
 	u_char *packet;
-	char *target, hnamebuf[MAX_HOSTNAMELEN];
+	char *target;
+#ifdef USE_IDN
+	char *hnamebuf;
+#else
+	char hnamebuf[MAX_HOSTNAMELEN];
+#endif
 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 
 	limit_capabilities();
+
+#ifdef USE_IDN
+	setlocale(LC_ALL, "");
+#endif
+
 	enable_capability_raw();
 
 	icmp_sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
@@ -249,14 +259,42 @@ main(int argc, char **argv)
 			if (argc == 1)
 				options |= F_NUMERIC;
 		} else {
-			hp = gethostbyname(target);
+			char *idn;
+#ifdef USE_IDN
+			int rc;
+
+			free(hnamebuf);
+			hnamebuf = NULL;
+
+			rc = idna_to_ascii_lz(target, &idn, 0);
+			if (rc != IDNA_SUCCESS) {
+				fprintf(stderr, "ping: IDN encoding failed: %s\n", idna_strerror(rc));
+				exit(2);
+			}
+#else
+			idn = target;
+#endif
+			hp = gethostbyname(idn);
 			if (!hp) {
 				fprintf(stderr, "ping: unknown host %s\n", target);
 				exit(2);
 			}
+#ifdef USE_IDN
+			free(idn);
+#endif
 			memcpy(&whereto.sin_addr, hp->h_addr, 4);
+#ifdef USE_IDN
+			if (idna_to_unicode_lzlz(hp->h_name, &hnamebuf, 0) != IDNA_SUCCESS) {
+				hnamebuf = strdup(hp->h_name);
+				if (!hnamebuf) {
+					perror("ping: strdup");
+					exit(-1);
+				}
+			}
+#else
 			strncpy(hnamebuf, hp->h_name, sizeof(hnamebuf) - 1);
 			hnamebuf[sizeof(hnamebuf) - 1] = 0;
+#endif
 			hostname = hnamebuf;
 		}
 		if (argc > 1)
@@ -1191,9 +1229,20 @@ pr_addr(__u32 addr)
 	if (exiting || (options & F_NUMERIC) ||
 	    !(hp = gethostbyaddr((char *)&addr, 4, AF_INET)))
 		sprintf(buf, "%s", inet_ntoa(*(struct in_addr *)&addr));
-	else
-		snprintf(buf, sizeof(buf), "%s (%s)", hp->h_name,
+	else {
+		char *s;
+#if USE_IDN
+		if (idna_to_unicode_lzlz(hp->h_name, &s, 0) != IDNA_SUCCESS)
+			s = NULL;
+#else
+		s = NULL;
+#endif
+		snprintf(buf, sizeof(buf), "%s (%s)", s ? s : hp->h_name,
 			 inet_ntoa(*(struct in_addr *)&addr));
+#if USE_IDN
+		free(s);
+#endif
+	}
 
 	in_pr_addr = 0;
 

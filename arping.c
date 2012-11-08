@@ -40,6 +40,11 @@
 #endif
 #include <ifaddrs.h>
 
+#ifdef USE_IDN
+#include <idna.h>
+#include <locale.h>
+#endif
+
 #include "SNAPSHOT.h"
 
 static void usage(void) __attribute__((noreturn));
@@ -527,6 +532,10 @@ main(int argc, char **argv)
 
 	limit_capabilities();
 
+#ifdef USE_IDN
+	setlocale(LC_ALL, "");
+#endif
+
 	enable_capability_raw();
 
 	s = socket(PF_PACKET, SOCK_DGRAM, 0);
@@ -624,11 +633,28 @@ main(int argc, char **argv)
 
 	if (inet_aton(target, &dst) != 1) {
 		struct hostent *hp;
-		hp = gethostbyname2(target, AF_INET);
+		char *idn = target;
+#ifdef USE_IDN
+		int rc;
+
+		rc = idna_to_ascii_lz(target, &idn, 0);
+
+		if (rc != IDNA_SUCCESS) {
+			fprintf(stderr, "arping: IDN encoding failed: %s\n", idna_strerror(rc));
+			exit(2);
+		}
+#endif
+
+		hp = gethostbyname2(idn, AF_INET);
 		if (!hp) {
 			fprintf(stderr, "arping: unknown host %s\n", target);
 			exit(2);
 		}
+
+#ifdef USE_IDN
+		free(idn);
+#endif
+
 		memcpy(&dst, hp->h_addr, 4);
 	}
 
