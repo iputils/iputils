@@ -65,6 +65,10 @@ struct timeval start, last;
 int sent, brd_sent;
 int received, brd_recv, req_recv;
 
+#ifndef CAPABILITIES
+static uid_t euid;
+#endif
+
 #define MS_TDIFF(tv1,tv2) ( ((tv1).tv_sec-(tv2).tv_sec)*1000 + \
 			   ((tv1).tv_usec-(tv2).tv_usec)/1000 )
 
@@ -108,6 +112,109 @@ void set_signal(int signo, void (*handler)(void))
 	sa.sa_handler = (void (*)(int))handler;
 	sa.sa_flags = SA_RESTART;
 	sigaction(signo, &sa, NULL);
+}
+
+static const cap_value_t caps[] = { CAP_NET_RAW, };
+
+void limit_capabilities(void)
+{
+#ifdef CAPABILITIES
+	cap_t cap_p;
+
+	cap_p = cap_init();
+	if (!cap_p) {
+		perror("arping: cap_init");
+		exit(-1);
+	}
+
+	if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps, CAP_SET) < 0) {
+		perror("arping: cap_set_flag");
+		exit(-1);
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
+		perror("arping: cap_set_proc");
+		exit(-1);
+	}
+
+	if (cap_free(cap_p) < 0) {
+		perror("arping: cap_free");
+		exit(-1);
+	}
+#else
+	euid = geteuid();
+#endif
+}
+
+int modify_capability_raw(int on)
+{
+#ifdef CAPABILITIES
+	cap_t cap_p;
+
+	cap_p = cap_get_proc();
+	if (!cap_p) {
+		perror("arping: cap_get_proc");
+		return -1;
+	}
+
+	if (cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps, on ? CAP_SET : CAP_CLEAR) < 0) {
+		perror("arping: cap_set_flag");
+		return -1;
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
+		perror("arping: cap_set_proc");
+		return -1;
+	}
+
+	if (cap_free(cap_p) < 0) {
+		perror("arping: cap_free");
+		return -1;
+	}
+#else
+	if (setuid(on ? euid : getuid())) {
+		perror("arping: setuid");
+		return -1;
+	}
+#endif
+	return 0;
+}
+
+static inline int enable_capability_raw(void)
+{
+	return modify_capability_raw(1);
+}
+
+static inline int disable_capability_raw(void)
+{
+	return modify_capability_raw(0);
+}
+
+void drop_capabilities(void)
+{
+#ifdef CAPABILITIES
+	cap_t cap_p = cap_init();
+
+	if (!cap_p) {
+		perror("arping: cap_init");
+		exit(-1);
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
+		perror("arping: cap_set_proc");
+		exit(-1);
+	}
+
+	if (cap_free(cap_p) < 0) {
+		perror("arping: cap_free");
+		exit(-1);
+	}
+#else
+	if (setuid(getuid()) < 0) {
+		perror("arping: setuid");
+		exit(-1);
+	}
+#endif
 }
 
 int send_pack(int s, struct in_addr src, struct in_addr dst,
@@ -361,26 +468,15 @@ main(int argc, char **argv)
 {
 	int socket_errno;
 	int ch;
-	uid_t uid = getuid();
+
+	limit_capabilities();
+
+	enable_capability_raw();
 
 	s = socket(PF_PACKET, SOCK_DGRAM, 0);
 	socket_errno = errno;
 
-	if (setuid(uid)) {
-		perror("arping: setuid");
-		exit(-1);
-	}
-
-#ifdef CAPABILITIES
-	{
-		cap_t caps = cap_init();
-		if (cap_set_proc(caps)) {
-			perror("arping: cap_set_proc");
-			exit(-1);
-		}
-		cap_free(caps);
-	}
-#endif
+	disable_capability_raw();
 
 	while ((ch = getopt(argc, argv, "h?bfDUAqc:w:s:I:V")) != EOF) {
 		switch(ch) {
@@ -497,8 +593,12 @@ main(int argc, char **argv)
 			exit(2);
 		}
 		if (device) {
+			enable_capability_raw();
+
 			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1)
 				perror("WARNING: interface is ignored");
+
+			disable_capability_raw();
 		}
 		memset(&saddr, 0, sizeof(saddr));
 		saddr.sin_family = AF_INET;
@@ -565,6 +665,8 @@ main(int argc, char **argv)
 		fprintf(stderr, "arping: no source address in not-DAD mode\n");
 		exit(2);
 	}
+
+	drop_capabilities();
 
 	set_signal(SIGINT, finish);
 	set_signal(SIGALRM, catcher);
