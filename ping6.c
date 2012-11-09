@@ -432,7 +432,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", name);
 		goto errexit;
 	} else if (n >= buflen) {
-		fprintf(stderr, "ping6: dn_comp() returned loo long result.\n");
+		fprintf(stderr, "ping6: dn_comp() returned too long result.\n");
 		goto errexit;
 	}
 
