@@ -15,8 +15,8 @@ ADDLIB=-lm
 
 # Capability support (with libcap)
 USE_CAP=yes
-# sysfs support (with libsysfs)
-USE_SYSFS=yes
+# sysfs support (with libsysfs - deprecated)
+USE_SYSFS=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.

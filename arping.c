@@ -38,6 +38,7 @@
 #ifdef USE_SYSFS
 #include <sysfs/libsysfs.h>
 #endif
+#include <ifaddrs.h>
 
 #include "SNAPSHOT.h"
 
@@ -430,9 +431,9 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 	return 1;
 }
 
-void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
-{
 #if USE_SYSFS
+static int set_device_broadcast_sysfs(char *device, unsigned char *ba, size_t balen)
+{
 	struct sysfs_class_device *dev;
 	struct sysfs_attribute *brdcast;
 	unsigned char *p;
@@ -441,25 +442,78 @@ void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
 	dev = sysfs_open_class_device("net", device);
 	if (!dev) {
 		perror("sysfs_open_class_device(net)");
-		exit(2);
+		return -1;
 	}
 
 	brdcast = sysfs_get_classdev_attr(dev, "broadcast");
 	if (!brdcast) {
 		perror("sysfs_get_classdev_attr(broadcast)");
-		exit(2);
+		return -1;
 	}
 
 	if (sysfs_read_attribute(brdcast)) {
 		perror("sysfs_read_attribute");
-		exit(2);
+		return -1;
 	}
 
 	for (p = ba, ch = 0; p < ba + balen; p++, ch += 3)
 		*p = strtoul(brdcast->value + ch, NULL, 16);
-#else
-	memset(ba, -1, balen);
+
+	return 0;
+}
 #endif
+
+static int set_device_broadcast_ifaddrs(char *device, unsigned char *ba, size_t balen)
+{
+	struct ifaddrs *ifa0, *ifa;
+
+	if (getifaddrs(&ifa0) < 0) {
+		fprintf(stderr, "getifaddrs failed");
+		return -1;
+	}
+
+	for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
+		struct sockaddr_ll *sll;
+
+		if (strcmp(ifa->ifa_name, device) ||
+		    !ifa->ifa_addr ||
+		    ifa->ifa_addr->sa_family != AF_PACKET ||
+		    !(ifa->ifa_flags & IFF_BROADCAST))
+			continue;
+
+		sll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
+
+		if (sll->sll_halen != balen)
+			continue;
+
+		memcpy(ba, sll->sll_addr, sll->sll_halen);
+
+		break;
+	}
+
+	return 0;
+}
+
+static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t balen)
+{
+	memset(ba, -1, balen);
+	return 0;
+}
+
+static void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
+{
+	int ret;
+
+#if USE_SYSFS
+	ret = set_device_broadcast_sysfs(device, ba, balen);
+	if (!ret)
+		return;
+#endif
+	ret = set_device_broadcast_ifaddrs(device, ba, balen);
+	if (!ret)
+		return;
+
+	ret = set_device_broadcast_fallback(device, ba, balen);
 	return;
 }
 
