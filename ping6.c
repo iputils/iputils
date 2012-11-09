@@ -73,6 +73,10 @@ char copyright[] =
 #include <netinet/icmp6.h>
 #include <resolv.h>
 
+#ifdef USE_IDN
+#include <stringprep.h>
+#endif
+
 #include "ping6_niquery.h"
 
 #ifndef SOL_IPV6
@@ -380,45 +384,38 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	return 0;
 }
 
-static int niquery_count_dots(const char *arg)
-{
-	const char *p;
-	int count = 0;
-	for (p = arg; *p; p++) {
-		if (*p == '.')
-			count++;
-	}
-	return count;
-}
-
 static int niquery_option_subject_name_handler(int index, const char *arg)
 {
 	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
 	unsigned char *dnptrs[2], **dpp, **lastdnptr;
 	int n;
+	int i;
 	char *name, *p;
-	unsigned char *buf;
-	size_t namelen = strlen(arg);
-	size_t buflen = namelen + 3 + 1;	/* dn_comp() requrires strlen() + 3,
-						   plus non-fqdn indicator. */
-	int fqdn = niquery_options[index].data;
+	char *canonname, *idn = NULL;
+	unsigned char *buf = NULL;
+	size_t namelen;
+	size_t buflen;
+	int dots, fqdn = niquery_options[index].data;
 	MD5_CTX ctxt;
 	__u8 digest[16];
+#ifdef USE_IDN
+	int rc;
+#endif
 
 	if (niquery_set_subject_type(NI_SUBJ_NAME) < 0)
 		return -1;
 
-	if (fqdn == 0) {
-		/* guess if hostname is FQDN */
-		fqdn = niquery_count_dots(arg) ? 1 : -1;
+#ifdef USE_IDN
+	name = stringprep_locale_to_utf8(arg);
+	if (!name) {
+		fprintf(stderr, "ping6: IDN support failed.\n");
+		exit(2);
 	}
-
+#else
 	name = strdup(arg);
-	buf = malloc(buflen);
-	if (!name || !buf) {
-		fprintf(stderr, "ping6: out of memory.\n");
-		goto errexit;
-	}
+	if (!name)
+		goto oomexit;
+#endif
 
 	p = strchr(name, '%');
 	if (p) {
@@ -429,15 +426,53 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 		}
 	}
 
+#ifdef USE_IDN
+	rc = idna_to_ascii_8z(name, &idn, 0);
+	if (rc) {
+		fprintf(stderr, "ping6: IDN encoding error: %s\n",
+			idna_strerror(rc));
+		exit(2);
+	}
+#else
+	idn = strdup(name);
+	if (!idn)
+		goto oomexit;
+#endif
+
+	namelen = strlen(idn);
+	canonname = malloc(namelen + 1);
+	if (!canonname)
+		goto oomexit;
+
+	dots = 0;
+	for (i = 0; i < namelen + 1; i++) {
+		canonname[i] = isupper(idn[i]) ? tolower(idn[i]) : idn[i];
+		if (idn[i] == '.')
+			dots++;
+	}
+
+	if (fqdn == 0) {
+		/* guess if hostname is FQDN */
+		fqdn = dots ? 1 : -1;
+	}
+
+	buflen = namelen + 3 + 1;	/* dn_comp() requrires strlen() + 3,
+					   plus non-fqdn indicator. */
+	buf = malloc(buflen);
+	if (!buf) {
+		fprintf(stderr, "ping6: out of memory.\n");
+		goto errexit;
+	}
+
 	dpp = dnptrs;
 	lastdnptr = &dnptrs[ARRAY_SIZE(dnptrs)];
 
 	*dpp++ = (unsigned char *)buf;
 	*dpp++ = NULL;
 
-	n = dn_comp(name, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
+	n = dn_comp(canonname, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
 	if (n < 0) {
-		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", name);
+		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", canonname);
 		goto errexit;
 	} else if (n >= buflen) {
 		fprintf(stderr, "ping6: dn_comp() returned too long result.\n");
@@ -457,16 +492,24 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 		buf[n] = 0;
 
 	free(ni_subject);
+
+	ni_group = nigroup_buf;
 	ni_subject = buf;
 	ni_subject_len = n + (fqdn < 0);
 	ni_group = nigroup_buf;
 
+	free(canonname);
+	free(idn);
 	free(name);
-	return 0;
 
+	return 0;
+oomexit:
+	fprintf(stderr, "ping6: out of memory.\n");
 errexit:
-	free(name);
 	free(buf);
+	free(canonname);
+	free(idn);
+	free(name);
 	exit(1);
 }
 
