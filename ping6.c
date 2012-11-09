@@ -248,7 +248,6 @@ static int niquery_option_ipv4_flag_handler(int index, const char *arg);
 static int niquery_option_subject_addr_handler(int index, const char *arg);
 static int niquery_option_subject_name_handler(int index, const char *arg);
 static int niquery_option_help_handler(int index, const char *arg);
-char *ni_groupaddr(const char *name);
 
 struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("name",			0,	0,				niquery_option_name_handler),
@@ -391,6 +390,7 @@ static int niquery_count_dots(const char *arg)
 
 static int niquery_option_subject_name_handler(int index, const char *arg)
 {
+	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
 	unsigned char *dnptrs[2], **dpp, **lastdnptr;
 	int n;
 	char *name, *p;
@@ -399,6 +399,8 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	size_t buflen = namelen + 3 + 1;	/* dn_comp() requrires strlen() + 3,
 						   plus non-fqdn indicator. */
 	int fqdn = niquery_options[index].data;
+	MD5_CTX ctxt;
+	__u8 digest[16];
 
 	if (niquery_set_subject_type(NI_SUBJ_NAME) < 0)
 		return -1;
@@ -415,11 +417,14 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 		goto errexit;
 	}
 
-	ni_group = ni_groupaddr(name);
-
 	p = strchr(name, '%');
-	if (p)
+	if (p) {
 		*p = '\0';
+		if (strlen(p + 1) >= IFNAMSIZ) {
+			fprintf(stderr, "ping6: too long scope name.\n");
+			exit(1);
+		}
+	}
 
 	dpp = dnptrs;
 	lastdnptr = &dnptrs[ARRAY_SIZE(dnptrs)];
@@ -436,12 +441,22 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 		goto errexit;
 	}
 
+	MD5_Init(&ctxt);
+	MD5_Update(&ctxt, buf, buf[0]);
+	MD5_Final(digest, &ctxt);
+
+	sprintf(nigroup_buf, "ff02::2:%02x%02x:%02x%02x%s%s",
+		digest[0], digest[1], digest[2], digest[3],
+		p ? "%" : "",
+		p ? p + 1 : "");
+
 	if (fqdn < 0)
 		buf[n] = 0;
 
 	free(ni_subject);
 	ni_subject = buf;
 	ni_subject_len = n + (fqdn < 0);
+	ni_group = nigroup_buf;
 
 	free(name);
 	return 0;
@@ -490,50 +505,6 @@ int niquery_option_handler(const char *opt_arg)
 		}
 	}
 	return ret;
-}
-
-char *ni_groupaddr(const char *name)
-{
-	MD5_CTX ctxt;
-	__u8 digest[16];
-	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
-	size_t len;
-	char buf[64], *p = buf, *q;
-	int i;
-
-	if (!p) {
-		fprintf(stderr, "ping6: memory allocation failure.\n");
-		exit(1);
-	}
-
-	len = strcspn(name, ".%");
-	if (len & ~0x3f) {
-		fprintf(stderr, "ping6: label too long for subject: %s\n",
-			name);
-		exit(1);
-	}
-
-	q = strrchr(name, '%');
-	if (q && strlen(q + 1) >= IFNAMSIZ) {
-		fprintf(stderr, "ping6: scope too long: %s\n",
-			q + 1);
-		exit(1);
-	}
-
-	*p++ = len;
-	for (i = 0; i < len; i++)
-		*p++ = isupper(name[i]) ? tolower(name[i]) : name[i];
-
-	MD5_Init(&ctxt);
-	MD5_Update(&ctxt, buf, len + 1);
-	MD5_Final(digest, &ctxt);
-
-	sprintf(nigroup_buf, "ff02::2:%02x%02x:%02x%02x",
-		digest[0], digest[1], digest[2], digest[3]);
-
-	if (q)
-		strcat(nigroup_buf, q);
-	return nigroup_buf;
 }
 
 int main(int argc, char *argv[])
