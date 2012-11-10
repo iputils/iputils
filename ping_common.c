@@ -572,6 +572,7 @@ void setup(int icmp_sock)
 {
 	int hold;
 	struct timeval tv;
+	sigset_t sset;
 
 	if ((options & F_FLOOD) && !(options & F_INTERVAL))
 		interval = 0;
@@ -649,6 +650,9 @@ void setup(int icmp_sock)
 	set_signal(SIGINT, sigexit);
 	set_signal(SIGALRM, sigexit);
 	set_signal(SIGQUIT, sigstatus);
+
+	sigemptyset(&sset);
+	sigprocmask(SIG_SETMASK, &sset, NULL);
 
 	gettimeofday(&start_time, NULL);
 
