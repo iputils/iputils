@@ -115,7 +115,9 @@ void set_signal(int signo, void (*handler)(void))
 	sigaction(signo, &sa, NULL);
 }
 
+#ifdef CAPABILITIES
 static const cap_value_t caps[] = { CAP_NET_RAW, };
+#endif
 
 void limit_capabilities(void)
 {
