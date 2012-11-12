@@ -1,3 +1,29 @@
+[s20121112]
+
+Sergey Fionov (1):
+      ping,ping6: Fallback to numeric addresses while exiting
+
+YOSHIFUJI Hideaki (18):
+      ping,ping6: Rework capability support and Make sure -m and -I options work.
+      ping,tracepath: Spelling fixes in manpages.
+      ping,ping6: Fix integer overflow with large interval value (-i option).
+      clockdiff: Make it work with large pid.
+      ping,ping6: Make in_pr_addr volatile.
+      arping: Do not quit too early with large deadline value (-w option).
+      arping: Maintain minimum capabilities for SO_BINDTODEVICE(-I option).
+      ping: Fix recorded route comparison.
+      arping: Use getifaddrs() to get broadcast address.
+      ping6: Fix typo in error message.
+      ping6: Generate NI Group Address and Subject Name at once.
+      ping,ping6: Unmask signals on start-up.
+      arping: Build with USE_CAP=no.
+      arping,ping,ping6,tracepath,tracepath6,traceroute6: Experimental IDN support.
+      ping6: IDN support for the Subject Name in NI Query.
+      tracepath,tracepath6: Introduce -p option for port.
+      ping6: Add missing definitions/declarations for flowlabel management (-F option).
+      makefile: Do not include merge commits in RELNOTES.
+
+
 [s20121106]
 
 YOSHIFUJI Hideaki (5):
