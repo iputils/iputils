@@ -129,7 +129,7 @@ measure(struct sockaddr_in * addr)
 	int msgcount;
 	int cc, count;
 	fd_set ready;
-	long sendtime, recvtime, histime,  histime1;
+	long sendtime, recvtime, histime;
 	long min1, min2, diff;
 	long delta1, delta2;
 	struct timeval tv1, tout;
@@ -243,7 +243,6 @@ empty:
 			  rtt_sigma = (rtt_sigma *3 + abs(diff-rtt))/4;
 			  msgcount++;
 			  histime = ntohl(((__u32*)(icp+1))[1]);
-			  histime1 = ntohl(((__u32*)(icp+1))[2]);
 		/*
 		 * a hosts using a time format different from
 		 * ms. since midnight UT (as per RFC792) should
