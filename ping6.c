@@ -78,6 +78,7 @@ char copyright[] =
 #endif
 
 #include "ping6_niquery.h"
+#include "in6_flowlabel.h"
 
 #ifndef SOL_IPV6
 #define SOL_IPV6 IPPROTO_IPV6

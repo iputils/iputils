@@ -73,7 +73,8 @@ ping: ping.o ping_common.o
 	$(LINK.o) $^ $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
 ping6: ping6.o ping_common.o
 	$(LINK.o) $^ -lresolv -lcrypto $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
-ping.o ping6.o ping_common.o: ping_common.h
+ping6.o: ping_common.h in6_flowlabel.h
+ping.o ping_common.o: ping_common.h
 
 # rarpd
 
