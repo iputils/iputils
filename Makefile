@@ -127,7 +127,7 @@ snapshot:
 	@if [ "`uname -n`" != "pleiades" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
 	@date "+[$(TAG)]" > RELNOTES.NEW
 	@echo >>RELNOTES.NEW
-	@git log $(LASTTAG).. | git shortlog >> RELNOTES.NEW
+	@git log --no-merges $(LASTTAG).. | git shortlog >> RELNOTES.NEW
 	@echo >> RELNOTES.NEW
 	@cat RELNOTES >> RELNOTES.NEW
 	@mv RELNOTES.NEW RELNOTES

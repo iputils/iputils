@@ -49,7 +49,6 @@ YOSHIFUJI Hideaki (32):
       ping,ping6: ifdef guard for inline function for capability support and fix build with USE_CAP=no.
       makefile: Do not use "-llib" dependency.
       arping: build without sysfs support (USE_SYSFS=no).
-      Merge branch 'ninfod'
 
 Ángel González (1):
       iputils: Add capability dropping
@@ -73,8 +72,6 @@ YOSHIFUJI Hideaki (4):
 [s20100418]
 
 YOSHIFUJI Hideaki (28):
-      Merge branch 'timestamp'
-      Merge branch 'miscommit-20100210'
       ping6: Use IPV6_TCLASS to set outgoing traffic class if available.
       ping: Make build_echo(), gather_statistics() more generic.
       ping6: Experimental support for Node Information Queries (RFC4620).
@@ -123,7 +120,6 @@ YOSHIFUJI Hideaki (11):
       tracepath: Fix documentation typo.
       Use sysconf(_SC_OPEN_MAX) instead of OPEN_MAX.
       ping,ping6: Add -D option to print timestamp.
-      Merge branch 'timestamp'
 
 
 [s20071127]
@@ -162,7 +158,6 @@ YOSHIFUJI Hideaki (9):
       [TRACEPATH] Print usage if we met incorrect option.
       [PING6]: Fix compilation error with glibc-2.4 and later.
       [PING6]: Use getaddrinfo() to allow scoped addresses
-      Merge branch 'miscommit-20060927'
       [PING6]: Ensure not to reverse-lookup if target is numeric address.
 
 
