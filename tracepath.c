@@ -316,7 +316,7 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 #endif
 
-	while ((ch = getopt(argc, argv, "nbh?l:")) != EOF) {
+	while ((ch = getopt(argc, argv, "nbh?l:p:")) != EOF) {
 		switch(ch) {
 		case 'n':
 			no_resolve = 1;
@@ -330,6 +330,9 @@ main(int argc, char **argv)
 				exit(1);
 			}
 			break;
+		case 'p':
+			base_port = atoi(optarg);
+			break;
 		default:
 			usage();
 		}
@@ -341,7 +344,6 @@ main(int argc, char **argv)
 	if (argc != 1)
 		usage();
 
-
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (fd < 0) {
 		perror("socket");
@@ -349,12 +351,15 @@ main(int argc, char **argv)
 	}
 	target.sin_family = AF_INET;
 
-	p = strchr(argv[0], '/');
-	if (p) {
-		*p = 0;
-		base_port = atoi(p+1);
-	} else
-		base_port = 44444;
+	/* Backward compatiblity */
+	if (base_port) {
+		p = strchr(argv[0], '/');
+		if (p) {
+			*p = 0;
+			base_port = atoi(p+1);
+		} else
+			base_port = 44444;
+	}
 
 	p = argv[0];
 #ifdef USE_IDN

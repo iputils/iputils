@@ -388,7 +388,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 #endif
 
-	while ((ch = getopt(argc, argv, "nbh?l:")) != EOF) {
+	while ((ch = getopt(argc, argv, "nbh?l:p:")) != EOF) {
 		switch(ch) {
 		case 'n':
 			no_resolve = 1;
@@ -402,6 +402,9 @@ int main(int argc, char **argv)
 				exit(1);
 			}
 			break;
+		case 'p':
+			base_port = atoi(optarg);
+			break;
 		default:
 			usage();
 		}
@@ -413,12 +416,15 @@ int main(int argc, char **argv)
 	if (argc != 1)
 		usage();
 
-	p = strchr(argv[0], '/');
-	if (p) {
-		*p = 0;
-		base_port = (unsigned)atoi(p+1);
-	} else {
-		base_port = 44444;
+	/* Backward compatiblity */
+	if (!base_port) {
+		p = strchr(argv[0], '/');
+		if (p) {
+			*p = 0;
+			base_port = (unsigned)atoi(p+1);
+		} else {
+			base_port = 44444;
+		}
 	}
 	sprintf(pbuf, "%u", base_port);
 

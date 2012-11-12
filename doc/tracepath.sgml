@@ -18,8 +18,8 @@ traces path to a network host discovering MTU along this path</refpurpose>
 <arg choice="opt">-n</arg>
 <arg choice="opt">-b</arg>
 <arg choice="opt">-l <replaceable/pktlen/</arg>
+<arg choice="opt">-p <replaceable/port/</arg>
 <arg choice="req"><replaceable/destination/</arg>
-<arg choice="opt"><replaceable/port/</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
 
@@ -66,6 +66,12 @@ Sets the initial packet length to <replaceable/pktlen/ instead of
 65536 for <command/tracepath/ or 128000 for <command/tracepath6/.
   </para></listitem>
  </varlistentry>
+
+ <varlistentry>
+  <term><option/-p/</term>
+  <listitem><para>
+Sets the initial destination port to use.
+  </para></listitem>
 </variablelist>
 </refsect1>
 
