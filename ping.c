@@ -316,6 +316,9 @@ main(int argc, char **argv)
 			struct ifreq ifr;
 			memset(&ifr, 0, sizeof(ifr));
 			strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
+
+			enable_capability_raw();
+
 			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 				if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
 					struct ip_mreqn imr;
@@ -331,6 +334,8 @@ main(int argc, char **argv)
 					}
 				}
 			}
+
+			disable_capability_raw();
 		}
 
 		if (settos &&
