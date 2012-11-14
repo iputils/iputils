@@ -580,7 +580,7 @@ static void print_copying(void) {
 
 static void print_usage(void) {
 	fprintf(stderr, 
-		"Usage: %s [-d [-p pidfile]] [-u user] [-h] [-v]\n\n",
+		"Usage: %s [-d] [-p pidfile] [-u user] [-h] [-v]\n\n",
 		appname
 	);
 }
