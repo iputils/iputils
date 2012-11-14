@@ -281,7 +281,7 @@ void common_options(int ch)
 		char *endp;
 		mark = (int)strtoul(optarg, &endp, 10);
 		if (mark < 0 || *endp != '\0') {
-			fprintf(stderr, "mark cannot be negative");
+			fprintf(stderr, "mark cannot be negative\n");
 			exit(2);
 		}
 		options |= F_MARK;
