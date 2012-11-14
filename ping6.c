@@ -592,10 +592,18 @@ int main(int argc, char *argv[])
 		switch(ch) {
 		case 'F':
 			sscanf(optarg, "%x", &flowlabel);
+			if (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL) {
+				fprintf(stderr, "ping: invalid flowlabe: %x\n", flowlabel);
+				exit(2);
+			}
 			options |= F_FLOWINFO;
 			break;
 		case 'Q':
 			sscanf(optarg, "%x", &tclass);
+			if (tclass & ~0xff) {
+				fprintf(stderr, "ping: invalid tclass: %x\n", tclass);
+				exit(2);
+			}
 			options |= F_TCLASS;
 			break;
 		case 'I':
@@ -994,7 +1002,7 @@ int main(int argc, char *argv[])
 		if (srcrt)
 			freq_len = CMSG_ALIGN(sizeof(*freq)) + srcrt->cmsg_len;
 		memset(freq, 0, sizeof(*freq));
-		freq->flr_label = htonl(flowlabel&0xFFFFF);
+		freq->flr_label = htonl(flowlabel & IPV6_FLOWINFO_FLOWLABEL);
 		freq->flr_action = IPV6_FL_A_GET;
 		freq->flr_flags = IPV6_FL_F_CREATE;
 		freq->flr_share = IPV6_FL_S_EXCL;
