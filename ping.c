@@ -122,7 +122,7 @@ main(int argc, char **argv)
 	u_char *packet;
 	char *target;
 #ifdef USE_IDN
-	char *hnamebuf;
+	char *hnamebuf = NULL;
 #else
 	char hnamebuf[MAX_HOSTNAMELEN];
 #endif
@@ -263,8 +263,10 @@ main(int argc, char **argv)
 #ifdef USE_IDN
 			int rc;
 
-			free(hnamebuf);
-			hnamebuf = NULL;
+			if (hnamebuf) {
+				free(hnamebuf);
+				hnamebuf = NULL;
+			}
 
 			rc = idna_to_ascii_lz(target, &idn, 0);
 			if (rc != IDNA_SUCCESS) {
