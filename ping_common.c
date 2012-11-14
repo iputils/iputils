@@ -1,6 +1,7 @@
 #include "ping_common.h"
 #include <ctype.h>
 #include <sched.h>
+#include <math.h>
 
 int options;
 
@@ -255,24 +256,20 @@ void common_options(int ch)
 		break;
 	case 'i':		/* wait between sending packets */
 	{
-		if (strchr(optarg, '.')) {
-			float t;
-			if (sscanf(optarg, "%f", &t) != 1) {
-				fprintf(stderr, "ping: bad timing interval.\n");
-				exit(2);
-			}
-			interval = (int)(t*1000);
-		} else if (sscanf(optarg, "%d", &interval) == 1) {
-			interval *= 1000;
-		} else {
-			fprintf(stderr, "ping: bad timing interval.\n");
+		double dbl;
+		char *ep;
+
+		errno = 0;
+		dbl = strtod(optarg, &ep);
+
+		if (errno || *ep != '\0' ||
+		    !finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0) {
+			fprintf(stderr, "ping: bad timing interval\n");
 			exit(2);
 		}
 
-		if (interval < 0) {
-			fprintf(stderr, "ping: bad timing interval.\n");
-			exit(2);
-		}
+		interval = (int)(dbl * 1000);
+
 		options |= F_INTERVAL;
 		break;
 	}
