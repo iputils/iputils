@@ -100,7 +100,8 @@ void limit_capabilities(void)
 
 	if (i == ARRAY_SIZE(caps)) {
 		perror("ping: cap_set_proc");
-		exit(-1);
+		if (errno != EPERM)
+			exit(-1);
 	}
 
 	cap_free(cap_p);

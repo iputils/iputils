@@ -142,7 +142,8 @@ void limit_capabilities(void)
 
 	if (cap_set_proc(cap_p) < 0) {
 		perror("arping: cap_set_proc");
-		exit(-1);
+		if (errno != EPERM)
+			exit(-1);
 	}
 
 	if (cap_free(cap_p) < 0) {
