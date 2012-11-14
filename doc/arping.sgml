@@ -182,7 +182,7 @@ It is now maintained by
 
 <refsect1><title>SECURITY</title>
 <para>
-<command/arping/ requires <constant/CAP_NET_RAWIO/ capability
+<command/arping/ requires <constant/CAP_NET_RAW/ capability
 to be executed. It is not recommended to be used as set-uid root,
 because it allows user to modify ARP caches of neighbour hosts.
 </para>

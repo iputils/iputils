@@ -122,7 +122,7 @@ It is now maintained by
 
 <refsect1><title>SECURITY</title>
 <para>
-<command/clockdiff/ requires <constant/CAP_NET_RAWIO/ capability
+<command/clockdiff/ requires <constant/CAP_NET_RAW/ capability
 to be executed. It is safe to be used as set-uid root.
 </para>
 </refsect1>

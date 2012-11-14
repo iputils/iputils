@@ -125,7 +125,7 @@ It is now maintained by
 
 <refsect1><title>SECURITY</title>
 <para>
-<command/rarpd/ requires <constant/CAP_NET_RAWIO/ capability
+<command/rarpd/ requires <constant/CAP_NET_RAW/ capability
 to listen and send RARP and ARP packets. It also needs <constant/CAP_NET_ADMIN/
 to give to kernel hint for ARP resolution; this is not strictly required,
 but some (most of, to be more exact) clients are so badly broken that

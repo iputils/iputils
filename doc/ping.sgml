@@ -619,7 +619,7 @@ The version described here is its descendant specific to Linux.
 
 <refsect1><title>SECURITY</title>
 <para>
-<command/ping/ requires <constant/CAP_NET_RAWIO/ capability
+<command/ping/ requires <constant/CAP_NET_RAW/ capability
 to be executed. It may be used as set-uid root.
 </para>
 </refsect1>

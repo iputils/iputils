@@ -58,7 +58,7 @@ to Linux by Pedro Roque. After this it was kept in sync by
 
 <refsect1><title>SECURITY</title>
 <para>
-<command/tracepath6/ requires <constant/CAP_NET_RAWIO/ capability
+<command/tracepath6/ requires <constant/CAP_NET_RAW/ capability
 to be executed. It is safe to be used as set-uid root.
 </para>
 </refsect1>

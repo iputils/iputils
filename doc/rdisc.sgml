@@ -168,7 +168,7 @@ Menlo Park, Calif., September 1991.
 
 <refsect1><title>SECURITY</title>
 <para>
-<command/rdisc/ requires <constant/CAP_NET_RAWIO/ to listen
+<command/rdisc/ requires <constant/CAP_NET_RAW/ to listen
 and send ICMP messages and capability <constant/CAP_NET_ADMIN/
 to update routing tables. 
 </para>
