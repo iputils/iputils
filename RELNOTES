@@ -1,3 +1,25 @@
+[s20121114]
+
+Jan Synacek (2):
+      clockdiff: remove unused variable
+      ping: Wrap SO_BINDTODEVICE with the correct capability.
+
+YOSHIFUJI Hideaki (13):
+      ping: IP_MULTICAST_IF does not need CAP_NET_RAW.
+      ping6: Check ranges of flowlabel (-F option) and tclass (-Q option) arguments.
+      ping6: Accept 0x-notation for flowlabel (-F option) and tclass (-Q option) arguments.
+      ping,ping6: Manual update regarding -F, -Q and -N option.
+      arping,ping,ping6: Defer exitting to allow users to see usage.
+      arping,ping,ping6,ninfod: Change euid to uid (non-root) even if capabiliy is enabled.
+      ninfod: Add configure.
+      ninfod: libcap support to drop capabilities.
+      ninfod: Add run as user (-u user) option.
+      ninfod: Fix usage message.
+      arping,clockdiff,rarpd,rdisc,tftpd: Change RFC source to tools.ietf.org.
+      ninfod: Add ninfod(8) manpage.
+      makefile: Add ninfod, distclean targets.
+
+
 [s20121112]
 
 Sergey Fionov (1):
