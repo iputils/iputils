@@ -666,7 +666,7 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case 'V':
-			printf("ping6 utility, iputils-ss%s\n", SNAPSHOT);
+			printf("ping6 utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
 		case 'N':
 			if (niquery_option_handler(optarg) < 0) {

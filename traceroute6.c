@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case 'V':
-			printf("traceroute6 utility, iputils-ss%s\n", SNAPSHOT);
+			printf("traceroute6 utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
 		default:
 			usage();
