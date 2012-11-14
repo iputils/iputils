@@ -554,6 +554,26 @@ int niquery_option_handler(const char *opt_arg)
 	return ret;
 }
 
+static int hextoui(const char *str)
+{
+	unsigned long val;
+	char *ep;
+
+	val = strtoul(str, &ep, 16);
+	if (*ep) {
+		if (!errno)
+			errno = EINVAL;
+		return -1;
+	}
+
+	if (val > UINT_MAX) {
+		errno = ERANGE;
+		return UINT_MAX;
+	}
+
+	return val;
+}
+
 int main(int argc, char *argv[])
 {
 	int ch, hold, packlen;
@@ -591,17 +611,17 @@ int main(int argc, char *argv[])
 	while ((ch = getopt(argc, argv, COMMON_OPTSTR "F:N:")) != EOF) {
 		switch(ch) {
 		case 'F':
-			sscanf(optarg, "%x", &flowlabel);
-			if (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL) {
-				fprintf(stderr, "ping: invalid flowlabe: %x\n", flowlabel);
+			flowlabel = hextoui(optarg);
+			if (errno || (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL)) {
+				fprintf(stderr, "ping: Invalid flowinfo %s\n", optarg);
 				exit(2);
 			}
 			options |= F_FLOWINFO;
 			break;
 		case 'Q':
-			sscanf(optarg, "%x", &tclass);
-			if (tclass & ~0xff) {
-				fprintf(stderr, "ping: invalid tclass: %x\n", tclass);
+			tclass = hextoui(optarg);
+			if (errno || (tclass & ~0xff)) {
+				fprintf(stderr, "ping: Invalid tclass %s\n", optarg);
 				exit(2);
 			}
 			options |= F_TCLASS;
