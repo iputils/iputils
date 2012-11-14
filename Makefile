@@ -56,7 +56,7 @@ LASTTAG:=`git describe HEAD | sed -e 's/-.*//'`
 TAG:=`date +s%Y%m%d`
 
 # -------------------------------------
-.PHONY: all clean man html check-kernel modules snapshot
+.PHONY: all ninfod clean distclean man html check-kernel modules snapshot
 
 all: $(TARGETS)
 
@@ -67,6 +67,16 @@ arping: arping.o
 # clockdiff
 clockdiff: clockdiff.o
 	$(LINK.o) $^ $(LIB_CAP) $(LDLIBS) -o $@
+
+# ninfod
+ninfod:
+	@set -e; \
+		if [ ! -f ninfod/Makefile ]; then \
+			cd ninfod; \
+			./configure; \
+			cd ..; \
+		fi; \
+		$(MAKE) -C ninfod
 
 # ping / ping6
 ping: ping.o ping_common.o
@@ -121,6 +131,16 @@ clean:
 	@rm -f *.o $(TARGETS)
 	@$(MAKE) -C Modules clean
 	@$(MAKE) -C doc clean
+	@set -e; \
+		if [ -f ninfod/Makefile ]; then \
+			$(MAKE) -C ninfod clean; \
+		fi
+
+distclean:
+	@set -e; \
+		if [ -f ninfod/Makefile ]; then \
+			$(MAKE) -C ninfod distclean; \
+		fi
 
 # -------------------------------------
 snapshot:
