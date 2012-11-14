@@ -7,6 +7,7 @@
 <!ENTITY tracepath SYSTEM "tracepath.sgml">
 <!ENTITY traceroute6 SYSTEM "traceroute6.sgml">
 <!ENTITY rarpd SYSTEM "rarpd.sgml">
+<!ENTITY ninfod SYSTEM "ninfod.sgml">
 <!ENTITY tftpd SYSTEM "tftpd.sgml">
 <!ENTITY pg3 SYSTEM "pg3.sgml">
 ]>
@@ -20,6 +21,7 @@
 &tracepath;
 &traceroute6;
 &tftpd;
+&ninfod;
 &rdisc;
 &pg3;
 

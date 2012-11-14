@@ -93,17 +93,17 @@ use NTP in this case, which is even better.
 <refsect1><title>REFERENCES</title>
 <para>
 [1] <anchor id="clockdiff.icmp-echo">ICMP ECHO,
-<ulink url="ftp://ftp.isi.edu/in-notes/rfc792.txt">
+<ulink url="http://tools.ietf.org/rfc/rfc792.txt">
 RFC0792, page 14</ulink>.
 </para>
 <para>
 [2] <anchor id="clockdiff.icmp-timestamp">ICMP TIMESTAMP,
-<ulink url="ftp://ftp.isi.edu/in-notes/rfc792.txt">
+<ulink url="http://tools.ietf.org/rfc/rfc792.txt">
 RFC0792, page 16</ulink>.
 </para>
 <para>
 [3] <anchor id="clockdiff.ip-timestamp">IP TIMESTAMP option,
-<ulink url="ftp://ftp.isi.edu/in-notes/rfc791.txt">
+<ulink url="http://tools.ietf.org/rfc/rfc791.txt">
 RFC0791, 3.1, page 16</ulink>.
 </para>
 </refsect1>

@@ -22,7 +22,7 @@
 <para>
 <command/tftpd/ is a server which supports the DARPA
 Trivial File Transfer Protocol
-(<ulink url="ftp://ftp.isi.edu/in-notes/rfc1350.txt">RFC1350</ulink>).
+(<ulink url="http://tools.ietf.org/rfc/rfc1350.txt">RFC1350</ulink>).
 The TFTP server is started
 by <citerefentry><refentrytitle/inetd/<manvolnum/8/</citerefentry>.
 </para>

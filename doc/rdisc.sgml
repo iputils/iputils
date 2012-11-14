@@ -160,7 +160,7 @@ It is now maintained by
 <refsect1><title>REFERENCES</title>
 <para>
 Deering, S.E.,ed "ICMP Router Discovery Messages",
-<ulink url="ftp://ftp.isi.edu/in-notes/rfc1256.txt">
+<ulink url="http://tools.ietf.org/rfc/rfc1256.txt">
 RFC1256</ulink>, Network Information Center, SRI International,
 Menlo Park, Calif., September 1991.
 </para>

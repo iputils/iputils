@@ -67,7 +67,7 @@ option, <command/arping/ waits for
   <term><option/-D/</term>
   <listitem><para>
 Duplicate address detection mode (DAD). See 
-<ulink url="ftp://ftp.isi.edu/in-notes/rfc2131.txt">RFC2131, 4.4.1</ulink>.
+<ulink url="http://tools.ietf.org/rfc/rfc2131.txt">RFC2131, 4.4.1</ulink>.
 Returns 0, if DAD succeeded i.e. no replies are received
   </para></listitem>
  </varlistentry>
