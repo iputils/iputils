@@ -79,6 +79,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(openssl/md5.h)
 AC_CHECK_HEADERS(sys/uio.h)
 AC_CHECK_HEADERS(sys/utsname.h arpa/inet.h netdb.h syslog.h)
+AC_CHECK_HEADERS(sys/capability.h)
 AC_CHECK_HEADERS(netinet/in.h)
 AC_CHECK_HEADERS(netinet/ip6.h netinet/icmp6.h,,,[
 #if HAVE_SYS_TYPES_H
@@ -117,6 +118,7 @@ struct icmp6_nodeinfo nodeinfo;
 dnl Checks for library functions.
 AC_CHECK_FUNCS(nanosleep)
 AC_CHECK_LIB(pthread, pthread_create)
+AC_CHECK_LIB(cap, cap_init)
 
 dnl AC_CHECK_LIB(crypto, MD5_Init,
 dnl	AC_DEFINE(HAVE_MD5_INIT)

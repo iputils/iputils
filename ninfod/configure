@@ -3572,6 +3572,18 @@ fi
 
 done
 
+for ac_header in sys/capability.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "sys/capability.h" "ac_cv_header_sys_capability_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_capability_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SYS_CAPABILITY_H 1
+_ACEOF
+
+fi
+
+done
+
 for ac_header in netinet/in.h
 do :
   ac_fn_c_check_header_mongrel "$LINENO" "netinet/in.h" "ac_cv_header_netinet_in_h" "$ac_includes_default"
@@ -4038,6 +4050,51 @@ if test "x$ac_cv_lib_pthread_pthread_create" = xyes; then :
 _ACEOF
 
   LIBS="-lpthread $LIBS"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for cap_init in -lcap" >&5
+$as_echo_n "checking for cap_init in -lcap... " >&6; }
+if ${ac_cv_lib_cap_cap_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcap  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char cap_init ();
+int
+main ()
+{
+return cap_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_cap_cap_init=yes
+else
+  ac_cv_lib_cap_cap_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_cap_cap_init" >&5
+$as_echo "$ac_cv_lib_cap_cap_init" >&6; }
+if test "x$ac_cv_lib_cap_cap_init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCAP 1
+_ACEOF
+
+  LIBS="-lcap $LIBS"
 
 fi
 

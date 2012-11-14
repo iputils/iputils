@@ -468,6 +468,8 @@ int main (int argc, char **argv)
 
 	appname = argv[0];
 
+	limit_capabilities();
+
 	sock = open_sock();
 	if (sock < 0)
 		sock_errno = errno;
@@ -482,14 +484,14 @@ int main (int argc, char **argv)
 	}
 
 	if (sock_errno) {
-		DEBUG(LOG_ERR, "%s\n", strerror(sock_errno));
+		DEBUG(LOG_ERR, "socket: %s\n", strerror(sock_errno));
 		exit(1);
 	}
 
 	if (!opt_d)
 		do_daemonize();
 
-	setuid(getuid());
+	drop_capabilities();
 
 	/* initialize */
 	if (init_sock(sock) < 0)
