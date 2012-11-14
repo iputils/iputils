@@ -98,6 +98,10 @@
 # include <syslog.h>
 #endif
 
+#if HAVE_PWD_H
+# include <pwd.h>
+#endif
+
 #if HAVE_SYS_CAPABILITY_H
 # include <sys/prctl.h>
 # include <sys/capability.h>
@@ -122,6 +126,7 @@ static int opt_d = 0;	/* debug */
 static int opt_h = 0;	/* help */
 static char *opt_p = NINFOD_PIDFILE;	/* pidfile */
 int opt_v = 0;		/* verbose */
+static uid_t opt_u;
 
 static int ipv6_pktinfo = IPV6_PKTINFO;
 
@@ -419,7 +424,7 @@ static void do_daemonize(void)
 
 /* --------- */
 #ifdef HAVE_LIBCAP
-static const cap_value_t caps[] = { CAP_NET_RAW, };
+static const cap_value_t caps[] = { CAP_NET_RAW, CAP_SETUID };
 #else
 static uid_t euid;
 #endif
@@ -435,7 +440,8 @@ static void limit_capabilities(void)
 		exit(-1);
         }
 
-	if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps, CAP_SET) < 0 ||
+	/* net_raw + setuid / net_raw */
+	if (cap_set_flag(cap_p, CAP_PERMITTED, 2, caps, CAP_SET) < 0 ||
 	    cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps, CAP_SET) < 0) {
 		DEBUG(LOG_ERR, "cap_set_flag: %s\n", strerror(errno));
 		exit(-1);
@@ -448,16 +454,6 @@ static void limit_capabilities(void)
 	}
 
 	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
-		DEBUG(LOG_ERR, "prctl: %s\n", strerror(errno));
-		exit(-1);
-	}
-
-	if (setuid(getuid()) < 0) {
-		DEBUG(LOG_ERR, "setuid: %s\n", strerror(errno));
-		exit(-1);
-	}
-
-	if (prctl(PR_SET_KEEPCAPS, 0) < 0) {
 		DEBUG(LOG_ERR, "prctl: %s\n", strerror(errno));
 		exit(-1);
 	}
@@ -482,6 +478,33 @@ static void drop_capabilities(void)
 		exit(-1);
 	}
 
+	/* setuid / setuid */
+	if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps + 1, CAP_SET) < 0 ||
+	    cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps + 1, CAP_SET) < 0) {
+		DEBUG(LOG_ERR, "cap_set_flag: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
+		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (seteuid(opt_u ? opt_u : getuid()) < 0) {
+		DEBUG(LOG_ERR, "setuid: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (prctl(PR_SET_KEEPCAPS, 0) < 0) {
+		DEBUG(LOG_ERR, "prctl: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (cap_clear(cap_p) < 0) {
+		DEBUG(LOG_ERR, "cap_clear: %s\n", strerror(errno));
+		exit(-1);
+	}
+
 	if (cap_set_proc(cap_p) < 0) {
 		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
 		exit(-1);
@@ -491,6 +514,7 @@ static void drop_capabilities(void)
 		DEBUG(LOG_ERR, "cap_free: %s\n", strerror(errno));
 		exit(-1);
 	}
+
 #else
 	if (setuid(getuid()) < 0) {
 		DEBUG(LOG_ERR, "setuid: %s\n", strerror(errno));
@@ -503,9 +527,11 @@ static void drop_capabilities(void)
 static void parse_args(int argc, char **argv)
 {
 	int c;
+	unsigned long val;
+	char *ep;
 
 	/* parse options */
-	while ((c = getopt(argc, argv, "dhvp:")) != -1) {
+	while ((c = getopt(argc, argv, "dhvp:u:")) != -1) {
 		switch(c) {
 		case 'd':	/* debug */
 			opt_d = 1;
@@ -515,6 +541,18 @@ static void parse_args(int argc, char **argv)
 			break;
 		case 'p':
 			opt_p = optarg;
+			break;
+		case 'u':
+			val = strtoul(optarg, &ep, 10);
+			if (!optarg || *ep) {
+				struct passwd *pw = getpwnam(optarg);
+				if (!pw) {
+					DEBUG(LOG_ERR, "No such user: %s", optarg);
+					exit(1);
+				}
+				opt_u = pw->pw_uid;
+			} else
+				opt_u = val;
 			break;
 		case 'h':	/* help */
 		default:
@@ -542,7 +580,7 @@ static void print_copying(void) {
 
 static void print_usage(void) {
 	fprintf(stderr, 
-		"Usage: %s [-d [-p pidfile]] [-h] [-v]\n\n",
+		"Usage: %s [-d] [-p pidfile] [-u user] [-h] [-v]\n\n",
 		appname
 	);
 }
@@ -555,11 +593,15 @@ int main (int argc, char **argv)
 
 	appname = argv[0];
 
+	limit_capabilities();
+
 	sock = open_sock();
 	if (sock < 0)
 		sock_errno = errno;
 
 	parse_args(argc, argv);
+
+	drop_capabilities();
 
 	if (opt_h || opt_v)
 		print_copying();
@@ -569,14 +611,12 @@ int main (int argc, char **argv)
 	}
 
 	if (sock_errno) {
-		DEBUG(LOG_ERR, "%s\n", strerror(sock_errno));
+		DEBUG(LOG_ERR, "socket: %s\n", strerror(sock_errno));
 		exit(1);
 	}
 
 	if (!opt_d)
 		do_daemonize();
-
-	setuid(getuid());
 
 	/* initialize */
 	if (init_sock(sock) < 0)
