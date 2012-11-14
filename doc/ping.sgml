@@ -108,8 +108,9 @@ Essentially, this socket option is not used by Linux kernel.
  <varlistentry>
   <term><option>-F <replaceable/flow label/</option></term>
   <listitem><para>
-Allocate and set 20 bit flow label on echo request packets.
-(Only <command/ping6/). If value is zero, kernel allocates random flow label.
+<command/ping6/ only.
+Allocate and set 20 bit flow label (in hex) on echo request packets.
+If value is zero, kernel allocates random flow label.
   </para></listitem>
  </varlistentry>
  <varlistentry>
@@ -124,6 +125,11 @@ whichever is more.
 Only the super-user may use this option with zero interval.
   </para></listitem>
  </varlistentry>
+ <varlistentry>
+  <term><option/-h/</term>
+  <listitem><para>
+Show help.
+  </para></listitem>
  <varlistentry>
   <term><option>-i <replaceable/interval/</option></term>
   <listitem><para>
@@ -159,7 +165,14 @@ destination is a multicast address.
  <varlistentry>
   <term><option>-N <replaceable/nioption/</option></term>
   <listitem><para>
+<command/ping6/ only.
 Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
+   <variablelist>
+    <varlistentry>
+     <term><option>help</option></term>
+     <listitem><para>Show help for NI support.</para></listitem>
+    </varlistentry>
+   </variablelist>
    <variablelist>
     <varlistentry>
      <term><option>name</option></term>
@@ -273,7 +286,7 @@ each line.
   <term><option>-Q <replaceable/tos/</option></term>
   <listitem><para>
 Set Quality of Service -related bits in ICMP datagrams.  
-<replaceable/tos/ can be either decimal or hex number.
+<replaceable/tos/ can be decimal (<command/ping/ only) or hex number.
 Traditionally (RFC1349), these have been interpreted as: 0 for reserved
 (currently being redefined as congestion control), 1-4 for Type of Service
 and 5-7 for Precedence.
