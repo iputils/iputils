@@ -98,6 +98,11 @@
 # include <syslog.h>
 #endif
 
+#if HAVE_SYS_CAPABILITY_H
+# include <sys/prctl.h>
+# include <sys/capability.h>
+#endif
+
 #include "ninfod.h"
 
 #ifndef offsetof
@@ -410,6 +415,88 @@ static void do_daemonize(void)
 		fprintf(fp, "%d\n", getpid());
 		fclose(fp);
 	}
+}
+
+/* --------- */
+#ifdef HAVE_LIBCAP
+static const cap_value_t caps[] = { CAP_NET_RAW, };
+#else
+static uid_t euid;
+#endif
+
+static void limit_capabilities(void)
+{
+#ifdef HAVE_LIBCAP
+	cap_t cap_p;
+
+	cap_p = cap_init();
+	if (!cap_p) {
+		DEBUG(LOG_ERR, "cap_init: %s\n", strerror(errno));
+		exit(-1);
+        }
+
+	if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps, CAP_SET) < 0 ||
+	    cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps, CAP_SET) < 0) {
+		DEBUG(LOG_ERR, "cap_set_flag: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
+		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
+		if (errno != EPERM)
+			exit(-1);
+	}
+
+	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
+		DEBUG(LOG_ERR, "prctl: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (setuid(getuid()) < 0) {
+		DEBUG(LOG_ERR, "setuid: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (prctl(PR_SET_KEEPCAPS, 0) < 0) {
+		DEBUG(LOG_ERR, "prctl: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (cap_free(cap_p) < 0) {
+		DEBUG(LOG_ERR, "cap_free: %s\n", strerror(errno));
+		exit(-1);
+	}
+#else
+	euid = geteuid();
+#endif
+}
+
+static void drop_capabilities(void)
+{
+#ifdef HAVE_LIBCAP
+	cap_t cap_p;
+
+	cap_p = cap_init();
+	if (!cap_p) {
+		DEBUG(LOG_ERR, "cap_init: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
+		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
+		exit(-1);
+	}
+
+	if (cap_free(cap_p) < 0) {
+		DEBUG(LOG_ERR, "cap_free: %s\n", strerror(errno));
+		exit(-1);
+	}
+#else
+	if (setuid(getuid()) < 0) {
+		DEBUG(LOG_ERR, "setuid: %s\n", strerror(errno));
+		exit(-1);
+	}
+#endif
 }
 
 /* --------- */

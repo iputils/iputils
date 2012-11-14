@@ -104,6 +104,21 @@ void limit_capabilities(void)
 			exit(-1);
 	}
 
+	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
+		perror("ping: prctl");
+		exit(-1);
+	}
+
+	if (setuid(getuid()) < 0) {
+		perror("setuid");
+		exit(-1);
+	}
+
+	if (prctl(PR_SET_KEEPCAPS, 0) < 0) {
+		perror("ping: prctl");
+		exit(-1);
+	}
+
 	cap_free(cap_p);
 #endif
 	uid = getuid();

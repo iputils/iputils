@@ -23,6 +23,7 @@
 #include <net/if_arp.h>
 #include <sys/uio.h>
 #ifdef CAPABILITIES
+#include <sys/prctl.h>
 #include <sys/capability.h>
 #endif
 
@@ -144,6 +145,21 @@ void limit_capabilities(void)
 		perror("arping: cap_set_proc");
 		if (errno != EPERM)
 			exit(-1);
+	}
+
+	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
+		perror("arping: prctl");
+		exit(-1);
+	}
+
+	if (setuid(getuid()) < 0) {
+		perror("arping: setuid");
+		exit(-1);
+	}
+
+	if (prctl(PR_SET_KEEPCAPS, 0) < 0) {
+		perror("arping: prctl");
+		exit(-1);
 	}
 
 	if (cap_free(cap_p) < 0) {
