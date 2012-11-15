@@ -17,7 +17,7 @@
 #include <sys/time.h>
 #include <sys/signal.h>
 #include <sys/ioctl.h>
-#include <linux/if.h>
+#include <net/if.h>
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
 #include <net/if_arp.h>
@@ -61,6 +61,7 @@ int quit_on_reply=0;
 struct device {
 	char *name;
 	int ifindex;
+	struct ifaddrs *ifa;
 } device = {
 	.name = DEFAULT_DEVICE,
 };
@@ -466,6 +467,27 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 	return 1;
 }
 
+static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *ba, size_t balen, int fatal)
+{
+	struct sockaddr_ll *sll;
+
+	if (!ifa)
+		return -1;
+
+	sll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
+
+	if (sll->sll_halen != balen) {
+		if (fatal) {
+			if (!quiet)
+				printf("Address length does not match...\n");
+			exit(2);
+		}
+		return -1;
+	}
+	memcpy(ba, sll->sll_addr, sll->sll_halen);
+	return 0;
+}
+
 #if USE_SYSFS
 static int set_device_broadcast_sysfs(char *device, unsigned char *ba, size_t balen)
 {
@@ -498,37 +520,6 @@ static int set_device_broadcast_sysfs(char *device, unsigned char *ba, size_t ba
 }
 #endif
 
-static int set_device_broadcast_ifaddrs(char *device, unsigned char *ba, size_t balen)
-{
-	struct ifaddrs *ifa0, *ifa;
-
-	if (getifaddrs(&ifa0) < 0) {
-		fprintf(stderr, "getifaddrs failed");
-		return -1;
-	}
-
-	for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
-		struct sockaddr_ll *sll;
-
-		if (strcmp(ifa->ifa_name, device) ||
-		    !ifa->ifa_addr ||
-		    ifa->ifa_addr->sa_family != AF_PACKET ||
-		    !(ifa->ifa_flags & IFF_BROADCAST))
-			continue;
-
-		sll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
-
-		if (sll->sll_halen != balen)
-			continue;
-
-		memcpy(ba, sll->sll_addr, sll->sll_halen);
-
-		break;
-	}
-
-	return 0;
-}
-
 static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t balen)
 {
 	memset(ba, -1, balen);
@@ -537,15 +528,14 @@ static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t
 
 static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t balen)
 {
-
+	if (!set_device_broadcast_ifaddrs_one(dev->ifa, ba, balen, 0))
+		return;
 #if USE_SYSFS
 	if (!set_device_broadcast_sysfs(dev->name, ba, balen))
 		return;
 #endif
-	if (!set_device_broadcast_ifaddrs(dev->name, ba, balen))
-		return;
-
 	set_device_broadcast_fallback(dev->name, ba, balen);
+	return;
 }
 
 static int check_ifflags(unsigned int ifflags, int fatal)
@@ -567,6 +557,57 @@ static int check_ifflags(unsigned int ifflags, int fatal)
 		return -1;
 	}
 	return 0;
+}
+
+static int find_device_by_ifaddrs(void)
+{
+	int rc;
+	struct ifaddrs *ifa0, *ifa;
+
+	rc = getifaddrs(&ifa0);
+	if (rc) {
+		perror("getifaddrs");
+		return -1;
+	}
+
+	for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
+		if (!ifa->ifa_addr)
+			continue;
+		if (ifa->ifa_addr->sa_family != AF_PACKET)
+			continue;
+		if (device.name && ifa->ifa_name && strcmp(ifa->ifa_name, device.name))
+			continue;
+
+		if (check_ifflags(ifa->ifa_flags, device.name != NULL) < 0)
+			continue;
+
+		if (!((struct sockaddr_ll *)ifa->ifa_addr)->sll_halen)
+			continue;
+		if (!ifa->ifa_broadaddr)
+			continue;
+
+		if (device.ifa) {
+			if (device.ifa->ifa_flags & IFF_RUNNING)
+				continue;
+		}
+
+		device.ifa = ifa;
+
+		if (ifa->ifa_flags & IFF_RUNNING)
+			break;
+	}
+
+	if (device.ifa) {
+		device.ifindex = if_nametoindex(device.ifa->ifa_name);
+		if (!device.ifindex) {
+			perror("arping: if_nametoindex");
+			freeifaddrs(ifa0);
+			return -1;
+		}
+		device.name  = device.ifa->ifa_name;
+		return 0;
+	}
+	return 1;
 }
 
 int
@@ -614,10 +655,6 @@ main(int argc, char **argv)
 			timeout = atoi(optarg);
 			break;
 		case 'I':
-			if (!*optarg) {
-				fprintf(stderr, "arping: device name cannot be emptry string.\n");
-				exit(2);
-			}
 			device.name = optarg;
 			break;
 		case 'f':
@@ -646,33 +683,22 @@ main(int argc, char **argv)
 	if (device.name && !*device.name)
 		device.name = NULL;
 
-	if (device.name == NULL) {
-		fprintf(stderr, "arping: device (option -I) is required\n");
-		usage();
-	}
-
 	if (s < 0) {
 		errno = socket_errno;
 		perror("arping: socket");
 		exit(2);
 	}
 
-	if (1) {
-		struct ifreq ifr;
-		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, device.name, IFNAMSIZ-1);
-		if (ioctl(s, SIOCGIFINDEX, &ifr) < 0) {
-			fprintf(stderr, "arping: unknown iface %s\n", device.name);
+	if (find_device_by_ifaddrs() < 0)
+		exit(2);
+
+	if (!device.ifindex) {
+		if (device.name) {
+			fprintf(stderr, "arping: Device %s not available.\n", device.name);
 			exit(2);
 		}
-		device.ifindex = ifr.ifr_ifindex;
-
-		if (ioctl(s, SIOCGIFFLAGS, (char*)&ifr)) {
-			perror("ioctl(SIOCGIFFLAGS)");
-			exit(2);
-		}
-
-		check_ifflags(ifr.ifr_flags, 1);
+		fprintf(stderr, "arping: No device found; device (option -I) is required.\n");
+		usage();
 	}
 
 	if (inet_aton(target, &dst) != 1) {
