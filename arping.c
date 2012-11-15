@@ -58,8 +58,12 @@ static void usage(void) __attribute__((noreturn));
 #endif
 
 int quit_on_reply=0;
-char *device = DEFAULT_DEVICE;
-int ifindex;
+struct device {
+	char *name;
+	int ifindex;
+} device = {
+	.name = DEFAULT_DEVICE,
+};
 char *source;
 struct in_addr src, dst;
 char *target;
@@ -531,17 +535,17 @@ static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t
 	return 0;
 }
 
-static void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
+static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t balen)
 {
 
 #if USE_SYSFS
-	if (!set_device_broadcast_sysfs(device, ba, balen))
+	if (!set_device_broadcast_sysfs(dev->name, ba, balen))
 		return;
 #endif
-	if (!set_device_broadcast_ifaddrs(device, ba, balen))
+	if (!set_device_broadcast_ifaddrs(dev->name, ba, balen))
 		return;
 
-	set_device_broadcast_fallback(device, ba, balen);
+	set_device_broadcast_fallback(dev->name, ba, balen);
 }
 
 static int check_ifflags(unsigned int ifflags, int fatal)
@@ -549,7 +553,7 @@ static int check_ifflags(unsigned int ifflags, int fatal)
 	if (!(ifflags & IFF_UP)) {
 		if (fatal) {
 			if (!quiet)
-				printf("Interface \"%s\" is down\n", device);
+				printf("Interface \"%s\" is down\n", device.name);
 			exit(2);
 		}
 		return -1;
@@ -557,7 +561,7 @@ static int check_ifflags(unsigned int ifflags, int fatal)
 	if (ifflags & (IFF_NOARP | IFF_LOOPBACK)) {
 		if (fatal) {
 			if (!quiet)
-				printf("Interface \"%s\" is not ARPable\n", device);
+				printf("Interface \"%s\" is not ARPable\n", device.name);
 			exit(dad ? 0 : 2);
 		}
 		return -1;
@@ -614,7 +618,7 @@ main(int argc, char **argv)
 				fprintf(stderr, "arping: device name cannot be emptry string.\n");
 				exit(2);
 			}
-			device = optarg;
+			device.name = optarg;
 			break;
 		case 'f':
 			quit_on_reply=1;
@@ -639,10 +643,10 @@ main(int argc, char **argv)
 
 	target = *argv;
 
-	if (device && !*device)
-		device = NULL;
+	if (device.name && !*device.name)
+		device.name = NULL;
 
-	if (device == NULL) {
+	if (device.name == NULL) {
 		fprintf(stderr, "arping: device (option -I) is required\n");
 		usage();
 	}
@@ -656,12 +660,12 @@ main(int argc, char **argv)
 	if (1) {
 		struct ifreq ifr;
 		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
+		strncpy(ifr.ifr_name, device.name, IFNAMSIZ-1);
 		if (ioctl(s, SIOCGIFINDEX, &ifr) < 0) {
-			fprintf(stderr, "arping: unknown iface %s\n", device);
+			fprintf(stderr, "arping: unknown iface %s\n", device.name);
 			exit(2);
 		}
-		ifindex = ifr.ifr_ifindex;
+		device.ifindex = ifr.ifr_ifindex;
 
 		if (ioctl(s, SIOCGIFFLAGS, (char*)&ifr)) {
 			perror("ioctl(SIOCGIFFLAGS)");
@@ -714,10 +718,10 @@ main(int argc, char **argv)
 			perror("socket");
 			exit(2);
 		}
-		if (device) {
+		if (device.name) {
 			enable_capability_raw();
 
-			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1)
+			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device.name, strlen(device.name)+1) == -1)
 				perror("WARNING: interface is ignored");
 
 			disable_capability_raw();
@@ -753,7 +757,7 @@ main(int argc, char **argv)
 	};
 
 	((struct sockaddr_ll *)&me)->sll_family = AF_PACKET;
-	((struct sockaddr_ll *)&me)->sll_ifindex = ifindex;
+	((struct sockaddr_ll *)&me)->sll_ifindex = device.ifindex;
 	((struct sockaddr_ll *)&me)->sll_protocol = htons(ETH_P_ARP);
 	if (bind(s, (struct sockaddr*)&me, sizeof(me)) == -1) {
 		perror("bind");
@@ -769,18 +773,18 @@ main(int argc, char **argv)
 	}
 	if (((struct sockaddr_ll *)&me)->sll_halen == 0) {
 		if (!quiet)
-			printf("Interface \"%s\" is not ARPable (no ll address)\n", device);
+			printf("Interface \"%s\" is not ARPable (no ll address)\n", device.name);
 		exit(dad?0:2);
 	}
 
 	he = me;
 
-	set_device_broadcast(device, ((struct sockaddr_ll *)&he)->sll_addr,
+	set_device_broadcast(&device, ((struct sockaddr_ll *)&he)->sll_addr,
 			     ((struct sockaddr_ll *)&he)->sll_halen);
 
 	if (!quiet) {
 		printf("ARPING %s ", inet_ntoa(dst));
-		printf("from %s %s\n",  inet_ntoa(src), device ? : "");
+		printf("from %s %s\n",  inet_ntoa(src), device.name ? : "");
 	}
 
 	if (!src.s_addr && !dad) {
