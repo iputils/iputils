@@ -544,6 +544,27 @@ static void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
 	set_device_broadcast_fallback(device, ba, balen);
 }
 
+static int check_ifflags(unsigned int ifflags, int fatal)
+{
+	if (!(ifflags & IFF_UP)) {
+		if (fatal) {
+			if (!quiet)
+				printf("Interface \"%s\" is down\n", device);
+			exit(2);
+		}
+		return -1;
+	}
+	if (ifflags & (IFF_NOARP | IFF_LOOPBACK)) {
+		if (fatal) {
+			if (!quiet)
+				printf("Interface \"%s\" is not ARPable\n", device);
+			exit(dad ? 0 : 2);
+		}
+		return -1;
+	}
+	return 0;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -646,16 +667,8 @@ main(int argc, char **argv)
 			perror("ioctl(SIOCGIFFLAGS)");
 			exit(2);
 		}
-		if (!(ifr.ifr_flags&IFF_UP)) {
-			if (!quiet)
-				printf("Interface \"%s\" is down\n", device);
-			exit(2);
-		}
-		if (ifr.ifr_flags&(IFF_NOARP|IFF_LOOPBACK)) {
-			if (!quiet)
-				printf("Interface \"%s\" is not ARPable\n", device);
-			exit(dad?0:2);
-		}
+
+		check_ifflags(ifr.ifr_flags, 1);
 	}
 
 	if (inet_aton(target, &dst) != 1) {
