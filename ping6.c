@@ -418,7 +418,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 		goto oomexit;
 #endif
 
-	p = strchr(name, '%');
+	p = strchr(name, SCOPE_DELIMITER);
 	if (p) {
 		*p = '\0';
 		if (strlen(p + 1) >= IFNAMSIZ) {
