@@ -221,7 +221,7 @@ main(int argc, char **argv)
 			}
 			break;
 		case 'V':
-			printf("ping utility, iputils-ss%s\n", SNAPSHOT);
+			printf("ping utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
 		COMMON_OPTIONS
 			common_options(ch);

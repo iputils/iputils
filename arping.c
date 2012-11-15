@@ -595,7 +595,7 @@ main(int argc, char **argv)
 			source = optarg;
 			break;
 		case 'V':
-			printf("arping utility, iputils-ss%s\n", SNAPSHOT);
+			printf("arping utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
 		case 'h':
 		case '?':

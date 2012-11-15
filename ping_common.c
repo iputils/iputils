@@ -372,7 +372,7 @@ void common_options(int ch)
 		lingertime *= 1000;
 		break;
 	case 'V':
-		printf("ping utility, iputils-ss%s\n", SNAPSHOT);
+		printf("ping utility, iputils-%s\n", SNAPSHOT);
 		exit(0);
 	default:
 		abort();

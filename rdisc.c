@@ -329,7 +329,7 @@ int main(int argc, char **argv)
 				forever = 1;
 				break;
 			case 'V':
-				printf("rdisc utility, iputils-ss%s\n", SNAPSHOT);
+				printf("rdisc utility, iputils-%s\n", SNAPSHOT);
 				exit(0);
 #ifdef RDISC_SERVER
 			case 'T':
