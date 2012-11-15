@@ -22,8 +22,8 @@ USE_IDN=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
-#CCOPT=-Wstrict-prototypes -Wall -g -Werror
-CCOPT=-Wstrict-prototypes -Wall -g
+#CCOPT=-no-strict-aliasing -Wstrict-prototypes -Wall -g -Werror
+CCOPT=-fno-strict-aliasing -Wstrict-prototypes -Wall -g
 CCOPTOPT=-O2
 GLIBCFIX=-D_GNU_SOURCE
 DEFINES=
