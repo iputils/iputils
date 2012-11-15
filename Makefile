@@ -90,7 +90,7 @@ ping.o ping_common.o: ping_common.h
 
 # rdisc_srv
 rdisc_srv.o: rdisc.c
-	$(CC) $(CFLAGS) -DRDISC_SERVER -o rdisc_srv.o rdisc.c
+	$(COMPILE.c) $^ -DRDISC_SERVER -o $@
 
 # tracepath
 tracepath: tracepath.o

@@ -886,7 +886,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 				((max_adv_int - min_adv_int)
 				 * (random() % 1000)/1000);
 		} else {
-			sin.sin_addr = ip->saddr;
+			sin.sin_addr.s_addr = ip->saddr;
 			if (!is_directly_connected(sin.sin_addr)) {
 				if (verbose)
 					logtrace("ICMP %s from %s: source not directly connected\n",
@@ -956,8 +956,6 @@ finish()
 {
 #ifdef RDISC_SERVER
 	if (responder) {
-		int i;
-
 		/* Send out a packet with a preference so that all
 		 * hosts will know that we are dead.
 		 *
