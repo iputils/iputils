@@ -45,7 +45,7 @@ ifneq ($(USE_IDN),no)
 endif
 
 # -------------------------------------
-IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
+IPV4_TARGETS=tracepath ping clockdiff rdisc rdisc_srv arping tftpd rarpd
 IPV6_TARGETS=tracepath6 traceroute6 ping6
 TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
 
@@ -87,6 +87,8 @@ ping6.o: ping_common.h in6_flowlabel.h
 ping.o ping_common.o: ping_common.h
 
 # rarpd
+
+# rdisc
 
 # rdisc_srv
 rdisc_srv.o: rdisc.c
