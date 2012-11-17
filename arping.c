@@ -49,6 +49,8 @@
 #include <locale.h>
 #endif
 
+#include "arping_sysfs.h"
+
 #include "SNAPSHOT.h"
 
 static void usage(void) __attribute__((noreturn));
@@ -60,14 +62,10 @@ static void usage(void) __attribute__((noreturn));
 # define DEFAULT_DEVICE		NULL
 #endif
 
+#include "arping.h"
+
 int quit_on_reply=0;
-struct device {
-	char *name;
-	int ifindex;
-#ifndef WITHOUT_IFADDRS
-	struct ifaddrs *ifa;
-#endif
-} device = {
+struct device device = {
 	.name = DEFAULT_DEVICE,
 };
 char *source;
@@ -495,38 +493,6 @@ static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *
 }
 #endif
 
-#if USE_SYSFS
-static int set_device_broadcast_sysfs(char *device, unsigned char *ba, size_t balen)
-{
-	struct sysfs_class_device *dev;
-	struct sysfs_attribute *brdcast;
-	unsigned char *p;
-	int ch;
-
-	dev = sysfs_open_class_device("net", device);
-	if (!dev) {
-		perror("sysfs_open_class_device(net)");
-		return -1;
-	}
-
-	brdcast = sysfs_get_classdev_attr(dev, "broadcast");
-	if (!brdcast) {
-		perror("sysfs_get_classdev_attr(broadcast)");
-		return -1;
-	}
-
-	if (sysfs_read_attribute(brdcast)) {
-		perror("sysfs_read_attribute");
-		return -1;
-	}
-
-	for (p = ba, ch = 0; p < ba + balen; p++, ch += 3)
-		*p = strtoul(brdcast->value + ch, NULL, 16);
-
-	return 0;
-}
-#endif
-
 static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t balen)
 {
 	memset(ba, -1, balen);
@@ -539,16 +505,14 @@ static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t b
 	if (!set_device_broadcast_ifaddrs_one(dev->ifa, ba, balen, 0))
 		return;
 #endif
-#if USE_SYSFS
-	if (!set_device_broadcast_sysfs(dev->name, ba, balen))
+	if (!set_device_broadcast_sysfs(dev->sysfs, ba, balen))
 		return;
-#endif
 	if (!quiet)
 		fprintf(stderr, "WARNING: using default broadcast address.\n");
 	set_device_broadcast_fallback(dev->name, ba, balen);
 }
 
-static int check_ifflags(unsigned int ifflags, int fatal)
+int check_ifflags(unsigned int ifflags, int fatal)
 {
 	if (!(ifflags & IFF_UP)) {
 		if (fatal) {
@@ -792,6 +756,7 @@ main(int argc, char **argv)
 	}
 
 	if (find_device_by_ifaddrs() < 0 &&
+	    find_device_by_sysfs(&device) < 0 &&
 	    find_device_by_ioctl() < 0)
 		exit(2);
 
