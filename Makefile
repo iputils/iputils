@@ -19,6 +19,8 @@ USE_CAP=yes
 USE_SYSFS=no
 # IDN support (experimental
 USE_IDN=no
+# arping default device
+ARPING_DEFAULT_DEVICE=eth0
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
@@ -61,6 +63,8 @@ TAG:=`date +s%Y%m%d`
 all: $(TARGETS)
 
 # arping
+arping.o: arping.c
+	$(COMPILE.c) $^ -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\" -o $@
 arping: arping.o
 	$(LINK.o) $^ $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
 

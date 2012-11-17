@@ -50,8 +50,15 @@
 
 static void usage(void) __attribute__((noreturn));
 
+#ifdef DEFAULT_DEVICE
+# define DEFAULT_DEVICE_STR	DEFAULT_DEVICE
+#else
+# define DEFAULT_DEVICE_STR	"no default"
+# define DEFAULT_DEVICE		NULL
+#endif
+
 int quit_on_reply=0;
-char *device="eth0";
+char *device = DEFAULT_DEVICE;
 int ifindex;
 char *source;
 struct in_addr src, dst;
@@ -104,7 +111,7 @@ void usage(void)
 		"  -V : print version and exit\n"
 		"  -c count : how many packets to send\n"
 		"  -w timeout : how long to wait for a reply\n"
-		"  -I device : which ethernet device to use (eth0)\n"
+		"  -I device : which ethernet device to use (" DEFAULT_DEVICE_STR ")\n"
 		"  -s source : source ip address\n"
 		"  destination : ask for what ip address\n"
 		);
@@ -606,6 +613,9 @@ main(int argc, char **argv)
 		usage();
 
 	target = *argv;
+
+	if (device && !*device)
+		device = NULL;
 
 	if (device == NULL) {
 		fprintf(stderr, "arping: device (option -I) is required\n");
