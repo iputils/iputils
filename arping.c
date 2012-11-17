@@ -589,6 +589,10 @@ main(int argc, char **argv)
 			timeout = atoi(optarg);
 			break;
 		case 'I':
+			if (!*optarg) {
+				fprintf(stderr, "arping: device name cannot be emptry string.\n");
+				exit(2);
+			}
 			device = optarg;
 			break;
 		case 'f':
