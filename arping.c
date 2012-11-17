@@ -39,6 +39,7 @@
 #ifdef USE_SYSFS
 #include <sysfs/libsysfs.h>
 #endif
+
 #include <ifaddrs.h>
 
 #ifdef USE_IDN
@@ -534,8 +535,9 @@ static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t b
 	if (!set_device_broadcast_sysfs(dev->name, ba, balen))
 		return;
 #endif
+	if (!quiet)
+		fprintf(stderr, "WARNING: using default broadcast address.\n");
 	set_device_broadcast_fallback(dev->name, ba, balen);
-	return;
 }
 
 static int check_ifflags(unsigned int ifflags, int fatal)
@@ -608,6 +610,94 @@ static int find_device_by_ifaddrs(void)
 		return 0;
 	}
 	return 1;
+}
+
+static int check_device_by_ioctl(int s, struct ifreq *ifr)
+{
+	if (ioctl(s, SIOCGIFFLAGS, ifr) < 0) {
+		perror("ioctl(SIOCGIFINDEX");
+		return -1;
+	}
+
+	if (check_ifflags(ifr->ifr_flags, device.name != NULL) < 0)
+		return 1;
+
+	if (ioctl(s, SIOCGIFINDEX, ifr) < 0) {
+		perror("ioctl(SIOCGIFINDEX");
+		return -1;
+	}
+
+	return 0;
+}
+
+static int find_device_by_ioctl(void)
+{
+	int s;
+	struct ifreq *ifr0, *ifr, *ifr_end;
+	size_t ifrsize = sizeof(*ifr);
+	struct ifconf ifc;
+	static struct ifreq ifrbuf;
+
+	s = socket(AF_INET, SOCK_DGRAM, 0);
+	if (s < 0) {
+		perror("socket");
+		return -1;
+	}
+
+	memset(&ifrbuf, 0, sizeof(ifrbuf));
+
+	if (device.name) {
+		strncpy(ifrbuf.ifr_name, device.name, sizeof(ifrbuf.ifr_name) - 1);
+		if (check_device_by_ioctl(s, &ifrbuf))
+			goto out;
+	} else {
+		do {
+			int rc;
+			ifr0 = malloc(ifrsize);
+			if (!ifr0) {
+				perror("malloc");
+				goto out;
+			}
+
+			ifc.ifc_buf = (char *)ifr0;
+			ifc.ifc_len = ifrsize;
+
+			rc = ioctl(s, SIOCGIFCONF, &ifc);
+			if (rc < 0) {
+				perror("ioctl(SIOCFIFCONF");
+				goto out;
+			}
+
+			if (ifc.ifc_len + sizeof(*ifr0) + sizeof(struct sockaddr_storage) - sizeof(struct sockaddr) <= ifrsize)
+				break;
+			ifrsize *= 2;
+			free(ifr0);
+			ifr0 = NULL;
+		} while(ifrsize < INT_MAX / 2);
+
+		if (!ifr0) {
+			fprintf(stderr, "arping: too many interfaces!?\n");
+			goto out;
+		}
+
+		ifr_end = (struct ifreq *)(((char *)ifr0) + ifc.ifc_len - sizeof(*ifr0));
+		for (ifr = ifr0; ifr <= ifr_end; ifr++) {
+			memcpy(&ifrbuf.ifr_name, ifr->ifr_name, sizeof(ifrbuf.ifr_name));
+			if (check_device_by_ioctl(s, &ifrbuf))
+				continue;
+			break;
+		}
+	}
+
+	close(s);
+
+	device.ifindex = ifrbuf.ifr_ifindex;
+	device.name = ifrbuf.ifr_name;
+
+	return !device.ifindex;
+out:
+	close(s);
+	return -1;
 }
 
 int
@@ -689,7 +779,8 @@ main(int argc, char **argv)
 		exit(2);
 	}
 
-	if (find_device_by_ifaddrs() < 0)
+	if (find_device_by_ifaddrs() < 0 &&
+	    find_device_by_ioctl() < 0)
 		exit(2);
 
 	if (!device.ifindex) {

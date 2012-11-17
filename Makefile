@@ -46,6 +46,10 @@ ifneq ($(USE_IDN),no)
 	LIB_IDN = -lidn
 endif
 
+ifneq ($(WITHOUT_IFADDRS),no)
+	DEFINES += -DWITHOUT_IFADDRS
+endif
+
 # -------------------------------------
 IPV4_TARGETS=tracepath ping clockdiff rdisc rdisc_srv arping tftpd rarpd
 IPV6_TARGETS=tracepath6 traceroute6 ping6
