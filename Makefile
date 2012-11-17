@@ -70,7 +70,7 @@ all: $(TARGETS)
 
 # arping
 arping.o: arping.c
-	$(COMPILE.c) $^ -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\" -o $@
+	$(COMPILE.c) $< -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\" -o $@
 arping: arping.o
 	$(LINK.o) $^ $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
 
@@ -102,7 +102,7 @@ ping.o ping_common.o: ping_common.h
 
 # rdisc_srv
 rdisc_srv.o: rdisc.c
-	$(COMPILE.c) $^ -DRDISC_SERVER -o $@
+	$(COMPILE.c) $< -DRDISC_SERVER -o $@
 
 # tracepath
 tracepath: tracepath.o
