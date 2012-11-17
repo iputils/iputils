@@ -40,7 +40,9 @@
 #include <sysfs/libsysfs.h>
 #endif
 
+#ifndef WITHOUT_IFADDRS
 #include <ifaddrs.h>
+#endif
 
 #ifdef USE_IDN
 #include <idna.h>
@@ -62,7 +64,9 @@ int quit_on_reply=0;
 struct device {
 	char *name;
 	int ifindex;
+#ifndef WITHOUT_IFADDRS
 	struct ifaddrs *ifa;
+#endif
 } device = {
 	.name = DEFAULT_DEVICE,
 };
@@ -468,6 +472,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 	return 1;
 }
 
+#ifndef WITHOUT_IFADDRS
 static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *ba, size_t balen, int fatal)
 {
 	struct sockaddr_ll *sll;
@@ -488,6 +493,7 @@ static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *
 	memcpy(ba, sll->sll_addr, sll->sll_halen);
 	return 0;
 }
+#endif
 
 #if USE_SYSFS
 static int set_device_broadcast_sysfs(char *device, unsigned char *ba, size_t balen)
@@ -529,8 +535,10 @@ static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t
 
 static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t balen)
 {
+#ifndef WITHOUT_IFADDRS
 	if (!set_device_broadcast_ifaddrs_one(dev->ifa, ba, balen, 0))
 		return;
+#endif
 #if USE_SYSFS
 	if (!set_device_broadcast_sysfs(dev->name, ba, balen))
 		return;
@@ -563,6 +571,7 @@ static int check_ifflags(unsigned int ifflags, int fatal)
 
 static int find_device_by_ifaddrs(void)
 {
+#ifndef WITHOUT_IFADDRS
 	int rc;
 	struct ifaddrs *ifa0, *ifa;
 
@@ -610,6 +619,9 @@ static int find_device_by_ifaddrs(void)
 		return 0;
 	}
 	return 1;
+#else
+	return -1;
+#endif
 }
 
 static int check_device_by_ioctl(int s, struct ifreq *ifr)

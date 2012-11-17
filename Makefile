@@ -19,6 +19,8 @@ USE_CAP=yes
 USE_SYSFS=no
 # IDN support (experimental
 USE_IDN=no
+# Do not use getifaddrs
+WITHOUT_IFADDRS=no
 # arping default device
 ARPING_DEFAULT_DEVICE=eth0
 
