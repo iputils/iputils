@@ -526,19 +526,15 @@ static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t
 
 static void set_device_broadcast(char *device, unsigned char *ba, size_t balen)
 {
-	int ret;
 
 #if USE_SYSFS
-	ret = set_device_broadcast_sysfs(device, ba, balen);
-	if (!ret)
+	if (!set_device_broadcast_sysfs(device, ba, balen))
 		return;
 #endif
-	ret = set_device_broadcast_ifaddrs(device, ba, balen);
-	if (!ret)
+	if (!set_device_broadcast_ifaddrs(device, ba, balen))
 		return;
 
-	ret = set_device_broadcast_fallback(device, ba, balen);
-	return;
+	set_device_broadcast_fallback(device, ba, balen);
 }
 
 int
