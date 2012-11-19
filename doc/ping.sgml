@@ -14,23 +14,23 @@
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>ping</command>
-<arg choice="opt"><option>-LRUbdfnqrvVaABDO</option></arg>
+<arg choice="opt"><option>-aAbBdDfhLnOqrRUvV</option></arg>
 <arg choice="opt">-c <replaceable/count/</arg>
-<arg choice="opt">-m <replaceable/mark/</arg>
-<arg choice="opt">-i <replaceable/interval/</arg>
-<arg choice="opt">-l <replaceable/preload/</arg>
-<arg choice="opt">-p <replaceable/pattern/</arg>
-<arg choice="opt">-s <replaceable/packetsize/</arg>
-<arg choice="opt">-t <replaceable/ttl/</arg>
-<arg choice="opt">-w <replaceable/deadline/</arg>
 <arg choice="opt">-F <replaceable/flowlabel/</arg>
+<arg choice="opt">-i <replaceable/interval/</arg>
 <arg choice="opt">-I <replaceable/interface/</arg>
-<arg choice="opt">-M <replaceable/hint/</arg>
-<arg choice="opt">-N <replaceable/nioption/</arg>
-<arg choice="opt">-Q <replaceable/tos/</arg>
-<arg choice="opt">-S <replaceable/sndbuf/</arg>
-<arg choice="opt">-T <replaceable/timestamp option/</arg>
+<arg choice="opt">-l <replaceable/preload/</arg>
+<arg choice="opt">-m <replaceable/mark/</arg>
+<arg choice="opt">-M <replaceable/pmtudisc_option/</arg>
+<arg choice="opt">-N <replaceable/nodeinfo_option/</arg>
+<arg choice="opt">-w <replaceable/deadline/</arg>
 <arg choice="opt">-W <replaceable/timeout/</arg>
+<arg choice="opt">-p <replaceable/pattern/</arg>
+<arg choice="opt">-Q <replaceable/tos/</arg>
+<arg choice="opt">-s <replaceable/packetsize/</arg>
+<arg choice="opt">-S <replaceable/sndbuf/</arg>
+<arg choice="opt">-t <replaceable/ttl/</arg>
+<arg choice="opt">-T <replaceable/timestamp option/</arg>
 <arg choice="opt" rep="repeat"><replaceable/hop/</arg>
 <arg choice="req"><replaceable/destination/</arg>
 </cmdsynopsis>
@@ -81,14 +81,6 @@ The address is bound to one selected when <command/ping/ starts.
   </para></listitem>
  </varlistentry>
  <varlistentry>
-  <term><option>-m <replaceable/mark/</option></term>
-  <listitem><para>
-use <replaceable/mark/ to tag the packets going out. This is useful
-for variety of reasons within the kernel such as using policy
-routing to select specific outbound processing.
-  </para></listitem>
- </varlistentry>
- <varlistentry>
   <term><option><anchor id="ping.count">-c <replaceable/count/</option></term>
   <listitem><para>
 Stop after sending <replaceable/count/ ECHO_REQUEST
@@ -106,11 +98,10 @@ Essentially, this socket option is not used by Linux kernel.
   </para></listitem>
  </varlistentry>
  <varlistentry>
-  <term><option>-F <replaceable/flow label/</option></term>
+  <term><option/-D/</term>
   <listitem><para>
-<command/ping6/ only.
-Allocate and set 20 bit flow label (in hex) on echo request packets.
-If value is zero, kernel allocates random flow label.
+Print timestamp (unix time + microseconds as in gettimeofday) before
+each line.
   </para></listitem>
  </varlistentry>
  <varlistentry>
@@ -123,6 +114,14 @@ If interval is not given, it sets interval to zero and
 outputs packets as fast as they come back or one hundred times per second,
 whichever is more.
 Only the super-user may use this option with zero interval.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option>-F <replaceable/flow label/</option></term>
+  <listitem><para>
+<command/ping6/ only.
+Allocate and set 20 bit flow label (in hex) on echo request packets.
+If value is zero, kernel allocates random flow label.
   </para></listitem>
  </varlistentry>
  <varlistentry>
@@ -163,7 +162,25 @@ destination is a multicast address.
   </para></listitem>
  </varlistentry>
  <varlistentry>
-  <term><option>-N <replaceable/nioption/</option></term>
+  <term><option>-m <replaceable/mark/</option></term>
+  <listitem><para>
+use <replaceable/mark/ to tag the packets going out. This is useful
+for variety of reasons within the kernel such as using policy
+routing to select specific outbound processing.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option>-M <replaceable/pmtudisc_opt/</option></term>
+  <listitem><para>
+Select Path MTU Discovery strategy.
+<replaceable/pmtudisc_option/ may be either <replaceable/do/
+(prohibit fragmentation, even local one), 
+<replaceable/want/ (do PMTU discovery, fragment locally when packet size
+is large), or <replaceable/dont/ (do not set DF flag).
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option>-N <replaceable/nodeinfo_option/</option></term>
   <listitem><para>
 <command/ping6/ only.
 Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
@@ -276,10 +293,11 @@ to be filled with all ones.
   </para></listitem>
  </varlistentry>
  <varlistentry>
-  <term><option/-D/</term>
+  <term><option/-q/</term>
   <listitem><para>
-Print timestamp (unix time + microseconds as in gettimeofday) before
-each line.
+Quiet output.
+Nothing is displayed except the summary lines at startup time and
+when finished.
   </para></listitem>
  </varlistentry>
  <varlistentry>
@@ -303,24 +321,6 @@ here), and bits 2-7 of Differentiated Services Codepoint (DSCP).
   </para></listitem>
  </varlistentry>
  <varlistentry>
-  <term><option/-q/</term>
-  <listitem><para>
-Quiet output.
-Nothing is displayed except the summary lines at startup time and
-when finished.
-  </para></listitem>
- </varlistentry>
- <varlistentry>
-  <term><option/-R/</term>
-  <listitem><para>
-Record route.
-Includes the RECORD_ROUTE option in the ECHO_REQUEST
-packet and displays the route buffer on returned packets.
-Note that the IP header is only large enough for nine such routes.
-Many hosts ignore or discard this option.
-  </para></listitem>
- </varlistentry>
- <varlistentry>
   <term><option/-r/</term>
   <listitem><para>
 Bypass the normal routing tables and send directly to a host on an attached
@@ -329,6 +329,17 @@ If the host is not on a directly-attached network, an error is returned.
 This option can be used to ping a local host through an interface
 that has no route through it provided the option <option/-I/ is also
 used.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option/-R/</term>
+  <listitem><para>
+<command/ping/ only.
+Record route.
+Includes the RECORD_ROUTE option in the ECHO_REQUEST
+packet and displays the route buffer on returned packets.
+Note that the IP header is only large enough for nine such routes.
+Many hosts ignore or discard this option.
   </para></listitem>
  </varlistentry>
  <varlistentry>
@@ -349,6 +360,7 @@ not more than one packet.
  <varlistentry>
   <term><option>-t <replaceable/ttl/</option></term>
   <listitem><para>
+<command/ping/ only.
 Set the IP Time to Live.
   </para></listitem>
  </varlistentry>
@@ -361,16 +373,6 @@ Set special IP timestamp options.
 <replaceable/tsandaddr/ (timestamps and addresses) or 
 <replaceable/tsprespec host1 [host2 [host3 [host4]]]/
 (timestamp prespecified hops).
-  </para></listitem>
- </varlistentry>
- <varlistentry>
-  <term><option>-M <replaceable/hint/</option></term>
-  <listitem><para>
-Select Path MTU Discovery strategy.
-<replaceable/hint/ may be either <replaceable/do/
-(prohibit fragmentation, even local one), 
-<replaceable/want/ (do PMTU discovery, fragment locally when packet size
-is large), or <replaceable/dont/ (do not set DF flag).
   </para></listitem>
  </varlistentry>
  <varlistentry>

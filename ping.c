@@ -1317,13 +1317,34 @@ void install_filter(void)
 		perror("WARNING: failed to install socket filter\n");
 }
 
+#define USAGE_NEWLINE	"\n           "
 
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: ping [-LRUbdfnqrvVaADO] [-c count] [-i interval] [-w deadline]\n"
-"            [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
-"            [-M pmtudisc-hint] [-m mark] [-S sndbuf]\n"
-"            [-T tstamp-options] [-Q tos] [hop1 ...] destination\n");
+		"Usage: ping"
+		" [-"
+			"aAbBdDfhLnOqrRUvV"
+		"]"
+		" [-c count]"
+		" [-i interval]"
+		" [-I interface]"
+		USAGE_NEWLINE
+		" [-m mark]"
+		" [-M pmtudisc_option]"
+		" [-l preload]"
+		" [-p pattern]"
+		" [-Q tos]"
+		USAGE_NEWLINE
+		" [-s packetsize]"
+		" [-S sndbuf]"
+		" [-t ttl]"
+		" [-T timestamp_option]"
+		USAGE_NEWLINE
+		" [-w deadline]"
+		" [-W timeout]"
+		" [hop1 ...] destination"
+		"\n"
+	);
 	exit(2);
 }

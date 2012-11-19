@@ -517,14 +517,14 @@ errexit:
 int niquery_option_help_handler(int index, const char *arg)
 {
 	fprintf(stderr, "ping6 -N suboptions\n"
+			"\tHelp:\n"
+			"\t\thelp\n"
 			"\tQuery:\n"
 			"\t\tname,\n"
 			"\t\tipv6,ipv6-all,ipv6-compatible,ipv6-linklocal,ipv6-sitelocal,ipv6-global,\n"
 			"\t\tipv4,ipv4-all,\n"
 			"\tSubject:\n"
 			"\t\tsubject-ipv6=addr,subject-ipv4=addr,subject-name=name,subject-fqdn=name,\n"
-			"\tHelp:\n"
-			"\t\thelp\n"
 		);
 	exit(2);
 }
@@ -1658,13 +1658,36 @@ char * pr_addr_n(struct in6_addr *addr)
 	return str;
 }
 
+#define USAGE_NEWLINE	"\n            "
+
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: ping6 [-LUdfnqrvVaADO] [-c count] [-i interval] [-w deadline]\n"
-"             [-p pattern] [-s packetsize] [-t ttl] [-I interface]\n"
-"             [-M pmtudisc-hint] [-S sndbuf] [-F flowlabel] [-Q tclass]\n"
-"             [-N nodeinfo-suboptions]\n"
-"             [hop1 ...] destination\n");
+		"Usage: ping6"
+		" [-"
+			"aAbBdDfhLnOqrRUvV"
+		"]"
+		" [-c count]"
+		" [-i interval]"
+		" [-I interface]"
+		USAGE_NEWLINE
+		" [-l preload]"
+		" [-m mark]"
+		" [-M pmtudisc_option]"
+		USAGE_NEWLINE
+		" [-N nodeinfo_option]"
+		" [-p pattern]"
+		" [-Q tclass]"
+		" [-s packetsize]"
+		USAGE_NEWLINE
+		" [-S sndbuf]"
+		" [-t ttl]"
+		" [-T timestamp_option]"
+		" [-w deadline]"
+		USAGE_NEWLINE
+		" [-W timeout]"
+		" [hop1 ...] destination"
+		"\n"
+	);
 	exit(2);
 }
