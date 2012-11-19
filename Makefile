@@ -23,6 +23,8 @@ USE_IDN=no
 WITHOUT_IFADDRS=no
 # arping default device
 ARPING_DEFAULT_DEVICE=eth0
+# rdisc server (-r option) support
+ENABLE_RDISC_SERVER=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
@@ -52,8 +54,12 @@ ifneq ($(WITHOUT_IFADDRS),no)
 	DEFINES += -DWITHOUT_IFADDRS
 endif
 
+ifneq ($(ENABLE_RDISC_SERVER),no)
+	DEF_rdisc = -DRDISC_SERVER
+endif
+
 # -------------------------------------
-IPV4_TARGETS=tracepath ping clockdiff rdisc rdisc_srv arping tftpd rarpd
+IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
 IPV6_TARGETS=tracepath6 traceroute6 ping6
 TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
 
@@ -99,10 +105,8 @@ ping.o ping_common.o: ping_common.h
 # rarpd
 
 # rdisc
-
-# rdisc_srv
-rdisc_srv.o: rdisc.c
-	$(COMPILE.c) $< -DRDISC_SERVER -o $@
+rdisc.o: rdisc.c
+	$(COMPILE.c) $< $(DEF_rdisc) -o $@
 
 # tracepath
 tracepath: tracepath.o
