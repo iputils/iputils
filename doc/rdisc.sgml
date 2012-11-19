@@ -14,7 +14,9 @@
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>rdisc</command>
-<arg choice="opt"><option>-abdfstvV</option></arg>
+<arg choice="opt"><option>-abdfrstvV</option></arg>
+<arg choice="opt">-p <replaceable/preference/</arg>
+<arg choice="opt">-T <replaceable/max_interval/</arg>
 <arg choice="opt"><replaceable/send_address/</arg>
 <arg choice="opt"><replaceable/receive_address/</arg>
 </cmdsynopsis>
@@ -59,6 +61,7 @@ message with the preference being maximally negative.
 <para>
 Server side of router discovery protocol is supported by Cisco IOS
 and by any more or less complete UNIX routing daemon, f.e <command/gated/.
+Or, <command/rdisc/ can act as responder, if compiled with -DRDISC_SERVER.
 </para>
 
 </refsect1>
@@ -101,6 +104,13 @@ If <option/-f/ is not specified in the first form then
  </varlistentry>
 
  <varlistentry>
+  <term><option/-r/</term>
+  <listitem><para>
+Responder mode, available only if compiled with -DRDISC_SERVER.
+  </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
   <term><option/-s/</term>
   <listitem><para>
 Send three <emphasis/solicitation/ messages initially to quickly discover
@@ -112,12 +122,27 @@ This can be overridden with the <option/-f/ option.
  </varlistentry>
 
  <varlistentry>
+  <term><option>-p <replaceable/preference/</option></term>
+  <listitem><para>
+Set preference in advertisement.
+Available only with -r option.
+  </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+  <term><option>-T <replaceable/max_interval/</option></term>
+  <listitem><para>
+Set maximum advertisement interval in seconds.  Default is 600 secs.
+Available only with -r option.
+  </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
   <term><option/-t/</term>
   <listitem><para>
 Test mode. Do not go to background.
   </para></listitem>
  </varlistentry>
-
 
  <varlistentry>
   <term><option/-v/</term>
