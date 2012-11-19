@@ -551,6 +551,8 @@ int niquery_option_handler(const char *opt_arg)
 			}
 		}
 	}
+	if (!p->name)
+		ret = niquery_option_help_handler(0, NULL);
 	return ret;
 }
 
