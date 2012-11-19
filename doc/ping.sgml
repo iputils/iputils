@@ -303,22 +303,22 @@ when finished.
  <varlistentry>
   <term><option>-Q <replaceable/tos/</option></term>
   <listitem><para>
-Set Quality of Service -related bits in ICMP datagrams.  
-<replaceable/tos/ can be decimal (<command/ping/ only) or hex number.
-Traditionally (RFC1349), these have been interpreted as: 0 for reserved
-(currently being redefined as congestion control), 1-4 for Type of Service
-and 5-7 for Precedence.
-Possible settings for Type of Service are: minimal cost: 0x02, 
-reliability: 0x04, throughput: 0x08, low delay: 0x10.  Multiple TOS bits
-should not be set simultaneously.  Possible settings for
-special Precedence range from priority (0x20) to net control (0xe0).  You
-must be root (<constant/CAP_NET_ADMIN/ capability) to use Critical or
-higher precedence value.  You cannot set
-bit 0x01 (reserved) unless ECN has been enabled in the kernel.
-In RFC2474, these fields has been redefined as 8-bit Differentiated
-Services (DS), consisting of: bits 0-1 of separate data (ECN will be used,
-here), and bits 2-7 of Differentiated Services Codepoint (DSCP).
-  </para></listitem>
+	Set Quality of Service -related bits in ICMP datagrams.
+	<replaceable/tos/ can be decimal (<command/ping/ only) or hex number.
+	</para>
+	<para>
+	In RFC2474, these fields are interpreted as 8-bit Differentiated
+	Services (DS), consisting of: bits 0-1 (2 lowest bits) of separate
+	data, and bits 2-7 (highest 6 bits) of Differentiated Services
+	Codepoint (DSCP).  In RFC2481 and RFC3168, bits 0-1 are used for ECN.
+	</para>
+	<para>
+	Historically (RFC1349, obsoleted by RFC2474), these were interpreted
+	as: bit 0 (lowest bit) for reserved (currently being redefined as
+	congestion control), 1-4 for Type of Service and bits 5-7
+	(highest bits) for Precedence.
+   </para>
+  </listitem>
  </varlistentry>
  <varlistentry>
   <term><option/-r/</term>
