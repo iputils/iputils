@@ -470,9 +470,9 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 	return 1;
 }
 
-#ifndef WITHOUT_IFADDRS
 static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *ba, size_t balen, int fatal)
 {
+#ifndef WITHOUT_IFADDRS
 	struct sockaddr_ll *sll;
 
 	if (!ifa)
@@ -490,8 +490,10 @@ static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *
 	}
 	memcpy(ba, sll->sll_addr, sll->sll_halen);
 	return 0;
-}
+#else
+	return -1;
 #endif
+}
 
 static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t balen)
 {
@@ -501,10 +503,8 @@ static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t
 
 static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t balen)
 {
-#ifndef WITHOUT_IFADDRS
 	if (!set_device_broadcast_ifaddrs_one(dev->ifa, ba, balen, 0))
 		return;
-#endif
 	if (!set_device_broadcast_sysfs(dev->sysfs, ba, balen))
 		return;
 	if (!quiet)
