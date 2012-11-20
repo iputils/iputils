@@ -28,9 +28,9 @@ ENABLE_RDISC_SERVER=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
-#CCOPT=-no-strict-aliasing -Wstrict-prototypes -Wall -g -Werror
+# CCOPT=-fno-strict-aliasing -Wstrict-prototypes -Wall -Werror -g
 CCOPT=-fno-strict-aliasing -Wstrict-prototypes -Wall -g
-CCOPTOPT=-O2
+CCOPTOPT=-O3
 GLIBCFIX=-D_GNU_SOURCE
 DEFINES=
 LDLIB=
