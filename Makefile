@@ -36,26 +36,26 @@ DEFINES=
 LDLIB=
 
 ifneq ($(USE_CAP),no)
-	DEFINES += -DCAPABILITIES
+	DEF_CAP = -DCAPABILITIES
 	LIB_CAP = -lcap
 endif
 
 ifneq ($(USE_SYSFS),no)
-	DEFINES += -DUSE_SYSFS
+	DEF_SYSFS = -DUSE_SYSFS
 	LIB_SYSFS = -lsysfs
 endif
 
 ifneq ($(USE_IDN),no)
-	DEFINES += -DUSE_IDN
+	DEF_IDN = -DUSE_IDN
 	LIB_IDN = -lidn
 endif
 
 ifneq ($(WITHOUT_IFADDRS),no)
-	DEFINES += -DWITHOUT_IFADDRS
+	DEF_WITHOUT_IFADDRS = -DWITHOUT_IFADDRS
 endif
 
 ifneq ($(ENABLE_RDISC_SERVER),no)
-	DEF_rdisc = -DRDISC_SERVER
+	DEF_ENABLE_RDISC_SERVER = -DRDISC_SERVER
 endif
 
 # -------------------------------------
@@ -74,16 +74,61 @@ TAG:=`date +s%Y%m%d`
 
 all: $(TARGETS)
 
+%.o: %.c
+	$(COMPILE.c) $< $(DEF_$(patsubst %.o,%,$@)) -o $@
+$(TARGETS): %: %.o
+	$(LINK.o) $^ $(LIB_$@) $(LDLIBS) -o $@
+
+# -------------------------------------
 # arping
-arping.o: arping.c
-	$(COMPILE.c) $< -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\" -o $@
-arping: arping.o
-	$(LINK.o) $^ $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
+DEF_arping = $(DEF_SYSFS) $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS) -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\"
+LIB_arping = $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN)
 
 # clockdiff
-clockdiff: clockdiff.o
-	$(LINK.o) $^ $(LIB_CAP) $(LDLIBS) -o $@
+DEF_clockdiff = $(DEF_CAP)
+LIB_clockdiff = $(LIB_CAP)
 
+# ping / ping6
+DEF_ping_common = $(DEF_CAP) $(DEF_IDN)
+DEF_ping  = $(DEF_CAP) $(DEF_IDN)
+LIB_ping  = $(LIB_CAP) $(LIB_IDN)
+DEF_ping6 = $(DEF_CAP) $(DEF_IDN)
+LIB_ping6 = $(LIB_CAP) $(LIB_IDN) -lresolv -lcrypto
+
+ping: ping_common.o
+ping6: ping_common.o
+ping.o ping_common.o: ping_common.h
+ping6.o: ping_common.h in6_flowlabel.h
+
+# rarpd
+DEF_rarpd =
+LIB_rarpd =
+
+# rdisc
+DEF_rdisc = $(DEF_ENABLE_RDISC_SERVER)
+LIB_rdisc =
+
+# tracepath
+DEF_tracepath = $(DEF_IDN)
+LIB_tracepath = $(LIB_IDN)
+
+# tracepath6
+DEF_tracepath6 = $(DEF_IDN)
+LIB_tracepath6 =
+
+# traceroute6
+DEF_traceroute6 = $(DEF_CAP) $(DEF_IDN)
+LIB_traceroute6 = $(LIB_CAP) $(LIB_IDN)
+
+# tftpd
+DEF_tftpd =
+DEF_tftpsubs =
+LIB_tftpd =
+
+tftpd: tftpsubs.o
+tftpd.o tftpsubs.o: tftp.h
+
+# -------------------------------------
 # ninfod
 ninfod:
 	@set -e; \
@@ -93,34 +138,6 @@ ninfod:
 			cd ..; \
 		fi; \
 		$(MAKE) -C ninfod
-
-# ping / ping6
-ping: ping.o ping_common.o
-	$(LINK.o) $^ $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
-ping6: ping6.o ping_common.o
-	$(LINK.o) $^ -lresolv -lcrypto $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
-ping6.o: ping_common.h in6_flowlabel.h
-ping.o ping_common.o: ping_common.h
-
-# rarpd
-
-# rdisc
-rdisc.o: rdisc.c
-	$(COMPILE.c) $< $(DEF_rdisc) -o $@
-
-# tracepath
-tracepath: tracepath.o
-	$(LINK.o) $^ $(LIB_IDN) $(LDLIBS) -o $@
-
-# tracepath6
-
-# traceroute6
-traceroute6: traceroute6.o
-	$(LINK.o) $^ $(LIB_CAP) $(LIB_IDN) $(LDLIBS) -o $@
-
-# tftpd
-tftpd: tftpd.o tftpsubs.o
-tftpd.o tftpsubs.o: tftp.h
 
 # -------------------------------------
 # modules / check-kernel are only for ancient kernels; obsolete
