@@ -152,7 +152,7 @@ clean:
 			$(MAKE) -C ninfod clean; \
 		fi
 
-distclean:
+distclean: clean
 	@set -e; \
 		if [ -f ninfod/Makefile ]; then \
 			$(MAKE) -C ninfod distclean; \
