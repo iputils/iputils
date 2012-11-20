@@ -74,6 +74,8 @@ TAG:=`date +s%Y%m%d`
 
 all: $(TARGETS)
 
+%.s: %.c
+	$(COMPILE.c) $< $(DEF_$(patsubst %.o,%,$@)) -S -o $@
 %.o: %.c
 	$(COMPILE.c) $< $(DEF_$(patsubst %.o,%,$@)) -o $@
 $(TARGETS): %: %.o
