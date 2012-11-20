@@ -162,11 +162,10 @@ static int interfaces_size;			/* Number of elements in interfaces */
 int debugfile;
 
 const char usage[] =
-"Usage:	rdisc [-b] [-d] [-s] [-v] [-f] [-a] [-V] [send_address] [receive_address]"
+"Usage:	rdisc [-b] [-d] [-s] [-v] [-f] [-a] [-V] [send_address] [receive_address]\n"
 #ifdef RDISC_SERVER
-"\n"
 "       rdisc -r [-b] [-d] [-s] [-v] [-f] [-a] [-V] [-p <preference>] [-T <secs>]\n"
-"		 [send_address] [receive_address]"
+"		 [send_address] [receive_address]\n"
 #endif
 ;
 
