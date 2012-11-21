@@ -171,12 +171,6 @@ char *ni_group;
 
 __u8 ni_nonce[8];
 
-static struct in6_addr in6_anyaddr;
-static __inline__ int ipv6_addr_any(struct in6_addr *addr)
-{
-	return (memcmp(addr, &in6_anyaddr, 16) == 0);
-}
-
 size_t inet6_srcrt_space(int type, int segments)
 {
 	if (type != 0 || segments > 24)
@@ -729,7 +723,7 @@ int main(int argc, char *argv[])
 		}
 		addr = &((struct sockaddr_in6 *)(ai->ai_addr))->sin6_addr;
 		inet6_srcrt_add(srcrt, addr);
-		if (ipv6_addr_any(&firsthop.sin6_addr)) {
+		if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
 			memcpy(&firsthop.sin6_addr, addr, 16);
 #ifdef HAVE_SIN6_SCOPEID
 			firsthop.sin6_scope_id = ((struct sockaddr_in6 *)(ai->ai_addr))->sin6_scope_id;
@@ -789,7 +783,7 @@ int main(int argc, char *argv[])
 
 	freeaddrinfo(ai);
 
-	if (ipv6_addr_any(&firsthop.sin6_addr)) {
+	if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
 		memcpy(&firsthop.sin6_addr, &whereto.sin6_addr, 16);
 #ifdef HAVE_SIN6_SCOPEID
 		firsthop.sin6_scope_id = whereto.sin6_scope_id;
@@ -805,7 +799,7 @@ int main(int argc, char *argv[])
 
 	hostname = target;
 
-	if (ipv6_addr_any(&source.sin6_addr)) {
+	if (IN6_IS_ADDR_UNSPECIFIED(&source.sin6_addr)) {
 		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
