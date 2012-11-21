@@ -166,7 +166,7 @@ int ni_query = -1;
 int ni_flag = 0;
 void *ni_subject = NULL;
 int ni_subject_len = 0;
-int ni_subject_type = 0;
+int ni_subject_type = -1;
 char *ni_group;
 
 __u8 ni_nonce[8];
@@ -320,9 +320,14 @@ static int niquery_option_ipv4_flag_handler(int index, const char *arg)
 	return 0;
 }
 
+static inline int niquery_is_subject_valid(void)
+{
+	return ni_subject_type >= 0 && ni_subject;
+}
+
 static int niquery_set_subject_type(int type)
 {
-	if (ni_subject_type && ni_subject_type != type) {
+	if (niquery_is_subject_valid() && ni_subject_type != type) {
 		printf("Subject type conflict\n");
 		return -1;
 	}
@@ -748,7 +753,7 @@ int main(int argc, char *argv[])
 		for (i = 0; i < 8; i++)
 			ni_nonce[i] = rand();
 
-		if (!ni_subject) {
+		if (!niquery_is_subject_valid()) {
 			ni_subject = &whereto.sin6_addr;
 			ni_subject_len = sizeof(whereto.sin6_addr);
 			ni_subject_type = NI_SUBJ_IPV6;
