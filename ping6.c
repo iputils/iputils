@@ -93,7 +93,7 @@ char copyright[] =
 #define ICMP6_DST_UNREACH_BEYONDSCOPE ICMP6_DST_UNREACH_NOTNEIGHBOR
 #endif
 
-#ifdef ENABLE_PING6_RTHDR
+#if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
 #ifndef IPV6_SRCRT_TYPE_0
 #define IPV6_SRCRT_TYPE_0	0
 #endif
@@ -175,7 +175,7 @@ char *ni_group;
 
 __u8 ni_nonce[8];
 
-#ifdef ENABLE_PING6_RTHDR
+#if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
 size_t inet6_srcrt_space(int type, int segments)
 {
 	if (type != 0 || segments > 24)
@@ -703,20 +703,38 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "ping6: Warning: "
 					"Source routing is deprecated by RFC5095.\n");
 
+#ifdef ENABLE_PING6_RTHDR_RFC3542
+			space = inet6_rth_space(IPV6_RTHDR_TYPE_0, argc - 1);
+#else
 			space = inet6_srcrt_space(IPV6_SRCRT_TYPE_0, argc - 1);
-
+#endif
 			if (space == 0)	{
 				fprintf(stderr, "srcrt_space failed\n");
 				exit(2);
 			}
+#ifdef ENABLE_PING6_RTHDR_RFC3542
+			if (cmsglen + CMSG_SPACE(space) > sizeof(cmsgbuf)) {
+				fprintf(stderr, "no room for options\n");
+				exit(2);
+			}
+#else
 			if (space + cmsglen > sizeof(cmsgbuf)) {
 				fprintf(stderr, "no room for options\n");
 				exit(2);
 			}
-
+#endif
 			srcrt = (struct cmsghdr*)(cmsgbuf+cmsglen);
+#ifdef ENABLE_PING6_RTHDR_RFC3542
+			memset(srcrt, 0, CMSG_SPACE(0));
+			srcrt->cmsg_len = CMSG_LEN(space);
+			srcrt->cmsg_level = IPPROTO_IPV6;
+			srcrt->cmsg_type = IPV6_RTHDR;
+			inet6_rth_init(CMSG_DATA(srcrt), space, IPV6_RTHDR_TYPE_0, argc - 1);
+			cmsglen += CMSG_SPACE(space);
+#else
 			cmsglen += CMSG_ALIGN(space);
 			inet6_srcrt_init(srcrt, IPV6_SRCRT_TYPE_0);
+#endif
 		}
 
 		target = *argv;
@@ -732,7 +750,11 @@ int main(int argc, char *argv[])
 			exit(2);
 		}
 		addr = &((struct sockaddr_in6 *)(ai->ai_addr))->sin6_addr;
+#ifdef ENABLE_PING6_RTHDR_RFC3542
+		inet6_rth_add(CMSG_DATA(srcrt), addr);
+#else
 		inet6_srcrt_add(srcrt, addr);
+#endif
 		if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
 			memcpy(&firsthop.sin6_addr, addr, 16);
 #ifdef HAVE_SIN6_SCOPEID
