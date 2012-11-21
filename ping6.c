@@ -344,6 +344,8 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 
 	ni_subject_type = niquery_options[index].data;
 
+	memset(&hints, 0, sizeof(hints));
+
 	switch (niquery_options[index].data) {
 	case NI_SUBJ_IPV6:
 		ni_subject_len = sizeof(struct in6_addr);
@@ -366,7 +368,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 #endif
 
 	gai = getaddrinfo(arg, 0, &hints, &ai0);
-	if (!gai) {
+	if (gai) {
 		fprintf(stderr, "Unknown host: %s\n", arg);
 		return -1;
 	}
