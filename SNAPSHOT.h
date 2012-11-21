@@ -1,1 +1,1 @@
-static char SNAPSHOT[] = "s20121114";
+static char SNAPSHOT[] = "s20121121";

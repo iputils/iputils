@@ -1,3 +1,43 @@
+[s20121121]
+
+Jan Synacek (2):
+      ping,ping6: Add newline to error message.
+      ping: Don't free an unintialized value.
+
+YOSHIFUJI Hideaki (31):
+      arping,clockdiff,ping,rarpd,rdisc,traceroute6 doc: s/CAP_NET_RAWIO/CAP_NET_RAW/.
+      ping,ping6: Do not assume radix point is denoted by '.' (-i option).
+      arping,ping,ping6,rdisc,traceroute6: Fix version string.
+      makefile: Give -fno-strict-aliasing to compiler by default.
+      ping6: Use SCOPE_DELIMITER.
+      Makefile: Remove -lm from ADDLIB.
+      rdisc_srv,Makefile: Fix build.
+      rdisc_srv,Makefile: Build rdisc_srv with make all.
+      arping: set_device_broadcast() does not need to store return value of sub-functions.
+      arping,Makefile: Make default interface configurable.
+      arping: Do not allow empty device name (-I option).
+      arping: Introduce check_ifflags() helper function.
+      arping: Introduce device structure to hold output device information.
+      arping: ALlow no default interface and select one by getifaddrs().
+      arping: Introduce 2nd (legacy) method to select interface by ioctls.
+      arping,Makefile: Allow build without getifaddrs() with WITHOUT_IFADDRS=yes.
+      Makefile: Use $< instead of $^ to complile C source code.
+      ping,ping6: Reorder command-line options in alphabetical order.
+      ping6: Show suboptions for Node Information Queries if -N suboption is invalid.
+      ping,ping6 doc: Readability for TOS (-Q) option.
+      rdisc: Missing new line after usage.
+      rdisc: Make rdisc with responder support if configured.
+      Makefile: distclean depends on clean.
+      Makefile: Default to -O3.
+      Makefile: Minimize options to gcc.
+      Makefile: Add rule to build assembly files.
+      arping,Makefile: 3rd legacy implementation to check network devices.
+      arping: Less ifdefs.
+      rdisc doc: Document -r, -p and -T options.
+      ping6: NI Subjecet address did not work (-N subject-{ipv6,ipv4] suboptions).
+      ping6: Ensure to detect subject type conflicts.
+
+
 [s20121114]
 
 Jan Synacek (2):
