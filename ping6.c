@@ -273,9 +273,14 @@ struct niquery_option niquery_options[] = {
 	{},
 };
 
+static inline int niquery_is_enabled(void)
+{
+	return ni_query >= 0;
+}
+
 static int niquery_set_qtype(int type)
 {
-	if (ni_query >= 0 && ni_query != type) {
+	if (niquery_is_enabled() && ni_query != type) {
 		printf("Qtype conflict\n");
 		return -1;
 	}
@@ -775,7 +780,7 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	if (ni_query >= 0) {
+	if (niquery_is_enabled()) {
 		int i;
 		for (i = 0; i < 8; i++)
 			ni_nonce[i] = rand();
@@ -986,7 +991,7 @@ int main(int argc, char *argv[])
 		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
 	}
 
-	if (ni_query >= 0)
+	if (niquery_is_enabled())
 		ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
 	else
 		ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
@@ -1270,7 +1275,7 @@ int send_probe(void)
 
 	CLR((ntransmitted+1) % mx_dup_ck);
 
-	if (ni_query >= 0)
+	if (niquery_is_enabled())
 		len = build_niquery(outpack);
 	else
 		len = build_echo(outpack);
