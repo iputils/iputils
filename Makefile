@@ -25,6 +25,8 @@ WITHOUT_IFADDRS=no
 ARPING_DEFAULT_DEVICE=eth0
 # rdisc server (-r option) support
 ENABLE_RDISC_SERVER=no
+# ping6 source routing (deprecated by RFC5095)
+ENABLE_PING6_RTHDR=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
@@ -56,6 +58,13 @@ endif
 
 ifneq ($(ENABLE_RDISC_SERVER),no)
 	DEF_ENABLE_RDISC_SERVER = -DRDISC_SERVER
+endif
+
+ifneq ($(ENABLE_PING6_RTHDR),no)
+	DEF_ENABLE_PING6_RTHDR = -DPING6_ENABLE_RTHDR
+ifeq ($(ENABLE_PING6_RTHDR),RFC3542)
+	DEF_ENABLE_PING6_RTHDR += -DPINR6_ENABLE_RTHDR_RFC3542
+endif
 endif
 
 # -------------------------------------
@@ -101,7 +110,7 @@ LIB_clockdiff = $(LIB_CAP)
 DEF_ping_common = $(DEF_CAP) $(DEF_IDN)
 DEF_ping  = $(DEF_CAP) $(DEF_IDN)
 LIB_ping  = $(LIB_CAP) $(LIB_IDN)
-DEF_ping6 = $(DEF_CAP) $(DEF_IDN)
+DEF_ping6 = $(DEF_CAP) $(DEF_IDN) $(DEF_ENABLE_PING6_RTHDR)
 LIB_ping6 = $(LIB_CAP) $(LIB_IDN) -lresolv -lcrypto
 
 ping: ping_common.o

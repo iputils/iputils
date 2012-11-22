@@ -46,6 +46,7 @@ number of ``pad'' bytes used to fill out the packet.
 </para>
 <para>
 <command/ping6/ is IPv6 version of <command/ping/, and can also send Node Information Queries (RFC4620).
+Intermediate <replaceable/hop/s may not be allowed, because IPv6 source routing was deprecated (RFC5095).
 </para>
 </refsect1>
 

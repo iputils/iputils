@@ -93,8 +93,10 @@ char copyright[] =
 #define ICMP6_DST_UNREACH_BEYONDSCOPE ICMP6_DST_UNREACH_NOTNEIGHBOR
 #endif
 
+#ifdef ENABLE_PING6_RTHDR
 #ifndef IPV6_SRCRT_TYPE_0
 #define IPV6_SRCRT_TYPE_0	0
+#endif
 #endif
 
 #ifndef MLD_LISTENER_QUERY
@@ -139,7 +141,9 @@ char copyright[] =
 
 __u32 flowlabel;
 __u32 tclass;
+#ifdef ENABLE_PING6_RTHDR
 struct cmsghdr *srcrt;
+#endif
 
 struct sockaddr_in6 whereto;	/* who to ping */
 u_char outpack[MAXPACKET];
@@ -171,6 +175,7 @@ char *ni_group;
 
 __u8 ni_nonce[8];
 
+#ifdef ENABLE_PING6_RTHDR
 size_t inet6_srcrt_space(int type, int segments)
 {
 	if (type != 0 || segments > 24)
@@ -211,6 +216,7 @@ int inet6_srcrt_add(struct cmsghdr *cmsg, const struct in6_addr *addr)
 
 	return 0;
 }
+#endif
 
 unsigned int if_name2index(const char *ifname)
 {
@@ -687,11 +693,15 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
+#ifdef ENABLE_PING6_RTHDR
 	while (argc > 1) {
 		struct in6_addr *addr;
 
 		if (srcrt == NULL) {
 			int space;
+
+			fprintf(stderr, "ping6: Warning: "
+					"Source routing is deprecated by RFC5095.\n");
 
 			space = inet6_srcrt_space(IPV6_SRCRT_TYPE_0, argc - 1);
 
@@ -741,6 +751,7 @@ int main(int argc, char *argv[])
 		argv++;
 		argc--;
 	}
+#endif
 
 	if (ni_query >= 0) {
 		int i;
@@ -754,9 +765,12 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (argc > 1)
+	if (argc > 1) {
+#ifndef ENABLE_PING6_RTHDR
+		fprintf(stderr, "ping6: Source routing is deprecated by RFC5095.\n");
+#endif
 		usage();
-	else if (argc == 1) {
+	} else if (argc == 1) {
 		target = *argv;
 	} else {
 		if (ni_query < 0 && ni_subject_type != NI_SUBJ_NAME)
@@ -1022,26 +1036,32 @@ int main(int argc, char *argv[])
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
 		int freq_len = sizeof(*freq);
+#ifdef ENABLE_PING6_RTHDR
 		if (srcrt)
 			freq_len = CMSG_ALIGN(sizeof(*freq)) + srcrt->cmsg_len;
+#endif
 		memset(freq, 0, sizeof(*freq));
 		freq->flr_label = htonl(flowlabel & IPV6_FLOWINFO_FLOWLABEL);
 		freq->flr_action = IPV6_FL_A_GET;
 		freq->flr_flags = IPV6_FL_F_CREATE;
 		freq->flr_share = IPV6_FL_S_EXCL;
 		memcpy(&freq->flr_dst, &whereto.sin6_addr, 16);
+#ifdef ENABLE_PING6_RTHDR
 		if (srcrt)
 			memcpy(freq_buf + CMSG_ALIGN(sizeof(*freq)), srcrt, srcrt->cmsg_len);
+#endif
 		if (setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR,
 			       freq, freq_len) == -1) {
 			perror ("can't set flowlabel");
 			exit(2);
 		}
 		flowlabel = freq->flr_label;
+#ifdef ENABLE_PING6_RTHDR
 		if (srcrt) {
 			cmsglen = (char*)srcrt - (char*)cmsgbuf;
 			srcrt = NULL;
 		}
+#endif
 #else
 		fprintf(stderr, "Flow labels are not supported.\n");
 		exit(2);
@@ -1689,7 +1709,10 @@ void usage(void)
 		" [-w deadline]"
 		USAGE_NEWLINE
 		" [-W timeout]"
-		" [hop1 ...] destination"
+#ifdef ENABLE_PING6_RTHDR
+		" [hop1 ...]"
+#endif
+		" destination"
 		"\n"
 	);
 	exit(2);
