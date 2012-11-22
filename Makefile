@@ -17,7 +17,7 @@ ADDLIB=
 USE_CAP=yes
 # sysfs support (with libsysfs - deprecated)
 USE_SYSFS=no
-# IDN support (experimental
+# IDN support (experimental)
 USE_IDN=no
 # Do not use getifaddrs
 WITHOUT_IFADDRS=no
