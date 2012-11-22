@@ -45,7 +45,7 @@ header, followed by a <structname/struct timeval/ and then an arbitrary
 number of ``pad'' bytes used to fill out the packet.
 </para>
 <para>
-<command/ping6/ can also send Node Information Queries (RFC4620).
+<command/ping6/ is IPv6 version of <command/ping/, and can also send Node Information Queries (RFC4620).
 </para>
 </refsect1>
 
