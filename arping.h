@@ -12,7 +12,7 @@ struct device {
 #ifndef WITHOUT_IFADDRS
 	struct ifaddrs *ifa;
 #endif
-#ifndef USE_SYSFS
+#ifdef USE_SYSFS
 	struct sysfs_devattr_values *sysfs;
 #endif
 };

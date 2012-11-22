@@ -21,6 +21,27 @@
 #include "arping.h"
 #include "arping_sysfs.h"
 
+union sysfs_devattr_value {
+	unsigned long	ulong;
+	void		*ptr;
+};
+
+enum {
+	SYSFS_DEVATTR_IFINDEX		= 0,
+	SYSFS_DEVATTR_TYPE		= 1,
+	SYSFS_DEVATTR_FLAGS		= 2,
+	SYSFS_DEVATTR_ADDR_LEN		= 3,
+	SYSFS_DEVATTR_ADDRESS		= 4,
+	SYSFS_DEVATTR_BROADCAST		= 5,
+	SYSFS_DEVATTR_NUM
+};
+
+struct sysfs_devattr_values
+{
+	char *ifname;
+	union sysfs_devattr_value	value[SYSFS_DEVATTR_NUM];
+};
+
 static int sysfs_devattr_ulong_dec(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
 static int sysfs_devattr_ulong_hex(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
 static int sysfs_devattr_macaddr(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
@@ -58,7 +79,7 @@ struct sysfs_devattrs {
 	},
 };
 
-void sysfs_devattr_values_init(struct sysfs_devattr_values *v, int do_free)
+static void sysfs_devattr_values_init(struct sysfs_devattr_values *v, int do_free)
 {
 	int i;
 	if (do_free) {
@@ -231,8 +252,12 @@ out:
 	return -1;
 }
 
-int set_device_broadcast_sysfs(struct sysfs_devattr_values *v, unsigned char *ba, size_t balen)
+int set_device_broadcast_sysfs(struct device *device, unsigned char *ba, size_t balen)
 {
+	struct sysfs_devattr_values *v;
+	if (!device)
+		return -1;
+	v = device->sysfs;
 	if (!v)
 		return -1;
 	if (v->value[SYSFS_DEVATTR_ADDR_LEN].ulong != balen)

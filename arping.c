@@ -470,11 +470,16 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 	return 1;
 }
 
-static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *ba, size_t balen, int fatal)
+static int set_device_broadcast_ifaddrs_one(struct device *device, unsigned char *ba, size_t balen, int fatal)
 {
 #ifndef WITHOUT_IFADDRS
+	struct ifaddrs *ifa;
 	struct sockaddr_ll *sll;
 
+	if (!device)
+		return -1;
+
+	ifa = device->ifa;
 	if (!ifa)
 		return -1;
 
@@ -495,7 +500,7 @@ static int set_device_broadcast_ifaddrs_one(struct ifaddrs *ifa, unsigned char *
 #endif
 }
 
-static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t balen)
+static int set_device_broadcast_fallback(struct device *device, unsigned char *ba, size_t balen)
 {
 	memset(ba, -1, balen);
 	return 0;
@@ -503,13 +508,13 @@ static int set_device_broadcast_fallback(char *device, unsigned char *ba, size_t
 
 static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t balen)
 {
-	if (!set_device_broadcast_ifaddrs_one(dev->ifa, ba, balen, 0))
+	if (!set_device_broadcast_ifaddrs_one(dev, ba, balen, 0))
 		return;
-	if (!set_device_broadcast_sysfs(dev->sysfs, ba, balen))
+	if (!set_device_broadcast_sysfs(dev, ba, balen))
 		return;
 	if (!quiet)
 		fprintf(stderr, "WARNING: using default broadcast address.\n");
-	set_device_broadcast_fallback(dev->name, ba, balen);
+	set_device_broadcast_fallback(dev, ba, balen);
 }
 
 int check_ifflags(unsigned int ifflags, int fatal)
