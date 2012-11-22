@@ -679,12 +679,9 @@ int send_probe()
 
 	if (timing) {
 		if (options&F_LATENCY) {
-			static volatile int fake_fucked_egcs = sizeof(struct timeval);
 			struct timeval tmp_tv;
 			gettimeofday(&tmp_tv, NULL);
-			/* egcs is crap or glibc is crap, but memcpy
-			   does not copy anything, if len is constant! */
-			memcpy(icp+1, &tmp_tv, fake_fucked_egcs);
+			memcpy(icp+1, &tmp_tv, sizeof(tmp_tv));
 		} else {
 			memset(icp+1, 0, sizeof(struct timeval));
 		}
@@ -696,13 +693,10 @@ int send_probe()
 	icp->checksum = in_cksum((u_short *)icp, cc, 0);
 
 	if (timing && !(options&F_LATENCY)) {
-		static volatile int fake_fucked_egcs = sizeof(struct timeval);
 		struct timeval tmp_tv;
 		gettimeofday(&tmp_tv, NULL);
-		/* egcs is crap or glibc is crap, but memcpy
-		   does not copy anything, if len is constant! */
-		memcpy(icp+1, &tmp_tv, fake_fucked_egcs);
-		icp->checksum = in_cksum((u_short *)(icp+1), fake_fucked_egcs, ~icp->checksum);
+		memcpy(icp+1, &tmp_tv, sizeof(tmp_tv));
+		icp->checksum = in_cksum((u_short *)(icp+1), sizeof(tmp_tv), ~icp->checksum);
 	}
 
 	do {
