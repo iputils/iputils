@@ -82,8 +82,7 @@ Finish after the first reply confirming that target is alive.
  <varlistentry>
   <term><option><anchor id="opt.interface">-I <replaceable/interface/</option></term>
   <listitem><para>
-Name of network device where to send ARP REQUEST packets. This option
-is required.
+Name of network device where to send ARP REQUEST packets.
   </para></listitem>
  </varlistentry>
 
