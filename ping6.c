@@ -283,34 +283,44 @@ static inline int niquery_is_enabled(void)
 	return ni_query >= 0;
 }
 
-__u8 ni_nonce[NI_NONCE_SIZE];
+__u8 *ni_nonce_ptr;
 
 static void niquery_init_nonce(void)
 {
 	struct timeval tv;
 	unsigned long seed;
-	int i;
 
 	seed = (unsigned long)getpid();
 	if (!gettimeofday(&tv, NULL))
 		seed ^= tv.tv_usec;
 	srand(seed);
 
-	for (i = 0; i < sizeof(ni_nonce); i++)
-		ni_nonce[i] = rand();
+	ni_nonce_ptr = calloc(NI_NONCE_SIZE, mx_dup_ck);
+	if (!ni_nonce_ptr) {
+		perror("ping6: calloc");
+		exit(2);
+	}
+
+	ni_nonce_ptr[0] = ~0;
 }
 
 static void niquery_fill_nonce(__u16 seq, __u8 *nonce)
 {
 	__u16 v = htons(seq);
-	memcpy(nonce, ni_nonce, NI_NONCE_SIZE);
-	memcpy(nonce, &v, sizeof(v));
+	int i;
+
+	memcpy(&ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], &v, sizeof(v));
+
+	for (i = sizeof(v); i < NI_NONCE_SIZE; i++)
+		ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck) + i] = 0x100 * ((double)random() / RAND_MAX);
+
+	memcpy(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE);
 }
 
 static int niquery_check_nonce(__u8 *nonce)
 {
 	__u16 seq = ntohsp((__u16 *)nonce);
-	if (memcmp(nonce + sizeof(seq), ni_nonce + sizeof(seq), NI_NONCE_SIZE - sizeof(seq)))
+	if (memcmp(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE))
 		return -1;
 	return seq;
 }
