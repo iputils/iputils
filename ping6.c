@@ -283,36 +283,47 @@ static inline int niquery_is_enabled(void)
 	return ni_query >= 0;
 }
 
-__u8 ni_nonce[NI_NONCE_SIZE];
+struct {
+	struct timeval tv;
+	pid_t pid;
+} ni_nonce_secret;
 
 static void niquery_init_nonce(void)
 {
-	struct timeval tv;
-	unsigned long seed;
-	int i;
-
-	seed = (unsigned long)getpid();
-	if (!gettimeofday(&tv, NULL))
-		seed ^= tv.tv_usec;
-	srand(seed);
-
-	for (i = 0; i < sizeof(ni_nonce); i++)
-		ni_nonce[i] = rand();
+	gettimeofday(&ni_nonce_secret.tv, NULL);
+	ni_nonce_secret.pid = getpid();
 }
 
-static void niquery_fill_nonce(__u16 seq, __u8 *nonce)
+static int niquery_nonce(__u8 *nonce, int fill)
+{
+	__u8 digest[MD5_DIGEST_LENGTH];
+	MD5_CTX ctxt;
+
+	MD5_Init(&ctxt);
+	MD5_Update(&ctxt, &ni_nonce_secret, sizeof(ni_nonce_secret));
+	MD5_Update(&ctxt, nonce, sizeof(__u16));
+	MD5_Final(digest, &ctxt);
+
+	if (fill) {
+		memcpy(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16));
+		return 0;
+	} else {
+		if (memcmp(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16)))
+			return -1;
+		return ntohsp((__u16 *)nonce);
+	}
+}
+
+static inline void niquery_fill_nonce(__u16 seq, __u8 *nonce)
 {
 	__u16 v = htons(seq);
-	memcpy(nonce, ni_nonce, NI_NONCE_SIZE);
 	memcpy(nonce, &v, sizeof(v));
+	niquery_nonce(nonce, 1);
 }
 
-static int niquery_check_nonce(__u8 *nonce)
+static inline int niquery_check_nonce(__u8 *nonce)
 {
-	__u16 seq = ntohsp((__u16 *)nonce);
-	if (memcmp(nonce + sizeof(seq), ni_nonce + sizeof(seq), NI_NONCE_SIZE - sizeof(seq)))
-		return -1;
-	return seq;
+	return niquery_nonce(nonce, 0);
 }
 
 static int niquery_set_qtype(int type)
