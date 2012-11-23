@@ -479,36 +479,6 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 	return 1;
 }
 
-static int set_device_broadcast_ifaddrs_one(struct device *device, unsigned char *ba, size_t balen, int fatal)
-{
-#ifndef WITHOUT_IFADDRS
-	struct ifaddrs *ifa;
-	struct sockaddr_ll *sll;
-
-	if (!device)
-		return -1;
-
-	ifa = device->ifa;
-	if (!ifa)
-		return -1;
-
-	sll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
-
-	if (sll->sll_halen != balen) {
-		if (fatal) {
-			if (!quiet)
-				printf("Address length does not match...\n");
-			exit(2);
-		}
-		return -1;
-	}
-	memcpy(ba, sll->sll_addr, sll->sll_halen);
-	return 0;
-#else
-	return -1;
-#endif
-}
-
 #ifdef USE_SYSFS
 union sysfs_devattr_value {
 	unsigned long	ulong;
@@ -516,12 +486,14 @@ union sysfs_devattr_value {
 };
 
 enum {
-	SYSFS_DEVATTR_IFINDEX		= 0,
-	SYSFS_DEVATTR_TYPE		= 1,
-	SYSFS_DEVATTR_FLAGS		= 2,
-	SYSFS_DEVATTR_ADDR_LEN		= 3,
-	SYSFS_DEVATTR_ADDRESS		= 4,
-	SYSFS_DEVATTR_BROADCAST		= 5,
+	SYSFS_DEVATTR_IFINDEX,
+	SYSFS_DEVATTR_FLAGS,
+	SYSFS_DEVATTR_ADDR_LEN,
+#if 0
+	SYSFS_DEVATTR_TYPE,
+	SYSFS_DEVATTR_ADDRESS,
+#endif
+	SYSFS_DEVATTR_BROADCAST,
 	SYSFS_DEVATTR_NUM
 };
 
@@ -544,10 +516,6 @@ struct sysfs_devattrs {
 		.name		= "ifindex",
 		.handler	= sysfs_devattr_ulong_dec,
 	},
-	[SYSFS_DEVATTR_TYPE] = {
-		.name		= "type",
-		.handler	= sysfs_devattr_ulong_dec,
-	},
 	[SYSFS_DEVATTR_ADDR_LEN] = {
 		.name		= "addr_len",
 		.handler	= sysfs_devattr_ulong_dec,
@@ -556,11 +524,17 @@ struct sysfs_devattrs {
 		.name		= "flags",
 		.handler	= sysfs_devattr_ulong_hex,
 	},
+#if 0
+	[SYSFS_DEVATTR_TYPE] = {
+		.name		= "type",
+		.handler	= sysfs_devattr_ulong_dec,
+	},
 	[SYSFS_DEVATTR_ADDRESS] = {
 		.name		= "address",
 		.handler	= sysfs_devattr_macaddr,
 		.free		= 1,
 	},
+#endif
 	[SYSFS_DEVATTR_BROADCAST] = {
 		.name		= "broadcast",
 		.handler	= sysfs_devattr_macaddr,
@@ -568,41 +542,6 @@ struct sysfs_devattrs {
 	},
 };
 #endif
-
-int set_device_broadcast_sysfs(struct device *device, unsigned char *ba, size_t balen)
-{
-#ifdef USE_SYSFS
-	struct sysfs_devattr_values *v;
-	if (!device)
-		return -1;
-	v = device->sysfs;
-	if (!v)
-		return -1;
-	if (v->value[SYSFS_DEVATTR_ADDR_LEN].ulong != balen)
-		return -1;
-	memcpy(ba, v->value[SYSFS_DEVATTR_BROADCAST].ptr, balen);
-	return 0;
-#else
-	return -1;
-#endif
-}
-
-static int set_device_broadcast_fallback(struct device *device, unsigned char *ba, size_t balen)
-{
-	memset(ba, -1, balen);
-	return 0;
-}
-
-static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t balen)
-{
-	if (!set_device_broadcast_ifaddrs_one(dev, ba, balen, 0))
-		return;
-	if (!set_device_broadcast_sysfs(dev, ba, balen))
-		return;
-	if (!quiet)
-		fprintf(stderr, "WARNING: using default broadcast address.\n");
-	set_device_broadcast_fallback(dev, ba, balen);
-}
 
 static int check_ifflags(unsigned int ifflags, int fatal)
 {
@@ -752,7 +691,7 @@ out:
 }
 #endif
 
-int find_device_by_sysfs(struct device *device)
+int find_device_by_sysfs(void)
 {
 #ifdef USE_SYSFS
 	struct sysfs_class *cls_net;
@@ -761,11 +700,9 @@ int find_device_by_sysfs(struct device *device)
 	struct sysfs_attribute *dev_attr;
 	struct sysfs_devattr_values sysfs_devattr_values;
 
-	if (!device)
-		return -1;
-	if (!device->sysfs) {
-		device->sysfs = malloc(sizeof(*device->sysfs));
-		sysfs_devattr_values_init(device->sysfs, 0);
+	if (!device.sysfs) {
+		device.sysfs = malloc(sizeof(*device.sysfs));
+		sysfs_devattr_values_init(device.sysfs, 0);
 	}
 
 	cls_net = sysfs_open_class("net");
@@ -786,7 +723,7 @@ int find_device_by_sysfs(struct device *device)
 		int i;
 		int rc = -1;
 
-		if (device->name && strcmp(dev->name, device->name))
+		if (device.name && strcmp(dev->name, device.name))
 			goto do_next;
 
 		sysfs_devattr_values_init(&sysfs_devattr_values, 1);
@@ -816,14 +753,14 @@ int find_device_by_sysfs(struct device *device)
 			goto do_next;
 
 		if (check_ifflags(sysfs_devattr_values.value[SYSFS_DEVATTR_FLAGS].ulong,
-				  device->name != NULL) < 0)
+				  device.name != NULL) < 0)
 			goto do_next;
 
 		if (!sysfs_devattr_values.value[SYSFS_DEVATTR_ADDR_LEN].ulong)
 			goto do_next;
 
-		if (device->sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong) {
-			if (device->sysfs->value[SYSFS_DEVATTR_FLAGS].ulong & IFF_RUNNING)
+		if (device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong) {
+			if (device.sysfs->value[SYSFS_DEVATTR_FLAGS].ulong & IFF_RUNNING)
 				goto do_next;
 		}
 
@@ -833,11 +770,11 @@ int find_device_by_sysfs(struct device *device)
 			goto out;
 		}
 
-		sysfs_devattr_values_init(device->sysfs, 1);
-		memcpy(device->sysfs, &sysfs_devattr_values, sizeof(*device->sysfs));
+		sysfs_devattr_values_init(device.sysfs, 1);
+		memcpy(device.sysfs, &sysfs_devattr_values, sizeof(*device.sysfs));
 		sysfs_devattr_values_init(&sysfs_devattr_values, 0);
 
-		if (device->sysfs->value[SYSFS_DEVATTR_FLAGS].ulong & IFF_RUNNING)
+		if (device.sysfs->value[SYSFS_DEVATTR_FLAGS].ulong & IFF_RUNNING)
 			break;
 
 		continue;
@@ -848,8 +785,8 @@ do_next:
 	//sysfs_close_list(dev_list);
 	sysfs_close_class(cls_net);
 
-	device->ifindex = device->sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong;
-	device->name = device->sysfs->ifname;
+	device.ifindex = device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong;
+	device.name = device.sysfs->ifname;
 
 	return 0;
 out:
@@ -945,6 +882,84 @@ out:
 	return -1;
 }
 
+static int find_device(void)
+{
+	int rc;
+	rc = find_device_by_ifaddrs();
+	if (rc >= 0)
+		goto out;
+	rc = find_device_by_sysfs();
+	if (rc >= 0)
+		goto out;
+	rc = find_device_by_ioctl();
+out:
+	return rc;
+}
+
+static int set_device_broadcast_ifaddrs_one(struct device *device, unsigned char *ba, size_t balen, int fatal)
+{
+#ifndef WITHOUT_IFADDRS
+	struct ifaddrs *ifa;
+	struct sockaddr_ll *sll;
+
+	if (!device)
+		return -1;
+
+	ifa = device->ifa;
+	if (!ifa)
+		return -1;
+
+	sll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
+
+	if (sll->sll_halen != balen) {
+		if (fatal) {
+			if (!quiet)
+				printf("Address length does not match...\n");
+			exit(2);
+		}
+		return -1;
+	}
+	memcpy(ba, sll->sll_addr, sll->sll_halen);
+	return 0;
+#else
+	return -1;
+#endif
+}
+int set_device_broadcast_sysfs(struct device *device, unsigned char *ba, size_t balen)
+{
+#ifdef USE_SYSFS
+	struct sysfs_devattr_values *v;
+	if (!device)
+		return -1;
+	v = device->sysfs;
+	if (!v)
+		return -1;
+	if (v->value[SYSFS_DEVATTR_ADDR_LEN].ulong != balen)
+		return -1;
+	memcpy(ba, v->value[SYSFS_DEVATTR_BROADCAST].ptr, balen);
+	return 0;
+#else
+	return -1;
+#endif
+}
+
+static int set_device_broadcast_fallback(struct device *device, unsigned char *ba, size_t balen)
+{
+	if (!quiet)
+		fprintf(stderr, "WARNING: using default broadcast address.\n");
+	memset(ba, -1, balen);
+	return 0;
+}
+
+static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t balen)
+{
+	if (!set_device_broadcast_ifaddrs_one(dev, ba, balen, 0))
+		return;
+	if (!set_device_broadcast_sysfs(dev, ba, balen))
+		return;
+	set_device_broadcast_fallback(dev, ba, balen);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -1024,9 +1039,7 @@ main(int argc, char **argv)
 		exit(2);
 	}
 
-	if (find_device_by_ifaddrs() < 0 &&
-	    find_device_by_sysfs(&device) < 0 &&
-	    find_device_by_ioctl() < 0)
+	if (find_device() < 0)
 		exit(2);
 
 	if (!device.ifindex) {
