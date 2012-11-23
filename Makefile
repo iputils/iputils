@@ -9,7 +9,7 @@ LIBC_INCLUDE=/usr/include
 # Libraries
 ADDLIB=
 # Linker flags
-LDFLAG_STATIC=-static
+LDFLAG_STATIC=-Wl,-Bstatic
 LDFLAG_DYNAMIC=-Wl,-Bdynamic
 
 #
