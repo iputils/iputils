@@ -8,6 +8,9 @@ CC=gcc
 LIBC_INCLUDE=/usr/include
 # Libraries
 ADDLIB=
+# Linker flags
+LDFLAG_STATIC=-static
+LDFLAG_DYNAMIC=-Wl,-Bdynamic
 
 #
 # Options
@@ -49,7 +52,11 @@ endif
 
 ifneq ($(USE_IDN),no)
 	DEF_IDN = -DUSE_IDN
+ifeq ($(USE_IDN),static)
+	LIB_IDN = $(LDFLAG_STATIC) -lidn $(LDFLAG_DYNAMIC)
+else
 	LIB_IDN = -lidn
+endif
 endif
 
 ifneq ($(WITHOUT_IFADDRS),no)
