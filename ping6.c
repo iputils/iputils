@@ -1249,8 +1249,6 @@ int build_niquery(__u8 *_nih)
 	nih = (struct ni_hdr *)_nih;
 	nih->ni_cksum = 0;
 
-	CLR(ntohsp((__u16*)(nih->ni_nonce)) % mx_dup_ck);
-
 	nih->ni_type = ICMPV6_NI_QUERY;
 	cc = sizeof(*nih);
 	datalen = 0;
