@@ -263,8 +263,6 @@ int ni_recv(struct packetcontext *p)
 		return -1;
 
 	p->querylen = cc;
-
-	memcpy(&p->addr, msgh.msg_name, msgh.msg_namelen);
 	p->addrlen = msgh.msg_namelen;
 
 	for (cmsg = CMSG_FIRSTHDR(&msgh); cmsg;
