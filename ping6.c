@@ -287,7 +287,15 @@ __u8 ni_nonce[NI_NONCE_SIZE];
 
 static void niquery_init_nonce(void)
 {
+	struct timeval tv;
+	unsigned long seed;
 	int i;
+
+	seed = (unsigned long)getpid();
+	if (!gettimeofday(&tv, NULL))
+		seed ^= tv.tv_usec;
+	srand(seed);
+
 	for (i = 0; i < sizeof(ni_nonce); i++)
 		ni_nonce[i] = rand();
 }
