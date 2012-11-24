@@ -296,13 +296,19 @@ static void niquery_init_nonce(void)
 
 static int niquery_nonce(__u8 *nonce, int fill)
 {
-	__u8 digest[MD5_DIGEST_LENGTH];
-	MD5_CTX ctxt;
+	static __u8 digest[MD5_DIGEST_LENGTH];
+	static int seq = -1;
 
-	MD5_Init(&ctxt);
-	MD5_Update(&ctxt, &ni_nonce_secret, sizeof(ni_nonce_secret));
-	MD5_Update(&ctxt, nonce, sizeof(__u16));
-	MD5_Final(digest, &ctxt);
+	if (fill || seq != *(__u16 *)nonce || seq < 0) {
+		MD5_CTX ctxt;
+
+		MD5_Init(&ctxt);
+		MD5_Update(&ctxt, &ni_nonce_secret, sizeof(ni_nonce_secret));
+		MD5_Update(&ctxt, nonce, sizeof(__u16));
+		MD5_Final(digest, &ctxt);
+
+		seq = *(__u16 *)nonce;
+	}
 
 	if (fill) {
 		memcpy(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16));
