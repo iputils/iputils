@@ -173,7 +173,12 @@ int ni_subject_len = 0;
 int ni_subject_type = -1;
 char *ni_group;
 
-__u8 ni_nonce[8];
+static inline int ntohsp(__u16 *p)
+{
+	__u16 v;
+	memcpy(&v, p, sizeof(v));
+	return ntohs(v);
+}
 
 #if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
 size_t inet6_srcrt_space(int type, int segments)
@@ -276,6 +281,30 @@ struct niquery_option niquery_options[] = {
 static inline int niquery_is_enabled(void)
 {
 	return ni_query >= 0;
+}
+
+__u8 ni_nonce[8];
+
+static void niquery_init_nonce(void)
+{
+	int i;
+	for (i = 0; i < 8; i++)
+		ni_nonce[i] = rand();
+}
+
+static void niquery_fill_nonce(__u16 seq, __u8 *nonce)
+{
+	__u16 v = htons(seq);
+	memcpy(nonce, ni_nonce, 8);
+	memcpy(nonce, &v, 2);
+}
+
+static int niquery_check_nonce(__u8 *nonce)
+{
+	__u16 seq = ntohsp((__u16 *)nonce);
+	if (memcmp(nonce + 2, ni_nonce + 2, 6))
+		return -1;
+	return seq;
 }
 
 static int niquery_set_qtype(int type)
@@ -781,9 +810,7 @@ int main(int argc, char *argv[])
 #endif
 
 	if (niquery_is_enabled()) {
-		int i;
-		for (i = 0; i < 8; i++)
-			ni_nonce[i] = rand();
+		niquery_init_nonce();
 
 		if (!niquery_is_subject_valid()) {
 			ni_subject = &whereto.sin6_addr;
@@ -1233,18 +1260,11 @@ int build_echo(__u8 *_icmph)
 	return cc;
 }
 
-static inline int ntohsp(__u16 *p)
-{
-	__u16 v;
-	memcpy(&v, p, sizeof(v));
-	return ntohs(v);
-}
 
 int build_niquery(__u8 *_nih)
 {
 	struct ni_hdr *nih;
 	int cc;
-	__u16 v;
 
 	nih = (struct ni_hdr *)_nih;
 	nih->ni_cksum = 0;
@@ -1253,11 +1273,7 @@ int build_niquery(__u8 *_nih)
 	cc = sizeof(*nih);
 	datalen = 0;
 
-	memcpy(&nih->ni_nonce, ni_nonce, sizeof(nih->ni_nonce));
-
-	v = htons(ntransmitted + 1);
-	memcpy(&nih->ni_nonce[0], &v, sizeof(v));
-
+	niquery_fill_nonce(ntransmitted + 1, nih->ni_nonce);
 	nih->ni_code = ni_subject_type;
 	nih->ni_qtype = htons(ni_query);
 	nih->ni_flags = ni_flag;
@@ -1494,8 +1510,8 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 			return 0;
 	} else if (icmph->icmp6_type == ICMPV6_NI_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
-		__u16 seq = ntohsp((__u16 *)nih->ni_nonce);
-		if (memcmp(&nih->ni_nonce[2], &ni_nonce[2], sizeof(ni_nonce) - sizeof(__u16)))
+		int seq = niquery_check_nonce(nih->ni_nonce);
+		if (seq < 0)
 			return 1;
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      seq,
