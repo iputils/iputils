@@ -66,6 +66,9 @@
 #  include <stdint.h>
 # endif
 #endif
+#if HAVE_LIMITS_H
+# include <limits.h>
+#endif
 #if HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -149,9 +152,40 @@ static const __inline__ char * log_level(int priority) {
 void stderrlog(int pri, char *fmt, ...)
 {
 	va_list ap;
+	char *buf = NULL;
+	size_t buflen = 1;
+
 	va_start(ap, fmt);
-	fprintf(stderr, "[%s] ", log_level(pri));
-	vfprintf(stderr, fmt, ap);
+
+	for (buf = NULL, buflen = 1024;
+	     buflen < SIZE_MAX / 2;
+	     free(buf), buf = NULL, buflen *= 2) {
+		size_t rem;
+		size_t res;
+
+		buf = malloc(buflen);
+		if (!buf)
+			break;	/*XXX*/
+
+		rem = buflen;
+
+		res = snprintf(buf, rem, "[%s] ", log_level(pri));
+		if (res >= rem)
+			continue;
+		rem -= res;
+
+		res = vsnprintf(buf + res, rem, fmt, ap);
+
+		if (res >= rem)
+			continue;
+		break;
+	}
+
+	if (buf) {
+		fputs(buf, stderr);
+		free(buf);
+	}
+
 	va_end(ap);
 }
 #endif
@@ -612,6 +646,8 @@ int main (int argc, char **argv)
 		DEBUG(LOG_ERR, "socket: %s\n", strerror(sock_errno));
 		exit(1);
 	}
+
+	setbuf(stderr, NULL);
 
 	if (!opt_d)
 		do_daemonize();
