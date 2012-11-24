@@ -370,6 +370,29 @@ int pr_nodeinfo_refused(CHECKANDFILL_ARGS)
 }
 
 /* ---------- */
+/* Policy */
+static int ni_policy(struct packetcontext *p)
+{
+	const struct in6_addr *saddr = &((const struct sockaddr_in6 *)&p->addr)->sin6_addr;
+
+	/*
+	 * >0: reply
+	 *  0: refused
+	 * <0: discard
+	 */
+
+	/* Default policy is to refuse queries from
+	 * non-local addresses; loopback, link-local or
+	 * site-local are okay
+	 */
+	if (!(IN6_IS_ADDR_LINKLOCAL(saddr) ||
+	      IN6_IS_ADDR_SITELOCAL(saddr) ||
+	      IN6_IS_ADDR_LOOPBACK(saddr)))
+		return 0;
+	return 1;
+}
+
+/* ---------- */
 void init_core(int forced)
 {
 	int i;
@@ -502,6 +525,7 @@ int pr_nodeinfo(struct packetcontext *p)
 #if ENABLE_THREADS && HAVE_PTHREAD_H
 	pthread_t thread;
 #endif
+	int rc;
 
 	/* Step 0: Check destination address
 	 *		discard non-linklocal multicast
@@ -594,9 +618,17 @@ int pr_nodeinfo(struct packetcontext *p)
 	}
 
 	/* XXX: Step 5: Check the policy */
-	if (0) {
+	rc = ni_policy(p);
+	if (rc <= 0) {
 		ni_free(p->replydata);
 		p->replydata = NULL;
+		p->replydatalen = 0;
+		if (rc < 0) {
+			DEBUG(LOG_WARNING, "Ignored by policy.\n");
+			ni_free(p);
+			return -1;
+		}
+		DEBUG(LOG_WARNING, "Refused by policy.\n");
 		replyonsubjcheck = 0;
 		qtypeinfo = &qtypeinfo_refused;
 	}
