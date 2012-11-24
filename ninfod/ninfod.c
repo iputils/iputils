@@ -320,8 +320,8 @@ int ni_send(struct packetcontext *p)
 		struct timespec ts, rts;
 		int err = 0;
 
-		rts.tv_sec  = 0;
-		rts.tv_nsec = (long)p->delay * 1000;
+		rts.tv_sec  = p->delay / 1000000;
+		rts.tv_nsec = (long)(p->delay % 1000000) * 1000;
 
 		do {
 			ts = rts;
