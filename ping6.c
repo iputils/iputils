@@ -410,7 +410,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	size_t buflen;
 	int dots, fqdn = niquery_options[index].data;
 	MD5_CTX ctxt;
-	__u8 digest[16];
+	__u8 digest[MD5_DIGEST_LENGTH];
 #ifdef USE_IDN
 	int rc;
 #endif
