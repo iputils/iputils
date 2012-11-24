@@ -142,6 +142,12 @@ static struct ipv6_mreq nigroup;
 
 /* ---------- */
 /* Functions */
+int check_nigroup(const struct in6_addr *addr)
+{
+	return IN6_IS_ADDR_MULTICAST(&nigroup.ipv6mr_multiaddr) &&
+	       IN6_ARE_ADDR_EQUAL(&nigroup.ipv6mr_multiaddr, addr);
+}
+
 static int encode_dnsname(const char *name, 
 			  char *buf, size_t buflen, 
 			  int fqdn)

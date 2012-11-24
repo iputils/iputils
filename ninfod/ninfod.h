@@ -130,6 +130,7 @@ void init_nodeinfo_ipv4addr(INIT_ARGS);
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS);
 
 /* ninfod_name.c */
+int check_nigroup(const struct in6_addr *addr);
 void init_nodeinfo_nodename(INIT_ARGS);
 int pr_nodeinfo_nodename(CHECKANDFILL_ARGS);
 

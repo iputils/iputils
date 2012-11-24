@@ -503,6 +503,31 @@ int pr_nodeinfo(struct packetcontext *p)
 	pthread_t thread;
 #endif
 
+	/* Step 0: Check destination address
+	 *		discard non-linklocal multicast
+	 *		discard non-nigroup multicast address(?)
+	 */
+	if (IN6_IS_ADDR_MULTICAST(&p->pktinfo.ipi6_addr)) {
+		if (!IN6_IS_ADDR_MC_LINKLOCAL(&p->pktinfo.ipi6_addr)) {
+			DEBUG(LOG_WARNING,
+			      "Destination is non-link-local multicast address.\n");
+			ni_free(p);
+			return -1;
+		}
+#if 0
+		/* Do not discard NI Queries to multicast address
+		 * other than its own NI Group Address(es) by default.
+		 */
+		if (!check_nigroup(&p->pktinfo.ipi6_addr)) {
+			DEBUG(LOG_WARNING,
+			      "Destination is link-local multicast address other than "
+			      "NI Group address.\n");
+			ni_free(p);
+			return -1;
+		}
+#endif
+	}
+
 	/* Step 1: Check length */
 	if (p->querylen < sizeof(struct icmp6_nodeinfo)) {
 		DEBUG(LOG_WARNING, "Query too short\n");
