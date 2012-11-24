@@ -469,6 +469,7 @@ static int ni_send_fork(struct packetcontext *p)
 			ret = ni_send(p);
 			DEBUG(LOG_DEBUG, "%s(): worker=%d => %d\n",
 			      __func__, getpid(), ret);
+			exit(ret > 0 ? 1 : 0);
 		}
 		ni_free(p->replydata);
 		ni_free(p);
