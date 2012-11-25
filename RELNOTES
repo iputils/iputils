@@ -1,3 +1,38 @@
+[s20121125]
+
+YOSHIFUJI Hideaki (30):
+      ping6: Use IN6_IS_ADDR_UNSPECIFIED() instead of our own helper function.
+      ping6 doc: Explicitly describe ping6 is IPv6 version if ping.
+      ping6: Deprecate source routing by default (RFC5095).
+      ping6: Use RFC3542 functions and definition for source routing.
+      ping6: Introduce niquery_is_enabled() for readability.
+      arping doc: interface is optional (-I option).
+      ping: Eliminate dirty hack to cope with ancient egcs bug.
+      Makefile: Fix missing right parenthese in comment.
+      arping: Fix build failure with USE_SYSFS=yes and/or WITHOUT_IFADDRS=yes
+      arping: Unify source files.
+      arping: Reorder functions and comment out unsued code.
+      arping,ping,ping6,tracepath,traceroute6 Makefile: Support static link of libidn by USE_IDN=static.
+      Makefile: Minimize statically linked libraries.
+      ping6: Do not clear seq check array twice for NI.
+      ping6: Use MD5_DIGEST_LENGTH instead of magic value 16.
+      ping6: Introduce helper functions for nonce in NI.
+      ping6: Introduce NI_NONCE_SIZE macro instead of magic value 8.
+      ping6: Ensure to call srand() to get some randomness in NI Nonce.
+      ping6: Generate different NI Nonce in each NI Query (Memory version).
+      ping6: Generate different NI Nonce in each NI Query (MD5 version).
+      ping6: Cache NI Nonce.
+      ping6: Print 'sequence number' embedded in NI Nonce.
+      ninfod: Do noy try to memcpy to self.
+      ninfod Makefile: More precise dependencies.
+      ninfod: Discard multicat packet outside linklocal scope.
+      ninfod: Apply default policy to refuse queries from global addresses.
+      ninfod: Normalize timespec for delay.
+      ninfod: Fix double-free without pthreads.
+      ninfod: Do not mix output from multiple threads.
+      ninfod: Employ internal buffer in stderrlog() for common case.
+
+
 [s20121121]
 
 Jan Synacek (2):
