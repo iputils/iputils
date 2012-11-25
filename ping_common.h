@@ -80,7 +80,6 @@ extern int options;
  * number of received sequence numbers we can keep track of.
  */
 #define	MAX_DUP_CHK	0x10000
-extern int mx_dup_ck;
 extern char rcvd_tbl[MAX_DUP_CHK / 8];
 
 
