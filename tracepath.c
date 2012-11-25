@@ -352,7 +352,7 @@ main(int argc, char **argv)
 	target.sin_family = AF_INET;
 
 	/* Backward compatiblity */
-	if (base_port) {
+	if (!base_port) {
 		p = strchr(argv[0], '/');
 		if (p) {
 			*p = 0;
