@@ -76,5 +76,13 @@ install: all
 # ----------------
 ninfod: ninfod_addrs.o ni_ifaddrs.o ninfod_name.o ninfod_core.o ninfod.o
 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
-.c.o:
-	$(CC) $(CFLAGS) -c $(DEFS) -o $@ $^
+%.o: %.c
+	$(CC) $(CFLAGS) -c $(DEFS) -o $@ $<
+
+# ----------------
+ni_ifaddrs.o: config.h ni_ifaddrs.h
+ninfod.o: config.h ninfod.h
+ninfod_addrs.c: config.h ninfod.h ni_ifaddrs.h
+ninfod_core.c: config.h ninfod.h
+ninfod_name.c: config.h ninfod.h
+

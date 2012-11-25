@@ -1,9 +1,11 @@
 #include <asm/byteorder.h>
 
+#define NI_NONCE_SIZE			8
+
 /* Node Information Query */
 struct ni_hdr {
 	struct icmp6_hdr		ni_u;
-	__u8				ni_nonce[8];
+	__u8				ni_nonce[NI_NONCE_SIZE];
 };
 
 #define ni_type		ni_u.icmp6_type

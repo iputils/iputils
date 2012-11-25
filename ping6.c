@@ -173,7 +173,12 @@ int ni_subject_len = 0;
 int ni_subject_type = -1;
 char *ni_group;
 
-__u8 ni_nonce[8];
+static inline int ntohsp(__u16 *p)
+{
+	__u16 v;
+	memcpy(&v, p, sizeof(v));
+	return ntohs(v);
+}
 
 #if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
 size_t inet6_srcrt_space(int type, int segments)
@@ -276,6 +281,97 @@ struct niquery_option niquery_options[] = {
 static inline int niquery_is_enabled(void)
 {
 	return ni_query >= 0;
+}
+
+#if PING6_NONCE_MEMORY
+__u8 *ni_nonce_ptr;
+#else
+struct {
+	struct timeval tv;
+	pid_t pid;
+} ni_nonce_secret;
+#endif
+
+static void niquery_init_nonce(void)
+{
+#if PING6_NONCE_MEMORY
+	struct timeval tv;
+	unsigned long seed;
+
+	seed = (unsigned long)getpid();
+	if (!gettimeofday(&tv, NULL))
+		seed ^= tv.tv_usec;
+	srand(seed);
+
+	ni_nonce_ptr = calloc(NI_NONCE_SIZE, mx_dup_ck);
+	if (!ni_nonce_ptr) {
+		perror("ping6: calloc");
+		exit(2);
+	}
+
+	ni_nonce_ptr[0] = ~0;
+#else
+	gettimeofday(&ni_nonce_secret.tv, NULL);
+	ni_nonce_secret.pid = getpid();
+#endif
+}
+
+#if !PING6_NONCE_MEMORY
+static int niquery_nonce(__u8 *nonce, int fill)
+{
+	static __u8 digest[MD5_DIGEST_LENGTH];
+	static int seq = -1;
+
+	if (fill || seq != *(__u16 *)nonce || seq < 0) {
+		MD5_CTX ctxt;
+
+		MD5_Init(&ctxt);
+		MD5_Update(&ctxt, &ni_nonce_secret, sizeof(ni_nonce_secret));
+		MD5_Update(&ctxt, nonce, sizeof(__u16));
+		MD5_Final(digest, &ctxt);
+
+		seq = *(__u16 *)nonce;
+	}
+
+	if (fill) {
+		memcpy(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16));
+		return 0;
+	} else {
+		if (memcmp(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16)))
+			return -1;
+		return ntohsp((__u16 *)nonce);
+	}
+}
+#endif
+
+static inline void niquery_fill_nonce(__u16 seq, __u8 *nonce)
+{
+	__u16 v = htons(seq);
+#if PING6_NONCE_MEMORY
+	int i;
+
+	memcpy(&ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], &v, sizeof(v));
+
+	for (i = sizeof(v); i < NI_NONCE_SIZE; i++)
+		ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck) + i] = 0x100 * ((double)random() / RAND_MAX);
+
+	memcpy(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE);
+#else
+	memcpy(nonce, &v, sizeof(v));
+	niquery_nonce(nonce, 1);
+#endif
+}
+
+static inline int niquery_check_nonce(__u8 *nonce)
+{
+#if PING6_NONCE_MEMORY
+	__u16 seq = ntohsp((__u16 *)nonce);
+	if (memcmp(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE))
+		return -1;
+	return seq;
+#else
+	return niquery_nonce(nonce, 0);
+#endif
 }
 
 static int niquery_set_qtype(int type)
@@ -410,7 +506,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	size_t buflen;
 	int dots, fqdn = niquery_options[index].data;
 	MD5_CTX ctxt;
-	__u8 digest[16];
+	__u8 digest[MD5_DIGEST_LENGTH];
 #ifdef USE_IDN
 	int rc;
 #endif
@@ -781,9 +877,7 @@ int main(int argc, char *argv[])
 #endif
 
 	if (niquery_is_enabled()) {
-		int i;
-		for (i = 0; i < 8; i++)
-			ni_nonce[i] = rand();
+		niquery_init_nonce();
 
 		if (!niquery_is_subject_valid()) {
 			ni_subject = &whereto.sin6_addr;
@@ -1233,33 +1327,20 @@ int build_echo(__u8 *_icmph)
 	return cc;
 }
 
-static inline int ntohsp(__u16 *p)
-{
-	__u16 v;
-	memcpy(&v, p, sizeof(v));
-	return ntohs(v);
-}
 
 int build_niquery(__u8 *_nih)
 {
 	struct ni_hdr *nih;
 	int cc;
-	__u16 v;
 
 	nih = (struct ni_hdr *)_nih;
 	nih->ni_cksum = 0;
-
-	CLR(ntohsp((__u16*)(nih->ni_nonce)) % mx_dup_ck);
 
 	nih->ni_type = ICMPV6_NI_QUERY;
 	cc = sizeof(*nih);
 	datalen = 0;
 
-	memcpy(&nih->ni_nonce, ni_nonce, sizeof(nih->ni_nonce));
-
-	v = htons(ntransmitted + 1);
-	memcpy(&nih->ni_nonce[0], &v, sizeof(v));
-
+	niquery_fill_nonce(ntransmitted + 1, nih->ni_nonce);
 	nih->ni_code = ni_subject_type;
 	nih->ni_qtype = htons(ni_query);
 	nih->ni_flags = ni_flag;
@@ -1443,7 +1524,7 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	default:
 		printf(" unknown code(%02x)", ntohs(nih->ni_code));
 	}
-	putchar(';');
+	printf("; seq=%u;", ntohsp((__u16*)nih->ni_nonce));
 }
 
 /*
@@ -1496,8 +1577,8 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 			return 0;
 	} else if (icmph->icmp6_type == ICMPV6_NI_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
-		__u16 seq = ntohsp((__u16 *)nih->ni_nonce);
-		if (memcmp(&nih->ni_nonce[2], &ni_nonce[2], sizeof(ni_nonce) - sizeof(__u16)))
+		int seq = niquery_check_nonce(nih->ni_nonce);
+		if (seq < 0)
 			return 1;
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      seq,

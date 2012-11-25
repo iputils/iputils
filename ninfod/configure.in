@@ -76,6 +76,7 @@ dnl Checks for libraries.
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_TIME
+AC_CHECK_HEADERS(limits.h)
 AC_CHECK_HEADERS(openssl/md5.h)
 AC_CHECK_HEADERS(sys/uio.h)
 AC_CHECK_HEADERS(sys/utsname.h arpa/inet.h netdb.h syslog.h)

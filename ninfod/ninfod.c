@@ -66,6 +66,9 @@
 #  include <stdint.h>
 # endif
 #endif
+#if HAVE_LIMITS_H
+# include <limits.h>
+#endif
 #if HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -149,9 +152,41 @@ static const __inline__ char * log_level(int priority) {
 void stderrlog(int pri, char *fmt, ...)
 {
 	va_list ap;
+	char ebuf[512];
+	char *buf;
+	size_t buflen;
+
 	va_start(ap, fmt);
-	fprintf(stderr, "[%s] ", log_level(pri));
-	vfprintf(stderr, fmt, ap);
+
+	for (buf = ebuf, buflen = sizeof(ebuf);
+	     buflen < SIZE_MAX / 2;
+	     free(buf != ebuf ? buf : NULL), buf = NULL, buflen *= 2) {
+		size_t rem;
+		size_t res;
+
+		buf = malloc(buflen);
+		if (!buf)
+			break;	/*XXX*/
+
+		rem = buflen;
+
+		res = snprintf(buf, rem, "[%s] ", log_level(pri));
+		if (res >= rem)
+			continue;
+		rem -= res;
+
+		res = vsnprintf(buf + res, rem, fmt, ap);
+
+		if (res >= rem)
+			continue;
+		break;
+	}
+
+	if (buf) {
+		fputs(buf, stderr);
+		free(buf != ebuf ? buf : NULL);
+	}
+
 	va_end(ap);
 }
 #endif
@@ -263,8 +298,6 @@ int ni_recv(struct packetcontext *p)
 		return -1;
 
 	p->querylen = cc;
-
-	memcpy(&p->addr, msgh.msg_name, msgh.msg_namelen);
 	p->addrlen = msgh.msg_namelen;
 
 	for (cmsg = CMSG_FIRSTHDR(&msgh); cmsg;
@@ -322,8 +355,8 @@ int ni_send(struct packetcontext *p)
 		struct timespec ts, rts;
 		int err = 0;
 
-		rts.tv_sec  = 0;
-		rts.tv_nsec = (long)p->delay * 1000;
+		rts.tv_sec  = p->delay / 1000000;
+		rts.tv_nsec = (long)(p->delay % 1000000) * 1000;
 
 		do {
 			ts = rts;
@@ -614,6 +647,8 @@ int main (int argc, char **argv)
 		DEBUG(LOG_ERR, "socket: %s\n", strerror(sock_errno));
 		exit(1);
 	}
+
+	setbuf(stderr, NULL);
 
 	if (!opt_d)
 		do_daemonize();
