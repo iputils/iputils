@@ -298,7 +298,7 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath [-n] [-b] [-l <len>] <destination>[/<port>]\n");
+	fprintf(stderr, "Usage: tracepath [-n] [-b] [-l <len>] [-p port] <destination>\n");
 	exit(-1);
 }
 
