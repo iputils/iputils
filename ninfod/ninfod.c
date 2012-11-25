@@ -152,14 +152,15 @@ static const __inline__ char * log_level(int priority) {
 void stderrlog(int pri, char *fmt, ...)
 {
 	va_list ap;
-	char *buf = NULL;
-	size_t buflen = 1;
+	char ebuf[512];
+	char *buf;
+	size_t buflen;
 
 	va_start(ap, fmt);
 
-	for (buf = NULL, buflen = 1024;
+	for (buf = ebuf, buflen = sizeof(ebuf);
 	     buflen < SIZE_MAX / 2;
-	     free(buf), buf = NULL, buflen *= 2) {
+	     free(buf != ebuf ? buf : NULL), buf = NULL, buflen *= 2) {
 		size_t rem;
 		size_t res;
 
@@ -183,7 +184,7 @@ void stderrlog(int pri, char *fmt, ...)
 
 	if (buf) {
 		fputs(buf, stderr);
-		free(buf);
+		free(buf != ebuf ? buf : NULL);
 	}
 
 	va_end(ap);
