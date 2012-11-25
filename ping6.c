@@ -1524,7 +1524,7 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	default:
 		printf(" unknown code(%02x)", ntohs(nih->ni_code));
 	}
-	putchar(';');
+	printf("; seq=%u;", ntohsp((__u16*)nih->ni_nonce));
 }
 
 /*
