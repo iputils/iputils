@@ -283,10 +283,18 @@ static inline int niquery_is_enabled(void)
 	return ni_query >= 0;
 }
 
+#if PING6_NONCE_MEMORY
 __u8 *ni_nonce_ptr;
+#else
+struct {
+	struct timeval tv;
+	pid_t pid;
+} ni_nonce_secret;
+#endif
 
 static void niquery_init_nonce(void)
 {
+#if PING6_NONCE_MEMORY
 	struct timeval tv;
 	unsigned long seed;
 
@@ -302,11 +310,44 @@ static void niquery_init_nonce(void)
 	}
 
 	ni_nonce_ptr[0] = ~0;
+#else
+	gettimeofday(&ni_nonce_secret.tv, NULL);
+	ni_nonce_secret.pid = getpid();
+#endif
 }
 
-static void niquery_fill_nonce(__u16 seq, __u8 *nonce)
+#if !PING6_NONCE_MEMORY
+static int niquery_nonce(__u8 *nonce, int fill)
+{
+	static __u8 digest[MD5_DIGEST_LENGTH];
+	static int seq = -1;
+
+	if (fill || seq != *(__u16 *)nonce || seq < 0) {
+		MD5_CTX ctxt;
+
+		MD5_Init(&ctxt);
+		MD5_Update(&ctxt, &ni_nonce_secret, sizeof(ni_nonce_secret));
+		MD5_Update(&ctxt, nonce, sizeof(__u16));
+		MD5_Final(digest, &ctxt);
+
+		seq = *(__u16 *)nonce;
+	}
+
+	if (fill) {
+		memcpy(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16));
+		return 0;
+	} else {
+		if (memcmp(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16)))
+			return -1;
+		return ntohsp((__u16 *)nonce);
+	}
+}
+#endif
+
+static inline void niquery_fill_nonce(__u16 seq, __u8 *nonce)
 {
 	__u16 v = htons(seq);
+#if PING6_NONCE_MEMORY
 	int i;
 
 	memcpy(&ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], &v, sizeof(v));
@@ -315,14 +356,22 @@ static void niquery_fill_nonce(__u16 seq, __u8 *nonce)
 		ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck) + i] = 0x100 * ((double)random() / RAND_MAX);
 
 	memcpy(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE);
+#else
+	memcpy(nonce, &v, sizeof(v));
+	niquery_nonce(nonce, 1);
+#endif
 }
 
-static int niquery_check_nonce(__u8 *nonce)
+static inline int niquery_check_nonce(__u8 *nonce)
 {
+#if PING6_NONCE_MEMORY
 	__u16 seq = ntohsp((__u16 *)nonce);
 	if (memcmp(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE))
 		return -1;
 	return seq;
+#else
+	return niquery_nonce(nonce, 0);
+#endif
 }
 
 static int niquery_set_qtype(int type)
