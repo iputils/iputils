@@ -1,3 +1,13 @@
+[s20121126]
+
+YOSHIFUJI Hideaki (5):
+      tracepath: Repair tracepath without -p option.
+      tracepath,tracepath6: -p option in usage.
+      ping,ping6: Use MAX_DUP_CHK directly, not using mx_dup_chk variable.
+      ping,ping6: Abstract received bitmap macros/definitions.
+      ping,ping6: Use __u64 or __u32 for bitmap.
+
+
 [s20121125]
 
 YOSHIFUJI Hideaki (30):
