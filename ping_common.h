@@ -43,12 +43,6 @@
 
 #define SCHINT(a)	(((a) <= MININTERVAL) ? MININTERVAL : (a))
 
-#define	A(bit)		rcvd_tbl[(bit)>>3]	/* identify byte in array */
-#define	B(bit)		(1 << ((bit) & 0x07))	/* identify bit in byte */
-#define	SET(bit)	(A(bit) |= B(bit))
-#define	CLR(bit)	(A(bit) &= (~B(bit)))
-#define	TST(bit)	(A(bit) & B(bit))
-
 /* various options */
 extern int options;
 #define	F_FLOOD		0x001
@@ -80,9 +74,49 @@ extern int options;
  * number of received sequence numbers we can keep track of.
  */
 #define	MAX_DUP_CHK	0x10000
-extern int mx_dup_ck;
-extern char rcvd_tbl[MAX_DUP_CHK / 8];
 
+#if defined(__WORDSIZE) && __WORDSIZE == 64
+# define USE_BITMAP64
+#endif
+
+#ifdef USE_BITMAP64
+typedef __u64	bitmap_t;
+# define BITMAP_SHIFT	6
+#else
+typedef __u32	bitmap_t;
+# define BITMAP_SHIFT	5
+#endif
+
+#if ((MAX_DUP_CHK >> (BITMAP_SHIFT + 3)) << (BITMAP_SHIFT + 3)) != MAX_DUP_CHK
+# error Please MAX_DUP_CHK and/or BITMAP_SHIFT
+#endif
+
+struct rcvd_table {
+	bitmap_t bitmap[MAX_DUP_CHK / (sizeof(bitmap_t) * 8)];
+};
+
+extern struct rcvd_table rcvd_tbl;
+
+#define	A(bit)	(rcvd_tbl.bitmap[(bit) >> BITMAP_SHIFT])	/* identify word in array */
+#define	B(bit)	(((bitmap_t)1) << ((bit) & ((1 << BITMAP_SHIFT) - 1)))	/* identify bit in word */
+
+static inline void rcvd_set(__u16 seq)
+{
+	unsigned bit = seq % MAX_DUP_CHK;
+	A(bit) |= B(bit);
+}
+
+static inline void rcvd_clear(__u16 seq)
+{
+	unsigned bit = seq % MAX_DUP_CHK;
+	A(bit) &= ~B(bit);
+}
+
+static inline bitmap_t rcvd_test(__u16 seq)
+{
+	unsigned bit = seq % MAX_DUP_CHK;
+	return A(bit) & B(bit);
+}
 
 extern u_char outpack[];
 extern int maxpacket;

@@ -12,8 +12,7 @@ int rtt;
 int rtt_addend;
 __u16 acked;
 
-int mx_dup_ck = MAX_DUP_CHK;
-char rcvd_tbl[MAX_DUP_CHK / 8];
+struct rcvd_table rcvd_tbl;
 
 
 /* counters */
@@ -294,11 +293,11 @@ void common_options(int ch)
 	case 'l':
 		preload = atoi(optarg);
 		if (preload <= 0) {
-			fprintf(stderr, "ping: bad preload value, should be 1..%d\n", mx_dup_ck);
+			fprintf(stderr, "ping: bad preload value, should be 1..%d\n", MAX_DUP_CHK);
 			exit(2);
 		}
-		if (preload > mx_dup_ck)
-			preload = mx_dup_ck;
+		if (preload > MAX_DUP_CHK)
+			preload = MAX_DUP_CHK;
 		if (uid && preload > 3) {
 			fprintf(stderr, "ping: cannot set preload to value > 3\n");
 			exit(2);
@@ -487,9 +486,9 @@ int pinger(void)
 	}
 
 	if (options & F_OUTSTANDING) {
-		if (ntransmitted > 0 && !TST(ntransmitted % mx_dup_ck)) {
+		if (ntransmitted > 0 && !rcvd_test(ntransmitted)) {
 			print_timestamp();
-			printf("no answer yet for icmp_seq=%lu\n", (ntransmitted % mx_dup_ck));
+			printf("no answer yet for icmp_seq=%lu\n", (ntransmitted % MAX_DUP_CHK));
 			fflush(stdout);
 		}
 	}
@@ -889,12 +888,12 @@ restamp:
 	if (csfailed) {
 		++nchecksum;
 		--nreceived;
-	} else if (TST(seq % mx_dup_ck)) {
+	} else if (rcvd_test(seq)) {
 		++nrepeats;
 		--nreceived;
 		dupflag = 1;
 	} else {
-		SET(seq % mx_dup_ck);
+		rcvd_set(seq);
 		dupflag = 0;
 	}
 	confirm = confirm_flag;

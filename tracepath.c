@@ -298,7 +298,7 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath [-n] [-b] [-l <len>] <destination>[/<port>]\n");
+	fprintf(stderr, "Usage: tracepath [-n] [-b] [-l <len>] [-p port] <destination>\n");
 	exit(-1);
 }
 
@@ -352,7 +352,7 @@ main(int argc, char **argv)
 	target.sin_family = AF_INET;
 
 	/* Backward compatiblity */
-	if (base_port) {
+	if (!base_port) {
 		p = strchr(argv[0], '/');
 		if (p) {
 			*p = 0;

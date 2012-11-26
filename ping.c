@@ -675,7 +675,7 @@ int send_probe()
 	icp->un.echo.sequence = htons(ntransmitted+1);
 	icp->un.echo.id = ident;			/* ID */
 
-	CLR((ntransmitted+1) % mx_dup_ck);
+	rcvd_clear(ntransmitted+1);
 
 	if (timing) {
 		if (options&F_LATENCY) {

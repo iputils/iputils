@@ -303,7 +303,7 @@ static void niquery_init_nonce(void)
 		seed ^= tv.tv_usec;
 	srand(seed);
 
-	ni_nonce_ptr = calloc(NI_NONCE_SIZE, mx_dup_ck);
+	ni_nonce_ptr = calloc(NI_NONCE_SIZE, MAX_DUP_CHK);
 	if (!ni_nonce_ptr) {
 		perror("ping6: calloc");
 		exit(2);
@@ -350,12 +350,12 @@ static inline void niquery_fill_nonce(__u16 seq, __u8 *nonce)
 #if PING6_NONCE_MEMORY
 	int i;
 
-	memcpy(&ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], &v, sizeof(v));
+	memcpy(&ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], &v, sizeof(v));
 
 	for (i = sizeof(v); i < NI_NONCE_SIZE; i++)
-		ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck) + i] = 0x100 * ((double)random() / RAND_MAX);
+		ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK) + i] = 0x100 * ((double)random() / RAND_MAX);
 
-	memcpy(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE);
+	memcpy(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE);
 #else
 	memcpy(nonce, &v, sizeof(v));
 	niquery_nonce(nonce, 1);
@@ -366,7 +366,7 @@ static inline int niquery_check_nonce(__u8 *nonce)
 {
 #if PING6_NONCE_MEMORY
 	__u16 seq = ntohsp((__u16 *)nonce);
-	if (memcmp(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % mx_dup_ck)], NI_NONCE_SIZE))
+	if (memcmp(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE))
 		return -1;
 	return seq;
 #else
@@ -1354,7 +1354,7 @@ int send_probe(void)
 {
 	int len, cc;
 
-	CLR((ntransmitted+1) % mx_dup_ck);
+	rcvd_clear(ntransmitted + 1);
 
 	if (niquery_is_enabled())
 		len = build_niquery(outpack);
