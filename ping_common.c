@@ -12,7 +12,7 @@ int rtt;
 int rtt_addend;
 __u16 acked;
 
-char rcvd_tbl[MAX_DUP_CHK / 8];
+struct rcvd_table rcvd_tbl;
 
 
 /* counters */
@@ -486,7 +486,7 @@ int pinger(void)
 	}
 
 	if (options & F_OUTSTANDING) {
-		if (ntransmitted > 0 && !TST(ntransmitted % MAX_DUP_CHK)) {
+		if (ntransmitted > 0 && !rcvd_test(ntransmitted)) {
 			print_timestamp();
 			printf("no answer yet for icmp_seq=%lu\n", (ntransmitted % MAX_DUP_CHK));
 			fflush(stdout);
@@ -888,12 +888,12 @@ restamp:
 	if (csfailed) {
 		++nchecksum;
 		--nreceived;
-	} else if (TST(seq % MAX_DUP_CHK)) {
+	} else if (rcvd_test(seq)) {
 		++nrepeats;
 		--nreceived;
 		dupflag = 1;
 	} else {
-		SET(seq % MAX_DUP_CHK);
+		rcvd_set(seq);
 		dupflag = 0;
 	}
 	confirm = confirm_flag;

@@ -43,12 +43,6 @@
 
 #define SCHINT(a)	(((a) <= MININTERVAL) ? MININTERVAL : (a))
 
-#define	A(bit)		rcvd_tbl[(bit)>>3]	/* identify byte in array */
-#define	B(bit)		(1 << ((bit) & 0x07))	/* identify bit in byte */
-#define	SET(bit)	(A(bit) |= B(bit))
-#define	CLR(bit)	(A(bit) &= (~B(bit)))
-#define	TST(bit)	(A(bit) & B(bit))
-
 /* various options */
 extern int options;
 #define	F_FLOOD		0x001
@@ -80,8 +74,32 @@ extern int options;
  * number of received sequence numbers we can keep track of.
  */
 #define	MAX_DUP_CHK	0x10000
-extern char rcvd_tbl[MAX_DUP_CHK / 8];
+struct rcvd_table {
+	__u8 bitmap[MAX_DUP_CHK / 8];
+};
 
+extern struct rcvd_table rcvd_tbl;
+
+#define	A(bit)		rcvd_tbl.bitmap[(bit)>>3]	/* identify byte in array */
+#define	B(bit)		(1 << ((bit) & 0x07))	/* identify bit in byte */
+
+static inline void rcvd_set(__u16 seq)
+{
+	unsigned bit = seq % MAX_DUP_CHK;
+	A(bit) |= B(bit);
+}
+
+static inline void rcvd_clear(__u16 seq)
+{
+	unsigned bit = seq % MAX_DUP_CHK;
+	A(bit) &= ~B(bit);
+}
+
+static inline __u8 rcvd_test(__u16 seq)
+{
+	unsigned bit = seq % MAX_DUP_CHK;
+	return A(bit) & B(bit);
+}
 
 extern u_char outpack[];
 extern int maxpacket;

@@ -1354,7 +1354,7 @@ int send_probe(void)
 {
 	int len, cc;
 
-	CLR((ntransmitted+1) % MAX_DUP_CHK);
+	rcvd_clear(ntransmitted + 1);
 
 	if (niquery_is_enabled())
 		len = build_niquery(outpack);
