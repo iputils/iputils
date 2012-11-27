@@ -130,6 +130,7 @@ If value is zero, kernel allocates random flow label.
   <listitem><para>
 Show help.
   </para></listitem>
+ </varlistentry>
  <varlistentry>
   <term><option>-i <replaceable/interval/</option></term>
   <listitem><para>

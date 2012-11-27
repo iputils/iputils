@@ -72,6 +72,7 @@ Sets the initial packet length to <replaceable/pktlen/ instead of
   <listitem><para>
 Sets the initial destination port to use.
   </para></listitem>
+ </varlistentry>
 </variablelist>
 </refsect1>
 
