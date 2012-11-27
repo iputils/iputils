@@ -326,7 +326,8 @@ main(int argc, char **argv)
 			break;
 		case 'l':
 			if ((mtu = atoi(optarg)) <= overhead) {
-				fprintf(stderr, "Error: length must be >= %d\n", overhead);
+				fprintf(stderr, "Error: pktlen must be > %d and <= %d.\n",
+					overhead, INT_MAX);
 				exit(1);
 			}
 			break;

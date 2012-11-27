@@ -563,6 +563,7 @@ done:
 	exit(0);
 
 pktlen_error:
-	fprintf(stderr, "Error: pktlen must be >= %d\n", overhead);
+	fprintf(stderr, "Error: pktlen must be > %d and <= %d\n",
+		overhead, INT_MAX);
 	exit(1);
 }
