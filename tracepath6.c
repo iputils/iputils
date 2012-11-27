@@ -58,6 +58,7 @@ __u16 base_port;
 
 int overhead;
 int mtu;
+void *pktbuf;
 int hops_to = -1;
 int hops_from = -1;
 int no_resolve = 0;
@@ -318,11 +319,9 @@ restart:
 int probe_ttl(int fd, int ttl)
 {
 	int i;
-	char sndbuf[mtu];
-	struct probehdr *hdr = (struct probehdr*)sndbuf;
+	struct probehdr *hdr = pktbuf;
 
-	memset(sndbuf, 0, mtu);
-
+	memset(pktbuf, 0, mtu);
 restart:
 
 	for (i=0; i<10; i++) {
@@ -340,7 +339,7 @@ restart:
 		gettimeofday(&hdr->tv, NULL);
 		his[hisptr].hops = ttl;
 		his[hisptr].sendtime = hdr->tv;
-		if (sendto(fd, sndbuf, mtu-overhead, 0, (struct sockaddr *)&target, targetlen) > 0)
+		if (sendto(fd, pktbuf, mtu-overhead, 0, (struct sockaddr *)&target, targetlen) > 0)
 			break;
 		res = recverr(fd, ttl);
 		his[hisptr].hops = 0;
@@ -353,7 +352,7 @@ restart:
 
 	if (i<10) {
 		data_wait(fd);
-		if (recv(fd, sndbuf, sizeof(sndbuf), MSG_DONTWAIT) > 0) {
+		if (recv(fd, pktbuf, mtu, MSG_DONTWAIT) > 0) {
 			printf("%2d?: reply received 8)\n", ttl);
 			return 0;
 		}
@@ -464,6 +463,7 @@ int main(int argc, char **argv)
 			mtu = 128000;
 		if (mtu <= overhead)
 			goto pktlen_error;
+
 		on = IPV6_PMTUDISC_DO;
 		if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
 		    (on = IPV6_PMTUDISC_DO,
@@ -497,6 +497,7 @@ int main(int argc, char **argv)
 			mtu = 65535;
 		if (mtu <= overhead)
 			goto pktlen_error;
+
 		on = IP_PMTUDISC_DO;
 		if (setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on))) {
 			perror("IP_MTU_DISCOVER");
@@ -511,6 +512,12 @@ int main(int argc, char **argv)
 			perror("IP_RECVTTL");
 			exit(1);
 		}
+	}
+
+	pktbuf = malloc(mtu);
+	if (!pktbuf) {
+		perror("malloc");
+		exit(1);
 	}
 
 	for (ttl=1; ttl<32; ttl++) {
