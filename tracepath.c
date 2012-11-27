@@ -46,6 +46,7 @@ __u16 base_port;
 
 const int overhead = 28;
 int mtu = 65535;
+void *pktbuf;
 int hops_to = -1;
 int hops_from = -1;
 int no_resolve = 0;
@@ -256,11 +257,9 @@ restart:
 int probe_ttl(int fd, int ttl)
 {
 	int i;
-	char sndbuf[mtu];
-	struct probehdr *hdr = (struct probehdr*)sndbuf;
+	struct probehdr *hdr = pktbuf;
 
-	memset(sndbuf,0,mtu);
-
+	memset(pktbuf, 0, mtu);
 restart:
 	for (i=0; i<10; i++) {
 		int res;
@@ -270,7 +269,7 @@ restart:
 		gettimeofday(&hdr->tv, NULL);
 		his[hisptr].hops = ttl;
 		his[hisptr].sendtime = hdr->tv;
-		if (sendto(fd, sndbuf, mtu-overhead, 0, (struct sockaddr*)&target, sizeof(target)) > 0)
+		if (sendto(fd, pktbuf, mtu-overhead, 0, (struct sockaddr*)&target, sizeof(target)) > 0)
 			break;
 		res = recverr(fd, ttl);
 		his[hisptr].hops = 0;
@@ -283,7 +282,7 @@ restart:
 
 	if (i<10) {
 		data_wait(fd);
-		if (recv(fd, sndbuf, sizeof(sndbuf), MSG_DONTWAIT) > 0) {
+		if (recv(fd, pktbuf, mtu, MSG_DONTWAIT) > 0) {
 			printf("%2d?: reply received 8)\n", ttl);
 			return 0;
 		}
@@ -326,7 +325,8 @@ main(int argc, char **argv)
 			break;
 		case 'l':
 			if ((mtu = atoi(optarg)) <= overhead) {
-				fprintf(stderr, "Error: length must be >= %d\n", overhead);
+				fprintf(stderr, "Error: pktlen must be > %d and <= %d.\n",
+					overhead, INT_MAX);
 				exit(1);
 			}
 			break;
@@ -396,6 +396,12 @@ main(int argc, char **argv)
 	}
 	if (setsockopt(fd, SOL_IP, IP_RECVTTL, &on, sizeof(on))) {
 		perror("IP_RECVTTL");
+		exit(1);
+	}
+
+	pktbuf = malloc(mtu);
+	if (!pktbuf) {
+		perror("malloc");
 		exit(1);
 	}
 

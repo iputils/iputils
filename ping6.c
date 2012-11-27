@@ -353,7 +353,7 @@ static inline void niquery_fill_nonce(__u16 seq, __u8 *nonce)
 	memcpy(&ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], &v, sizeof(v));
 
 	for (i = sizeof(v); i < NI_NONCE_SIZE; i++)
-		ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK) + i] = 0x100 * ((double)random() / RAND_MAX);
+		ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK) + i] = 0x100 * (rand() / (RAND_MAX + 1.0));
 
 	memcpy(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE);
 #else

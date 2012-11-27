@@ -56,8 +56,9 @@ struct sockaddr_storage target;
 socklen_t targetlen;
 __u16 base_port;
 
-int overhead = 48;
-int mtu = 128000;
+int overhead;
+int mtu;
+void *pktbuf;
 int hops_to = -1;
 int hops_from = -1;
 int no_resolve = 0;
@@ -318,11 +319,9 @@ restart:
 int probe_ttl(int fd, int ttl)
 {
 	int i;
-	char sndbuf[mtu];
-	struct probehdr *hdr = (struct probehdr*)sndbuf;
+	struct probehdr *hdr = pktbuf;
 
-	memset(sndbuf, 0, mtu);
-
+	memset(pktbuf, 0, mtu);
 restart:
 
 	for (i=0; i<10; i++) {
@@ -340,7 +339,7 @@ restart:
 		gettimeofday(&hdr->tv, NULL);
 		his[hisptr].hops = ttl;
 		his[hisptr].sendtime = hdr->tv;
-		if (sendto(fd, sndbuf, mtu-overhead, 0, (struct sockaddr *)&target, targetlen) > 0)
+		if (sendto(fd, pktbuf, mtu-overhead, 0, (struct sockaddr *)&target, targetlen) > 0)
 			break;
 		res = recverr(fd, ttl);
 		his[hisptr].hops = 0;
@@ -353,7 +352,7 @@ restart:
 
 	if (i<10) {
 		data_wait(fd);
-		if (recv(fd, sndbuf, sizeof(sndbuf), MSG_DONTWAIT) > 0) {
+		if (recv(fd, pktbuf, mtu, MSG_DONTWAIT) > 0) {
 			printf("%2d?: reply received 8)\n", ttl);
 			return 0;
 		}
@@ -397,10 +396,7 @@ int main(int argc, char **argv)
 			show_both = 1;
 			break;
 		case 'l':
-			if ((mtu = atoi(optarg)) <= overhead) {
-				fprintf(stderr, "Error: length must be >= %d\n", overhead);
-				exit(1);
-			}
+			mtu = atoi(optarg);
 			break;
 		case 'p':
 			base_port = atoi(optarg);
@@ -446,6 +442,9 @@ int main(int argc, char **argv)
 		/* sanity check */
 		if (family && ai->ai_family != family)
 			continue;
+		if (ai->ai_family != AF_INET6 &&
+		    ai->ai_family != AF_INET)
+			continue;
 		family = ai->ai_family;
 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 		if (fd < 0)
@@ -462,8 +461,12 @@ int main(int argc, char **argv)
 
 	switch (family) {
 	case AF_INET6:
-		mtu = 128000;
 		overhead = 48;
+		if (!mtu)
+			mtu = 128000;
+		if (mtu <= overhead)
+			goto pktlen_error;
+
 		on = IPV6_PMTUDISC_DO;
 		if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
 		    (on = IPV6_PMTUDISC_DO,
@@ -492,8 +495,12 @@ int main(int argc, char **argv)
 		mapped = 1;
 		/*FALLTHROUGH*/
 	case AF_INET:
-		mtu = 65535;
 		overhead = 28;
+		if (!mtu)
+			mtu = 65535;
+		if (mtu <= overhead)
+			goto pktlen_error;
+
 		on = IP_PMTUDISC_DO;
 		if (setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on))) {
 			perror("IP_MTU_DISCOVER");
@@ -508,6 +515,12 @@ int main(int argc, char **argv)
 			perror("IP_RECVTTL");
 			exit(1);
 		}
+	}
+
+	pktbuf = malloc(mtu);
+	if (!pktbuf) {
+		perror("malloc");
+		exit(1);
 	}
 
 	for (ttl=1; ttl<32; ttl++) {
@@ -558,4 +571,9 @@ done:
 		printf("back %d ", hops_from);
 	printf("\n");
 	exit(0);
+
+pktlen_error:
+	fprintf(stderr, "Error: pktlen must be > %d and <= %d\n",
+		overhead, INT_MAX);
+	exit(1);
 }
