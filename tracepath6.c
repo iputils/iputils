@@ -56,8 +56,8 @@ struct sockaddr_storage target;
 socklen_t targetlen;
 __u16 base_port;
 
-int overhead = 48;
-int mtu = 128000;
+int overhead;
+int mtu;
 int hops_to = -1;
 int hops_from = -1;
 int no_resolve = 0;
@@ -397,10 +397,7 @@ int main(int argc, char **argv)
 			show_both = 1;
 			break;
 		case 'l':
-			if ((mtu = atoi(optarg)) <= overhead) {
-				fprintf(stderr, "Error: length must be >= %d\n", overhead);
-				exit(1);
-			}
+			mtu = atoi(optarg);
 			break;
 		case 'p':
 			base_port = atoi(optarg);
@@ -462,8 +459,11 @@ int main(int argc, char **argv)
 
 	switch (family) {
 	case AF_INET6:
-		mtu = 128000;
 		overhead = 48;
+		if (!mtu)
+			mtu = 128000;
+		if (mtu <= overhead)
+			goto pktlen_error;
 		on = IPV6_PMTUDISC_DO;
 		if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
 		    (on = IPV6_PMTUDISC_DO,
@@ -492,8 +492,11 @@ int main(int argc, char **argv)
 		mapped = 1;
 		/*FALLTHROUGH*/
 	case AF_INET:
-		mtu = 65535;
 		overhead = 28;
+		if (!mtu)
+			mtu = 65535;
+		if (mtu <= overhead)
+			goto pktlen_error;
 		on = IP_PMTUDISC_DO;
 		if (setsockopt(fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on))) {
 			perror("IP_MTU_DISCOVER");
@@ -558,4 +561,8 @@ done:
 		printf("back %d ", hops_from);
 	printf("\n");
 	exit(0);
+
+pktlen_error:
+	fprintf(stderr, "Error: pktlen must be >= %d\n", overhead);
+	exit(1);
 }
