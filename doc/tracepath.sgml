@@ -63,7 +63,7 @@ Print both of host names and IP addresses.
   <term><option/-l/</term>
   <listitem><para>
 Sets the initial packet length to <replaceable/pktlen/ instead of
-65536 for <command/tracepath/ or 128000 for <command/tracepath6/.
+65535 for <command/tracepath/ or 128000 for <command/tracepath6/.
   </para></listitem>
  </varlistentry>
 
