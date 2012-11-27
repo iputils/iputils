@@ -442,6 +442,9 @@ int main(int argc, char **argv)
 		/* sanity check */
 		if (family && ai->ai_family != family)
 			continue;
+		if (ai->ai_family != AF_INET6 &&
+		    ai->ai_family != AF_INET)
+			continue;
 		family = ai->ai_family;
 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 		if (fd < 0)
