@@ -696,7 +696,7 @@ int send_probe()
 		struct timeval tmp_tv;
 		gettimeofday(&tmp_tv, NULL);
 		memcpy(icp+1, &tmp_tv, sizeof(tmp_tv));
-		icp->checksum = in_cksum((u_short *)(icp+1), sizeof(tmp_tv), ~icp->checksum);
+		icp->checksum = in_cksum((u_short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
 	}
 
 	do {
@@ -881,7 +881,7 @@ in_cksum(const u_short *addr, register int len, u_short csum)
 
 	/* mop up an odd byte, if necessary */
 	if (nleft == 1)
-		sum += htons(*(u_char *)w << 8);
+		sum += le16toh((u_short)*(u_char *)w);
 
 	/*
 	 * add back carry outs from top 16 bits to low 16 bits

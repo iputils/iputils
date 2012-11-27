@@ -930,7 +930,7 @@ u_short in_cksum(u_short *addr, int len)
 
 	/* mop up an odd byte, if necessary */
 	if( nleft == 1 )
-		sum += htons(*(u_char *)w<<8);
+		sum += le16toh(*(u_char *)w);
 
 	/*
 	 * add back carry outs from top 16 bits to low 16 bits
