@@ -150,6 +150,7 @@ void set_signal(int signo, void (*handler)(void))
 
 #ifdef CAPABILITIES
 static const cap_value_t caps[] = { CAP_NET_RAW, };
+static cap_flag_value_t cap_raw = CAP_CLEAR;
 #endif
 
 void limit_capabilities(void)
@@ -157,21 +158,33 @@ void limit_capabilities(void)
 #ifdef CAPABILITIES
 	cap_t cap_p;
 
-	cap_p = cap_init();
+	cap_p = cap_get_proc();
 	if (!cap_p) {
-		perror("arping: cap_init");
+		perror("arping: cap_get_proc");
 		exit(-1);
 	}
 
-	if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps, CAP_SET) < 0) {
-		perror("arping: cap_set_flag");
+	if (cap_get_flag(cap_p, CAP_NET_RAW, CAP_PERMITTED, &cap_raw) < 0) {
+		perror("arping: cap_get_flag");
 		exit(-1);
 	}
 
-	if (cap_set_proc(cap_p) < 0) {
-		perror("arping: cap_set_proc");
-		if (errno != EPERM)
+	if (cap_raw != CAP_CLEAR) {
+		if (cap_clear(cap_p) < 0) {
+			perror("arping: cap_clear");
 			exit(-1);
+		}
+
+		if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps, CAP_SET) < 0) {
+			perror("arping: cap_set_flag");
+			exit(-1);
+		}
+
+		if (cap_set_proc(cap_p) < 0) {
+			perror("arping: cap_set_proc");
+			if (errno != EPERM)
+				exit(-1);
+		}
 	}
 
 	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
@@ -202,6 +215,9 @@ int modify_capability_raw(int on)
 {
 #ifdef CAPABILITIES
 	cap_t cap_p;
+
+	if (cap_raw != CAP_SET)
+		return on ? -1 : 0;
 
 	cap_p = cap_get_proc();
 	if (!cap_p) {
