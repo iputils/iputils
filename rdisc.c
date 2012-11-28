@@ -910,6 +910,14 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
  * Checksum routine for Internet Protocol family headers (C Version)
  *
  */
+#if BYTE_ORDER == LITTLE_ENDIAN
+# define ODDBYTE(v)	(v)
+#elif BYTE_ORDER == BIG_ENDIAN
+# define ODDBYTE(v)	((u_short)(v) << 8)
+#else
+# define ODDBYTE(v)	htons((u_short)(v) << 8)
+#endif
+
 u_short in_cksum(u_short *addr, int len)
 {
 	register int nleft = len;
@@ -930,7 +938,7 @@ u_short in_cksum(u_short *addr, int len)
 
 	/* mop up an odd byte, if necessary */
 	if( nleft == 1 )
-		sum += le16toh(*(u_char *)w);
+		sum += ODDBYTE(*(u_char *)w);	/* le16toh() may be unavailable on old systems */
 
 	/*
 	 * add back carry outs from top 16 bits to low 16 bits
