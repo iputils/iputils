@@ -89,27 +89,17 @@ void limit_capabilities(void)
 		exit(-1);
 	}
 
-	if (cap_get_flag(cap_cur_p, CAP_NET_ADMIN, CAP_PERMITTED, &cap_ok) < 0) {
-		perror("ping: cap_get_flag(ADMIN)");
-		exit(-1);
-	}
+	cap_ok = CAP_CLEAR;
+	cap_get_flag(cap_cur_p, CAP_NET_ADMIN, CAP_PERMITTED, &cap_ok);
 
-	if (cap_ok != CAP_CLEAR &&
-	    cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_admin, CAP_SET) < 0) {
-		perror("ping: cap_set_flag(ADMIN)");
-		exit(-1);
-	}
+	if (cap_ok != CAP_CLEAR)
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_admin, CAP_SET);
 
-	if (cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok) < 0) {
-		perror("ping: cap_get_flag(RAW)");
-		exit(-1);
-	}
+	cap_ok = CAP_CLEAR;
+	cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok);
 
-	if (cap_ok != CAP_CLEAR &&
-	    cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_raw, CAP_SET) < 0) {
-		perror("ping: cap_set_flag(RAW)");
-		exit(-1);
-	}
+	if (cap_ok != CAP_CLEAR)
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_raw, CAP_SET);
 
 	if (cap_set_proc(cap_p) < 0) {
 		perror("ping: cap_set_proc");
@@ -156,30 +146,21 @@ int modify_capability(cap_value_t cap, cap_flag_value_t on)
 		goto out;
 	}
 
-	if (cap_get_flag(cap_p, cap, CAP_PERMITTED, &cap_ok) < 0) {
-		perror("ping: cap_get_flag");
-		goto out;
-	}
-
+	cap_ok = CAP_CLEAR;
+	cap_get_flag(cap_p, cap, CAP_PERMITTED, &cap_ok);
 	if (cap_ok == CAP_CLEAR) {
 		rc = on ? -1 : 0;
 		goto out;
 	}
 
-	if (cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap, on) < 0) {
-		perror("ping: cap_set_flag");
-		goto out;
-	}
+	cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap, on);
 
 	if (cap_set_proc(cap_p) < 0) {
 		perror("ping: cap_set_proc");
 		goto out;
 	}
 
-	if (cap_free(cap_p) < 0) {
-		perror("ping: cap_free");
-		goto out;
-	}
+	cap_free(cap_p);
 
 	rc = 0;
 out:

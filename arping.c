@@ -164,10 +164,7 @@ void limit_capabilities(void)
 		exit(-1);
 	}
 
-	if (cap_get_flag(cap_p, CAP_NET_RAW, CAP_PERMITTED, &cap_raw) < 0) {
-		perror("arping: cap_get_flag");
-		exit(-1);
-	}
+	cap_get_flag(cap_p, CAP_NET_RAW, CAP_PERMITTED, &cap_raw);
 
 	if (cap_raw != CAP_CLEAR) {
 		if (cap_clear(cap_p) < 0) {
@@ -175,10 +172,7 @@ void limit_capabilities(void)
 			exit(-1);
 		}
 
-		if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps, CAP_SET) < 0) {
-			perror("arping: cap_set_flag");
-			exit(-1);
-		}
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, caps, CAP_SET);
 
 		if (cap_set_proc(cap_p) < 0) {
 			perror("arping: cap_set_proc");
@@ -202,10 +196,7 @@ void limit_capabilities(void)
 		exit(-1);
 	}
 
-	if (cap_free(cap_p) < 0) {
-		perror("arping: cap_free");
-		exit(-1);
-	}
+	cap_free(cap_p);
 #else
 	euid = geteuid();
 #endif
@@ -225,20 +216,14 @@ int modify_capability_raw(int on)
 		return -1;
 	}
 
-	if (cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps, on ? CAP_SET : CAP_CLEAR) < 0) {
-		perror("arping: cap_set_flag");
-		return -1;
-	}
+	cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps, on ? CAP_SET : CAP_CLEAR);
 
 	if (cap_set_proc(cap_p) < 0) {
 		perror("arping: cap_set_proc");
 		return -1;
 	}
 
-	if (cap_free(cap_p) < 0) {
-		perror("arping: cap_free");
-		return -1;
-	}
+	cap_free(cap_p);
 #else
 	if (setuid(on ? euid : getuid())) {
 		perror("arping: setuid");
@@ -273,10 +258,7 @@ void drop_capabilities(void)
 		exit(-1);
 	}
 
-	if (cap_free(cap_p) < 0) {
-		perror("arping: cap_free");
-		exit(-1);
-	}
+	cap_free(cap_p);
 #else
 	if (setuid(getuid()) < 0) {
 		perror("arping: setuid");
