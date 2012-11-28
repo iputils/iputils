@@ -119,8 +119,12 @@ $(TARGETS): %: %.o
 
 # -------------------------------------
 # arping
-DEF_arping = $(DEF_SYSFS) $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS) -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\"
+DEF_arping = $(DEF_SYSFS) $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS)
 LIB_arping = $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN)
+
+ifneq ($(ARPING_DEFAULT_DEVICE),)
+DEF_arping += -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\"
+endif
 
 # clockdiff
 DEF_clockdiff = $(DEF_CAP)

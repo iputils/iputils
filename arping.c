@@ -58,7 +58,6 @@ static void usage(void) __attribute__((noreturn));
 #ifdef DEFAULT_DEVICE
 # define DEFAULT_DEVICE_STR	DEFAULT_DEVICE
 #else
-# define DEFAULT_DEVICE_STR	"no default"
 # define DEFAULT_DEVICE		NULL
 #endif
 
@@ -128,7 +127,11 @@ void usage(void)
 		"  -V : print version and exit\n"
 		"  -c count : how many packets to send\n"
 		"  -w timeout : how long to wait for a reply\n"
-		"  -I device : which ethernet device to use (" DEFAULT_DEVICE_STR ")\n"
+		"  -I device : which ethernet device to use"
+#ifdef DEFAULT_DEVICE_STR
+			" (" DEFAULT_DEVICE_STR ")"
+#endif
+			"\n"
 		"  -s source : source ip address\n"
 		"  destination : ask for what ip address\n"
 		);
