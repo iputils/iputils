@@ -428,7 +428,7 @@ sub arg_start
 	output ' ';
 
 	if($_[0]->attribute('CHOICE')->value =~ /opt/i) {
-		output '[ ';
+		output '[';
 	}
 	bold_on();
 }
@@ -441,7 +441,7 @@ sub arg_end
 		font_off();
 	}
 	if($_[0]->attribute('CHOICE')->value =~ /opt/i) {
-		output '] ';
+		output ']';
 	}
 }
 
