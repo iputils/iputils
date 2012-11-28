@@ -500,7 +500,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	int n;
 	int i;
 	char *name, *p;
-	char *canonname, *idn = NULL;
+	char *canonname = NULL, *idn = NULL;
 	unsigned char *buf = NULL;
 	size_t namelen;
 	size_t buflen;

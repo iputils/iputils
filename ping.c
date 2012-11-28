@@ -860,6 +860,15 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	return 0;
 }
 
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+# define ODDBYTE(v)	(v)
+#elif BYTE_ORDER == BIG_ENDIAN
+# define ODDBYTE(v)	((u_short)(v) << 8)
+#else
+# define ODDBYTE(v)	htons((u_short)(v) << 8)
+#endif
+
 u_short
 in_cksum(const u_short *addr, register int len, u_short csum)
 {
@@ -881,7 +890,7 @@ in_cksum(const u_short *addr, register int len, u_short csum)
 
 	/* mop up an odd byte, if necessary */
 	if (nleft == 1)
-		sum += le16toh((u_short)*(u_char *)w);
+		sum += ODDBYTE(*(u_char *)w); /* le16toh() may be unavailable on old systems */
 
 	/*
 	 * add back carry outs from top 16 bits to low 16 bits
