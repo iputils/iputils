@@ -65,43 +65,55 @@ static int screen_width = INT_MAX;
 
 #define ARRAY_SIZE(a)	(sizeof(a) / sizeof(a[0]))
 
+#ifdef CAPABILITIES
+static cap_value_t cap_raw = CAP_NET_RAW;
+static cap_value_t cap_admin = CAP_NET_ADMIN;
+#endif
+
 void limit_capabilities(void)
 {
 #ifdef CAPABILITIES
+	cap_t cap_cur_p;
 	cap_t cap_p;
-	const cap_value_t caps[] = {
-		CAP_NET_ADMIN,
-		CAP_NET_RAW,
-	};
-	int i;
+	cap_flag_value_t cap_ok;
 
-	cap_p = cap_init();
-	if (!cap_p) {
+	cap_cur_p = cap_get_proc();
+	if (!cap_cur_p) {
 		perror("ping: cap_get_proc");
 		exit(-1);
 	}
 
-	for (i = 0; i < ARRAY_SIZE(caps); i++) {
-		if (cap_clear(cap_p) < 0) {
-			perror("ping: cap_clear");
-			exit(-1);
-		}
-
-		if (cap_set_flag(cap_p, CAP_PERMITTED, ARRAY_SIZE(caps) - i, caps + i, CAP_SET) < 0) {
-			perror("ping: cap_set_flag");
-			exit(-1);
-		}
-
-		if (cap_set_proc(cap_p) < 0)
-			continue;
-
-		break;
+	cap_p = cap_init();
+	if (!cap_p) {
+		perror("ping: cap_init");
+		exit(-1);
 	}
 
-	if (i == ARRAY_SIZE(caps)) {
+	if (cap_get_flag(cap_cur_p, CAP_NET_ADMIN, CAP_PERMITTED, &cap_ok) < 0) {
+		perror("ping: cap_get_flag(ADMIN)");
+		exit(-1);
+	}
+
+	if (cap_ok != CAP_CLEAR &&
+	    cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_admin, CAP_SET) < 0) {
+		perror("ping: cap_set_flag(ADMIN)");
+		exit(-1);
+	}
+
+	if (cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok) < 0) {
+		perror("ping: cap_get_flag(RAW)");
+		exit(-1);
+	}
+
+	if (cap_ok != CAP_CLEAR &&
+	    cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_raw, CAP_SET) < 0) {
+		perror("ping: cap_set_flag(RAW)");
+		exit(-1);
+	}
+
+	if (cap_set_proc(cap_p) < 0) {
 		perror("ping: cap_set_proc");
-		if (errno != EPERM)
-			exit(-1);
+		exit(-1);
 	}
 
 	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
@@ -120,6 +132,7 @@ void limit_capabilities(void)
 	}
 
 	cap_free(cap_p);
+	cap_free(cap_cur_p);
 #endif
 	uid = getuid();
 	euid = geteuid();
@@ -135,11 +148,20 @@ void limit_capabilities(void)
 int modify_capability(cap_value_t cap, cap_flag_value_t on)
 {
 	cap_t cap_p = cap_get_proc();
+	cap_flag_value_t cap_ok;
 
 	if (!cap_p) {
 		perror("ping: cap_get_proc");
 		return -1;
 	}
+
+	if (cap_get_flag(cap_p, cap, CAP_PERMITTED, &cap_ok) < 0) {
+		perror("ping: cap_get_flag");
+		return -1;
+	}
+
+	if (cap_ok == CAP_CLEAR)
+		return on ?  -1 : 0;
 
 	if (cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap, on) < 0) {
 		perror("ping: cap_set_flag");
