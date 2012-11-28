@@ -149,36 +149,43 @@ int modify_capability(cap_value_t cap, cap_flag_value_t on)
 {
 	cap_t cap_p = cap_get_proc();
 	cap_flag_value_t cap_ok;
+	int rc = -1;
 
 	if (!cap_p) {
 		perror("ping: cap_get_proc");
-		return -1;
+		goto out;
 	}
 
 	if (cap_get_flag(cap_p, cap, CAP_PERMITTED, &cap_ok) < 0) {
 		perror("ping: cap_get_flag");
-		return -1;
+		goto out;
 	}
 
-	if (cap_ok == CAP_CLEAR)
-		return on ?  -1 : 0;
+	if (cap_ok == CAP_CLEAR) {
+		rc = on ? -1 : 0;
+		goto out;
+	}
 
 	if (cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap, on) < 0) {
 		perror("ping: cap_set_flag");
-		return -1;
+		goto out;
 	}
 
 	if (cap_set_proc(cap_p) < 0) {
 		perror("ping: cap_set_proc");
-		return -1;
+		goto out;
 	}
 
 	if (cap_free(cap_p) < 0) {
 		perror("ping: cap_free");
-		return -1;
+		goto out;
 	}
 
-	return 0;
+	rc = 0;
+out:
+	if (cap_p)
+		cap_free(cap_p);
+	return rc;
 }
 #else
 int modify_capability(int on)
