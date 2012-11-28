@@ -24,8 +24,8 @@ USE_SYSFS=no
 USE_IDN=no
 # Do not use getifaddrs
 WITHOUT_IFADDRS=no
-# arping default device
-ARPING_DEFAULT_DEVICE=eth0
+# arping default device (e.g. eth0)
+ARPING_DEFAULT_DEVICE=
 # rdisc server (-r option) support
 ENABLE_RDISC_SERVER=no
 # ping6 source routing (deprecated by RFC5095)
