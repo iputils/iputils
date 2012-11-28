@@ -40,14 +40,34 @@ GLIBCFIX=-D_GNU_SOURCE
 DEFINES=
 LDLIB=
 
+ifeq ($(USE_CRYPTO),static)
+	LIB_CRYPTO = $(LDFLAG_STATIC) -lcrypto $(LDFLAG_DYNAMIC)
+else
+	LIB_CRYPTO = -lcrypto
+endif
+
+ifeq ($(USE_RESOLV),static)
+	LIB_RESOLV = $(LDFLAG_STATIC) -lresolv $(LDFLAG_DYNAMIC)
+else
+	LIB_RESOLV = -lresolv
+endif
+
 ifneq ($(USE_CAP),no)
 	DEF_CAP = -DCAPABILITIES
+ifeq ($(USE_CAP),static)
+	LIB_CAP = $(LDFLAG_STATIC) -lcap $(LDFLAG_DYNAMIC)
+else
 	LIB_CAP = -lcap
+endif
 endif
 
 ifneq ($(USE_SYSFS),no)
 	DEF_SYSFS = -DUSE_SYSFS
+ifeq ($(USE_SYSFS),static)
+	LIB_SYSFS = $(LDFLAG_STATIC) -lsysfs $(LDFLAG_DYNAMIC)
+else
 	LIB_SYSFS = -lsysfs
+endif
 endif
 
 ifneq ($(USE_IDN),no)
@@ -111,7 +131,7 @@ DEF_ping_common = $(DEF_CAP) $(DEF_IDN)
 DEF_ping  = $(DEF_CAP) $(DEF_IDN)
 LIB_ping  = $(LIB_CAP) $(LIB_IDN)
 DEF_ping6 = $(DEF_CAP) $(DEF_IDN) $(DEF_ENABLE_PING6_RTHDR)
-LIB_ping6 = $(LIB_CAP) $(LIB_IDN) -lresolv -lcrypto
+LIB_ping6 = $(LIB_CAP) $(LIB_IDN) $(LIB_RESOLV) $(LIB_CRYPTO)
 
 ping: ping_common.o
 ping6: ping_common.o
