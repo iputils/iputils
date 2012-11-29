@@ -11,6 +11,11 @@ ADDLIB=
 # Linker flags
 LDFLAG_STATIC=-Wl,-Bstatic
 LDFLAG_DYNAMIC=-Wl,-Bdynamic
+LDFLAG_CAP=-lcap
+LDFLAG_CRYPTO=-lcrypto
+LDFLAG_IDN=-lidn
+LDFLAG_RESOLV=-lresolv
+LDFLAG_SYSFS=-lsysfs
 
 #
 # Options
@@ -50,27 +55,27 @@ LDLIB=
 FUNC_LIB = $(if $(filter static,$(1)),$(LDFLAG_STATIC) $(2) $(LDFLAG_DYNAMIC),$(2))
 
 # USE_CRYPTO: LIB_CRYPTO
-LIB_CRYPTO = $(call FUNC_LIB,$(USE_CRYPTO),-lcrypto)
+LIB_CRYPTO = $(call FUNC_LIB,$(USE_CRYPTO),$(LDFLAG_CRYPTO))
 
 # USE_RESOLV: LIB_RESOLV
-LIB_RESOLV = $(call FUNC_LIB,$(USE_RESOLV),-lresolv)
+LIB_RESOLV = $(call FUNC_LIB,$(USE_RESOLV),$(LDFLAG_RESOLV))
 
 # USE_CAP:  DEF_CAP, LIB_CAP
 ifneq ($(USE_CAP),no)
 	DEF_CAP = -DCAPABILITIES
-	LIB_CAP = $(call FUNC_LIB,$(USE_CAP),-lcap)
+	LIB_CAP = $(call FUNC_LIB,$(USE_CAP),$(LDFLAG_CAP))
 endif
 
 # USE_SYSFS: DEF_SYSFS, LIB_SYSFS
 ifneq ($(USE_SYSFS),no)
 	DEF_SYSFS = -DUSE_SYSFS
-	LIB_SYSFS = $(call FUNC_LIB,$(USE_SYSFS),-lsysfs)
+	LIB_SYSFS = $(call FUNC_LIB,$(USE_SYSFS),$(LDFLAG_SYSFS))
 endif
 
 # USE_IDN: DEF_IDN, LIB_IDN
 ifneq ($(USE_IDN),no)
 	DEF_IDN = -DUSE_IDN
-	LIB_IDN = $(call FUNC_LIB,$(USE_IDN),-lidn)
+	LIB_IDN = $(call FUNC_LIB,$(USE_IDN),$(LDFLAG_IDN))
 endif
 
 # WITHOUT_IFADDRS: DEF_WITHOUT_IFADDRS
