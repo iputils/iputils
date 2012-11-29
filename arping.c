@@ -596,6 +596,7 @@ static int find_device_by_ifaddrs(void)
 #ifndef WITHOUT_IFADDRS
 	int rc;
 	struct ifaddrs *ifa0, *ifa;
+	int count = 0;
 
 	rc = getifaddrs(&ifa0);
 	if (rc) {
@@ -619,18 +620,13 @@ static int find_device_by_ifaddrs(void)
 		if (!ifa->ifa_broadaddr)
 			continue;
 
-		if (device.ifa) {
-			if (device.ifa->ifa_flags & IFF_RUNNING)
-				continue;
-		}
-
 		device.ifa = ifa;
 
-		if (ifa->ifa_flags & IFF_RUNNING)
+		if (count++)
 			break;
 	}
 
-	if (device.ifa) {
+	if (count == 1 && device.ifa) {
 		device.ifindex = if_nametoindex(device.ifa->ifa_name);
 		if (!device.ifindex) {
 			perror("arping: if_nametoindex");
@@ -727,6 +723,7 @@ int find_device_by_sysfs(void)
 	struct sysfs_class_device *dev;
 	struct sysfs_attribute *dev_attr;
 	struct sysfs_devattr_values sysfs_devattr_values;
+	int count = 0;
 
 	if (!device.sysfs) {
 		device.sysfs = malloc(sizeof(*device.sysfs));
@@ -800,7 +797,7 @@ int find_device_by_sysfs(void)
 		memcpy(device.sysfs, &sysfs_devattr_values, sizeof(*device.sysfs));
 		sysfs_devattr_values_init(&sysfs_devattr_values, 0);
 
-		if (device.sysfs->value[SYSFS_DEVATTR_FLAGS].ulong & IFF_RUNNING)
+		if (count++)
 			break;
 
 		continue;
@@ -808,9 +805,10 @@ do_next:
 		sysfs_devattr_values_init(&sysfs_devattr_values, 1);
 	}
 
-	device.ifindex = device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong;
-	device.name = device.sysfs->ifname;
-
+	if (count == 1) {
+		device.ifindex = device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong;
+		device.name = device.sysfs->ifname;
+	}
 	rc = !device.ifindex;
 out:
 	sysfs_close_class(cls_net);
@@ -843,6 +841,7 @@ static int find_device_by_ioctl(void)
 	size_t ifrsize = sizeof(*ifr);
 	struct ifconf ifc;
 	static struct ifreq ifrbuf;
+	int count = 0;
 
 	s = socket(AF_INET, SOCK_DGRAM, 0);
 	if (s < 0) {
@@ -856,6 +855,7 @@ static int find_device_by_ioctl(void)
 		strncpy(ifrbuf.ifr_name, device.name, sizeof(ifrbuf.ifr_name) - 1);
 		if (check_device_by_ioctl(s, &ifrbuf))
 			goto out;
+		count++;
 	} else {
 		do {
 			int rc;
@@ -888,18 +888,20 @@ static int find_device_by_ioctl(void)
 
 		ifr_end = (struct ifreq *)(((char *)ifr0) + ifc.ifc_len - sizeof(*ifr0));
 		for (ifr = ifr0; ifr <= ifr_end; ifr++) {
-			memcpy(&ifrbuf.ifr_name, ifr->ifr_name, sizeof(ifrbuf.ifr_name));
 			if (check_device_by_ioctl(s, &ifrbuf))
 				continue;
-			break;
+			memcpy(&ifrbuf.ifr_name, ifr->ifr_name, sizeof(ifrbuf.ifr_name));
+			if (count++)
+				break;
 		}
 	}
 
 	close(s);
 
-	device.ifindex = ifrbuf.ifr_ifindex;
-	device.name = ifrbuf.ifr_name;
-
+	if (count == 1) {
+		device.ifindex = ifrbuf.ifr_ifindex;
+		device.name = ifrbuf.ifr_name;
+	}
 	return !device.ifindex;
 out:
 	close(s);
@@ -1077,7 +1079,7 @@ main(int argc, char **argv)
 			fprintf(stderr, "arping: Device %s not available.\n", device.name);
 			exit(2);
 		}
-		fprintf(stderr, "arping: No device found; device (option -I) is required.\n");
+		fprintf(stderr, "arping: device (option -I) is required.\n");
 		usage();
 	}
 
