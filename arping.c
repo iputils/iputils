@@ -694,6 +694,7 @@ out:
 
 int find_device_by_sysfs(void)
 {
+	int rc = -1;
 #ifdef USE_SYSFS
 	struct sysfs_class *cls_net;
 	struct dlist *dev_list;
@@ -709,7 +710,7 @@ int find_device_by_sysfs(void)
 	cls_net = sysfs_open_class("net");
 	if (!cls_net) {
 		perror("sysfs_open_class");
-		goto out;
+		return -1;
 	}
 
 	dev_list = sysfs_get_class_devices(cls_net);
@@ -743,8 +744,6 @@ int find_device_by_sysfs(void)
 				break;
 			}
 			rc = sysfs_devattrs[i].handler(dev_attr->value, &sysfs_devattr_values, i);
-
-			//sysfs_close_attribute(dev_attr);
 
 			if (rc < 0)
 				break;
@@ -783,16 +782,14 @@ do_next:
 		sysfs_devattr_values_init(&sysfs_devattr_values, 1);
 	}
 
-	//sysfs_close_list(dev_list);
-	sysfs_close_class(cls_net);
-
 	device.ifindex = device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong;
 	device.name = device.sysfs->ifname;
 
-	return 0;
+	rc = 0;
 out:
+	sysfs_close_class(cls_net);
 #endif
-	return -1;
+	return rc;
 }
 
 static int check_device_by_ioctl(int s, struct ifreq *ifr)
