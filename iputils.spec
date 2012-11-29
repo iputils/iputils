@@ -2,17 +2,17 @@
 # This spec file is for _testing_.
 #
 
-%define ssdate 020124
+%define ssdate 20121126
 Summary: The ping program for checking to see if network hosts are alive.
 Name: iputils
-Version: 20%{ssdate}
+Version: s%{ssdate}
 Release: 1local
-License: BSD
+License: GPLv2+
 Group: System Environment/Daemons
-Source0: iputils-ss%{ssdate}.tar.bz2
+Source0: iputils-s%{ssdate}.tar.bz2
 Prefix: %{_prefix}
 BuildRoot: %{_tmppath}/%{name}-root
-BuildPrereq: docbook-dtd31-sgml, perl
+#BuildPrereq: docbook-dtd31-sgml, perl
 Requires: kernel >= 2.4.7
 
 %description
@@ -22,59 +22,68 @@ specified network host and can tell you if that machine is alive and
 receiving network traffic.
 
 %prep
-%setup -q -n %{name}
+%setup -q %{name}
 
 %build
-make CC=gcc3
+make
+make ninfod
 make man
 make html
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
-
+rm -fr ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}%{_sbindir}
-mkdir -p ${RPM_BUILD_ROOT}/{bin,sbin}
-install -c clockdiff		${RPM_BUILD_ROOT}%{_sbindir}/
-%ifos linux
-install -c arping               ${RPM_BUILD_ROOT}/sbin/
-ln -s ../../sbin/arping ${RPM_BUILD_ROOT}%{_sbindir}/arping
-install -c ping			${RPM_BUILD_ROOT}/bin/
-%else
-install -c arping		${RPM_BUILD_ROOT}%{_sbindir}/
-install -c ping			${RPM_BUILD_ROOT}%{_sbindir}/
-%endif
-install -c ping6		${RPM_BUILD_ROOT}%{_sbindir}/
-install -c rdisc		${RPM_BUILD_ROOT}%{_sbindir}/
-install -c tracepath		${RPM_BUILD_ROOT}%{_sbindir}/
-install -c tracepath6		${RPM_BUILD_ROOT}%{_sbindir}/
-install -c traceroute6		${RPM_BUILD_ROOT}%{_sbindir}/
+mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
+mkdir -p $RPM_BUILD_ROOT/%{_unitdir}
+
+install -c clockdiff            ${RPM_BUILD_ROOT}%{_sbindir}/
+install -cp arping              ${RPM_BUILD_ROOT}%{_sbindir}/
+install -cp ping                ${RPM_BUILD_ROOT}%{_bindir}/
+install -cp rdisc               ${RPM_BUILD_ROOT}%{_sbindir}/
+install -cp ping6               ${RPM_BUILD_ROOT}%{_bindir}/
+install -cp tracepath           ${RPM_BUILD_ROOT}%{_bindir}/
+install -cp tracepath6          ${RPM_BUILD_ROOT}%{_bindir}/
+install -cp ninfod/ninfod       ${RPM_BUILD_ROOT}%{_sbindir}/
+
+mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
+ln -sf ../bin/ping6 ${RPM_BUILD_ROOT}%{_sbindir}
+ln -sf ../bin/tracepath ${RPM_BUILD_ROOT}%{_sbindir}
+ln -sf ../bin/tracepath6 ${RPM_BUILD_ROOT}%{_sbindir}
 
 mkdir -p ${RPM_BUILD_ROOT}%{_mandir}/man8
-install -c doc/*.8		${RPM_BUILD_ROOT}%{_mandir}/man8/
+install -cp doc/clockdiff.8     ${RPM_BUILD_ROOT}%{_mandir}/man8/
+install -cp doc/arping.8        ${RPM_BUILD_ROOT}%{_mandir}/man8/
+install -cp doc/ping.8          ${RPM_BUILD_ROOT}%{_mandir}/man8/
+install -cp doc/rdisc.8         ${RPM_BUILD_ROOT}%{_mandir}/man8/
+install -cp doc/tracepath.8     ${RPM_BUILD_ROOT}%{_mandir}/man8/
+install -cp doc/ninfod.8        ${RPM_BUILD_ROOT}%{_mandir}/man8/
+ln -s ping.8.gz ${RPM_BUILD_ROOT}%{_mandir}/man8/ping6.8.gz
+ln -s tracepath.8.gz ${RPM_BUILD_ROOT}%{_mandir}/man8/tracepath6.8.gz
+
+iconv -f ISO88591 -t UTF8 RELNOTES -o RELNOTES.tmp
+touch -r RELNOTES RELNOTES.tmp
+mv -f RELNOTES.tmp RELNOTES
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
-%defattr(-,root,root)
-%doc RELNOTES doc/*.html
-%{_sbindir}/clockdiff
-%ifos linux
-%attr(4755,root,root)	/bin/ping
-/sbin/arping
-%{_sbindir}/arping
-%else
-%{_sbindir}/arping
-%attr(4755,root,root)	%{_sbindir}/ping
-%endif
-%attr(4755,root,root) %{_sbindir}/ping6
+%doc RELNOTES
+%attr(0755,root,root) %caps(cap_net_raw=ep) %{_sbindir}/clockdiff
+%attr(0755,root,root) %caps(cap_net_raw=ep) %{_sbindir}/arping
+%attr(0755,root,root) %caps(cap_net_raw=ep cap_net_admin=ep) %{_bindir}/ping
+%{_sbindir}/rdisc
+%attr(0755,root,root) %caps(cap_net_raw=ep cap_net_admin=ep) %{_bindir}/ping6
+%{_bindir}/tracepath
+%{_bindir}/tracepath6
+%{_sbindir}/ping6
 %{_sbindir}/tracepath
 %{_sbindir}/tracepath6
-%attr(4755,root,root) %{_sbindir}/traceroute6
-%{_sbindir}/rdisc
-%{_mandir}/man8/*
-
+%{_sbindir}/ninfod
+%attr(644,root,root) %{_mandir}/man8/*
 
 %changelog
 * Sat Feb 23 2001 Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
   Taken iputils rpm from ASPLinux-7.2 as pattern.
+* Fri Nov 30 2012 YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
+  Partically sync with current Fedora's specfile.
