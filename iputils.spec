@@ -1,5 +1,5 @@
 #
-# This spec file is for _testing_. You may use it (I do), but no warranty.
+# This spec file is for _testing_.
 #
 
 %define ssdate 020124
