@@ -104,8 +104,10 @@ TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
 CFLAGS=$(CCOPTOPT) $(CCOPT) $(GLIBCFIX) $(DEFINES)
 LDLIBS=$(LDLIB) $(ADDLIB)
 
-LASTTAG:=`git describe HEAD | sed -e 's/-.*//'`
-TAG:=`date +s%Y%m%d`
+UNAME_N:=$(shell uname -n)
+LASTTAG:=$(shell git describe HEAD | sed -e 's/-.*//')
+TAG:=$(shell date +s%Y%m%d)
+
 
 # -------------------------------------
 .PHONY: all ninfod clean distclean man html check-kernel modules snapshot
@@ -221,7 +223,7 @@ distclean: clean
 
 # -------------------------------------
 snapshot:
-	@if [ "`uname -n`" != "pleiades" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
+	@if [ x"$(UNAME_N)" != x"pleiades" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
 	@date "+[$(TAG)]" > RELNOTES.NEW
 	@echo >>RELNOTES.NEW
 	@git log --no-merges $(LASTTAG).. | git shortlog >> RELNOTES.NEW
