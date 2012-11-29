@@ -811,7 +811,7 @@ do_next:
 	device.ifindex = device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong;
 	device.name = device.sysfs->ifname;
 
-	rc = 0;
+	rc = !device.ifindex;
 out:
 	sysfs_close_class(cls_net);
 #endif
