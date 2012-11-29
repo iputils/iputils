@@ -107,6 +107,7 @@ LDLIBS=$(LDLIB) $(ADDLIB)
 UNAME_N:=$(shell uname -n)
 LASTTAG:=$(shell git describe HEAD | sed -e 's/-.*//')
 TODAY=$(shell date +%Y/%m/%d)
+DATE=$(shell date --date $(TODAY) +%Y%m%d)
 TAG:=$(shell date --date=$(TODAY) +s%Y%m%d)
 
 
@@ -231,6 +232,8 @@ snapshot:
 	@echo >> RELNOTES.NEW
 	@cat RELNOTES >> RELNOTES.NEW
 	@mv RELNOTES.NEW RELNOTES
+	@sed -e "s/^%define ssdate .*/%define ssdate $(DATE)/" iputils.spec > iputils.spec.tmp
+	@mv iputils.spec.tmp iputils.spec
 	@echo "static char SNAPSHOT[] = \"$(TAG)\";" > SNAPSHOT.h
 	@$(MAKE) -C doc snapshot
 	@$(MAKE) man
