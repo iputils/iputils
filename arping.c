@@ -39,7 +39,7 @@
 
 #ifdef USE_SYSFS
 #include <sysfs/libsysfs.h>
-struct sysf_devattr_values;
+struct sysfs_devattr_values;
 #endif
 
 #ifndef WITHOUT_IFADDRS
