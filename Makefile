@@ -106,7 +106,8 @@ LDLIBS=$(LDLIB) $(ADDLIB)
 
 UNAME_N:=$(shell uname -n)
 LASTTAG:=$(shell git describe HEAD | sed -e 's/-.*//')
-TAG:=$(shell date +s%Y%m%d)
+TODAY=$(shell date +%Y/%m/%d)
+TAG:=$(shell date --date=$(TODAY) +s%Y%m%d)
 
 
 # -------------------------------------
@@ -224,13 +225,13 @@ distclean: clean
 # -------------------------------------
 snapshot:
 	@if [ x"$(UNAME_N)" != x"pleiades" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
-	@date "+[$(TAG)]" > RELNOTES.NEW
+	@echo "[$(TAG)]" > RELNOTES.NEW
 	@echo >>RELNOTES.NEW
 	@git log --no-merges $(LASTTAG).. | git shortlog >> RELNOTES.NEW
 	@echo >> RELNOTES.NEW
 	@cat RELNOTES >> RELNOTES.NEW
 	@mv RELNOTES.NEW RELNOTES
-	@date "+static char SNAPSHOT[] = \"$(TAG)\";" > SNAPSHOT.h
+	@echo "static char SNAPSHOT[] = \"$(TAG)\";" > SNAPSHOT.h
 	@$(MAKE) -C doc snapshot
 	@$(MAKE) man
 	@git commit -a -m "iputils-$(TAG)"
