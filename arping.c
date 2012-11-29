@@ -544,6 +544,32 @@ struct sysfs_devattrs {
 };
 #endif
 
+/*
+ * find_device()
+ *
+ * This function checks 1) if the device (if given) is okay for ARP,
+ * or 2) find fist appropriate device on the system.
+ *
+ * Return value:
+ *	>0	: Succeeded, and appropriate device not found.
+ *		  device.ifindex remains 0.
+ *	0	: Succeeded, and approptiate device found.
+ *		  device.ifindex is set.
+ *	<0	: Failed.  Support not found, or other
+ *		: system error.  Try other method.
+ *
+ * If an appropriate device found, it is recorded inside the
+ * "device" variable for later reference.
+ *
+ * We have several implementations for this.
+ *	by_ifaddrs():	requires getifaddr() in glibc, and rtnetlink in
+ *			kernel. default and recommended for recent systems.
+ *	by_sysfs():	requires libsysfs , and sysfs in kernel.
+ *	by_ioctl():	unable to list devices without ipv4 address; this
+ *			means, you need to supply the device name for
+ *			DAD purpose.
+ */
+/* Common check for ifa->ifa_flags */
 static int check_ifflags(unsigned int ifflags, int fatal)
 {
 	if (!(ifflags & IFF_UP)) {
@@ -894,6 +920,12 @@ out:
 	return rc;
 }
 
+/*
+ * set_device_broadcast()
+ *
+ * This fills the device "broadcast address"
+ * based on information found by find_device() funcion.
+ */
 static int set_device_broadcast_ifaddrs_one(struct device *device, unsigned char *ba, size_t balen, int fatal)
 {
 #ifndef WITHOUT_IFADDRS
