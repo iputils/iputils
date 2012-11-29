@@ -16,20 +16,27 @@ LDFLAG_DYNAMIC=-Wl,-Bdynamic
 # Options
 #
 
-# Capability support (with libcap)
+# Capability support (with libcap) [yes|static|no]
 USE_CAP=yes
-# sysfs support (with libsysfs - deprecated)
+# sysfs support (with libsysfs - deprecated) [no|yes|static]
 USE_SYSFS=no
-# IDN support (experimental)
+# IDN support (experimental) [no|yes|static]
 USE_IDN=no
-# Do not use getifaddrs
+
+# Do not use getifaddrs [no|yes|static]
 WITHOUT_IFADDRS=no
-# arping default device (e.g. eth0)
+# arping default device (e.g. eth0) []
 ARPING_DEFAULT_DEVICE=
-# rdisc server (-r option) support
-ENABLE_RDISC_SERVER=no
-# ping6 source routing (deprecated by RFC5095)
+
+# Crypto library for ping6 [yes|static]
+USE_CRYPTO=yes
+# Resolv library for ping6 [yes|static]
+USE_RESOLV=yes
+# ping6 source routing (deprecated by RFC5095) [no|yes|RFC3542]
 ENABLE_PING6_RTHDR=no
+
+# rdisc server (-r option) support [no|yes]
+ENABLE_RDISC_SERVER=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
@@ -42,33 +49,41 @@ LDLIB=
 
 FUNC_LIB = $(if $(filter static,$(1)),$(LDFLAG_STATIC) $(2) $(LDFLAG_DYNAMIC),$(2))
 
+# USE_CRYPTO: LIB_CRYPTO
 LIB_CRYPTO = $(call FUNC_LIB,$(USE_CRYPTO),-lcrypto)
 
+# USE_RESOLV: LIB_RESOLV
 LIB_RESOLV = $(call FUNC_LIB,$(USE_RESOLV),-lresolv)
 
+# USE_CAP:  DEF_CAP, LIB_CAP
 ifneq ($(USE_CAP),no)
 	DEF_CAP = -DCAPABILITIES
 	LIB_CAP = $(call FUNC_LIB,$(USE_CAP),-lcap)
 endif
 
+# USE_SYSFS: DEF_SYSFS, LIB_SYSFS
 ifneq ($(USE_SYSFS),no)
 	DEF_SYSFS = -DUSE_SYSFS
 	LIB_SYSFS = $(call FUNC_LIB,$(USE_SYSFS),-lsysfs)
 endif
 
+# USE_IDN: DEF_IDN, LIB_IDN
 ifneq ($(USE_IDN),no)
 	DEF_IDN = -DUSE_IDN
 	LIB_IDN = $(call FUNC_LIB,$(USE_IDN),-lidn)
 endif
 
+# WITHOUT_IFADDRS: DEF_WITHOUT_IFADDRS
 ifneq ($(WITHOUT_IFADDRS),no)
 	DEF_WITHOUT_IFADDRS = -DWITHOUT_IFADDRS
 endif
 
+# ENABLE_RDISC_SERVER: DEF_ENABLE_RDISC_SERVER
 ifneq ($(ENABLE_RDISC_SERVER),no)
 	DEF_ENABLE_RDISC_SERVER = -DRDISC_SERVER
 endif
 
+# ENABLE_PING6_RTHDR: DEF_ENABLE_PING6_RTHDR
 ifneq ($(ENABLE_PING6_RTHDR),no)
 	DEF_ENABLE_PING6_RTHDR = -DPING6_ENABLE_RTHDR
 ifeq ($(ENABLE_PING6_RTHDR),RFC3542)
