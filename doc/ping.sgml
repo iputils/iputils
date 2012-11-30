@@ -141,11 +141,16 @@ to values less 0.2 seconds.
   </para></listitem>
  </varlistentry>
  <varlistentry>
-  <term><option>-I <replaceable/interface address/</option></term>
+  <term><option>-I <replaceable/interface/</option></term>
   <listitem><para>
-Set source address to specified interface address. Argument
-may be numeric IP address or name of device. When pinging IPv6
-link-local address this option is required.
+<replaceable/interface/ is either an address, or an interface name.
+If <replaceable/interface/ is an address, it sets source address
+to specified interface address.
+If <replaceable/interface/ in an interface name, it sets
+source interface to specified interface.
+For <command/ping6/, when doing ping to a link-local scope
+address, link specification (by the '%'-notation in
+<replaceable/destination/, or by this option) is required.
   </para></listitem>
  </varlistentry>
  <varlistentry>
