@@ -87,7 +87,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(644,root,root) %{_mandir}/man8/*
 
 %changelog
-* Sat Feb 23 2001 Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
-  Taken iputils rpm from ASPLinux-7.2 as pattern.
 * Fri Nov 30 2012 YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
   Partically sync with current Fedora's specfile.
+* Sat Feb 23 2001 Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+  Taken iputils rpm from ASPLinux-7.2 as pattern.
