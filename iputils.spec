@@ -70,10 +70,14 @@ rm -rf ${RPM_BUILD_ROOT}
 %files
 %doc RELNOTES
 %attr(0755,root,root) %caps(cap_net_raw=ep) %{_sbindir}/clockdiff
+#%attr(4755,root,root) %{_sbindir}/clockdiff
 %attr(0755,root,root) %caps(cap_net_raw=ep) %{_sbindir}/arping
+#%attr(4755,root,root) %{_sbindir}/arping
 %attr(0755,root,root) %caps(cap_net_raw=ep cap_net_admin=ep) %{_bindir}/ping
-%{_sbindir}/rdisc
+#%attr(4755,root,root) %{_bindir}/ping
 %attr(0755,root,root) %caps(cap_net_raw=ep cap_net_admin=ep) %{_bindir}/ping6
+#%attr(4755,root,root) %{_bindir}/ping6
+%{_sbindir}/rdisc
 %{_bindir}/tracepath
 %{_bindir}/tracepath6
 %{_sbindir}/ping6
