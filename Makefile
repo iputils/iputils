@@ -138,9 +138,9 @@ LIB_clockdiff = $(LIB_CAP)
 
 # ping / ping6
 DEF_ping_common = $(DEF_CAP) $(DEF_IDN)
-DEF_ping  = $(DEF_CAP) $(DEF_IDN)
+DEF_ping  = $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS)
 LIB_ping  = $(LIB_CAP) $(LIB_IDN)
-DEF_ping6 = $(DEF_CAP) $(DEF_IDN) $(DEF_ENABLE_PING6_RTHDR)
+DEF_ping6 = $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS) $(DEF_ENABLE_PING6_RTHDR)
 LIB_ping6 = $(LIB_CAP) $(LIB_IDN) $(LIB_RESOLV) $(LIB_CRYPTO)
 
 ping: ping_common.o
