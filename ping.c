@@ -338,6 +338,9 @@ main(int argc, char **argv)
 						perror("ping: IP_MULTICAST_IF");
 						exit(2);
 					}
+				} else {
+					perror("ping: SO_BINDTODEVICE");
+					exit(2);
 				}
 			}
 		}

@@ -965,6 +965,7 @@ int main(int argc, char *argv[])
 #endif
 			    setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 				perror("setsockopt(SO_BINDTODEVICE)");
+				exit(2);
 			}
 			disable_capability_raw();
 		}
