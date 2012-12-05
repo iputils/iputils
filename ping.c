@@ -62,6 +62,9 @@ char copyright[] =
 
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
+#ifndef WITHOUT_IFADDRS
+#include <ifaddrs.h>
+#endif
 
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
@@ -309,6 +312,10 @@ main(int argc, char **argv)
 		socklen_t alen;
 		struct sockaddr_in dst = whereto;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);
+#ifndef WITHOUT_IFADDRS
+		struct ifaddrs *ifa0, *ifa;
+		int ret;
+#endif
 
 		if (probe_fd < 0) {
 			perror("socket");
@@ -338,6 +345,9 @@ main(int argc, char **argv)
 						perror("ping: IP_MULTICAST_IF");
 						exit(2);
 					}
+				} else {
+					perror("ping: SO_BINDTODEVICE");
+					exit(2);
 				}
 			}
 		}
@@ -376,6 +386,25 @@ main(int argc, char **argv)
 			exit(2);
 		}
 		source.sin_port = 0;
+
+#ifndef WITHOUT_IFADDRS
+		ret = getifaddrs(&ifa0);
+		if (ret) {
+			fprintf(stderr, "gatifaddrs() failed.\n");
+			exit(2);
+		}
+		for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
+			if (!ifa->ifa_addr || ifa->ifa_addr->sa_family != AF_INET)
+				continue;
+			if (!strncmp(ifa->ifa_name, device, sizeof(device) - 1) &&
+			    !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
+				    &source.sin_addr, sizeof(source.sin_addr)))
+				break;
+		}
+		freeifaddrs(ifa0);
+		if (!ifa)
+			fprintf(stderr, "ping: Warning: source address might be selected on device other than %s.\n", device);
+#endif
 		close(probe_fd);
 	} while (0);
 

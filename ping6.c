@@ -72,6 +72,9 @@ char copyright[] =
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
 #include <resolv.h>
+#ifndef WITHOUT_IFADDRS
+#include <ifaddrs.h>
+#endif
 
 #ifdef USE_IDN
 #include <stringprep.h>
@@ -937,6 +940,9 @@ int main(int argc, char *argv[])
 	if (IN6_IS_ADDR_UNSPECIFIED(&source.sin6_addr)) {
 		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
+#ifndef WITHOUT_IFADDRS
+		struct ifaddrs *ifa0, *ifa;
+#endif
 
 		if (probe_fd < 0) {
 			perror("socket");
@@ -965,6 +971,7 @@ int main(int argc, char *argv[])
 #endif
 			    setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 				perror("setsockopt(SO_BINDTODEVICE)");
+				exit(2);
 			}
 			disable_capability_raw();
 		}
@@ -980,6 +987,26 @@ int main(int argc, char *argv[])
 		}
 		source.sin6_port = 0;
 		close(probe_fd);
+
+#ifndef WITHOUT_IFADDRS
+		if (getifaddrs(&ifa0)) {
+			perror("getifaddrs");
+			exit(2);
+		}
+
+		for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
+			if (!ifa->ifa_addr || ifa->ifa_addr->sa_family != AF_INET6)
+				continue;
+			if (!strncmp(ifa->ifa_name, device, sizeof(device) - 1) &&
+			    IN6_ARE_ADDR_EQUAL(&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr,
+					       &source.sin6_addr))
+				break;
+		}
+		if (!ifa)
+			fprintf(stderr, "ping6: Warning: source address might be selected on device other than %s.\n", device);
+
+		freeifaddrs(ifa0);
+#endif
 	}
 #ifdef HAVE_SIN6_SCOPEID
 	else if (device && (IN6_IS_ADDR_LINKLOCAL(&source.sin6_addr) ||
