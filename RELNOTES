@@ -1,3 +1,46 @@
+[s20121205]
+
+Jan Synacek (1):
+      ping,tracepath doc: Fix missing end tags.
+
+YOSHIFUJI Hideaki (35):
+      tracepath6: packet length option (-l) did not have any effect.
+      tracepath,tracepath6: Fix pktlen message.
+      tracepath,tracepath6: Use calloc(3) instead of using stack.
+      tracepath6: Ignore families other than IPv4 and IPv6.
+      ping6: Improve randomness of NI Nonce.
+      tracepath,tracepath6 doc: Fix default pktlen.
+      ping,rdisc: Optimize checksumming.
+      makefile: Static link support for crypto, resolv, cap and sysfs.
+      doc: Ajdust spaces around sqare brackets.
+      ping,rdisc: Use macro to get odd byte when checksumming.
+      ping6: Do not try to free pointed by uninitialized variable on error path.
+      arping: Allow building without default interface.
+      arping: No default interface by default.
+      arping: Allow printing usage without permission errors.
+      ping,ping6: Allow printing usage without permission errors.
+      ping,ping6: Fix cap_t leakage.
+      arping,ping,ping6: Do not ideologically check return value from cap_free,cap_{set,get}_flag().
+      arping: Fix sysfs_class leakage on error path.
+      arping: Some comments for new functions for finding devices support.
+      arping: Typo in type declaration.
+      makefile: Use call function for external libraries.
+      makefile: Add more comments.
+      arping: Ensure to fail if no appropriate device found with sysfs.
+      arping: Enforce user to specify device (-I) if multiple devices found.
+      Makefile: parameterize options for linking libraries.
+      Makefile: Use shell function instead if backslashes.
+      Makefile: Ensure to have same date when making snapshot.
+      spec: Maintainer does not use ipsec.spec.
+      spec: partially sync with fedora.
+      Makefile: Bump date in iputils.spec as well.
+      spec: Add exmple lines for suid-root installation
+      spec: Sort changelog.
+      ping: Exit on SO_BINDTODEVICE failure.
+      ping: Warn if kernel has selected source address from other interface.
+      ping: Clarify difference between -I device and -I addr.
+
+
 [s20121126]
 
 YOSHIFUJI Hideaki (5):
