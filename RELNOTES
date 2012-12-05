@@ -14,7 +14,7 @@ YOSHIFUJI Hideaki (35):
       makefile: Static link support for crypto, resolv, cap and sysfs.
       doc: Ajdust spaces around sqare brackets.
       ping,rdisc: Use macro to get odd byte when checksumming.
-      ping6: Do not try to free pointed by uninitialized variable on error path.
+      ping6: Do not try to free memory pointed by uninitialized variable on error path.
       arping: Allow building without default interface.
       arping: No default interface by default.
       arping: Allow printing usage without permission errors.
@@ -29,7 +29,7 @@ YOSHIFUJI Hideaki (35):
       arping: Ensure to fail if no appropriate device found with sysfs.
       arping: Enforce user to specify device (-I) if multiple devices found.
       Makefile: parameterize options for linking libraries.
-      Makefile: Use shell function instead if backslashes.
+      Makefile: Use shell function instead if backquotes.
       Makefile: Ensure to have same date when making snapshot.
       spec: Maintainer does not use ipsec.spec.
       spec: partially sync with fedora.
@@ -61,7 +61,7 @@ YOSHIFUJI Hideaki (30):
       ping6: Introduce niquery_is_enabled() for readability.
       arping doc: interface is optional (-I option).
       ping: Eliminate dirty hack to cope with ancient egcs bug.
-      Makefile: Fix missing right parenthese in comment.
+      Makefile: Fix missing right parenthes in comment.
       arping: Fix build failure with USE_SYSFS=yes and/or WITHOUT_IFADDRS=yes
       arping: Unify source files.
       arping: Reorder functions and comment out unsued code.
