@@ -1,3 +1,10 @@
+[s20121207]
+
+YOSHIFUJI Hideaki (2):
+      RELNOTES: Typos.
+      ping,ping6: Check outgoing device only if specified.
+
+
 [s20121205]
 
 Jan Synacek (1):
