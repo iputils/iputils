@@ -260,7 +260,7 @@ static int nodeinfo_group(const char *dnsname, int namelen,
 			  struct in6_addr *nigroup)
 {
 	MD5_CTX ctxt;
-	char digest[16];
+	unsigned char digest[16];
 
 	if (!dnsname || !nigroup)
 		return -1;
