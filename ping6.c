@@ -1742,7 +1742,7 @@ int pr_icmph(__u8 type, __u8 code, __u32 info)
 		printf("MLD Reduction");
 		break;
 	default:
-		printf("unknown icmp type");
+		printf("unknown icmp type: %u", type);
 
 	}
 	return 0;
