@@ -417,7 +417,7 @@ static void do_daemonize(void)
 			if ((fp = fopen(opt_p, "r"))) {
 				if (fscanf(fp, "%d", &pid) != 1) {
 					DEBUG(LOG_ERR, "pid file '%s' exists, but read failed.\n",
-					      opt_p, pid);
+					      opt_p);
 				} else {
 					DEBUG(LOG_ERR, "pid file '%s' exists : %d\n",
 					      opt_p, pid);
