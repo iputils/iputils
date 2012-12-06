@@ -241,8 +241,6 @@ static __inline__ struct qtypeinfo *qtypeinfo_lookup(int qtype)
 /* noop */
 int pr_nodeinfo_noop(CHECKANDFILL_ARGS)
 {
-	struct icmp6_nodeinfo *replybuf = NULL;
-
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (subjlen) {
@@ -270,8 +268,6 @@ int pr_nodeinfo_noop(CHECKANDFILL_ARGS)
 /* suptypes */
 int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS)
 {
-	size_t replylen = sizeof(struct icmp6_nodeinfo) + (suptypes_len<<2);
-
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (subjlen) {

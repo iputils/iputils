@@ -252,9 +252,9 @@ static int set_recvpktinfo(int sock)
 static int __inline__ init_sock(int sock)
 {
 	struct icmp6_filter filter;
+#if NEED_IPV6CHECKSUM
 	int i;
 
-#if NEED_IPV6CHECKSUM
 	i = offsetof(struct icmp6_nodeinfo, ni_cksum);
 	if (setsockopt(sock,
 		       IPPROTO_IPV6, IPV6_CHECKSUM,
@@ -633,7 +633,6 @@ static void print_usage(void) {
 int main (int argc, char **argv)
 {
 	int sock_errno = 0;
-	int c;
 
 	appname = argv[0];
 
