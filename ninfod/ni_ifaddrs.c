@@ -321,7 +321,6 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 
 	pid_t pid = getpid();
 	int seq = 0;
-	int result;
 	int build;		/* 0 or 1 */
 
 /* ---------------------------------- */
@@ -352,7 +351,6 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 		struct ni_ifaddrs *ifl = NULL, *ifa = NULL;
 		struct nlmsghdr *nlh, *nlh0;
 		void *data = NULL, *xdata = NULL;
-		uint16_t *ifflist = NULL;
 #ifndef IFA_LOCAL
 		struct rtmaddr_ifamap ifamap;
 #endif
@@ -364,18 +362,15 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 				*ifap = ifa;
 			else {
 				free_data(data);
-				result = 0;
 				break;
 			}
 			if (data == NULL) {
 				free_data(data);
-				result = -1;
 				break;
 			}
 			ifl = NULL;
 			data += NLMSG_ALIGN(sizeof(struct ni_ifaddrs)) * icnt;
 			xdata = data + dlen;
-			ifflist = xdata + xlen;
 		}
 
 		for (nlm = nlmsg_list; nlm; nlm = nlm->nlm_next) {
@@ -388,7 +383,7 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 
 				size_t nlm_struct_size = 0;
 				sa_family_t nlm_family = 0;
-				uint32_t nlm_scope = 0, nlm_index = 0;
+				uint32_t nlm_index = 0;
 				unsigned int nlm_flags;
 				size_t rtasize;
 
@@ -407,7 +402,6 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 					ifam = (struct ifaddrmsg *) NLMSG_DATA(nlh);
 					nlm_struct_size = sizeof(*ifam);
 					nlm_family = ifam->ifa_family;
-					nlm_scope = ifam->ifa_scope;
 					nlm_index = ifam->ifa_index;
 					nlm_flags = ifam->ifa_flags;
 					if (family && nlm_family != family)
