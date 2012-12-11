@@ -666,6 +666,7 @@ static int sysfs_devattr_ulong(char *ptr, struct sysfs_devattr_values *v, unsign
 		return -1;
 
 	p = &v->value[idx].ulong;
+	errno = 0;
 	*p = strtoul(ptr, &ep, base);
 	if ((*ptr && isspace(*ptr & 0xff)) || errno || (*ep != '\0' && *ep != '\n'))
 		goto out;
