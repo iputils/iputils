@@ -672,6 +672,7 @@ static int hextoui(const char *str)
 	unsigned long val;
 	char *ep;
 
+	errno = 0;
 	val = strtoul(str, &ep, 16);
 	if (*ep) {
 		if (!errno)
