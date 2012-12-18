@@ -12,6 +12,7 @@ ADDLIB=
 LDFLAG_STATIC=-Wl,-Bstatic
 LDFLAG_DYNAMIC=-Wl,-Bdynamic
 LDFLAG_CAP=-lcap
+LDFLAG_GNUTLS=-lgnutls-openssl
 LDFLAG_CRYPTO=-lcrypto
 LDFLAG_IDN=-lidn
 LDFLAG_RESOLV=-lresolv
@@ -33,8 +34,10 @@ WITHOUT_IFADDRS=no
 # arping default device (e.g. eth0) []
 ARPING_DEFAULT_DEVICE=
 
-# Crypto library for ping6 [yes|static]
-USE_CRYPTO=yes
+# GNU TLS library for ping6 [yes|no|static]
+USE_GNUTLS=yes
+# Crypto library for ping6 [shared|static]
+USE_CRYPTO=shared
 # Resolv library for ping6 [yes|static]
 USE_RESOLV=yes
 # ping6 source routing (deprecated by RFC5095) [no|yes|RFC3542]
@@ -54,8 +57,14 @@ LDLIB=
 
 FUNC_LIB = $(if $(filter static,$(1)),$(LDFLAG_STATIC) $(2) $(LDFLAG_DYNAMIC),$(2))
 
+# USE_GNUTLS: DEF_GNUTLS, LIB_GNUTLS
 # USE_CRYPTO: LIB_CRYPTO
-LIB_CRYPTO = $(call FUNC_LIB,$(USE_CRYPTO),$(LDFLAG_CRYPTO))
+ifneq ($(USE_GNUTLS),no)
+	LIB_CRYPTO = $(call FUNC_LIB,$(USE_GNUTLS),$(LDFLAG_GNUTLS))
+	DEF_CRYPTO = -DUSE_GNUTLS
+else
+	LIB_CRYPTO = $(call FUNC_LIB,$(USE_CRYPTO),$(LDFLAG_CRYPTO))
+endif
 
 # USE_RESOLV: LIB_RESOLV
 LIB_RESOLV = $(call FUNC_LIB,$(USE_RESOLV),$(LDFLAG_RESOLV))

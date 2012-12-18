@@ -166,7 +166,11 @@ int pmtudisc=-1;
 
 static int icmp_sock;
 
-#include <openssl/md5.h>
+#ifdef USE_GNUTLS
+# include <gnutls/openssl.h>
+#else
+# include <openssl/md5.h>
+#endif
 
 /* Node Information query */
 int ni_query = -1;
