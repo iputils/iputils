@@ -171,6 +171,7 @@ static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *
 	for (;;) {
 		void *newbuff = realloc(buff, bufsize);
 		if (newbuff == NULL || bufsize < lastbufsize) {
+			free(newbuff);
 			result = -1;
 			break;
 		}
