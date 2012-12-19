@@ -208,6 +208,7 @@ static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *
 		if (buff) {
 			int saved_errno = errno;
 			free(buff);
+			buff = NULL;
 			errno = saved_errno;
 		}
 	*nlhp = (struct nlmsghdr *) buff;
