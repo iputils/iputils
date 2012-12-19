@@ -1405,6 +1405,7 @@ int send_probe(void)
 		iov.iov_len  = len;
 		iov.iov_base = outpack;
 
+		memset(&mhdr, 0, sizeof(mhdr));
 		mhdr.msg_name = &whereto;
 		mhdr.msg_namelen = sizeof(struct sockaddr_in6);
 		mhdr.msg_iov = &iov;
