@@ -99,8 +99,10 @@
 
 #include <arpa/inet.h>
 
-#ifdef HAVE_OPENSSL_MD5_H
-#include <openssl/md5.h>
+#if defined(HAVE_GNUTLS_OPENSSL_H)
+# include <gnutls/openssl.h>
+#elif defined(HAVE_OPENSSL_MD5_H)
+# include <openssl/md5.h>
 #endif
 
 #if HAVE_SYS_UTSNAME_H

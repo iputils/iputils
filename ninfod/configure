@@ -3547,6 +3547,18 @@ fi
 
 done
 
+for ac_header in gnutls/openssl.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "gnutls/openssl.h" "ac_cv_header_gnutls_openssl_h" "$ac_includes_default"
+if test "x$ac_cv_header_gnutls_openssl_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_GNUTLS_OPENSSL_H 1
+_ACEOF
+
+fi
+
+done
+
 for ac_header in openssl/md5.h
 do :
   ac_fn_c_check_header_mongrel "$LINENO" "openssl/md5.h" "ac_cv_header_openssl_md5_h" "$ac_includes_default"
@@ -4123,7 +4135,92 @@ _ACEOF
 fi
 
 
-LIBS="-lcrypto $LIBS"
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MD5_Init in -lgnutls-openssl" >&5
+$as_echo_n "checking for MD5_Init in -lgnutls-openssl... " >&6; }
+if ${ac_cv_lib_gnutls_openssl_MD5_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgnutls-openssl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char MD5_Init ();
+int
+main ()
+{
+return MD5_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_gnutls_openssl_MD5_Init=yes
+else
+  ac_cv_lib_gnutls_openssl_MD5_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gnutls_openssl_MD5_Init" >&5
+$as_echo "$ac_cv_lib_gnutls_openssl_MD5_Init" >&6; }
+if test "x$ac_cv_lib_gnutls_openssl_MD5_Init" = xyes; then :
+  $as_echo "#define HAVE_MD5_INIT 1" >>confdefs.h
+
+	LIBS="-lgnutls-openssl $LIBS"
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for MD5_Init in -lcrypto" >&5
+$as_echo_n "checking for MD5_Init in -lcrypto... " >&6; }
+if ${ac_cv_lib_crypto_MD5_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcrypto  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char MD5_Init ();
+int
+main ()
+{
+return MD5_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_crypto_MD5_Init=yes
+else
+  ac_cv_lib_crypto_MD5_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_MD5_Init" >&5
+$as_echo "$ac_cv_lib_crypto_MD5_Init" >&6; }
+if test "x$ac_cv_lib_crypto_MD5_Init" = xyes; then :
+  $as_echo "#define HAVE_MD5_INIT 1" >>confdefs.h
+
+		LIBS="-lcrypto $LIBS"
+fi
+
+
+fi
+
 
 
 ac_config_files="$ac_config_files Makefile ninfod.sh"
