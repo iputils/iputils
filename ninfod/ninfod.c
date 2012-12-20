@@ -468,7 +468,9 @@ static void do_daemonize(void)
 
 /* --------- */
 #ifdef HAVE_LIBCAP
-static const cap_value_t caps[] = { CAP_NET_RAW, CAP_SETUID };
+static const cap_value_t cap_net_raw = CAP_NET_RAW;
+static const cap_value_t cap_setuid =  CAP_SETUID; 
+static cap_flag_value_t cap_ok;
 #else
 static uid_t euid;
 #endif
@@ -476,20 +478,30 @@ static uid_t euid;
 static void limit_capabilities(void)
 {
 #ifdef HAVE_LIBCAP
-	cap_t cap_p;
+	cap_t cap_p, cap_cur_p;
 
 	cap_p = cap_init();
 	if (!cap_p) {
 		DEBUG(LOG_ERR, "cap_init: %s\n", strerror(errno));
 		exit(-1);
+	}
+
+	cap_cur_p = cap_get_proc();
+	if (!cap_cur_p) {
+		DEBUG(LOG_ERR, "cap_get_proc: %s\n", strerror(errno));
+		exit(-1);
         }
 
 	/* net_raw + setuid / net_raw */
-	if (cap_set_flag(cap_p, CAP_PERMITTED, 2, caps, CAP_SET) < 0 ||
-	    cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps, CAP_SET) < 0) {
-		DEBUG(LOG_ERR, "cap_set_flag: %s\n", strerror(errno));
-		exit(-1);
+	cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok);
+	if (cap_ok != CAP_CLEAR) {
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_net_raw, CAP_SET);
+		cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap_net_raw, CAP_SET);
 	}
+
+	cap_get_flag(cap_cur_p, CAP_SETUID, CAP_PERMITTED, &cap_ok);
+	if (cap_ok != CAP_CLEAR)
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_setuid, CAP_SET);
 
 	if (cap_set_proc(cap_p) < 0) {
 		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
@@ -502,10 +514,8 @@ static void limit_capabilities(void)
 		exit(-1);
 	}
 
-	if (cap_free(cap_p) < 0) {
-		DEBUG(LOG_ERR, "cap_free: %s\n", strerror(errno));
-		exit(-1);
-	}
+	cap_free(cap_cur_p);
+	cap_free(cap_p);
 #else
 	euid = geteuid();
 #endif
@@ -523,15 +533,14 @@ static void drop_capabilities(void)
 	}
 
 	/* setuid / setuid */
-	if (cap_set_flag(cap_p, CAP_PERMITTED, 1, caps + 1, CAP_SET) < 0 ||
-	    cap_set_flag(cap_p, CAP_EFFECTIVE, 1, caps + 1, CAP_SET) < 0) {
-		DEBUG(LOG_ERR, "cap_set_flag: %s\n", strerror(errno));
-		exit(-1);
-	}
+	if (cap_ok != CAP_CLEAR) {
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_setuid, CAP_SET);
+		cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap_setuid, CAP_SET);
 
-	if (cap_set_proc(cap_p) < 0) {
-		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
-		exit(-1);
+		if (cap_set_proc(cap_p) < 0) {
+			DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
+			exit(-1);
+		}
 	}
 
 	if (seteuid(opt_u ? opt_u : getuid()) < 0) {
@@ -544,21 +553,13 @@ static void drop_capabilities(void)
 		exit(-1);
 	}
 
-	if (cap_clear(cap_p) < 0) {
-		DEBUG(LOG_ERR, "cap_clear: %s\n", strerror(errno));
-		exit(-1);
-	}
-
+	cap_clear(cap_p);
 	if (cap_set_proc(cap_p) < 0) {
 		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
 		exit(-1);
 	}
 
-	if (cap_free(cap_p) < 0) {
-		DEBUG(LOG_ERR, "cap_free: %s\n", strerror(errno));
-		exit(-1);
-	}
-
+	cap_free(cap_p);
 #else
 	if (setuid(getuid()) < 0) {
 		DEBUG(LOG_ERR, "setuid: %s\n", strerror(errno));
