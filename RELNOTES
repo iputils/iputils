@@ -1,3 +1,22 @@
+[s20121221]
+
+YOSHIFUJI Hideaki (14):
+      ninfod: Use unsigned int for digest.
+      ninfod: nanosleep(3) needs <time.h>.
+      ninfod: Too many arguments for syslog(3)/fprintf(3) via DEBUG().
+      ninfod: Fix several warnings on ununsed variables.
+      ping6: Print unknown ICMP type.
+      ping6: Fix flowlabel switch (-F option).
+      arping: Fix sysfs decimal/hexadecimal parser for libsysfs support.
+      ping6: Use GNU TLS by default.
+      ninfod: Fix memory leakage in error path.
+      ninfod: Fix off-by-one error to check possible programming error (again).
+      ninfod: Do not expose freed buffer to caller.
+      ping6: Ensure to initialize msghdr.
+      ninfod: Support GNU TLS.
+      ninfod: Allow printing usage without permission errors.
+
+
 [s20121207]
 
 YOSHIFUJI Hideaki (2):
