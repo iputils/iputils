@@ -1128,12 +1128,10 @@ initifs()
 		(void) close(sock);
 		return;
 	}
-	if (interfaces)
-		interfaces = (struct interface *)ALLIGN(realloc((char *)interfaces,
-					 numifs * sizeof(struct interface)));
-	else
-		interfaces = (struct interface *)ALLIGN(malloc(numifs *
-						sizeof(struct interface)));
+	if (interfaces != NULL)
+		(void) free(interfaces);
+	interfaces = (struct interface *)ALLIGN(malloc(numifs *
+					sizeof(struct interface)));
 	if (interfaces == NULL) {
 		logerr("out of memory\n");
 		(void) close(sock);
