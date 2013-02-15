@@ -436,6 +436,23 @@ static void cleanup_pidfile(void)
 	}
 }
 
+static FILE *fopen_excl(const char *file)
+{
+#ifndef __linux__
+	int fd;
+	FILE *fp;
+
+	fd = open(file, O_CREAT | O_RDWR | O_EXCL,
+		  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	if (fd < 0)
+		return NULL;
+
+	return fdopen(file, "w+");
+#else
+	return fopen(file, "w+x");
+#endif
+}
+
 static void do_daemonize(void)
 {
 	FILE *fp = NULL;
@@ -456,7 +473,7 @@ static void do_daemonize(void)
 			}
 		}
 
-		fp = fopen(opt_p, "w+");
+		fp = fopen_excl(opt_p);
 		if (!fp) {
 			DEBUG(LOG_ERR, "failed to open file '%s': %s\n",
 			      opt_p, strerror(errno));
