@@ -18,6 +18,7 @@ traces path to a network host discovering MTU along this path</refpurpose>
 <arg choice="opt">-n</arg>
 <arg choice="opt">-b</arg>
 <arg choice="opt">-l <replaceable/pktlen/</arg>
+<arg choice="opt">-m <replaceable/max_hops/</arg>
 <arg choice="opt">-p <replaceable/port/</arg>
 <arg choice="req"><replaceable/destination/</arg>
 </cmdsynopsis>
@@ -64,6 +65,14 @@ Print both of host names and IP addresses.
   <listitem><para>
 Sets the initial packet length to <replaceable/pktlen/ instead of
 65535 for <command/tracepath/ or 128000 for <command/tracepath6/.
+  </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+  <term><option/-m</term>
+  <listitem><para>
+Set maximum hops (or maximum TTLs) to <replaceable/max_hops/
+instead of 30.
   </para></listitem>
  </varlistentry>
 

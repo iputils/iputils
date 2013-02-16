@@ -32,6 +32,9 @@
 #define IP_PMTUDISC_PROBE	3
 #endif
 
+#define MAX_HOPS_LIMIT		255
+#define MAX_HOPS_DEFAULT	30
+
 struct hhistory
 {
 	int	hops;
@@ -43,6 +46,7 @@ int hisptr;
 
 struct sockaddr_in target;
 __u16 base_port;
+int max_hops = MAX_HOPS_DEFAULT;
 
 const int overhead = 28;
 int mtu = 65535;
@@ -312,7 +316,7 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 #endif
 
-	while ((ch = getopt(argc, argv, "nbh?l:p:")) != EOF) {
+	while ((ch = getopt(argc, argv, "nbh?l:m:p:")) != EOF) {
 		switch(ch) {
 		case 'n':
 			no_resolve = 1;
@@ -325,6 +329,14 @@ main(int argc, char **argv)
 				fprintf(stderr, "Error: pktlen must be > %d and <= %d.\n",
 					overhead, INT_MAX);
 				exit(1);
+			}
+			break;
+		case 'm':
+			max_hops = atoi(optarg);
+			if (max_hops < 0 || max_hops > MAX_HOPS_LIMIT) {
+				fprintf(stderr,
+					"Error: max hops must be 0 .. %d (inclusive).\n",
+					MAX_HOPS_LIMIT);
 			}
 			break;
 		case 'p':
@@ -402,7 +414,7 @@ main(int argc, char **argv)
 		exit(1);
 	}
 
-	for (ttl=1; ttl<32; ttl++) {
+	for (ttl = 1; ttl <= max_hops; ttl++) {
 		int res;
 		int i;
 
