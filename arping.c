@@ -361,16 +361,22 @@ void catcher(void)
 	ts_o.tv_sec = timeout;
 	ts_o.tv_nsec = 500 * 1000000;
 
-	if (count-- == 0 || (timeout && timespec_later(&ts_s, &ts_o)))
+	if (timeout && timespec_later(&ts_s, &ts_o))
 		finish();
 
 	timespec_sub(&ts, &last, &ts_s);
 	ts_o.tv_sec = 0;
 
 	if (last.tv_sec==0 || timespec_later(&ts_s, &ts_o)) {
+		if (!timeout && (sent == count))
+			finish();
 		send_pack(s, src, dst,
 			  (struct sockaddr_ll *)&me, (struct sockaddr_ll *)&he);
-		if (count == 0 && unsolicited)
+		if ((sent == count) && unsolicited)
+			/* We usually wait for an extra iteration
+			 * after sending the last request to see if we
+			 * get a reply, but we don't need to in
+			 * unsolicited mode */
 			finish();
 	}
 	alarm(1);
@@ -480,6 +486,8 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 		fflush(stdout);
 	}
 	received++;
+	if (timeout && (received == count))
+		finish();
 	if (FROM->sll_pkttype != PACKET_HOST)
 		brd_recv++;
 	if (ah->ar_op == htons(ARPOP_REQUEST))
