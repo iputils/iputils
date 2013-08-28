@@ -11,18 +11,14 @@
  */
 
 #include <stdlib.h>
+#include <time.h>
 #include <signal.h>
 #include <net/if.h>
-#include <linux/sockios.h>
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
 #include <net/if_arp.h>
-#include <sys/file.h>
-#include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/param.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
 #ifdef CAPABILITIES
 #include <sys/prctl.h>
 #include <sys/capability.h>
@@ -90,7 +86,7 @@ int broadcast_only;
 struct sockaddr_storage me;
 struct sockaddr_storage he;
 
-struct timeval start, last;
+struct timespec start, last;
 
 int sent, brd_sent;
 int received, brd_recv, req_recv;
@@ -271,7 +267,7 @@ int send_pack(int s, struct in_addr src, struct in_addr dst,
 	      struct sockaddr_ll *ME, struct sockaddr_ll *HE)
 {
 	int err;
-	struct timeval now;
+	struct timespec now;
 	unsigned char buf[256];
 	struct arphdr *ah = (struct arphdr*)buf;
 	unsigned char *p = (unsigned char *)(ah+1);
@@ -299,7 +295,7 @@ int send_pack(int s, struct in_addr src, struct in_addr dst,
 	memcpy(p, &dst, 4);
 	p+=4;
 
-	gettimeofday(&now, NULL);
+	clock_gettime(CLOCK_MONOTONIC, &now);
 	err = sendto(s, buf, p-buf, 0, (struct sockaddr*)HE, SLL_LEN(ah->ar_hln));
 	if (err == p-buf) {
 		last = now;
@@ -335,26 +331,43 @@ void finish(void)
 	exit(!received);
 }
 
+static void timespec_sub(struct timespec *a, struct timespec *b,
+			 struct timespec *res)
+{
+	res->tv_sec = a->tv_sec - b->tv_sec;
+	res->tv_nsec = a->tv_nsec - b->tv_nsec;
+	if (a->tv_nsec < b->tv_nsec) {
+		res->tv_sec--;
+		res->tv_nsec += 1000000000;
+	}
+}
+
+static int timespec_later(struct timespec *a, struct timespec *b)
+{
+	return (a->tv_sec > b->tv_sec) ||
+		((a->tv_sec == b->tv_sec) && (a->tv_nsec > b->tv_nsec));
+}
+
 void catcher(void)
 {
-	struct timeval tv, tv_s, tv_o;
+	struct timespec ts, ts_s, ts_o;
 
-	gettimeofday(&tv, NULL);
+	clock_gettime(CLOCK_MONOTONIC, &ts);
 
 	if (start.tv_sec==0)
-		start = tv;
+		start = ts;
 
-	timersub(&tv, &start, &tv_s);
-	tv_o.tv_sec = timeout;
-	tv_o.tv_usec = 500 * 1000;
+	timespec_sub(&ts, &start, &ts_s);
+	ts_o.tv_sec = timeout;
+	ts_o.tv_nsec = 500 * 1000000;
 
-	if (count-- == 0 || (timeout && timercmp(&tv_s, &tv_o, >)))
+	if (count-- == 0 || (timeout && timespec_later(&ts_s, &ts_o)))
 		finish();
 
-	timersub(&tv, &last, &tv_s);
-	tv_o.tv_sec = 0;
+	timespec_sub(&ts, &last, &ts_s);
+	ts_o.tv_sec = 0;
 
-	if (last.tv_sec==0 || timercmp(&tv_s, &tv_o, >)) {
+	if (last.tv_sec==0 || timespec_later(&ts_s, &ts_o)) {
 		send_pack(s, src, dst,
 			  (struct sockaddr_ll *)&me, (struct sockaddr_ll *)&he);
 		if (count == 0 && unsolicited)
@@ -375,12 +388,12 @@ void print_hex(unsigned char *p, int len)
 
 int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 {
-	struct timeval tv;
+	struct timespec ts;
 	struct arphdr *ah = (struct arphdr*)buf;
 	unsigned char *p = (unsigned char *)(ah+1);
 	struct in_addr src_ip, dst_ip;
 
-	gettimeofday(&tv, NULL);
+	clock_gettime(CLOCK_MONOTONIC, &ts);
 
 	/* Filter out wild packets */
 	if (FROM->sll_pkttype != PACKET_HOST &&
@@ -456,8 +469,8 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 			printf("]");
 		}
 		if (last.tv_sec) {
-			long usecs = (tv.tv_sec-last.tv_sec) * 1000000 +
-				tv.tv_usec-last.tv_usec;
+			long usecs = (ts.tv_sec-last.tv_sec) * 1000000 +
+				(ts.tv_nsec-last.tv_nsec+500) / 1000;
 			long msecs = (usecs+500)/1000;
 			usecs -= msecs*1000 - 500;
 			printf(" %ld.%03ldms\n", msecs, usecs);
