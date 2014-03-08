@@ -115,7 +115,7 @@ static void init(void);
 
 #define MAXIFS 32
 
-#if !defined(__GLIBC__) || __GLIBC__ < 2
+#if defined(__UCLIBC__) || (defined(__GLIBC__) && __GLIBC__ < 2)
 /* For router advertisement */
 struct icmp_ra
 {
