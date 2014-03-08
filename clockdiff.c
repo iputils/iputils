@@ -14,7 +14,6 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #define TSPTYPES
-#include <protocols/timed.h>
 #include <fcntl.h>
 #include <netdb.h>
 #include <arpa/inet.h>
