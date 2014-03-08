@@ -118,7 +118,7 @@ static inline bitmap_t rcvd_test(__u16 seq)
 	return A(bit) & B(bit);
 }
 
-extern u_char outpack[];
+extern unsigned char outpack[];
 extern int maxpacket;
 
 extern int datalen;

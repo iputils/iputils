@@ -209,7 +209,7 @@ static void fill(char *patp)
 	int ii, jj, kk;
 	int pat[16];
 	char *cp;
-	u_char *bp = outpack+8;
+	unsigned char *bp = outpack+8;
 
 #ifdef USE_IDN
 	setlocale(LC_ALL, "C");
@@ -672,7 +672,7 @@ void setup(int icmp_sock)
 
 	if (!(options & F_PINGFILLED)) {
 		int i;
-		u_char *p = outpack+8;
+		unsigned char *p = outpack+8;
 
 		/* Do not forget about case of small datalen,
 		 * fill timestamp area too!
@@ -958,13 +958,13 @@ restamp:
 			printf(" (BAD CHECKSUM!)");
 
 		/* check the data */
-		cp = ((u_char*)ptr) + sizeof(struct timeval);
+		cp = ((unsigned char*)ptr) + sizeof(struct timeval);
 		dp = &outpack[8 + sizeof(struct timeval)];
 		for (i = sizeof(struct timeval); i < datalen; ++i, ++cp, ++dp) {
 			if (*cp != *dp) {
 				printf("\nwrong data byte #%d should be 0x%x but was 0x%x",
 				       i, *dp, *cp);
-				cp = (u_char*)ptr + sizeof(struct timeval);
+				cp = (unsigned char*)ptr + sizeof(struct timeval);
 				for (i = sizeof(struct timeval); i < datalen; ++i, ++cp) {
 					if ((i % 32) == sizeof(struct timeval))
 						printf("\n#%d\t", i);

@@ -91,7 +91,7 @@ struct sockaddr_in whereto;	/* who to ping */
 int optlen = 0;
 int settos = 0;			/* Set TOS, Precendence or other QOS options */
 int icmp_sock;			/* socket file descriptor */
-u_char outpack[0x10000];
+unsigned char outpack[0x10000];
 int maxpacket = sizeof(outpack);
 
 static int broadcast_pings = 0;
@@ -100,7 +100,7 @@ static char *pr_addr(__u32);
 static void pr_options(unsigned char * cp, int hlen);
 static void pr_iph(struct iphdr *ip);
 static void usage(void) __attribute__((noreturn));
-static u_short in_cksum(const u_short *addr, int len, u_short salt);
+static unsigned short in_cksum(const unsigned short *addr, int len, unsigned short salt);
 static void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp);
 static int parsetos(char *str);
 
@@ -122,7 +122,7 @@ main(int argc, char **argv)
 	struct hostent *hp;
 	int ch, hold, packlen;
 	int socket_errno;
-	u_char *packet;
+	unsigned char *packet;
 	char *target;
 #ifdef USE_IDN
 	char *hnamebuf = NULL;
@@ -575,7 +575,7 @@ main(int argc, char **argv)
 	if (datalen >= sizeof(struct timeval))	/* can we time transfer */
 		timing = 1;
 	packlen = datalen + MAXIPLEN + MAXICMPLEN;
-	if (!(packet = (u_char *)malloc((u_int)packlen))) {
+	if (!(packet = (unsigned char *)malloc((unsigned int)packlen))) {
 		fprintf(stderr, "ping: out of memory.\n");
 		exit(2);
 	}
@@ -720,13 +720,13 @@ int send_probe()
 	cc = datalen + 8;			/* skips ICMP portion */
 
 	/* compute ICMP checksum here */
-	icp->checksum = in_cksum((u_short *)icp, cc, 0);
+	icp->checksum = in_cksum((unsigned short *)icp, cc, 0);
 
 	if (timing && !(options&F_LATENCY)) {
 		struct timeval tmp_tv;
 		gettimeofday(&tmp_tv, NULL);
 		memcpy(icp+1, &tmp_tv, sizeof(tmp_tv));
-		icp->checksum = in_cksum((u_short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
+		icp->checksum = in_cksum((unsigned short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
 	}
 
 	do {
@@ -779,7 +779,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	/* Now the ICMP part */
 	cc -= hlen;
 	icp = (struct icmphdr *)(buf + hlen);
-	csfailed = in_cksum((u_short *)icp, cc, 0);
+	csfailed = in_cksum((unsigned short *)icp, cc, 0);
 
 	if (icp->type == ICMP_ECHOREPLY) {
 		if (icp->un.echo.id != ident)
@@ -894,17 +894,17 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 #if BYTE_ORDER == LITTLE_ENDIAN
 # define ODDBYTE(v)	(v)
 #elif BYTE_ORDER == BIG_ENDIAN
-# define ODDBYTE(v)	((u_short)(v) << 8)
+# define ODDBYTE(v)	((unsigned short)(v) << 8)
 #else
-# define ODDBYTE(v)	htons((u_short)(v) << 8)
+# define ODDBYTE(v)	htons((unsigned short)(v) << 8)
 #endif
 
-u_short
-in_cksum(const u_short *addr, register int len, u_short csum)
+unsigned short
+in_cksum(const unsigned short *addr, register int len, unsigned short csum)
 {
 	register int nleft = len;
-	const u_short *w = addr;
-	register u_short answer;
+	const unsigned short *w = addr;
+	register unsigned short answer;
 	register int sum = csum;
 
 	/*
@@ -920,7 +920,7 @@ in_cksum(const u_short *addr, register int len, u_short csum)
 
 	/* mop up an odd byte, if necessary */
 	if (nleft == 1)
-		sum += ODDBYTE(*(u_char *)w); /* le16toh() may be unavailable on old systems */
+		sum += ODDBYTE(*(unsigned char *)w); /* le16toh() may be unavailable on old systems */
 
 	/*
 	 * add back carry outs from top 16 bits to low 16 bits
@@ -1238,10 +1238,10 @@ void pr_options(unsigned char * cp, int hlen)
 void pr_iph(struct iphdr *ip)
 {
 	int hlen;
-	u_char *cp;
+	unsigned char *cp;
 
 	hlen = ip->ihl << 2;
-	cp = (u_char *)ip + 20;		/* point to options */
+	cp = (unsigned char *)ip + 20;		/* point to options */
 
 	printf("Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n");
 	printf(" %1x  %1x  %02x %04x %04x",

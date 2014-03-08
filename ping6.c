@@ -149,7 +149,7 @@ struct cmsghdr *srcrt;
 #endif
 
 struct sockaddr_in6 whereto;	/* who to ping */
-u_char outpack[MAXPACKET];
+unsigned char outpack[MAXPACKET];
 int maxpacket = sizeof(outpack);
 
 static unsigned char cmsgbuf[4096];
@@ -695,7 +695,7 @@ static int hextoui(const char *str)
 int main(int argc, char *argv[])
 {
 	int ch, hold, packlen;
-	u_char *packet;
+	unsigned char *packet;
 	char *target;
 	struct addrinfo hints, *ai;
 	int gai;
@@ -1074,7 +1074,7 @@ int main(int argc, char *argv[])
 		timing = 1;
 	}
 	packlen = datalen + 8 + 4096 + 40 + 8; /* 4096 for rthdr */
-	if (!(packet = (u_char *)malloc((u_int)packlen))) {
+	if (!(packet = (unsigned char *)malloc((unsigned int)packlen))) {
 		fprintf(stderr, "ping: out of memory.\n");
 		exit(2);
 	}

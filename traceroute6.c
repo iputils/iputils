@@ -288,10 +288,10 @@ char copyright[] =
 #define Fprintf (void)fprintf
 #define Printf (void)printf
 
-u_char	packet[512];		/* last inbound (icmp) packet */
+unsigned char	packet[512];		/* last inbound (icmp) packet */
 
 int	wait_for_reply(int, struct sockaddr_in6 *, struct in6_addr *, int);
-int	packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
+int	packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 		  struct in6_addr *to, int seq, struct timeval *);
 void	send_probe(int seq, int ttl);
 double	deltaT (struct timeval *, struct timeval *);
@@ -314,7 +314,7 @@ char *hostname;
 int nprobes = 3;
 int max_ttl = 30;
 pid_t ident;
-u_short port = 32768+666;	/* start udp dest port # for probe packets */
+unsigned short port = 32768+666;	/* start udp dest port # for probe packets */
 int options;			/* socket options */
 int verbose;
 int waittime = 5;		/* time to wait for response (in seconds) */
@@ -821,12 +821,12 @@ char * pr_type(unsigned char t)
 }
 
 
-int packet_ok(u_char *buf, int cc, struct sockaddr_in6 *from,
+int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 	      struct in6_addr *to, int seq,
 	      struct timeval *tv)
 {
 	struct icmp6_hdr *icp;
-	u_char type, code;
+	unsigned char type, code;
 
 	icp = (struct icmp6_hdr *) buf;
 
