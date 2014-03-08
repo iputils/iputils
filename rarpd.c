@@ -30,6 +30,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
+
 int do_reload = 1;
 
 int debug;
@@ -99,7 +100,7 @@ void load_if(void)
 	}
 
 	ifc.ifc_len = sizeof ibuf;
-	ifc.ifc_buf = (caddr_t)ibuf;
+	ifc.ifc_buf = (char *)ibuf;
 	if (ioctl(fd, SIOCGIFCONF, (char *)&ifc) < 0 ||
 	    ifc.ifc_len < (int)sizeof(struct ifreq)) {
 		syslog(LOG_ERR, "SIOCGIFCONF: %m");
