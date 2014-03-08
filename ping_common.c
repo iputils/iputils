@@ -3,6 +3,10 @@
 #include <sched.h>
 #include <math.h>
 
+#ifndef HZ
+#define HZ sysconf(_SC_CLK_TCK)
+#endif
+
 int options;
 
 int mark;
