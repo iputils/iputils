@@ -17,18 +17,18 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <netdb.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <poll.h>
 #include <arpa/inet.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <sys/errno.h>
-#include <sys/fcntl.h>
-#include <sys/socket.h>
-#include <sys/signal.h>
+#include <netinet/in.h>
 #include <linux/if.h>
 #include <linux/if_arp.h>
-#include <netinet/in.h>
 #include <linux/if_packet.h>
 #include <linux/filter.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
 
 int do_reload = 1;
 

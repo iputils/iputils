@@ -11,17 +11,17 @@
  */
 
 #include <stdlib.h>
-#include <sys/param.h>
-#include <sys/socket.h>
-#include <linux/sockios.h>
-#include <sys/file.h>
-#include <sys/time.h>
-#include <sys/signal.h>
-#include <sys/ioctl.h>
+#include <signal.h>
 #include <net/if.h>
+#include <linux/sockios.h>
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
 #include <net/if_arp.h>
+#include <sys/file.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <sys/param.h>
+#include <sys/socket.h>
 #include <sys/uio.h>
 #ifdef CAPABILITIES
 #include <sys/prctl.h>
