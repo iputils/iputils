@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
+#include <limits.h>
 #include <netinet/in.h>
 #include <resolv.h>
 #include <sys/time.h>

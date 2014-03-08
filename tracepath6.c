@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
+#include <limits.h>
 #include <resolv.h>
 #include <sys/time.h>
 #include <sys/uio.h>
