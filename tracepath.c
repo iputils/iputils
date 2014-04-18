@@ -381,9 +381,9 @@ main(int argc, char **argv)
 	}
 #endif
 
-	he = gethostbyname(p);
+	he = gethostbyname2(p, AF_INET);
 	if (he == NULL) {
-		herror("gethostbyname");
+		herror("gethostbyname2");
 		exit(1);
 	}
 

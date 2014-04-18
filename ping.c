@@ -279,7 +279,7 @@ main(int argc, char **argv)
 #else
 			idn = target;
 #endif
-			hp = gethostbyname(idn);
+			hp = gethostbyname2(idn, AF_INET);
 			if (!hp) {
 				fprintf(stderr, "ping: unknown host %s\n", target);
 				exit(2);
