@@ -47,21 +47,21 @@ of UDP ports to maintain trace history.
 <variablelist>
 
  <varlistentry>
-  <term><option/-n/</term>
+  <term><option>-n</option></term>
   <listitem><para>
 Print primarily IP addresses numerically.
   </para></listitem>
  </varlistentry>
 
  <varlistentry>
-  <term><option/-b/</term>
+  <term><option>-b</option></term>
   <listitem><para>
 Print both of host names and IP addresses.
   </para></listitem>
  </varlistentry>
 
  <varlistentry>
-  <term><option/-l/</term>
+  <term><option>-l</option></term>
   <listitem><para>
 Sets the initial packet length to <replaceable/pktlen/ instead of
 65535 for <command/tracepath/ or 128000 for <command/tracepath6/.
@@ -77,7 +77,7 @@ instead of 30.
  </varlistentry>
 
  <varlistentry>
-  <term><option/-p/</term>
+  <term><option>-p</option></term>
   <listitem><para>
 Sets the initial destination port to use.
   </para></listitem>

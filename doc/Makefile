@@ -6,7 +6,7 @@ all: html
 
 html: $(HTMLFILES) iputils.html
 
-man: $(MANFILES)
+man: $(MANFILES) fix_sgml2man
 
 # docbook scripts are incredibly dirty in the sense that they leak
 # lots of some strange temporary junk directories and files.
@@ -32,6 +32,9 @@ $(MANFILES): index.db
 	@-mkdir tmp.db2man
 	@set -e; cd tmp.db2man; nsgmls ../$< | sgmlspl ../docbook2man-spec.pl ;	mv $@ ..
 	@-rm -rf tmp.db2man
+
+fix_sgml2man:
+	@sed -i -e 's!\\fB\\fIdestination\\fB\\fR \[\\fB/\\fIport\\fB\\fR\]!\\fB\\fIdestination\\fB\\fR[\\fB/\\fIport\\fB\\fR]!g' tracepath.8
 
 clean:
 	@rm -rf $(MANFILES) $(HTMLFILES) iputils.html tmp.db2html tmp.db2man
