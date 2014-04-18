@@ -947,17 +947,6 @@ int ping4_receive_error_msg(socket_st *sock)
 
 		acknowledge(ntohs(icmph.un.echo.sequence));
 
-		if (sock->socktype == SOCK_RAW && !sock->working_recverr) {
-			struct icmp_filter filt;
-			sock->working_recverr = 1;
-			/* OK, it works. Add stronger filter. */
-			filt.data = ~((1<<ICMP_SOURCE_QUENCH)|  
-					(1<<ICMP_REDIRECT)|
-					(1<<ICMP_ECHOREPLY));
-			if (setsockopt(sock->fd, SOL_RAW, ICMP_FILTER, (char*)&filt, sizeof(filt)) == -1)
-				perror("\rWARNING: setsockopt(ICMP_FILTER)");
-		}
-
 		net_errors++;
 		nerrors++;
 		if (options & F_QUIET)
