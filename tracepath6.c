@@ -262,6 +262,13 @@ restart:
 			printf("(This broken router returned corrupted payload) ");
 	}
 
+	if (rethops<=64)
+		rethops = 65-rethops;
+	else if (rethops<=128)
+		rethops = 129-rethops;
+	else
+		rethops = 256-rethops;
+
 	switch (e->ee_errno) {
 	case ETIMEDOUT:
 		printf("\n");
@@ -287,12 +294,6 @@ restart:
 		     e->ee_type == 3 &&
 		     e->ee_code == 0)) {
 			if (rethops>=0) {
-				if (rethops<=64)
-					rethops = 65-rethops;
-				else if (rethops<=128)
-					rethops = 129-rethops;
-				else
-					rethops = 256-rethops;
 				if (sndhops>=0 && rethops != sndhops)
 					printf("asymm %2d ", rethops);
 				else if (sndhops<0 && rethops != ttl)
