@@ -1,3 +1,58 @@
+[s20140419]
+
+Arjan van de Ven (1):
+      ping6: Fix build command line argument with gnutls.
+
+Bjørn Mork (1):
+      tracepath: return correct number of hops
+
+Christophe Le Roy (1):
+      ping: flush stdout when a truncated response is received
+
+David Fries (1):
+      Only emit an audible ping when requested (including flooding).
+
+David Heidelberger (13):
+      add missing limits.h
+      in case that HZ is undefined, define it
+      fix include paths, now compile with both glibc and musl
+      protocol/timed.h is no longer required
+      fix ifdef to apply only on uclibc and old glibc
+      replace non-POSIX compilant caddr_t with char *
+      replace u_TYPE with compilant unsigned TYPE
+      add .gitignore and .travis.yml
+      ping_common.c: fix typo
+      fix tracepath docs
+      Makefile: set CC only if it's not defined before
+      add README.md
+      .travis.yml, improve build testing
+
+Hendrik Lönngren (1):
+      arping: return immediately
+
+Jan Synacek (1):
+      ping doc: Fix typo.
+
+Jeremie Koenig (1):
+      replace gethostbyname with gethostbyname2
+
+Matija Nalis (1):
+      Disable DNS-lookup on every ping
+
+Mike Frysinger (1):
+      tracepath, tracepath6: re-use printf return in print_host
+
+Noah Meyerhans (1):
+      remove bogus check required for < 2.4.9 kernels
+
+YOSHIFUJI Hideaki (5):
+      rdisc: Fix memory leakage in initifs() in error path.
+      ninfod: Clean up signal/logfile handling
+      ninfod: Open pidfile exclusively for write.
+      ping, ping6: fix building with older linux headers that don't define SO_MARK
+      tracepath, tracepath6: Support -m (maximum hops) option.
+
+
 [s20121221]
 
 YOSHIFUJI Hideaki (14):
