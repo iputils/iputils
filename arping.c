@@ -471,7 +471,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
 		brd_recv++;
 	if (ah->ar_op == htons(ARPOP_REQUEST))
 		req_recv++;
-	if (quit_on_reply)
+	if (quit_on_reply || (count == 0 && received == sent))
 		finish();
 	if(!broadcast_only) {
 		memcpy(((struct sockaddr_ll *)&he)->sll_addr, p, ((struct sockaddr_ll *)&me)->sll_halen);
