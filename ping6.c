@@ -1667,13 +1667,13 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		pr_icmph(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
 
-	if (!(options & F_FLOOD)) {
-		if (options & F_AUDIBLE)
-			putchar('\a');
-		putchar('\n');
-		fflush(stdout);
-	} else {
+	if (options & F_AUDIBLE) {
 		putchar('\a');
+		if(options & F_FLOOD)
+			fflush(stdout);
+	}
+	if (!(options & F_FLOOD)) {
+		putchar('\n');
 		fflush(stdout);
 	}
 	return 0;
