@@ -1792,8 +1792,9 @@ void install_filter(void)
  */
 char * pr_addr(struct in6_addr *addr)
 {
-	struct hostent *hp = NULL;
+	static struct hostent *hp = NULL;
 	static char *s;
+	static struct in6_addr last_addr;
 
 #ifdef USE_IDN
 	free(s);
@@ -1801,8 +1802,11 @@ char * pr_addr(struct in6_addr *addr)
 
 	in_pr_addr = !setjmp(pr_addr_jmp);
 
-	if (!(exiting || options&F_NUMERIC))
+	if (!(hp && memcmp(addr, &last_addr, sizeof(struct in6_addr))) &&
+	    !(exiting || options&F_NUMERIC)) {
 		hp = gethostbyaddr((__u8*)addr, sizeof(struct in6_addr), AF_INET6);
+		memcpy(&last_addr, addr, sizeof(struct in6_addr));
+	}
 
 	in_pr_addr = 0;
 

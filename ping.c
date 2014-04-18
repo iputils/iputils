@@ -1264,7 +1264,13 @@ char *
 pr_addr(__u32 addr)
 {
 	struct hostent *hp;
-	static char buf[4096];
+	static char buf[4096] = "";
+	static __u32 last_addr = 0;
+
+	if(*buf && addr == last_addr)
+		return(buf);
+
+	last_addr = addr;
 
 	in_pr_addr = !setjmp(pr_addr_jmp);
 
