@@ -787,8 +787,10 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
 				      ip->ttl, 0, tv, pr_addr(from->sin_addr.s_addr),
-				      pr_echo_reply))
+				      pr_echo_reply)) {
+			fflush(stdout);
 			return 0;
+		}
 	} else {
 		/* We fall here when a redirect or source quench arrived.
 		 * Also this branch processes icmp errors, when IP_RECVERR

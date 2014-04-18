@@ -1607,8 +1607,10 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(&from->sin6_addr),
-				      pr_echo_reply))
+				      pr_echo_reply)) {
+			fflush(stdout);
 			return 0;
+		}
 	} else if (icmph->icmp6_type == ICMPV6_NI_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
 		int seq = niquery_check_nonce(nih->ni_nonce);
