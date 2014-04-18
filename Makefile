@@ -3,7 +3,7 @@
 #
 
 # CC
-CC=gcc
+CC?=gcc
 # Path to parent kernel include files directory
 LIBC_INCLUDE=/usr/include
 # Libraries
