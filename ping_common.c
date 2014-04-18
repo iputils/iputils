@@ -612,7 +612,7 @@ void setup(int icmp_sock)
 		interval = 0;
 
 	if (uid && interval < MINUSERINTERVAL) {
-		fprintf(stderr, "ping: cannot flood; minimal interval, allowed for user, is %dms\n", MINUSERINTERVAL);
+		fprintf(stderr, "ping: cannot flood; minimal interval allowed for user is %dms\n", MINUSERINTERVAL);
 		exit(2);
 	}
 
