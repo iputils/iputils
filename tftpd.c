@@ -109,17 +109,20 @@ int main(int ac, char **av)
 	register int n = 0;
 	int on = 1;
 
+	openlog("tftpd", LOG_PID, LOG_DAEMON);
+
 	/* Sanity. If parent forgot to setuid() on us. */
 	if (geteuid() == 0) {
-		setgid(65534);
-		setuid(65534);
+		if (setgid(65534) || setuid(65534)) {
+			syslog(LOG_ERR, "set*id failed: %m\n");
+			exit(1);
+		}
 	}
 
 	ac--; av++;
 	while (ac-- > 0 && n < MAXARG)
 		dirs[n++] = *av++;
 
-	openlog("tftpd", LOG_PID, LOG_DAEMON);
 	if (ioctl(0, FIONBIO, &on) < 0) {
 		syslog(LOG_ERR, "ioctl(FIONBIO): %m\n");
 		exit(1);
