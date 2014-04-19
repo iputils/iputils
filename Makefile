@@ -2,8 +2,6 @@
 # Configuration
 #
 
-# CC
-CC?=gcc
 # Path to parent kernel include files directory
 LIBC_INCLUDE=/usr/include
 # Libraries
@@ -48,11 +46,10 @@ ENABLE_RDISC_SERVER=no
 
 # -------------------------------------
 # What a pity, all new gccs are buggy and -Werror does not work. Sigh.
-# CCOPT=-fno-strict-aliasing -Wstrict-prototypes -Wall -Werror -g
-CCOPT=-fno-strict-aliasing -Wstrict-prototypes -Wall -g
-CCOPTOPT=-O3
-GLIBCFIX=-D_GNU_SOURCE
-DEFINES=
+# CFLAGS+=-fno-strict-aliasing -Wstrict-prototypes -Wall -Werror -g
+CFLAGS?=-O3 -g
+CFLAGS+=-fno-strict-aliasing -Wstrict-prototypes -Wall
+CPPFLAGS+=-D_GNU_SOURCE
 LDLIB=
 
 FUNC_LIB = $(if $(filter static,$(1)),$(LDFLAG_STATIC) $(2) $(LDFLAG_DYNAMIC),$(2))
@@ -113,7 +110,6 @@ IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
 IPV6_TARGETS=tracepath6 traceroute6 ping6
 TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
 
-CFLAGS=$(CCOPTOPT) $(CCOPT) $(GLIBCFIX) $(DEFINES)
 LDLIBS=$(LDLIB) $(ADDLIB)
 
 UNAME_N:=$(shell uname -n)
@@ -132,6 +128,7 @@ all: $(TARGETS)
 	$(COMPILE.c) $< $(DEF_$(patsubst %.o,%,$@)) -S -o $@
 %.o: %.c
 	$(COMPILE.c) $< $(DEF_$(patsubst %.o,%,$@)) -o $@
+LINK.o += $(CFLAGS)
 $(TARGETS): %: %.o
 	$(LINK.o) $^ $(LIB_$@) $(LDLIBS) -o $@
 
