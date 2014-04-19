@@ -168,8 +168,10 @@ static int icmp_sock;
 
 #ifdef USE_GNUTLS
 # include <gnutls/openssl.h>
-#else
+# define USE_CRYPTO
+#elif defined USE_OPENSSL
 # include <openssl/md5.h>
+# define USE_CRYPTO
 #endif
 
 /* Node Information query */
@@ -326,6 +328,7 @@ static void niquery_init_nonce(void)
 #if !PING6_NONCE_MEMORY
 static int niquery_nonce(__u8 *nonce, int fill)
 {
+# ifdef USE_CRYPTO
 	static __u8 digest[MD5_DIGEST_LENGTH];
 	static int seq = -1;
 
@@ -348,6 +351,10 @@ static int niquery_nonce(__u8 *nonce, int fill)
 			return -1;
 		return ntohsp((__u16 *)nonce);
 	}
+# else
+	fprintf(stderr, "ping6: function not available; crypto disabled\n");
+	exit(3);
+# endif
 }
 #endif
 
@@ -502,6 +509,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 
 static int niquery_option_subject_name_handler(int index, const char *arg)
 {
+#ifdef USE_CRYPTO
 	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
 	unsigned char *dnptrs[2], **dpp, **lastdnptr;
 	int n;
@@ -627,6 +635,10 @@ errexit:
 	free(idn);
 	free(name);
 	exit(1);
+#else
+	fprintf(stderr, "ping6: function not available; crypto disabled\n");
+	exit(3);
+#endif
 }
 
 int niquery_option_help_handler(int index, const char *arg)
