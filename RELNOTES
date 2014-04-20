@@ -1,3 +1,16 @@
+[s20140420]
+
+David Heidelberger (1):
+      improve autobuild bot configuration
+
+Mike Frysinger (5):
+      improve gitignore
+      doc: fix parallel build of html/man pages
+      ping6: allow disabling of openssl support
+      fix handling of CFLAGS
+      tftpd: check return value of set*id calls
+
+
 [s20140419]
 
 Arjan van de Ven (1):
