@@ -17,6 +17,7 @@
 #include <string.h>
 #include <netdb.h>
 #include <setjmp.h>
+#include <locale.h>
 
 #ifdef CAPABILITIES
 #include <sys/prctl.h>
@@ -24,7 +25,6 @@
 #endif
 
 #ifdef USE_IDN
-#include <locale.h>
 #include <idna.h>
 #endif
 

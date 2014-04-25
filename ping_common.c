@@ -273,7 +273,9 @@ void common_options(int ch)
 		char *ep;
 
 		errno = 0;
+		setlocale(LC_ALL, "C");
 		dbl = strtod(optarg, &ep);
+		setlocale(LC_ALL, "");
 
 		if (errno || *ep != '\0' ||
 		    !finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0) {
