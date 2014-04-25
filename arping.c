@@ -1215,16 +1215,22 @@ main(int argc, char **argv)
 		socklen_t alen = sizeof(from);
 		int cc;
 
+		sigemptyset(&sset);
+		sigaddset(&sset, SIGALRM);
+		sigaddset(&sset, SIGINT);
+		/* Unblock SIGALRM so that the previously called alarm()
+		 * can prevent recvfrom from blocking forever in case the
+		 * inherited procmask is blocking SIGALRM and no packet
+		 * is received. */
+		sigprocmask(SIG_UNBLOCK, &sset, &osset);
+
 		if ((cc = recvfrom(s, packet, sizeof(packet), 0,
 				   (struct sockaddr *)&from, &alen)) < 0) {
 			perror("arping: recvfrom");
 			continue;
 		}
 
-		sigemptyset(&sset);
-		sigaddset(&sset, SIGALRM);
-		sigaddset(&sset, SIGINT);
-		sigprocmask(SIG_BLOCK, &sset, &osset);
+		sigprocmask(SIG_BLOCK, &sset, NULL);
 		recv_pack(packet, cc, (struct sockaddr_ll *)&from);
 		sigprocmask(SIG_SETMASK, &osset, NULL);
 	}
