@@ -527,10 +527,11 @@ resend:
 	if (i > 0) {
 		/* Apparently, it is some fatal bug. */
 		abort();
-	} else if (errno == ENOBUFS || errno == ENOMEM) {
+	} else if (errno == ENOBUFS || errno == ENOMEM || errno == EPERM) {
 		int nores_interval;
 
-		/* Device queue overflow or OOM. Packet is not sent. */
+		/* Device queue overflow, OOM or operation not permitted.
+		 * Packet is not sent. */
 		tokens = 0;
 		/* Slowdown. This works only in adaptive mode (option -A) */
 		rtt_addend += (rtt < 8*50000 ? rtt/8 : 50000);
@@ -539,7 +540,8 @@ resend:
 		nores_interval = SCHINT(interval/2);
 		if (nores_interval > 500)
 			nores_interval = 500;
-		oom_count++;
+		if (errno != EPERM)
+			oom_count++;
 		if (oom_count*nores_interval < lingertime)
 			return nores_interval;
 		i = 0;
