@@ -30,12 +30,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
-#ifndef lint
-/*static char sccsid[] = "from: @(#)tftpsubs.c	5.6 (Berkeley) 2/28/91";*/
-/* static char rcsid[] = "$Id: tftpsubs.c,v 1.2 1993/08/01 18:07:04 mycroft Exp $"; */
-#endif /* not lint */
-
 /* Simple minded read-ahead/write-behind subroutines for tftp user and
    server.  Written originally with multiple buffers in mind, but current
    implementation has two buffer logic wired in.
