@@ -1157,22 +1157,20 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (1) {
-		int on = 1;
-		if (
+	const int on = 1;
+	if (
 #ifdef IPV6_RECVHOPLIMIT
-		    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_RECVHOPLIMIT,
-			       &on, sizeof(on)) == -1 &&
-		    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_2292HOPLIMIT,
-			       &on, sizeof(on)) == -1
+	    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_RECVHOPLIMIT,
+		       &on, sizeof(on)) == -1 &&
+	    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_2292HOPLIMIT,
+		       &on, sizeof(on)) == -1
 #else
-		    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_HOPLIMIT,
-			       &on, sizeof(on)) == -1
+	    setsockopt(icmp_sock, IPPROTO_IPV6, IPV6_HOPLIMIT,
+		       &on, sizeof(on)) == -1
 #endif
-		   ){
-			perror ("can't receive hop limit");
-			exit(2);
-		}
+	   ){
+		perror ("can't receive hop limit");
+		exit(2);
 	}
 
 	if (options & F_TCLASS) {
@@ -1188,9 +1186,6 @@ int main(int argc, char *argv[])
 	}
 
 	if (options&F_FLOWINFO) {
-#ifdef IPV6_FLOWINFO_SEND
-		int on = 1;
-#endif
 #ifdef IPV6_FLOWLABEL_MGR
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;

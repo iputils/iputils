@@ -180,28 +180,10 @@ main(int argc, char **argv)
 			break;
 		case 'I':
 		{
-#if 0
-			char dummy;
-			int i1, i2, i3, i4;
-
-			if (sscanf(optarg, "%u.%u.%u.%u%c",
-				   &i1, &i2, &i3, &i4, &dummy) == 4) {
-				__u8 *ptr;
-				ptr = (__u8*)&source.sin_addr;
-				ptr[0] = i1;
-				ptr[1] = i2;
-				ptr[2] = i3;
-				ptr[3] = i4;
-				options |= F_STRICTSOURCE;
-			} else {
-				device = optarg;
-			}
-#else
 			if (inet_pton(AF_INET, optarg, &source.sin_addr) > 0)
 				options |= F_STRICTSOURCE;
 			else
 				device = optarg;
-#endif
 			break;
 		}
 		case 'M':
@@ -452,17 +434,15 @@ main(int argc, char **argv)
 		exit(2);
 	}
 
-	if (1) {
-		struct icmp_filter filt;
-		filt.data = ~((1<<ICMP_SOURCE_QUENCH)|
-			      (1<<ICMP_DEST_UNREACH)|
-			      (1<<ICMP_TIME_EXCEEDED)|
-			      (1<<ICMP_PARAMETERPROB)|
-			      (1<<ICMP_REDIRECT)|
-			      (1<<ICMP_ECHOREPLY));
-		if (setsockopt(icmp_sock, SOL_RAW, ICMP_FILTER, (char*)&filt, sizeof(filt)) == -1)
-			perror("WARNING: setsockopt(ICMP_FILTER)");
-	}
+	struct icmp_filter filt;
+	filt.data = ~((1<<ICMP_SOURCE_QUENCH)|
+		      (1<<ICMP_DEST_UNREACH)|
+		      (1<<ICMP_TIME_EXCEEDED)|
+		      (1<<ICMP_PARAMETERPROB)|
+		      (1<<ICMP_REDIRECT)|
+		      (1<<ICMP_ECHOREPLY));
+	if (setsockopt(icmp_sock, SOL_RAW, ICMP_FILTER, (char*)&filt, sizeof(filt)) == -1)
+		perror("WARNING: setsockopt(ICMP_FILTER)");
 
 	hold = 1;
 	if (setsockopt(icmp_sock, SOL_IP, IP_RECVERR, (char *)&hold, sizeof(hold)))
