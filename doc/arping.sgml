@@ -58,8 +58,8 @@ from sending broadcast, and switch to unicast after reply received.
 Stop after sending <replaceable/count/ ARP REQUEST
 packets. With 
 <link linkend="arping.deadline"><replaceable/deadline/</link>
-option, <command/arping/ waits for
-<replaceable/count/ ARP REPLY packets, until the timeout expires.
+option, instead wait for
+<replaceable/count/ ARP REPLY packets, or until the timeout expires.
   </para></listitem>
  </varlistentry>
 

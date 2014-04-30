@@ -15,6 +15,7 @@ LDFLAG_CRYPTO=-lcrypto
 LDFLAG_IDN=-lidn
 LDFLAG_RESOLV=-lresolv
 LDFLAG_SYSFS=-lsysfs
+LDFLAG_RT=-lrt
 
 #
 # Options
@@ -135,7 +136,7 @@ $(TARGETS): %: %.o
 # -------------------------------------
 # arping
 DEF_arping = $(DEF_SYSFS) $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS)
-LIB_arping = $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN)
+LIB_arping = $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN) $(LDFLAG_RT)
 
 ifneq ($(ARPING_DEFAULT_DEVICE),)
 DEF_arping += -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\"
