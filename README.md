@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/iputils/iputils.png?branch=master)](https://travis-ci.org/iputils/iputils)
+[![Coverity Status](https://scan.coverity.com/projects/1944/badge.svg?flat=1)](https://scan.coverity.com/projects/1944)
 
 The iputils package is set of small useful utilities for Linux networking.
 
@@ -17,7 +18,7 @@ These tools are included in iputils
 
 If you using [old version](http://www.skbuff.net/iputils/), please consider to move forward to new releases placed here.
 
-This version also support fully support both glibc and musl-libc.
+This version also fully support support glibc, uClibc and musl-libc.
 
 <!-- vim: set tw=80: -->
 

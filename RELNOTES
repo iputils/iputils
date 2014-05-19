@@ -1,3 +1,21 @@
+[s20140519]
+
+David Gibson (3):
+      arping: Avoid confusing local names
+      arping: Use monotonic clock for timeouts
+      arping: Clarify and correct interaction of -c and -w options
+
+David Heidelberger (3):
+      rdisc: ifdef only apply on historic glibc < 2
+      get rid of unused lint and copyright array
+      cleanup, get rid of if(1), #if 0 and constify on
+
+Jan Synacek (3):
+      ninfod: Fix more unused variables.
+      arping: fix arping hang if SIGALRM is blocked
+      ping_common.c: fix message flood when EPERM is encountered in ping
+
+
 [s20140420]
 
 David Heidelberger (1):
