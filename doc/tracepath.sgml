@@ -69,7 +69,7 @@ Sets the initial packet length to <replaceable/pktlen/ instead of
  </varlistentry>
 
  <varlistentry>
-  <term><option/-m</term>
+  <term><option>-m</option></term>
   <listitem><para>
 Set maximum hops (or maximum TTLs) to <replaceable/max_hops/
 instead of 30.
