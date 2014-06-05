@@ -6,6 +6,7 @@
 #include <poll.h>
 #include <sys/param.h>
 #include <sys/socket.h>
+#include <linux/types.h>
 #include <linux/sockios.h>
 #include <sys/file.h>
 #include <sys/time.h>
