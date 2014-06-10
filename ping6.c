@@ -159,12 +159,9 @@ int pmtudisc=-1;
 
 static int icmp_sock;
 
-#ifdef USE_GNUTLS
-# include <gnutls/openssl.h>
-# define USE_CRYPTO
-#elif defined USE_OPENSSL
-# include <openssl/md5.h>
-# define USE_CRYPTO
+#if defined(USE_GNUTLS) || defined(USE_OPENSSL)
+#include "iputils_md5dig.h"
+#define USE_CRYPTO
 #endif
 
 /* Node Information query */
