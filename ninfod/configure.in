@@ -77,6 +77,7 @@ dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_TIME
 AC_CHECK_HEADERS(limits.h)
+AC_CHECK_HEADERS(gcrypt.h)
 AC_CHECK_HEADERS(gnutls/openssl.h)
 AC_CHECK_HEADERS(openssl/md5.h)
 AC_CHECK_HEADERS(sys/uio.h)
@@ -123,14 +124,15 @@ AC_CHECK_FUNCS(nanosleep)
 AC_CHECK_LIB(pthread, pthread_create)
 AC_CHECK_LIB(cap, cap_init)
 
-AC_CHECK_LIB(gnutls-openssl, MD5_Init,
-	AC_DEFINE(HAVE_MD5_INIT)
-	LIBS="-lgnutls-openssl $LIBS",
-	AC_CHECK_LIB(crypto, MD5_Init,
-		AC_DEFINE(HAVE_MD5_INIT)
-		LIBS="-lcrypto $LIBS",
-	)
+AC_CHECK_LIB(crypto, MD5_Init,
+	     AC_DEFINE(HAVE_MD5_INIT)
+	     LIBS="-lcrypto $LIBS"
 )
+AC_CHECK_LIB(gcrypt, gcry_md_open,
+	     AC_DEFINE(HAVE_GCRY_MD_OPEN,[],[if you have gcrypt])
+	     LIBS="-lgcrypt $LIBS"
+)
+
 dnl AC_CHECK_LIB(crypto, MD5Init,
 dnl	AC_DEFINE(HAVE_MD5INIT)
 dnl	LIBS="-lcrypto $LIBS",
