@@ -99,7 +99,10 @@
 
 #include <arpa/inet.h>
 
-#if defined(HAVE_GNUTLS_OPENSSL_H)
+#if defined(HAVE_GCRYPT_H)
+# define USE_GCRYPT
+# include "iputils_md5dig.h"
+#elif defined(HAVE_GNUTLS_OPENSSL_H)
 # include <gnutls/openssl.h>
 #elif defined(HAVE_OPENSSL_MD5_H)
 # include <openssl/md5.h>
