@@ -1,23 +1,22 @@
 #ifndef IPUTILS_MD5DIG_H
 #define IPUTILS_MD5DIG_H
 
-#ifdef USE_GNUTLS
+#ifdef USE_GCRYPT
 # include <stdlib.h>
-# include <gnutls/gnutls.h>
-# include <gnutls/crypto.h>
+# include <gcrypt.h>
 # define IPUTILS_MD5DIG_LEN	16
 #else
 # include <openssl/md5.h>
 #endif
 
-#ifdef USE_GNUTLS
+#ifdef USE_GCRYPT
 typedef struct {
-	gnutls_hash_hd_t dig;
+	gcry_md_hd_t dig;
 } iputils_md5dig_ctx;
 
 static void iputils_md5dig_init(iputils_md5dig_ctx *ctx)
 {
-	if (gnutls_hash_init(&ctx->dig, GNUTLS_MAC_MD5))
+	if (gcry_md_open(&ctx->dig, GCRY_MD_MD5, 0) != GPG_ERR_NO_ERROR)
 		abort();
 	return;
 }
@@ -25,17 +24,25 @@ static void iputils_md5dig_init(iputils_md5dig_ctx *ctx)
 static void iputils_md5dig_update(iputils_md5dig_ctx *ctx,
 			   void *buf, int len)
 {
-	if (gnutls_hash(ctx->dig, buf, len) < 0)
-		abort();
+	gcry_md_write(ctx->dig, buf, len);
 	return;
 }
 
 static void iputils_md5dig_final(unsigned char *digest,
 				 iputils_md5dig_ctx *ctx)
 {
-	if (gnutls_hash_get_len(GNUTLS_MAC_MD5) > IPUTILS_MD5DIG_LEN)
+	const void *p;
+	size_t dlen;
+
+	p = gcry_md_read(ctx->dig, GCRY_MD_MD5);
+	dlen = gcry_md_get_algo_dlen(GCRY_MD_MD5);
+
+	if (dlen != IPUTILS_MD5DIG_LEN)
 		abort();
-	gnutls_hash_deinit(ctx->dig, digest);
+
+	memcpy(digest, p, dlen);
+
+	gcry_md_close(ctx->dig);
 }
 
 # define MD5_DIGEST_LENGTH	IPUTILS_MD5DIG_LEN
