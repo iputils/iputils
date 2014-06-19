@@ -91,6 +91,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(644,root,root) %{_mandir}/man8/*
 
 %changelog
+* Thu Jun 19 2014 YOSHIFUJI Hideaki <hideaki.yoshifuji@miraclelinux.com>
+  Configure before build.
 * Fri Nov 30 2012 YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
   Partically sync with current Fedora's specfile.
 * Sat Feb 23 2001 Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
