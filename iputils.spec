@@ -93,5 +93,5 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Fri Nov 30 2012 YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
   Partically sync with current Fedora's specfile.
-* Sat Feb 23 2001 Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+* Fri Feb 23 2001 Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
   Taken iputils rpm from ASPLinux-7.2 as pattern.
