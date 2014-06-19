@@ -26,7 +26,11 @@ receiving network traffic.
 
 %build
 make
-make ninfod
+(
+ cd ninfod
+ %configure
+ make
+)
 make man
 make html
 
