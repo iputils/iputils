@@ -111,8 +111,14 @@ int main(int ac, char **av)
 
 	/* Sanity. If parent forgot to setuid() on us. */
 	if (geteuid() == 0) {
-		setgid(65534);
-		setuid(65534);
+		if (setgid(65534)) {
+			syslog(LOG_ERR, "setgid");
+			exit(1);
+		}
+		if (setuid(65534)) {
+			syslog(LOG_ERR, "setuid");
+			exit(1);
+		}
 	}
 
 	ac--; av++;
