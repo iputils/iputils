@@ -3,13 +3,15 @@
 #
 
 %define ssdate 20121221
+%define srcbase iputils%{!?current:-s%{ssdate}}
+
 Summary: The ping program for checking to see if network hosts are alive.
 Name: iputils
-Version: s%{ssdate}
+Version: %{ssdate}%{?current:+}
 Release: 1local
 License: GPLv2+
 Group: System Environment/Daemons
-Source0: iputils-s%{ssdate}.tar.bz2
+Source0: %{srcbase}.tar.bz2
 Prefix: %{_prefix}
 BuildRoot: %{_tmppath}/%{name}-root
 #BuildPrereq: docbook-dtd31-sgml, perl
@@ -22,7 +24,7 @@ specified network host and can tell you if that machine is alive and
 receiving network traffic.
 
 %prep
-%setup -q %{name}
+%setup -q -n %{srcbase}
 
 %build
 make

@@ -233,6 +233,8 @@ distclean: clean
 		fi
 
 # -------------------------------------
+RPMBUILD=rpmbuild
+RPMTMP=.rpmtmp
 snapshot:
 	@if [ x"$(UNAME_N)" != x"pleiades" ]; then echo "Not authorized to advance snapshot"; exit 1; fi
 	@echo "[$(TAG)]" > RELNOTES.NEW
@@ -249,4 +251,9 @@ snapshot:
 	@git commit -a -m "iputils-$(TAG)"
 	@git tag -s -m "iputils-$(TAG)" $(TAG)
 	@git archive --format=tar --prefix=iputils-$(TAG)/ $(TAG) | bzip2 -9 > ../iputils-$(TAG).tar.bz2
+
+rpm:
+	@git archive --format=tar --prefix=iputils/ HEAD | bzip2 -9 > $(RPMTMP)/iputils.tar.bz2
+	@$(RPMBUILD) -ta --define 'current yes' $(RPMTMP)/iputils.tar.bz2
+	@rm -f $(RPMTMP)/iputils.tar.bz2
 
