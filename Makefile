@@ -234,6 +234,8 @@ distclean: clean
 		fi
 
 # -------------------------------------
+RPMBUILD=rpmbuild
+RPMTMP=.rpmtmp
 snapshot:
 	@echo "[$(TAG)]" > RELNOTES.NEW
 	@echo >>RELNOTES.NEW
@@ -249,4 +251,9 @@ snapshot:
 	@git commit -a -m "iputils-$(TAG)"
 	@git tag -s -m "iputils-$(TAG)" $(TAG)
 	@git archive --format=tar --prefix=iputils-$(TAG)/ $(TAG) | bzip2 -9 > ../iputils-$(TAG).tar.bz2
+
+rpm:
+	@git archive --format=tar --prefix=iputils/ HEAD | bzip2 -9 > $(RPMTMP)/iputils.tar.bz2
+	@$(RPMBUILD) -ta --define 'current yes' $(RPMTMP)/iputils.tar.bz2
+	@rm -f $(RPMTMP)/iputils.tar.bz2
 
