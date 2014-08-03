@@ -50,7 +50,7 @@ __u16 base_port;
 int max_hops = MAX_HOPS_DEFAULT;
 
 const int overhead = 28;
-int mtu = 65535;
+int mtu = 65536;
 void *pktbuf;
 int hops_to = -1;
 int hops_from = -1;
