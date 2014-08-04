@@ -508,7 +508,7 @@ int main(int argc, char **argv)
 	case AF_INET:
 		overhead = 28;
 		if (!mtu)
-			mtu = 65535;
+			mtu = 65536;
 		if (mtu <= overhead)
 			goto pktlen_error;
 
