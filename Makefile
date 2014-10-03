@@ -115,9 +115,9 @@ LDLIBS=$(LDLIB) $(ADDLIB)
 
 UNAME_N:=$(shell uname -n)
 LASTTAG:=$(shell git describe HEAD | sed -e 's/-.*//')
-TODAY=$(shell date +%Y/%m/%d)
-DATE=$(shell date --date $(TODAY) +%Y%m%d)
-TAG:=$(shell date --date=$(TODAY) +s%Y%m%d)
+TODAY=$(shell date +%Y-%m-%d)
+DATE=$(shell date -d $(TODAY) +%Y%m%d)
+TAG:=$(shell date -d $(TODAY) +s%Y%m%d)
 
 
 # -------------------------------------
