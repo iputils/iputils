@@ -57,7 +57,9 @@
  *	Public Domain.  Distribution Unlimited.
  * Bugs -
  *	More statistics could always be gathered.
- *	This program has to run SUID to ROOT to access the ICMP socket.
+ *	If kernel does not support non-raw ICMP sockets or
+ *	if -N option is used, this program has to run SUID to ROOT or
+ *	with net_cap_raw enabled.
  */
 #include "ping_common.h"
 
@@ -717,11 +719,16 @@ int main(int argc, char *argv[])
 #endif
 
 	enable_capability_raw();
-
 	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
+	disable_capability_raw();
+
+	if (icmp_sock < 0) {
+		icmp_sock = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
+		using_ping_socket = 1;
+	}
+
 	socket_errno = errno;
 
-	disable_capability_raw();
 
 	source.sin6_family = AF_INET6;
 	memset(&firsthop, 0, sizeof(firsthop));
@@ -789,6 +796,10 @@ int main(int argc, char *argv[])
 			printf("ping6 utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
 		case 'N':
+			if (using_ping_socket) {
+				fprintf(stderr, "ping: -N requires raw socket permissions\n");
+				exit(2);
+			}
 			if (niquery_option_handler(optarg) < 0) {
 				usage();
 				break;
@@ -1094,43 +1105,45 @@ int main(int argc, char *argv[])
 	hold += ((hold+511)/512)*(40+16+64+160);
 	sock_setbufs(icmp_sock, hold);
 
+	if (!using_ping_socket) {
 #ifdef __linux__
-	csum_offset = 2;
-	sz_opt = sizeof(int);
+		csum_offset = 2;
+		sz_opt = sizeof(int);
 
-	err = setsockopt(icmp_sock, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
-	if (err < 0) {
-		/* checksum should be enabled by default and setting this
-		 * option might fail anyway.
-		 */
-		fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
-	}
+		err = setsockopt(icmp_sock, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
+		if (err < 0) {
+			/* checksum should be enabled by default and setting this
+			 * option might fail anyway.
+			 */
+			fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
+		}
 #endif
 
-	/*
-	 *	select icmp echo reply as icmp type to receive
-	 */
+		/*
+		 *	select icmp echo reply as icmp type to receive
+		 */
 
-	ICMP6_FILTER_SETBLOCKALL(&filter);
+		ICMP6_FILTER_SETBLOCKALL(&filter);
 
-	if (!working_recverr) {
-		ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
-	}
+		if (!working_recverr) {
+			ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
+			ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
+			ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
+			ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
+		}
 
-	if (niquery_is_enabled())
-		ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
-	else
-		ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
+		if (niquery_is_enabled())
+			ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
+		else
+			ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
 
-	err = setsockopt(icmp_sock, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
-			 sizeof(struct icmp6_filter));
+		err = setsockopt(icmp_sock, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
+				 sizeof(struct icmp6_filter));
 
-	if (err < 0) {
-		perror("setsockopt(ICMP6_FILTER)");
-		exit(2);
+		if (err < 0) {
+			perror("setsockopt(ICMP6_FILTER)");
+			exit(2);
+		}
 	}
 
 	if (options & F_NOLOOP) {
@@ -1601,6 +1614,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
 		if (!is_ours(icmph->icmp6_id))
 			return 1;
+
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(&from->sin6_addr),
