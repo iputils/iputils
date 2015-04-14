@@ -1301,7 +1301,7 @@ int receive_error_msg()
 		if (res < sizeof(icmph) ||
 		    memcmp(&target.sin6_addr, &whereto.sin6_addr, 16) ||
 		    icmph.icmp6_type != ICMP6_ECHO_REQUEST ||
-		    icmph.icmp6_id != ident) {
+		    !is_ours(icmph.icmp6_id)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
@@ -1598,7 +1598,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (icmph->icmp6_id != ident)
+		if (!is_ours(icmph->icmp6_id))
 			return 1;
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
@@ -1641,7 +1641,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		}
 		if (nexthdr == IPPROTO_ICMPV6) {
 			if (icmph1->icmp6_type != ICMP6_ECHO_REQUEST ||
-			    icmph1->icmp6_id != ident)
+			    !is_ours(icmph1->icmp6_id))
 				return 1;
 			acknowledge(ntohs(icmph1->icmp6_seq));
 			if (working_recverr)

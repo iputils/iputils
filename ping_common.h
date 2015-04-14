@@ -274,6 +274,7 @@ extern int send_probe(void);
 extern int receive_error_msg(void);
 extern int parse_reply(struct msghdr *msg, int len, void *addr, struct timeval *);
 extern void install_filter(void);
+extern int is_ours(uint16_t id);
 
 extern int pinger(void);
 extern void sock_setbufs(int icmp_sock, int alloc);

@@ -646,7 +646,7 @@ int receive_error_msg()
 		if (res < sizeof(icmph) ||
 		    target.sin_addr.s_addr != whereto.sin_addr.s_addr ||
 		    icmph.type != ICMP_ECHO ||
-		    icmph.un.echo.id != ident) {
+		    !is_ours(icmph.un.echo.id)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
@@ -782,7 +782,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	csfailed = in_cksum((u_short *)icp, cc, 0);
 
 	if (icp->type == ICMP_ECHOREPLY) {
-		if (icp->un.echo.id != ident)
+		if (!is_ours(icp->un.echo.id))
 			return 1;			/* 'Twas not our ECHO */
 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
@@ -812,7 +812,7 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 					return 1;
 				if (icp1->type != ICMP_ECHO ||
 				    iph->daddr != whereto.sin_addr.s_addr ||
-				    icp1->un.echo.id != ident)
+				    !is_ours(icp1->un.echo.id))
 					return 1;
 				error_pkt = (icp->type != ICMP_REDIRECT &&
 					     icp->type != ICMP_SOURCE_QUENCH);
