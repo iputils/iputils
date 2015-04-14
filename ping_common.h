@@ -127,6 +127,7 @@ extern char *hostname;
 extern int uid;
 extern int ident;			/* process id to identify our packets */
 
+extern int using_ping_socket;
 extern int sndbuf;
 extern int ttl;
 
