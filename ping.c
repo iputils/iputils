@@ -691,16 +691,7 @@ int send_probe()
 		icp->checksum = in_cksum((unsigned short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
 	}
 
-	do {
-		static struct iovec iov = {outpack, 0};
-		static struct msghdr m = { &whereto, sizeof(whereto),
-						   &iov, 1, &cmsg, 0, 0 };
-		m.msg_controllen = cmsg_len;
-		iov.iov_len = cc;
-
-		i = sendmsg(icmp_sock, &m, confirm);
-		confirm = 0;
-	} while (0);
+	i = sendto(icmp_sock, icp, cc, 0, (struct sockaddr*)&whereto, sizeof(whereto));
 
 	return (cc == i ? 0 : i);
 }
