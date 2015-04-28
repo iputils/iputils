@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/iputils/iputils.png?branch=master)](https://travis-ci.org/iputils/iputils)
+[![Build Status](https://travis-ci.org/iputils/iputils.svg?branch=master)](https://travis-ci.org/iputils/iputils)
 [![Coverity Status](https://scan.coverity.com/projects/1944/badge.svg?flat=1)](https://scan.coverity.com/projects/1944)
 
 The iputils package is set of small useful utilities for Linux networking.
