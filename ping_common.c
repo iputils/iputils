@@ -1064,7 +1064,7 @@ void status(void)
 	if (ntransmitted)
 		loss = (((long long)(ntransmitted - nreceived)) * 100) / ntransmitted;
 
-	fprintf(stderr, "\r%ld/%ld packets, %d%% loss", ntransmitted, nreceived, loss);
+	fprintf(stderr, "\r%ld/%ld packets, %d%% loss", nreceived, ntransmitted, loss);
 
 	if (nreceived && timing) {
 		tavg = tsum / (nreceived + nrepeats);
