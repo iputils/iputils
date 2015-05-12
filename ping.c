@@ -59,6 +59,8 @@
 #include <ifaddrs.h>
 #endif
 
+#include "ping6_common.h"
+
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
 struct icmp_filter {
@@ -79,16 +81,15 @@ ping_func_set_st ping4_func_set = {
 #define TOS_MAX		255		/* 8-bit TOS field */
 #define MAX_HOSTNAMELEN	NI_MAXHOST
 
+static const int max_ping4_packet = 0x10000;
 
 static int ts_type;
 static int nroute = 0;
 static __u32 route[10];
 
-struct sockaddr_in whereto;	/* who to ping */
-int optlen = 0;
-int settos = 0;			/* Set TOS, Precendence or other QOS options */
-unsigned char outpack[0x10000];
-int maxpacket = sizeof(outpack);
+static struct sockaddr_in whereto;	/* who to ping */
+static int optlen = 0;
+static int settos = 0;			/* Set TOS, Precendence or other QOS options */
 
 static int broadcast_pings = 0;
 
@@ -107,20 +108,24 @@ static struct {
 	   {0, }};
 int cmsg_len;
 
-struct sockaddr_in source;
-char *device;
-int pmtudisc = -1;
-
+static struct sockaddr_in source;
+static char *device;
+static int pmtudisc = -1;
 
 int
 main(int argc, char **argv)
 {
 	struct hostent *hp;
 	int ch, hold, packlen;
-	int socket_errno;
+	int socket_errno, socket_errno6;
 	unsigned char *packet;
 	char *target;
 	int icmp_sock;			/* socket file descriptor */
+	int icmp_sock6;			/* socket file descriptor */
+	unsigned unknown_option = 0;
+	char ipbuf[64];
+	int orig_argc = argc;
+	char **orig_argv = argv;
 #ifdef USE_IDN
 	char *hnamebuf = NULL;
 #else
@@ -139,13 +144,18 @@ main(int argc, char **argv)
 	icmp_sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	socket_errno = errno;
 
+	icmp_sock6 = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
+	socket_errno6 = errno;
+
 	disable_capability_raw();
 
 	source.sin_family = AF_INET;
 
 	preload = 1;
-	while ((ch = getopt(argc, argv, COMMON_OPTSTR "bRT:")) != EOF) {
+	while ((ch = getopt(argc, argv, COMMON_OPTSTR "6bRT:")) != EOF) {
 		switch(ch) {
+		case '6':
+			return ping6_main(orig_argc, orig_argv, icmp_sock6, socket_errno6);
 		case 'b':
 			broadcast_pings = 1;
 			break;
@@ -209,7 +219,8 @@ main(int argc, char **argv)
 			common_options(ch);
 			break;
 		default:
-			usage();
+			unknown_option = 1;
+			break;
 		}
 	}
 	argc -= optind;
@@ -233,6 +244,14 @@ main(int argc, char **argv)
 	}
 	while (argc > 0) {
 		target = *argv;
+
+		/* ipv6 detected */
+		if (strchr(target, ':') != 0 && inet_pton(AF_INET6, target, ipbuf) == 1)
+			return ping6_main(orig_argc, orig_argv, icmp_sock6, socket_errno6);
+
+		if (unknown_option != 0) {
+			usage();
+		}
 
 		memset((char *)&whereto, 0, sizeof(whereto));
 		whereto.sin_family = AF_INET;
@@ -541,7 +560,7 @@ main(int argc, char **argv)
 	}
 
 	if (datalen > 0xFFFF - 8 - optlen - 20) {
-		if (uid || datalen > sizeof(outpack)-8) {
+		if (uid || datalen > max_ping4_packet-8 || datalen > MAXPACKET-8) {
 			fprintf(stderr, "Error: packet size %d is too large. Maximum is %d\n", datalen, 0xFFFF-8-20-optlen);
 			exit(2);
 		}
@@ -658,13 +677,13 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int ping4_send_probe(int icmp_sock)
+int ping4_send_probe(int icmp_sock, void *packet, unsigned packet_size)
 {
 	struct icmphdr *icp;
 	int cc;
 	int i;
 
-	icp = (struct icmphdr *)outpack;
+	icp = (struct icmphdr *)packet;
 	icp->type = ICMP_ECHO;
 	icp->code = 0;
 	icp->checksum = 0;
@@ -707,6 +726,7 @@ int ping4_send_probe(int icmp_sock)
  * which arrive ('tis only fair).  This permits multiple copies of this
  * program to be run without having intermingled output (or statistics!).
  */
+static
 void pr_echo_reply(__u8 *_icp, int len)
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
@@ -1310,7 +1330,7 @@ void usage(void)
 	fprintf(stderr,
 		"Usage: ping"
 		" [-"
-			"aAbBdDfhLnOqrRUvV"
+			"aAbBdDfhLnOqrRUvV6"
 		"]"
 		" [-c count]"
 		" [-i interval]"

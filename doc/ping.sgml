@@ -14,7 +14,7 @@
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>ping</command>
-<arg choice="opt"><option>-aAbBdDfhLnOqrRUvV</option></arg>
+<arg choice="opt"><option>-aAbBdDfhLnOqrRUvV6</option></arg>
 <arg choice="opt">-c <replaceable/count/</arg>
 <arg choice="opt">-F <replaceable/flowlabel/</arg>
 <arg choice="opt">-i <replaceable/interval/</arg>
