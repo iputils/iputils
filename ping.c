@@ -66,6 +66,12 @@ struct icmp_filter {
 };
 #endif
 
+ping_func_set_st ping4_func_set = {
+	.send_probe = ping4_send_probe,
+	.receive_error_msg = ping4_receive_error_msg,
+	.parse_reply = ping4_parse_reply,
+	.install_filter = ping4_install_filter
+};
 
 #define	MAXIPLEN	60
 #define	MAXICMPLEN	76
@@ -78,12 +84,9 @@ static int ts_type;
 static int nroute = 0;
 static __u32 route[10];
 
-
-
 struct sockaddr_in whereto;	/* who to ping */
 int optlen = 0;
 int settos = 0;			/* Set TOS, Precendence or other QOS options */
-int icmp_sock;			/* socket file descriptor */
 unsigned char outpack[0x10000];
 int maxpacket = sizeof(outpack);
 
@@ -117,6 +120,7 @@ main(int argc, char **argv)
 	int socket_errno;
 	unsigned char *packet;
 	char *target;
+	int icmp_sock;			/* socket file descriptor */
 #ifdef USE_IDN
 	char *hnamebuf = NULL;
 #else
@@ -560,11 +564,11 @@ main(int argc, char **argv)
 
 	setup(icmp_sock);
 
-	main_loop(icmp_sock, packet, packlen);
+	main_loop(&ping4_func_set, icmp_sock, packet, packlen);
 }
 
 
-int receive_error_msg()
+int ping4_receive_error_msg(int icmp_sock)
 {
 	int res;
 	char cbuf[512];
@@ -654,7 +658,7 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int send_probe()
+int ping4_send_probe(int icmp_sock)
 {
 	struct icmphdr *icp;
 	int cc;
@@ -710,7 +714,7 @@ void pr_echo_reply(__u8 *_icp, int len)
 }
 
 int
-parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
+ping4_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 {
 	struct sockaddr_in *from = addr;
 	__u8 *buf = msg->msg_iov->iov_base;
@@ -1270,7 +1274,7 @@ int parsetos(char *str)
 
 #include <linux/filter.h>
 
-void install_filter(void)
+void ping4_install_filter(int icmp_sock)
 {
 	static int once;
 	static struct sock_filter insns[] = {
