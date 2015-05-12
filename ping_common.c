@@ -18,7 +18,6 @@ __u16 acked;
 
 struct rcvd_table rcvd_tbl;
 
-
 /* counters */
 long npackets;			/* max packets to transmit */
 long nreceived;			/* # of packets we got back */
@@ -462,7 +461,7 @@ void print_timestamp(void)
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int pinger(void)
+int pinger(ping_func_set_st *fset, int sockfd)
 {
 	static int oom_count;
 	static int tokens;
@@ -508,7 +507,7 @@ int pinger(void)
 	}
 
 resend:
-	i = send_probe();
+	i = fset->send_probe(sockfd);
 
 	if (i == 0) {
 		oom_count = 0;
@@ -554,7 +553,7 @@ resend:
 		tokens += interval;
 		return MININTERVAL;
 	} else {
-		if ((i=receive_error_msg()) > 0) {
+		if ((i=fset->receive_error_msg(sockfd)) > 0) {
 			/* An ICMP error arrived. */
 			tokens += interval;
 			return MININTERVAL;
@@ -714,7 +713,7 @@ void setup(int icmp_sock)
 	}
 }
 
-void main_loop(int icmp_sock, __u8 *packet, int packlen)
+void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *packet, int packlen)
 {
 	char addrbuf[128];
 	char ans_data[4096];
@@ -741,7 +740,7 @@ void main_loop(int icmp_sock, __u8 *packet, int packlen)
 
 		/* Send probes scheduled to this time. */
 		do {
-			next = pinger();
+			next = pinger(fset, icmp_sock);
 			next = schedule_exit(next);
 		} while (next <= 0);
 
@@ -811,7 +810,7 @@ void main_loop(int icmp_sock, __u8 *packet, int packlen)
 			if (cc < 0) {
 				if (errno == EAGAIN || errno == EINTR)
 					break;
-				if (!receive_error_msg()) {
+				if (!fset->receive_error_msg(icmp_sock)) {
 					if (errno) {
 						perror("ping: recvmsg");
 						break;
@@ -838,12 +837,12 @@ void main_loop(int icmp_sock, __u8 *packet, int packlen)
 					recv_timep = &recv_time;
 				}
 
-				not_ours = parse_reply(&msg, cc, addrbuf, recv_timep);
+				not_ours = fset->parse_reply(&msg, cc, addrbuf, recv_timep);
 			}
 
 			/* See? ... someone runs another ping on this host. */
 			if (not_ours)
-				install_filter();
+				fset->install_filter(icmp_sock);
 
 			/* If nothing is in flight, "break" returns us to pinger. */
 			if (in_flight() == 0)
