@@ -133,8 +133,6 @@ ping_func_set_st ping6_func_set = {
 	memset(filterp, 0xFF, sizeof(struct icmp6_filter));
 #endif
 
-#define	MAXPACKET	128000		/* max packet size */
-
 #ifdef SO_TIMESTAMP
 #define HAVE_SIN6_SCOPEID 1
 #endif
@@ -150,8 +148,6 @@ struct cmsghdr *srcrt;
 #endif
 
 struct sockaddr_in6 whereto;	/* who to ping */
-unsigned char outpack[MAXPACKET];
-int maxpacket = sizeof(outpack);
 
 static unsigned char cmsgbuf[4096];
 static int cmsglen = 0;
@@ -159,7 +155,7 @@ static int cmsglen = 0;
 static char * pr_addr(struct in6_addr *addr);
 static char * pr_addr_n(struct in6_addr *addr);
 static int pr_icmph(__u8 type, __u8 code, __u32 info);
-static void usage(void) __attribute((noreturn));
+void usage(void) __attribute((noreturn));
 
 struct sockaddr_in6 source;
 char *device;
@@ -720,8 +716,11 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 	firsthop.sin6_family = AF_INET6;
 
 	preload = 1;
-	while ((ch = getopt(argc, argv, COMMON_OPTSTR "F:N:")) != EOF) {
+	optind = 0;
+	while ((ch = getopt(argc, argv, COMMON_OPTSTR "6F:N:")) != EOF) {
 		switch(ch) {
+		case '6':
+			break;
 		case 'F':
 			flowlabel = hextoui(optarg);
 			if (errno || (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL)) {
@@ -1328,7 +1327,7 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int build_echo(__u8 *_icmph)
+int build_echo(__u8 *_icmph, unsigned packet_size)
 {
 	struct icmp6_hdr *icmph;
 	int cc;
@@ -1341,7 +1340,7 @@ int build_echo(__u8 *_icmph)
 	icmph->icmp6_id = ident;
 
 	if (timing)
-		gettimeofday((struct timeval *)&outpack[8],
+		gettimeofday((struct timeval *)&_icmph[8],
 		    (struct timezone *)NULL);
 
 	cc = datalen + 8;			/* skips ICMP portion */
@@ -1350,7 +1349,7 @@ int build_echo(__u8 *_icmph)
 }
 
 
-int build_niquery(__u8 *_nih)
+int build_niquery(__u8 *_nih, unsigned packet_size)
 {
 	struct ni_hdr *nih;
 	int cc;
@@ -1372,19 +1371,19 @@ int build_niquery(__u8 *_nih)
 	return cc;
 }
 
-int ping6_send_probe(int sockfd)
+int ping6_send_probe(int sockfd, void *packet, unsigned packet_size)
 {
 	int len, cc;
 
 	rcvd_clear(ntransmitted + 1);
 
 	if (niquery_is_enabled())
-		len = build_niquery(outpack);
+		len = build_niquery(packet, packet_size);
 	else
-		len = build_echo(outpack);
+		len = build_echo(packet, packet_size);
 
 	if (cmsglen == 0) {
-		cc = sendto(sockfd, (char *)outpack, len, confirm,
+		cc = sendto(sockfd, (char *)packet, len, confirm,
 			    (struct sockaddr *) &whereto,
 			    sizeof(struct sockaddr_in6));
 	} else {
@@ -1392,7 +1391,7 @@ int ping6_send_probe(int sockfd)
 		struct iovec iov;
 
 		iov.iov_len  = len;
-		iov.iov_base = outpack;
+		iov.iov_base = packet;
 
 		memset(&mhdr, 0, sizeof(mhdr));
 		mhdr.msg_name = &whereto;
@@ -1423,6 +1422,7 @@ static void putchar_safe(char c)
 		printf("\\%03o", c);
 }
 
+static
 void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 {
 	__u8 *h = (__u8 *)(nih + 1);
@@ -1467,6 +1467,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 	}
 }
 
+static
 void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 {
 	__u8 *h = (__u8 *)(nih + 1);
@@ -1520,6 +1521,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 		printf(" (truncated)");
 }
 
+static
 void pr_niquery_reply(__u8 *_nih, int len)
 {
 	struct ni_hdr *nih = (struct ni_hdr *)_nih;
