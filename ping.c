@@ -279,8 +279,13 @@ main(int argc, char **argv)
 #endif
 			hp = gethostbyname2(idn, AF_INET);
 			if (!hp) {
-				fprintf(stderr, "ping: unknown host %s\n", target);
-				exit(2);
+				hp = gethostbyname2(idn, AF_INET6);
+				if (hp) {
+					return ping6_main(orig_argc, orig_argv, icmp_sock6, socket_errno6);
+				} else {
+					fprintf(stderr, "ping: unknown host %s\n", target);
+					exit(2);
+				}
 			}
 #ifdef USE_IDN
 			free(idn);
