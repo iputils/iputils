@@ -1357,5 +1357,6 @@ void usage(void)
 		" [hop1 ...] destination"
 		"\n"
 	);
+	ping6_usage(1);
 	exit(2);
 }
