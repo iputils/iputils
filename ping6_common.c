@@ -155,7 +155,7 @@ static int cmsglen = 0;
 static char * pr_addr(struct in6_addr *addr);
 static char * pr_addr_n(struct in6_addr *addr);
 static int pr_icmph(__u8 type, __u8 code, __u32 info);
-void usage(void) __attribute((noreturn));
+void ping6_usage(unsigned) __attribute((noreturn));
 
 struct sockaddr_in6 source;
 char *device;
@@ -781,7 +781,7 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 			exit(0);
 		case 'N':
 			if (niquery_option_handler(optarg) < 0) {
-				usage();
+				ping6_usage(0);
 				break;
 			}
 			break;
@@ -789,7 +789,7 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 			common_options(ch);
 			break;
 		default:
-			usage();
+			ping6_usage(0);
 		}
 	}
 	argc -= optind;
@@ -891,12 +891,12 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 #ifndef ENABLE_PING6_RTHDR
 		fprintf(stderr, "ping6: Source routing is deprecated by RFC5095.\n");
 #endif
-		usage();
+		ping6_usage(0);
 	} else if (argc == 1) {
 		target = *argv;
 	} else {
 		if (ni_query < 0 && ni_subject_type != NI_SUBJ_NAME)
-			usage();
+			ping6_usage(0);
 		target = ni_group;
 	}
 
@@ -1822,10 +1822,15 @@ char * pr_addr_n(struct in6_addr *addr)
 
 #define USAGE_NEWLINE	"\n            "
 
-void usage(void)
+void ping6_usage(unsigned from_ping)
 {
+	const char *name;
+	if (from_ping)
+		name = "ping -6";
+	else
+		name = "ping6";
 	fprintf(stderr,
-		"Usage: ping6"
+		"Usage: %s"
 		" [-"
 			"aAbBdDfhLnOqrRUvV"
 		"]"
@@ -1852,7 +1857,7 @@ void usage(void)
 		" [hop1 ...]"
 #endif
 		" destination"
-		"\n"
+		"\n", name
 	);
 	exit(2);
 }
