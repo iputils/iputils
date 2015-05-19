@@ -122,6 +122,7 @@ main(int argc, char **argv)
 	char *target;
 	int icmp_sock;			/* socket file descriptor */
 	int icmp_sock6;			/* socket file descriptor */
+	int force_ipv4 = 0;
 	unsigned unknown_option = 0;
 	char ipbuf[64];
 	int orig_argc = argc;
@@ -152,10 +153,17 @@ main(int argc, char **argv)
 	source.sin_family = AF_INET;
 
 	preload = 1;
-	while ((ch = getopt(argc, argv, COMMON_OPTSTR "6bRT:")) != EOF) {
+	while ((ch = getopt(argc, argv, COMMON_OPTSTR "64bRT:")) != EOF) {
 		switch(ch) {
 		case '6':
+			if (force_ipv4 != 0) {
+				fprintf(stderr, "Only one of -4 or -6 may be specified\n");
+				exit(2);
+			}
 			return ping6_main(orig_argc, orig_argv, icmp_sock6, socket_errno6);
+		case '4':
+			force_ipv4 = 1;
+			break;
 		case 'b':
 			broadcast_pings = 1;
 			break;
@@ -246,7 +254,7 @@ main(int argc, char **argv)
 		target = *argv;
 
 		/* ipv6 detected */
-		if (strchr(target, ':') != 0 && inet_pton(AF_INET6, target, ipbuf) == 1)
+		if (force_ipv4 == 0 && strchr(target, ':') != 0 && inet_pton(AF_INET6, target, ipbuf) == 1)
 			return ping6_main(orig_argc, orig_argv, icmp_sock6, socket_errno6);
 
 		if (unknown_option != 0) {
@@ -279,7 +287,10 @@ main(int argc, char **argv)
 #endif
 			hp = gethostbyname2(idn, AF_INET);
 			if (!hp) {
-				hp = gethostbyname2(idn, AF_INET6);
+				if (force_ipv4 == 0) {
+					hp = gethostbyname2(idn, AF_INET6);
+				}
+
 				if (hp) {
 					return ping6_main(orig_argc, orig_argv, icmp_sock6, socket_errno6);
 				} else {
@@ -1335,7 +1346,7 @@ void usage(void)
 	fprintf(stderr,
 		"Usage: ping"
 		" [-"
-			"aAbBdDfhLnOqrRUvV6"
+			"aAbBdDfhLnOqrRUvV64"
 		"]"
 		" [-c count]"
 		" [-i interval]"
