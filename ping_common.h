@@ -268,12 +268,12 @@ static inline int disable_capability_admin(void)	{ return modify_capability(0); 
 extern void drop_capabilities(void);
 
 typedef struct socket_st {
-	int sock;
+	int fd;
 	int sock_errno;
 	int using_ping_socket;
 } socket_st;
 
-int is_ours(socket_st *sockets, uint16_t id);
+int is_ours(socket_st *sock, uint16_t id);
 
 int ping4_send_probe(socket_st *, void *packet, unsigned packet_size);
 int ping4_receive_error_msg(socket_st *);
@@ -290,7 +290,7 @@ typedef struct ping_func_set_st {
 #define	MAXPACKET	128000		/* max packet size */
 extern ping_func_set_st ping4_func_set;
 
-extern int pinger(ping_func_set_st *fset, socket_st *sockets);
+extern int pinger(ping_func_set_st *fset, socket_st *sock);
 extern void sock_setbufs(socket_st*, int alloc);
 extern void setup(socket_st *);
 extern void main_loop(ping_func_set_st *fset, socket_st*, __u8 *buf, int buflen) __attribute__((noreturn));
