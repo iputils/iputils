@@ -267,22 +267,23 @@ static inline int disable_capability_admin(void)	{ return modify_capability(0); 
 #endif
 extern void drop_capabilities(void);
 
-int is_ours(uint16_t id);
-
 typedef struct socket_st {
 	int sock;
 	int sock_errno;
+	int using_ping_socket;
 } socket_st;
+
+int is_ours(socket_st *sockets, uint16_t id);
 
 int ping4_send_probe(socket_st *, void *packet, unsigned packet_size);
 int ping4_receive_error_msg(socket_st *);
-int ping4_parse_reply(struct msghdr *msg, int len, void *addr, struct timeval *);
+int ping4_parse_reply(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
 void ping4_install_filter(socket_st *);
 
 typedef struct ping_func_set_st {
 	int (*send_probe)(socket_st *, void *packet, unsigned packet_size);
 	int (*receive_error_msg)(socket_st *sock);
-	int (*parse_reply)(struct msghdr *msg, int len, void *addr, struct timeval *);
+	int (*parse_reply)(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
 	void (*install_filter)(socket_st *);
 } ping_func_set_st;
 

@@ -683,7 +683,8 @@ void setup(socket_st *sockets)
 			*p++ = i;
 	}
 
-	ident = htons(getpid() & 0xFFFF);
+	if (!sockets->using_ping_socket)
+		ident = htons(getpid() & 0xFFFF);
 
 	set_signal(SIGINT, sigexit);
 	set_signal(SIGALRM, sigexit);
@@ -838,11 +839,11 @@ void main_loop(ping_func_set_st *fset, socket_st *sockets, __u8 *packet, int pac
 					recv_timep = &recv_time;
 				}
 
-				not_ours = fset->parse_reply(&msg, cc, addrbuf, recv_timep);
+				not_ours = fset->parse_reply(sockets, &msg, cc, addrbuf, recv_timep);
 			}
 
 			/* See? ... someone runs another ping on this host. */
-			if (not_ours)
+			if (not_ours && !sockets->using_ping_socket)
 				fset->install_filter(sockets);
 
 			/* If nothing is in flight, "break" returns us to pinger. */
@@ -1078,6 +1079,6 @@ void status(void)
 	fprintf(stderr, "\n");
 }
 
-inline int is_ours(uint16_t id) {
-       return id == ident;
+inline int is_ours(socket_st *sockets, uint16_t id) {
+       return sockets->using_ping_socket || id == ident;
 }

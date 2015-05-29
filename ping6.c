@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 {
 	socket_st sockets;
 
+	memset(&sockets, 0, sizeof(sockets));
 	limit_capabilities();
 
 #ifdef USE_IDN
@@ -41,8 +42,12 @@ int main(int argc, char *argv[])
 
 	sockets.sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 	sockets.sock_errno = errno;
-
 	disable_capability_raw();
+
+	if (sockets.sock < 0) {
+		sockets.sock = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
+		sockets.using_ping_socket = 1;
+	}
 
 	return ping6_main(argc, argv, &sockets);
 }
