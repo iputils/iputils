@@ -269,25 +269,30 @@ extern void drop_capabilities(void);
 
 int is_ours(uint16_t id);
 
-int ping4_send_probe(int sock, void *packet, unsigned packet_size);
-int ping4_receive_error_msg(int sock);
+typedef struct socket_st {
+	int sock;
+	int sock_errno;
+} socket_st;
+
+int ping4_send_probe(socket_st *, void *packet, unsigned packet_size);
+int ping4_receive_error_msg(socket_st *);
 int ping4_parse_reply(struct msghdr *msg, int len, void *addr, struct timeval *);
-void ping4_install_filter(int sockfd);
+void ping4_install_filter(socket_st *);
 
 typedef struct ping_func_set_st {
-	int (*send_probe)(int sock, void *packet, unsigned packet_size);
-	int (*receive_error_msg)(int sock);
+	int (*send_probe)(socket_st *, void *packet, unsigned packet_size);
+	int (*receive_error_msg)(socket_st *sock);
 	int (*parse_reply)(struct msghdr *msg, int len, void *addr, struct timeval *);
-	void (*install_filter)(int sockfd);
+	void (*install_filter)(socket_st *);
 } ping_func_set_st;
 
 #define	MAXPACKET	128000		/* max packet size */
 extern ping_func_set_st ping4_func_set;
 
-extern int pinger(ping_func_set_st *fset, int sockfd);
-extern void sock_setbufs(int icmp_sock, int alloc);
-extern void setup(int icmp_sock);
-extern void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *buf, int buflen) __attribute__((noreturn));
+extern int pinger(ping_func_set_st *fset, socket_st *sockets);
+extern void sock_setbufs(socket_st*, int alloc);
+extern void setup(socket_st *);
+extern void main_loop(ping_func_set_st *fset, socket_st*, __u8 *buf, int buflen) __attribute__((noreturn));
 extern void finish(void) __attribute__((noreturn));
 extern void status(void);
 extern void common_options(int ch);

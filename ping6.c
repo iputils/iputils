@@ -29,7 +29,7 @@
 
 int main(int argc, char *argv[])
 {
-	int icmp_sock6, socket_errno6;
+	socket_st sockets;
 
 	limit_capabilities();
 
@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
 
 	enable_capability_raw();
 
-	icmp_sock6 = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
-	socket_errno6 = errno;
+	sockets.sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
+	sockets.sock_errno = errno;
 
 	disable_capability_raw();
 
-	return ping6_main(argc, argv, icmp_sock6, socket_errno6);
+	return ping6_main(argc, argv, &sockets);
 }
