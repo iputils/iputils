@@ -462,7 +462,7 @@ void print_timestamp(void)
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int pinger(ping_func_set_st *fset, int sockfd)
+int pinger(ping_func_set_st *fset, socket_st *sockets)
 {
 	static int oom_count;
 	static int tokens;
@@ -508,7 +508,7 @@ int pinger(ping_func_set_st *fset, int sockfd)
 	}
 
 resend:
-	i = fset->send_probe(sockfd, outpack, sizeof(outpack));
+	i = fset->send_probe(sockets, outpack, sizeof(outpack));
 
 	if (i == 0) {
 		oom_count = 0;
@@ -554,7 +554,7 @@ resend:
 		tokens += interval;
 		return MININTERVAL;
 	} else {
-		if ((i=fset->receive_error_msg(sockfd)) > 0) {
+		if ((i=fset->receive_error_msg(sockets)) > 0) {
 			/* An ICMP error arrived. */
 			tokens += interval;
 			return MININTERVAL;
@@ -583,20 +583,20 @@ resend:
 
 /* Set socket buffers, "alloc" is an estimate of memory taken by single packet. */
 
-void sock_setbufs(int icmp_sock, int alloc)
+void sock_setbufs(socket_st *sockets, int alloc)
 {
 	int rcvbuf, hold;
 	socklen_t tmplen = sizeof(hold);
 
 	if (!sndbuf)
 		sndbuf = alloc;
-	setsockopt(icmp_sock, SOL_SOCKET, SO_SNDBUF, (char *)&sndbuf, sizeof(sndbuf));
+	setsockopt(sockets->sock, SOL_SOCKET, SO_SNDBUF, (char *)&sndbuf, sizeof(sndbuf));
 
 	rcvbuf = hold = alloc * preload;
 	if (hold < 65536)
 		hold = 65536;
-	setsockopt(icmp_sock, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
-	if (getsockopt(icmp_sock, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
+	setsockopt(sockets->sock, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
+	if (getsockopt(sockets->sock, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
 			fprintf(stderr, "WARNING: probably, rcvbuf is not enough to hold preload.\n");
 	}
@@ -604,7 +604,7 @@ void sock_setbufs(int icmp_sock, int alloc)
 
 /* Protocol independent setup and parameter checks. */
 
-void setup(int icmp_sock)
+void setup(socket_st *sockets)
 {
 	int hold;
 	struct timeval tv;
@@ -625,14 +625,14 @@ void setup(int icmp_sock)
 
 	hold = 1;
 	if (options & F_SO_DEBUG)
-		setsockopt(icmp_sock, SOL_SOCKET, SO_DEBUG, (char *)&hold, sizeof(hold));
+		setsockopt(sockets->sock, SOL_SOCKET, SO_DEBUG, (char *)&hold, sizeof(hold));
 	if (options & F_SO_DONTROUTE)
-		setsockopt(icmp_sock, SOL_SOCKET, SO_DONTROUTE, (char *)&hold, sizeof(hold));
+		setsockopt(sockets->sock, SOL_SOCKET, SO_DONTROUTE, (char *)&hold, sizeof(hold));
 
 #ifdef SO_TIMESTAMP
 	if (!(options&F_LATENCY)) {
 		int on = 1;
-		if (setsockopt(icmp_sock, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
+		if (setsockopt(sockets->sock, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
 			fprintf(stderr, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP\n");
 	}
 #endif
@@ -641,7 +641,7 @@ void setup(int icmp_sock)
 		int ret;
 
 		enable_capability_admin();
-		ret = setsockopt(icmp_sock, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
+		ret = setsockopt(sockets->sock, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
 		disable_capability_admin();
 
 		if (ret == -1) {
@@ -663,13 +663,13 @@ void setup(int icmp_sock)
 		tv.tv_sec = 0;
 		tv.tv_usec = 1000 * SCHINT(interval);
 	}
-	setsockopt(icmp_sock, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
+	setsockopt(sockets->sock, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
 
 	/* Set RCVTIMEO to "interval". Note, it is just an optimization
 	 * allowing to avoid redundant poll(). */
 	tv.tv_sec = SCHINT(interval)/1000;
 	tv.tv_usec = 1000*(SCHINT(interval)%1000);
-	if (setsockopt(icmp_sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv)))
+	if (setsockopt(sockets->sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv)))
 		options |= F_FLOOD_POLL;
 
 	if (!(options & F_PINGFILLED)) {
@@ -714,7 +714,7 @@ void setup(int icmp_sock)
 	}
 }
 
-void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *packet, int packlen)
+void main_loop(ping_func_set_st *fset, socket_st *sockets, __u8 *packet, int packlen)
 {
 	char addrbuf[128];
 	char ans_data[4096];
@@ -741,7 +741,7 @@ void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *packet, int packlen)
 
 		/* Send probes scheduled to this time. */
 		do {
-			next = pinger(fset, icmp_sock);
+			next = pinger(fset, sockets);
 			next = schedule_exit(next);
 		} while (next <= 0);
 
@@ -780,7 +780,7 @@ void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *packet, int packlen)
 			if (!polling &&
 			    ((options & (F_ADAPTIVE|F_FLOOD_POLL)) || interval)) {
 				struct pollfd pset;
-				pset.fd = icmp_sock;
+				pset.fd = sockets->sock;
 				pset.events = POLLIN|POLLERR;
 				pset.revents = 0;
 				if (poll(&pset, 1, next) < 1 ||
@@ -805,13 +805,13 @@ void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *packet, int packlen)
 			msg.msg_control = ans_data;
 			msg.msg_controllen = sizeof(ans_data);
 
-			cc = recvmsg(icmp_sock, &msg, polling);
+			cc = recvmsg(sockets->sock, &msg, polling);
 			polling = MSG_DONTWAIT;
 
 			if (cc < 0) {
 				if (errno == EAGAIN || errno == EINTR)
 					break;
-				if (!fset->receive_error_msg(icmp_sock)) {
+				if (!fset->receive_error_msg(sockets)) {
 					if (errno) {
 						perror("ping: recvmsg");
 						break;
@@ -833,7 +833,7 @@ void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *packet, int packlen)
 
 				if ((options&F_LATENCY) || recv_timep == NULL) {
 					if ((options&F_LATENCY) ||
-					    ioctl(icmp_sock, SIOCGSTAMP, &recv_time))
+					    ioctl(sockets->sock, SIOCGSTAMP, &recv_time))
 						gettimeofday(&recv_time, NULL);
 					recv_timep = &recv_time;
 				}
@@ -843,7 +843,7 @@ void main_loop(ping_func_set_st *fset, int icmp_sock, __u8 *packet, int packlen)
 
 			/* See? ... someone runs another ping on this host. */
 			if (not_ours)
-				fset->install_filter(icmp_sock);
+				fset->install_filter(sockets);
 
 			/* If nothing is in flight, "break" returns us to pinger. */
 			if (in_flight() == 0)

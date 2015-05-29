@@ -696,7 +696,7 @@ static int hextoui(const char *str)
 	return val;
 }
 
-int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
+int ping6_main(int argc, char *argv[], socket_st *sockets)
 {
 	int ch, hold, packlen;
 	unsigned char *packet;
@@ -1013,8 +1013,8 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 		source.sin6_scope_id = if_name2index(device);
 #endif
 
-	if (icmp_sock6 < 0) {
-		errno = socket_errno6;
+	if (sockets->sock < 0) {
+		errno = sockets->sock_errno;
 		perror("ping: icmp open socket");
 		exit(2);
 	}
@@ -1050,14 +1050,14 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 	}
 
 	if (pmtudisc >= 0) {
-		if (setsockopt(icmp_sock6, SOL_IPV6, IPV6_MTU_DISCOVER, &pmtudisc, sizeof(pmtudisc)) == -1) {
+		if (setsockopt(sockets->sock, SOL_IPV6, IPV6_MTU_DISCOVER, &pmtudisc, sizeof(pmtudisc)) == -1) {
 			perror("ping: IPV6_MTU_DISCOVER");
 			exit(2);
 		}
 	}
 
 	if ((options&F_STRICTSOURCE) &&
-	    bind(icmp_sock6, (struct sockaddr*)&source, sizeof(source)) == -1) {
+	    bind(sockets->sock, (struct sockaddr*)&source, sizeof(source)) == -1) {
 		perror("ping: bind icmp socket");
 		exit(2);
 	}
@@ -1074,7 +1074,7 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 
 	working_recverr = 1;
 	hold = 1;
-	if (setsockopt(icmp_sock6, SOL_IPV6, IPV6_RECVERR, (char *)&hold, sizeof(hold))) {
+	if (setsockopt(sockets->sock, SOL_IPV6, IPV6_RECVERR, (char *)&hold, sizeof(hold))) {
 		fprintf(stderr, "WARNING: your kernel is veeery old. No problems.\n");
 		working_recverr = 0;
 	}
@@ -1083,13 +1083,13 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 	 * Actually, for small datalen's it depends on kernel side a lot. */
 	hold = datalen+8;
 	hold += ((hold+511)/512)*(40+16+64+160);
-	sock_setbufs(icmp_sock6, hold);
+	sock_setbufs(sockets, hold);
 
 #ifdef __linux__
 	csum_offset = 2;
 	sz_opt = sizeof(int);
 
-	err = setsockopt(icmp_sock6, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
+	err = setsockopt(sockets->sock, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
 	if (err < 0) {
 		/* checksum should be enabled by default and setting this
 		 * option might fail anyway.
@@ -1116,7 +1116,7 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 	else
 		ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
 
-	err = setsockopt(icmp_sock6, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
+	err = setsockopt(sockets->sock, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
 			 sizeof(struct icmp6_filter));
 
 	if (err < 0) {
@@ -1126,19 +1126,19 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 
 	if (options & F_NOLOOP) {
 		int loop = 0;
-		if (setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_MULTICAST_LOOP,
+		if (setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_MULTICAST_LOOP,
 							&loop, sizeof(loop)) == -1) {
 			perror ("can't disable multicast loopback");
 			exit(2);
 		}
 	}
 	if (options & F_TTL) {
-		if (setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_MULTICAST_HOPS,
+		if (setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_MULTICAST_HOPS,
 			       &ttl, sizeof(ttl)) == -1) {
 			perror ("can't set multicast hop limit");
 			exit(2);
 		}
-		if (setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_UNICAST_HOPS,
+		if (setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_UNICAST_HOPS,
 			       &ttl, sizeof(ttl)) == -1) {
 			perror ("can't set unicast hop limit");
 			exit(2);
@@ -1148,12 +1148,12 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 	const int on = 1;
 	if (
 #ifdef IPV6_RECVHOPLIMIT
-	    setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_RECVHOPLIMIT,
+	    setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_RECVHOPLIMIT,
 		       &on, sizeof(on)) == -1 &&
-	    setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_2292HOPLIMIT,
+	    setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_2292HOPLIMIT,
 		       &on, sizeof(on)) == -1
 #else
-	    setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_HOPLIMIT,
+	    setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_HOPLIMIT,
 		       &on, sizeof(on)) == -1
 #endif
 	   ){
@@ -1163,7 +1163,7 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 
 	if (options & F_TCLASS) {
 #ifdef IPV6_TCLASS
-		if (setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_TCLASS,
+		if (setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_TCLASS,
 			       &tclass, sizeof(tclass)) == -1) {
 			perror ("setsockopt(IPV6_TCLASS)");
 			exit(2);
@@ -1192,7 +1192,7 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 		if (srcrt)
 			memcpy(freq_buf + CMSG_ALIGN(sizeof(*freq)), srcrt, srcrt->cmsg_len);
 #endif
-		if (setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR,
+		if (setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR,
 			       freq, freq_len) == -1) {
 			perror ("can't set flowlabel");
 			exit(2);
@@ -1211,7 +1211,7 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 
 #ifdef IPV6_FLOWINFO_SEND
 		whereto.sin6_flowinfo = flowlabel;
-		if (setsockopt(icmp_sock6, IPPROTO_IPV6, IPV6_FLOWINFO_SEND,
+		if (setsockopt(sockets->sock, IPPROTO_IPV6, IPV6_FLOWINFO_SEND,
 			       &on, sizeof(on)) == -1) {
 			perror ("can't send flowinfo");
 			exit(2);
@@ -1231,14 +1231,14 @@ int ping6_main(int argc, char *argv[], int icmp_sock6, int socket_errno6)
 	}
 	printf("%d data bytes\n", datalen);
 
-	setup(icmp_sock6);
+	setup(sockets);
 
 	drop_capabilities();
 
-	main_loop(&ping6_func_set, icmp_sock6, packet, packlen);
+	main_loop(&ping6_func_set, sockets, packet, packlen);
 }
 
-int ping6_receive_error_msg(int icmp_sock6)
+int ping6_receive_error_msg(socket_st *sockets)
 {
 	int res;
 	char cbuf[512];
@@ -1262,7 +1262,7 @@ int ping6_receive_error_msg(int icmp_sock6)
 	msg.msg_control = cbuf;
 	msg.msg_controllen = sizeof(cbuf);
 
-	res = recvmsg(icmp_sock6, &msg, MSG_ERRQUEUE|MSG_DONTWAIT);
+	res = recvmsg(sockets->sock, &msg, MSG_ERRQUEUE|MSG_DONTWAIT);
 	if (res < 0)
 		goto out;
 
@@ -1371,7 +1371,7 @@ int build_niquery(__u8 *_nih, unsigned packet_size)
 	return cc;
 }
 
-int ping6_send_probe(int sockfd, void *packet, unsigned packet_size)
+int ping6_send_probe(socket_st *sockets, void *packet, unsigned packet_size)
 {
 	int len, cc;
 
@@ -1383,7 +1383,7 @@ int ping6_send_probe(int sockfd, void *packet, unsigned packet_size)
 		len = build_echo(packet, packet_size);
 
 	if (cmsglen == 0) {
-		cc = sendto(sockfd, (char *)packet, len, confirm,
+		cc = sendto(sockets->sock, (char *)packet, len, confirm,
 			    (struct sockaddr *) &whereto,
 			    sizeof(struct sockaddr_in6));
 	} else {
@@ -1401,7 +1401,7 @@ int ping6_send_probe(int sockfd, void *packet, unsigned packet_size)
 		mhdr.msg_control = cmsgbuf;
 		mhdr.msg_controllen = cmsglen;
 
-		cc = sendmsg(sockfd, &mhdr, confirm);
+		cc = sendmsg(sockets->sock, &mhdr, confirm);
 	}
 	confirm = 0;
 
@@ -1749,7 +1749,7 @@ int pr_icmph(__u8 type, __u8 code, __u32 info)
 
 #include <linux/filter.h>
 
-void ping6_install_filter(int sockfd)
+void ping6_install_filter(socket_st *sockets)
 {
 	static int once;
 	static struct sock_filter insns[] = {
@@ -1773,7 +1773,7 @@ void ping6_install_filter(int sockfd)
 	/* Patch bpflet for current identifier. */
 	insns[1] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, htons(ident), 0, 1);
 
-	if (setsockopt(sockfd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
+	if (setsockopt(sockets->sock, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		perror("WARNING: failed to install socket filter\n");
 }
 
