@@ -57,7 +57,9 @@
  *	Public Domain.  Distribution Unlimited.
  * Bugs -
  *	More statistics could always be gathered.
- *	This program has to run SUID to ROOT to access the ICMP socket.
+ *	If kernel does not support non-raw ICMP sockets or
+ *	if -N option is used, this program has to run SUID to ROOT or
+ *	with net_cap_raw enabled.
  */
 #include "ping_common.h"
 
@@ -780,6 +782,11 @@ int ping6_main(int argc, char *argv[], socket_st *sockets)
 			printf("ping6 utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
 		case 'N':
+			if (sockets->using_ping_socket) {
+				fprintf(stderr, "ping: -N requires raw socket permissions\n");
+				exit(2);
+			}
+
 			if (niquery_option_handler(optarg) < 0) {
 				ping6_usage(0);
 				break;
@@ -1086,42 +1093,44 @@ int ping6_main(int argc, char *argv[], socket_st *sockets)
 	sock_setbufs(sockets, hold);
 
 #ifdef __linux__
-	csum_offset = 2;
-	sz_opt = sizeof(int);
+	if (!sockets->using_ping_socket) {
+		csum_offset = 2;
+		sz_opt = sizeof(int);
 
-	err = setsockopt(sockets->sock, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
-	if (err < 0) {
-		/* checksum should be enabled by default and setting this
-		 * option might fail anyway.
-		 */
-		fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
-	}
+		err = setsockopt(sockets->sock, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
+		if (err < 0) {
+			/* checksum should be enabled by default and setting this
+			 * option might fail anyway.
+			 */
+			fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
+		}
 #endif
 
-	/*
-	 *	select icmp echo reply as icmp type to receive
-	 */
+		/*
+		 *	select icmp echo reply as icmp type to receive
+		 */
 
-	ICMP6_FILTER_SETBLOCKALL(&filter);
+		ICMP6_FILTER_SETBLOCKALL(&filter);
 
-	if (!working_recverr) {
-		ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
-	}
+		if (!working_recverr) {
+			ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
+			ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
+			ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
+			ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
+		}
 
-	if (niquery_is_enabled())
-		ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
-	else
-		ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
+		if (niquery_is_enabled())
+			ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
+		else
+			ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
 
-	err = setsockopt(sockets->sock, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
-			 sizeof(struct icmp6_filter));
+		err = setsockopt(sockets->sock, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
+				 sizeof(struct icmp6_filter));
 
-	if (err < 0) {
-		perror("setsockopt(ICMP6_FILTER)");
-		exit(2);
+		if (err < 0) {
+			perror("setsockopt(ICMP6_FILTER)");
+			exit(2);
+		}
 	}
 
 	if (options & F_NOLOOP) {
@@ -1293,7 +1302,7 @@ int ping6_receive_error_msg(socket_st *sockets)
 		if (res < sizeof(icmph) ||
 		    memcmp(&target.sin6_addr, &whereto.sin6_addr, 16) ||
 		    icmph.icmp6_type != ICMP6_ECHO_REQUEST ||
-		    !is_ours(icmph.icmp6_id)) {
+		    !is_ours(sockets, icmph.icmp6_id)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
@@ -1560,7 +1569,7 @@ void pr_niquery_reply(__u8 *_nih, int len)
  * program to be run without having intermingled output (or statistics!).
  */
 int
-ping6_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
+ping6_parse_reply(socket_st *sockets, struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 {
 	struct sockaddr_in6 *from = addr;
 	__u8 *buf = msg->msg_iov->iov_base;
@@ -1593,7 +1602,7 @@ ping6_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (!is_ours(icmph->icmp6_id))
+		if (!is_ours(sockets, icmph->icmp6_id))
 			return 1;
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
@@ -1638,7 +1647,7 @@ ping6_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		}
 		if (nexthdr == IPPROTO_ICMPV6) {
 			if (icmph1->icmp6_type != ICMP6_ECHO_REQUEST ||
-			    !is_ours(icmph1->icmp6_id))
+			    !is_ours(sockets, icmph1->icmp6_id))
 				return 1;
 			acknowledge(ntohs(icmph1->icmp6_seq));
 			if (working_recverr)

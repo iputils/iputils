@@ -48,7 +48,9 @@
  *	Public Domain.  Distribution Unlimited.
  * Bugs -
  *	More statistics could always be gathered.
- *	This program has to run SUID to ROOT to access the ICMP socket.
+ *	If kernel does not support non-raw ICMP sockets,
+ *	this program has to run SUID to ROOT or with
+ *	net_cap_raw enabled.
  */
 
 #include "ping_common.h"
@@ -141,6 +143,7 @@ main(int argc, char **argv)
 #endif
 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 
+	memset(&sockets, 0, sizeof(sockets));
 	limit_capabilities();
 
 #ifdef USE_IDN
@@ -156,6 +159,14 @@ main(int argc, char **argv)
 	sock6_errno = errno;
 
 	disable_capability_raw();
+
+	if (sockets.sock < 0 && sock6 < 0) {
+		sockets.sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
+		sockets.using_ping_socket = 1;
+		working_recverr = 1;
+
+		sock6 = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
+	}
 
 	source.sin_family = AF_INET;
 
@@ -484,19 +495,30 @@ main(int argc, char **argv)
 		exit(2);
 	}
 
-	struct icmp_filter filt;
-	filt.data = ~((1<<ICMP_SOURCE_QUENCH)|
-		      (1<<ICMP_DEST_UNREACH)|
-		      (1<<ICMP_TIME_EXCEEDED)|
-		      (1<<ICMP_PARAMETERPROB)|
-		      (1<<ICMP_REDIRECT)|
-		      (1<<ICMP_ECHOREPLY));
-	if (setsockopt(sockets.sock, SOL_RAW, ICMP_FILTER, (char*)&filt, sizeof(filt)) == -1)
-		perror("WARNING: setsockopt(ICMP_FILTER)");
+	if (!sockets.using_ping_socket) {
+		struct icmp_filter filt;
+		filt.data = ~((1<<ICMP_SOURCE_QUENCH)|
+			      (1<<ICMP_DEST_UNREACH)|
+			      (1<<ICMP_TIME_EXCEEDED)|
+			      (1<<ICMP_PARAMETERPROB)|
+			      (1<<ICMP_REDIRECT)|
+			      (1<<ICMP_ECHOREPLY));
+		if (setsockopt(sockets.sock, SOL_RAW, ICMP_FILTER, (char*)&filt, sizeof(filt)) == -1)
+			perror("WARNING: setsockopt(ICMP_FILTER)");
+	}
 
 	hold = 1;
 	if (setsockopt(sockets.sock, SOL_IP, IP_RECVERR, (char *)&hold, sizeof(hold)))
 		fprintf(stderr, "WARNING: your kernel is veeery old. No problems.\n");
+
+	if (sockets.using_ping_socket) {
+		if (setsockopt(sockets.sock, SOL_IP, IP_RECVTTL,
+			       (char *)&hold, sizeof(hold)))
+			perror("WARNING: setsockopt(IP_RECVTTL)");
+		if (setsockopt(sockets.sock, SOL_IP, IP_RETOPTS,
+			       (char *)&hold, sizeof(hold)))
+			perror("WARNING: setsockopt(IP_RETOPTS)");
+	}
 
 	/* record route option */
 	if (options & F_RROUTE) {
@@ -669,13 +691,24 @@ int ping4_receive_error_msg(socket_st *sockets)
 		if (res < sizeof(icmph) ||
 		    target.sin_addr.s_addr != whereto.sin_addr.s_addr ||
 		    icmph.type != ICMP_ECHO ||
-		    !is_ours(icmph.un.echo.id)) {
+		    !is_ours(sockets, icmph.un.echo.id)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
 		}
 
 		acknowledge(ntohs(icmph.un.echo.sequence));
+
+		if (!sockets->using_ping_socket && !working_recverr) {
+			struct icmp_filter filt;
+			working_recverr = 1;
+			/* OK, it works. Add stronger filter. */
+			filt.data = ~((1<<ICMP_SOURCE_QUENCH)|  
+					(1<<ICMP_REDIRECT)|
+					(1<<ICMP_ECHOREPLY));
+			if (setsockopt(sockets->sock, SOL_RAW, ICMP_FILTER, (char*)&filt, sizeof(filt)) == -1)
+				perror("\rWARNING: setsockopt(ICMP_FILTER)");
+		}
 
 		net_errors++;
 		nerrors++;
@@ -761,7 +794,7 @@ void pr_echo_reply(__u8 *_icp, int len)
 }
 
 int
-ping4_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
+ping4_parse_reply(struct socket_st *sockets, struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 {
 	struct sockaddr_in *from = addr;
 	__u8 *buf = msg->msg_iov->iov_base;
@@ -769,15 +802,41 @@ ping4_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	struct iphdr *ip;
 	int hlen;
 	int csfailed;
+	struct cmsghdr *cmsg;
+	int ttl;
+	__u8 *opts;
+	int optlen;
 
 	/* Check the IP header */
 	ip = (struct iphdr *)buf;
-	hlen = ip->ihl*4;
-	if (cc < hlen + 8 || ip->ihl < 5) {
-		if (options & F_VERBOSE)
-			fprintf(stderr, "ping: packet too short (%d bytes) from %s\n", cc,
-				pr_addr(from->sin_addr.s_addr));
-		return 1;
+	if (!sockets->using_ping_socket) {
+		hlen = ip->ihl*4;
+		if (cc < hlen + 8 || ip->ihl < 5) {
+			if (options & F_VERBOSE)
+				fprintf(stderr, "ping: packet too short (%d bytes) from %s\n", cc,
+					pr_addr(from->sin_addr.s_addr));
+			return 1;
+		}
+		ttl = ip->ttl;
+		opts = buf + sizeof(struct iphdr);
+		optlen = hlen - sizeof(struct iphdr);
+	} else {
+		hlen = 0;
+		ttl = 0;
+		opts = buf;
+		optlen = 0;
+		for (cmsg = CMSG_FIRSTHDR(msg); cmsg; cmsg = CMSG_NXTHDR(msg, cmsg)) {
+			if (cmsg->cmsg_level != SOL_IP)
+				continue;
+			if (cmsg->cmsg_type == IP_TTL) {
+				if (cmsg->cmsg_len < sizeof(int))
+					continue;
+				ttl = *(int *) CMSG_DATA(cmsg);
+			} else if (cmsg->cmsg_type == IP_RETOPTS) {
+				opts = (__u8 *) CMSG_DATA(cmsg);
+				optlen = cmsg->cmsg_len;
+			}
+		}
 	}
 
 	/* Now the ICMP part */
@@ -786,11 +845,11 @@ ping4_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 	csfailed = in_cksum((unsigned short *)icp, cc, 0);
 
 	if (icp->type == ICMP_ECHOREPLY) {
-		if (!is_ours(icp->un.echo.id))
+		if (!is_ours(sockets, icp->un.echo.id))
 			return 1;			/* 'Twas not our ECHO */
 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      ip->ttl, 0, tv, pr_addr(from->sin_addr.s_addr),
+				      ttl, 0, tv, pr_addr(from->sin_addr.s_addr),
 				      pr_echo_reply)) {
 			fflush(stdout);
 			return 0;
@@ -818,7 +877,7 @@ ping4_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 					return 1;
 				if (icp1->type != ICMP_ECHO ||
 				    iph->daddr != whereto.sin_addr.s_addr ||
-				    !is_ours(icp1->un.echo.id))
+				    !is_ours(sockets, icp1->un.echo.id))
 					return 1;
 				error_pkt = (icp->type != ICMP_REDIRECT &&
 					     icp->type != ICMP_SOURCE_QUENCH);
@@ -876,7 +935,7 @@ ping4_parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 			fflush(stdout);
 	}
 	if (!(options & F_FLOOD)) {
-		pr_options(buf + sizeof(struct iphdr), hlen);
+		pr_options(opts, optlen + sizeof(struct iphdr));
 
 		putchar('\n');
 		fflush(stdout);
@@ -1016,8 +1075,8 @@ void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp)
 			printf("Redirect, Bad Code: %d", code);
 			break;
 		}
-		if (icp)
-			printf("(New nexthop: %s)\n", pr_addr(icp->un.gateway));
+		printf("(New nexthop: %s)\n",
+		       pr_addr(icp ? icp->un.gateway : info));
 		if (icp && (options & F_VERBOSE))
 			pr_iph((struct iphdr*)(icp + 1));
 		break;
