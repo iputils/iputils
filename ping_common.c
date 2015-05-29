@@ -462,7 +462,7 @@ void print_timestamp(void)
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int pinger(ping_func_set_st *fset, socket_st *sockets)
+int pinger(ping_func_set_st *fset, socket_st *sock)
 {
 	static int oom_count;
 	static int tokens;
@@ -508,7 +508,7 @@ int pinger(ping_func_set_st *fset, socket_st *sockets)
 	}
 
 resend:
-	i = fset->send_probe(sockets, outpack, sizeof(outpack));
+	i = fset->send_probe(sock, outpack, sizeof(outpack));
 
 	if (i == 0) {
 		oom_count = 0;
@@ -554,7 +554,7 @@ resend:
 		tokens += interval;
 		return MININTERVAL;
 	} else {
-		if ((i=fset->receive_error_msg(sockets)) > 0) {
+		if ((i=fset->receive_error_msg(sock)) > 0) {
 			/* An ICMP error arrived. */
 			tokens += interval;
 			return MININTERVAL;
@@ -583,20 +583,20 @@ resend:
 
 /* Set socket buffers, "alloc" is an estimate of memory taken by single packet. */
 
-void sock_setbufs(socket_st *sockets, int alloc)
+void sock_setbufs(socket_st *sock, int alloc)
 {
 	int rcvbuf, hold;
 	socklen_t tmplen = sizeof(hold);
 
 	if (!sndbuf)
 		sndbuf = alloc;
-	setsockopt(sockets->sock, SOL_SOCKET, SO_SNDBUF, (char *)&sndbuf, sizeof(sndbuf));
+	setsockopt(sock->fd, SOL_SOCKET, SO_SNDBUF, (char *)&sndbuf, sizeof(sndbuf));
 
 	rcvbuf = hold = alloc * preload;
 	if (hold < 65536)
 		hold = 65536;
-	setsockopt(sockets->sock, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
-	if (getsockopt(sockets->sock, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
+	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
+	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
 			fprintf(stderr, "WARNING: probably, rcvbuf is not enough to hold preload.\n");
 	}
@@ -604,7 +604,7 @@ void sock_setbufs(socket_st *sockets, int alloc)
 
 /* Protocol independent setup and parameter checks. */
 
-void setup(socket_st *sockets)
+void setup(socket_st *sock)
 {
 	int hold;
 	struct timeval tv;
@@ -625,14 +625,14 @@ void setup(socket_st *sockets)
 
 	hold = 1;
 	if (options & F_SO_DEBUG)
-		setsockopt(sockets->sock, SOL_SOCKET, SO_DEBUG, (char *)&hold, sizeof(hold));
+		setsockopt(sock->fd, SOL_SOCKET, SO_DEBUG, (char *)&hold, sizeof(hold));
 	if (options & F_SO_DONTROUTE)
-		setsockopt(sockets->sock, SOL_SOCKET, SO_DONTROUTE, (char *)&hold, sizeof(hold));
+		setsockopt(sock->fd, SOL_SOCKET, SO_DONTROUTE, (char *)&hold, sizeof(hold));
 
 #ifdef SO_TIMESTAMP
 	if (!(options&F_LATENCY)) {
 		int on = 1;
-		if (setsockopt(sockets->sock, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
+		if (setsockopt(sock->fd, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
 			fprintf(stderr, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP\n");
 	}
 #endif
@@ -641,7 +641,7 @@ void setup(socket_st *sockets)
 		int ret;
 
 		enable_capability_admin();
-		ret = setsockopt(sockets->sock, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
+		ret = setsockopt(sock->fd, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
 		disable_capability_admin();
 
 		if (ret == -1) {
@@ -663,13 +663,13 @@ void setup(socket_st *sockets)
 		tv.tv_sec = 0;
 		tv.tv_usec = 1000 * SCHINT(interval);
 	}
-	setsockopt(sockets->sock, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
+	setsockopt(sock->fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
 
 	/* Set RCVTIMEO to "interval". Note, it is just an optimization
 	 * allowing to avoid redundant poll(). */
 	tv.tv_sec = SCHINT(interval)/1000;
 	tv.tv_usec = 1000*(SCHINT(interval)%1000);
-	if (setsockopt(sockets->sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv)))
+	if (setsockopt(sock->fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv)))
 		options |= F_FLOOD_POLL;
 
 	if (!(options & F_PINGFILLED)) {
@@ -683,7 +683,7 @@ void setup(socket_st *sockets)
 			*p++ = i;
 	}
 
-	if (!sockets->using_ping_socket)
+	if (!sock->using_ping_socket)
 		ident = htons(getpid() & 0xFFFF);
 
 	set_signal(SIGINT, sigexit);
@@ -715,7 +715,7 @@ void setup(socket_st *sockets)
 	}
 }
 
-void main_loop(ping_func_set_st *fset, socket_st *sockets, __u8 *packet, int packlen)
+void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packlen)
 {
 	char addrbuf[128];
 	char ans_data[4096];
@@ -742,7 +742,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sockets, __u8 *packet, int pac
 
 		/* Send probes scheduled to this time. */
 		do {
-			next = pinger(fset, sockets);
+			next = pinger(fset, sock);
 			next = schedule_exit(next);
 		} while (next <= 0);
 
@@ -781,7 +781,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sockets, __u8 *packet, int pac
 			if (!polling &&
 			    ((options & (F_ADAPTIVE|F_FLOOD_POLL)) || interval)) {
 				struct pollfd pset;
-				pset.fd = sockets->sock;
+				pset.fd = sock->fd;
 				pset.events = POLLIN|POLLERR;
 				pset.revents = 0;
 				if (poll(&pset, 1, next) < 1 ||
@@ -806,13 +806,13 @@ void main_loop(ping_func_set_st *fset, socket_st *sockets, __u8 *packet, int pac
 			msg.msg_control = ans_data;
 			msg.msg_controllen = sizeof(ans_data);
 
-			cc = recvmsg(sockets->sock, &msg, polling);
+			cc = recvmsg(sock->fd, &msg, polling);
 			polling = MSG_DONTWAIT;
 
 			if (cc < 0) {
 				if (errno == EAGAIN || errno == EINTR)
 					break;
-				if (!fset->receive_error_msg(sockets)) {
+				if (!fset->receive_error_msg(sock)) {
 					if (errno) {
 						perror("ping: recvmsg");
 						break;
@@ -834,17 +834,17 @@ void main_loop(ping_func_set_st *fset, socket_st *sockets, __u8 *packet, int pac
 
 				if ((options&F_LATENCY) || recv_timep == NULL) {
 					if ((options&F_LATENCY) ||
-					    ioctl(sockets->sock, SIOCGSTAMP, &recv_time))
+					    ioctl(sock->fd, SIOCGSTAMP, &recv_time))
 						gettimeofday(&recv_time, NULL);
 					recv_timep = &recv_time;
 				}
 
-				not_ours = fset->parse_reply(sockets, &msg, cc, addrbuf, recv_timep);
+				not_ours = fset->parse_reply(sock, &msg, cc, addrbuf, recv_timep);
 			}
 
 			/* See? ... someone runs another ping on this host. */
-			if (not_ours && !sockets->using_ping_socket)
-				fset->install_filter(sockets);
+			if (not_ours && !sock->using_ping_socket)
+				fset->install_filter(sock);
 
 			/* If nothing is in flight, "break" returns us to pinger. */
 			if (in_flight() == 0)
@@ -1079,6 +1079,6 @@ void status(void)
 	fprintf(stderr, "\n");
 }
 
-inline int is_ours(socket_st *sockets, uint16_t id) {
-       return sockets->using_ping_socket || id == ident;
+inline int is_ours(socket_st *sock, uint16_t id) {
+       return sock->using_ping_socket || id == ident;
 }
