@@ -17,7 +17,6 @@ int rtt_addend;
 __u16 acked;
 
 struct rcvd_table rcvd_tbl;
-int using_ping_socket = 0;
 
 
 /* counters */
@@ -684,8 +683,7 @@ void setup(int icmp_sock)
 			*p++ = i;
 	}
 
-	if (!using_ping_socket)
-		ident = htons(getpid() & 0xFFFF);
+	ident = htons(getpid() & 0xFFFF);
 
 	set_signal(SIGINT, sigexit);
 	set_signal(SIGALRM, sigexit);
@@ -844,7 +842,7 @@ void main_loop(int icmp_sock, __u8 *packet, int packlen)
 			}
 
 			/* See? ... someone runs another ping on this host. */
-			if (not_ours && !using_ping_socket)
+			if (not_ours)
 				install_filter();
 
 			/* If nothing is in flight, "break" returns us to pinger. */
@@ -1081,5 +1079,5 @@ void status(void)
 }
 
 inline int is_ours(uint16_t id) {
-	return using_ping_socket || id == ident;
+       return id == ident;
 }
