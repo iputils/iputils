@@ -14,7 +14,7 @@
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>ping</command>
-<arg choice="opt"><option>-aAbBdDfhLnOqrRUvV</option></arg>
+<arg choice="opt"><option>-aAbBdDfhLnOqrRUvV6</option></arg>
 <arg choice="opt">-c <replaceable/count/</arg>
 <arg choice="opt">-F <replaceable/flowlabel/</arg>
 <arg choice="opt">-i <replaceable/interval/</arg>
@@ -191,6 +191,7 @@ is large), or <replaceable/dont/ (do not set DF flag).
   <listitem><para>
 <command/ping6/ only.
 Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
+<constant/CAP_NET_RAW/ capability is required.
    <variablelist>
     <varlistentry>
      <term><option>help</option></term>
@@ -629,7 +630,11 @@ The version described here is its descendant specific to Linux.
 <refsect1><title>SECURITY</title>
 <para>
 <command/ping/ requires <constant/CAP_NET_RAW/ capability
-to be executed. It may be used as set-uid root.
+to be executed 1) if the program is used for non-echo queries
+(See <option>-N</option> option), or 2) if kernel does not
+support non-raw ICMP sockets, or 3) if the user is not allowed
+to create an ICMP echo socket.  The program may be used as
+set-uid root.
 </para>
 </refsect1>
 

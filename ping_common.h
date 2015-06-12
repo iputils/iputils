@@ -119,9 +119,6 @@ static inline bitmap_t rcvd_test(__u16 seq)
 	return A(bit) & B(bit);
 }
 
-extern unsigned char outpack[];
-extern int maxpacket;
-
 extern int datalen;
 extern char *hostname;
 extern int uid;
@@ -270,16 +267,33 @@ static inline int disable_capability_admin(void)	{ return modify_capability(0); 
 #endif
 extern void drop_capabilities(void);
 
-extern int send_probe(void);
-extern int receive_error_msg(void);
-extern int parse_reply(struct msghdr *msg, int len, void *addr, struct timeval *);
-extern void install_filter(void);
-extern int is_ours(uint16_t id);
+typedef struct socket_st {
+	int fd;
+	int sock_errno;
+	int using_ping_socket;
+} socket_st;
 
-extern int pinger(void);
-extern void sock_setbufs(int icmp_sock, int alloc);
-extern void setup(int icmp_sock);
-extern void main_loop(int icmp_sock, __u8 *buf, int buflen) __attribute__((noreturn));
+int is_ours(socket_st *sock, uint16_t id);
+
+int ping4_send_probe(socket_st *, void *packet, unsigned packet_size);
+int ping4_receive_error_msg(socket_st *);
+int ping4_parse_reply(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+void ping4_install_filter(socket_st *);
+
+typedef struct ping_func_set_st {
+	int (*send_probe)(socket_st *, void *packet, unsigned packet_size);
+	int (*receive_error_msg)(socket_st *sock);
+	int (*parse_reply)(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+	void (*install_filter)(socket_st *);
+} ping_func_set_st;
+
+#define	MAXPACKET	128000		/* max packet size */
+extern ping_func_set_st ping4_func_set;
+
+extern int pinger(ping_func_set_st *fset, socket_st *sock);
+extern void sock_setbufs(socket_st*, int alloc);
+extern void setup(socket_st *);
+extern void main_loop(ping_func_set_st *fset, socket_st*, __u8 *buf, int buflen) __attribute__((noreturn));
 extern void finish(void) __attribute__((noreturn));
 extern void status(void);
 extern void common_options(int ch);
