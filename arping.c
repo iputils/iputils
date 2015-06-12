@@ -1091,30 +1091,24 @@ main(int argc, char **argv)
 	}
 
 	if (inet_aton(target, &dst) != 1) {
-		struct hostent *hp;
-		char *idn = target;
+		struct addrinfo hints = {
+			.ai_family = AF_INET,
+			.ai_socktype = SOCK_RAW,
 #ifdef USE_IDN
-		int rc;
-
-		rc = idna_to_ascii_lz(target, &idn, 0);
-
-		if (rc != IDNA_SUCCESS) {
-			fprintf(stderr, "arping: IDN encoding failed: %s\n", idna_strerror(rc));
-			exit(2);
-		}
+			.ai_flags = AI_IDN | AI_CANONIDN
 #endif
+		};
+		struct addrinfo *result;
+		int status;
 
-		hp = gethostbyname2(idn, AF_INET);
-		if (!hp) {
-			fprintf(stderr, "arping: unknown host %s\n", target);
+		status = getaddrinfo(target, NULL, &hints, &result);
+		if (status) {
+			fprintf(stderr, "arping: %s: %s\n", target, gai_strerror(status));
 			exit(2);
 		}
 
-#ifdef USE_IDN
-		free(idn);
-#endif
-
-		memcpy(&dst, hp->h_addr, 4);
+		memcpy(&dst, &((struct sockaddr_in *) result->ai_addr)->sin_addr, sizeof dst);
+		freeaddrinfo(result);
 	}
 
 	if (source && inet_aton(source, &src) != 1) {

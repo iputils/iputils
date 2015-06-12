@@ -550,7 +550,9 @@ int
 main(int argc, char *argv[])
 {
 	int measure_status;
-	struct hostent * hp;
+	struct addrinfo hints = { .ai_family = AF_INET, .ai_socktype = SOCK_RAW, .ai_flags = AI_CANONNAME };
+	struct addrinfo *result;
+	int status;
 	char hostname[MAX_HOSTNAMELEN];
 	int s_errno = 0;
 	int n_errno = 0;
@@ -598,23 +600,23 @@ main(int argc, char *argv[])
 	id = getpid();
 
 	(void)gethostname(hostname,sizeof(hostname));
-	hp = gethostbyname(hostname);
-	if (hp == NULL) {
-		fprintf(stderr, "clockdiff: %s: my host not found\n", hostname);
+	status = getaddrinfo(hostname, NULL, &hints, &result);
+	if (status) {
+		fprintf(stderr, "clockdiff: %s: %s\n", hostname, gai_strerror(status));
+		exit(2);
+	}
+	myname = strdup(result->ai_canonname);
+	freeaddrinfo(result);
+
+	status = getaddrinfo(argv[1], NULL, &hints, &result);
+	if (status) {
+		fprintf(stderr, "clockdiff: %s: %s\n", argv[1], gai_strerror(status));
 		exit(1);
 	}
-	myname = strdup(hp->h_name);
+	hisname = strdup(result->ai_canonname);
 
-	hp = gethostbyname(argv[1]);
-	if (hp == NULL) {
-		fprintf(stderr, "clockdiff: %s: host not found\n", argv[1]);
-		exit(1);
-	}
-	hisname = strdup(hp->h_name);
-
-	memset(&server, 0, sizeof(server));
-	server.sin_family = hp->h_addrtype;
-	memcpy(&(server.sin_addr.s_addr), hp->h_addr, 4);
+	memcpy(&server, result->ai_addr, sizeof server);
+	freeaddrinfo(result);
 
 	if (connect(sock_raw, (struct sockaddr*)&server, sizeof(server)) == -1) {
 		perror("connect");

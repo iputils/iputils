@@ -381,9 +381,17 @@ int main(int argc, char **argv)
 	int on;
 	int ttl;
 	char *p;
-	struct addrinfo hints, *ai, *ai0;
+	struct addrinfo hints = {
+		.ai_family = family,
+		.ai_socktype = SOCK_DGRAM,
+		.ai_protocol = IPPROTO_UDP,
+#ifdef USE_IDN
+		.ai_flags = AI_IDN | AI_CANONNAME,
+#endif
+	};
+	struct addrinfo *ai, *result;
 	int ch;
-	int gai;
+	int status;
 	char pbuf[NI_MAXSERV];
 
 #ifdef USE_IDN
@@ -435,21 +443,14 @@ int main(int argc, char **argv)
 	}
 	sprintf(pbuf, "%u", base_port);
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = family;
-	hints.ai_socktype = SOCK_DGRAM;
-	hints.ai_protocol = IPPROTO_UDP;
-#ifdef USE_IDN
-	hints.ai_flags = AI_IDN;
-#endif
-	gai = getaddrinfo(argv[0], pbuf, &hints, &ai0);
-	if (gai) {
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gai));
+	status = getaddrinfo(argv[0], pbuf, &hints, &result);
+	if (status) {
+		fprintf(stderr, "tracepath6: %s: %s\n", argv[0], gai_strerror(status));
 		exit(1);
 	}
 
 	fd = -1;
-	for (ai = ai0; ai; ai = ai->ai_next) {
+	for (ai = result; ai; ai = ai->ai_next) {
 		/* sanity check */
 		if (family && ai->ai_family != family)
 			continue;
@@ -468,7 +469,7 @@ int main(int argc, char **argv)
 		perror("socket/connect");
 		exit(1);
 	}
-	freeaddrinfo(ai0);
+	freeaddrinfo(result);
 
 	switch (family) {
 	case AF_INET6:

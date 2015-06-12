@@ -27,6 +27,10 @@
 #ifdef USE_IDN
 #include <locale.h>
 #include <idna.h>
+#include <stringprep.h>
+#define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
+#else
+#define getaddrinfo_flags (AI_CANONNAME)
 #endif
 
 #include <netinet/in.h>
