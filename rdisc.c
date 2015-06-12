@@ -699,13 +699,12 @@ pr_type(int t)
  */
 char *pr_name(struct in_addr addr)
 {
-	struct hostent *phe;
+	struct sockaddr_in sin = { .sin_family = AF_INET, .sin_addr = addr };
+	char hnamebuf[NI_MAXHOST] = "";
 	static char buf[80];
 
-	phe = gethostbyaddr((char *)&addr.s_addr, 4, AF_INET);
-	if (phe == NULL)
-		return( inet_ntoa(addr));
-	snprintf(buf, sizeof(buf), "%s (%s)", phe->h_name, inet_ntoa(addr));
+	getnameinfo((struct sockaddr *) &sin, sizeof sin, hnamebuf, sizeof hnamebuf, NULL, 0, 0);
+	snprintf(buf, sizeof buf, "%s (%s)", hnamebuf, inet_ntoa(addr));
 	return(buf);
 }
 

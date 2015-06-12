@@ -81,7 +81,6 @@ ping_func_set_st ping4_func_set = {
 #define	MAXICMPLEN	76
 #define	NROUTES		9		/* number of record route slots */
 #define TOS_MAX		255		/* 8-bit TOS field */
-#define MAX_HOSTNAMELEN	NI_MAXHOST
 
 static const int max_ping4_packet = 0x10000;
 
@@ -125,7 +124,9 @@ static void set_socket(socket_st *sock, int fd, int e)
 int
 main(int argc, char **argv)
 {
-	struct hostent *hp;
+	struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
+	struct addrinfo *result;
+	int status;
 	int ch, hold, packlen;
 	unsigned char *packet;
 	char *target;
@@ -136,11 +137,7 @@ main(int argc, char **argv)
 	char ipbuf[64];
 	int orig_argc = argc;
 	char **orig_argv = argv;
-#ifdef USE_IDN
-	char *hnamebuf = NULL;
-#else
-	char hnamebuf[MAX_HOSTNAMELEN];
-#endif
+	char hnamebuf[NI_MAXHOST];
 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 
 	memset(&sock, 0, sizeof(sock));
@@ -289,53 +286,25 @@ main(int argc, char **argv)
 			if (argc == 1)
 				options |= F_NUMERIC;
 		} else {
-			char *idn;
-#ifdef USE_IDN
-			int rc;
-
-			if (hnamebuf) {
-				free(hnamebuf);
-				hnamebuf = NULL;
-			}
-
-			rc = idna_to_ascii_lz(target, &idn, 0);
-			if (rc != IDNA_SUCCESS) {
-				fprintf(stderr, "ping: IDN encoding failed: %s\n", idna_strerror(rc));
-				exit(2);
-			}
-#else
-			idn = target;
-#endif
-			hp = gethostbyname2(idn, AF_INET);
-			if (!hp) {
-				if (force_ipv4 == 0) {
-					hp = gethostbyname2(idn, AF_INET6);
-				}
-
-				if (hp) {
+			hints.ai_family = AF_INET;
+			status = getaddrinfo(target, NULL, &hints, &result);
+			if (status && !force_ipv4) {
+				hints.ai_family = AF_INET6;
+				status = getaddrinfo(target, NULL, &hints, &result);
+				if (!status) {
 					set_socket(&sock, sock6, sock6_errno);
 					return ping6_main(orig_argc, orig_argv, &sock);
-				} else {
-					fprintf(stderr, "ping: unknown host %s\n", target);
-					exit(2);
 				}
 			}
-#ifdef USE_IDN
-			free(idn);
-#endif
-			memcpy(&whereto.sin_addr, hp->h_addr, 4);
-#ifdef USE_IDN
-			if (idna_to_unicode_lzlz(hp->h_name, &hnamebuf, 0) != IDNA_SUCCESS) {
-				hnamebuf = strdup(hp->h_name);
-				if (!hnamebuf) {
-					perror("ping: strdup");
-					exit(-1);
-				}
+			if (status) {
+				fprintf(stderr, "ping: %s: %s\n", target, gai_strerror(status));
+				exit(2);
 			}
-#else
-			strncpy(hnamebuf, hp->h_name, sizeof(hnamebuf) - 1);
-			hnamebuf[sizeof(hnamebuf) - 1] = 0;
-#endif
+			memcpy(&whereto, result->ai_addr, sizeof whereto);
+			memset(hnamebuf, 0, sizeof hnamebuf);
+			if (result->ai_canonname)
+				strncpy(hnamebuf, result->ai_canonname, sizeof hnamebuf - 1);
+			freeaddrinfo(result);
 			hostname = hnamebuf;
 		}
 		if (argc > 1)

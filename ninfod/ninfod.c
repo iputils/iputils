@@ -705,7 +705,7 @@ int main (int argc, char **argv)
 		struct icmp6_hdr *icmph;
 #if ENABLE_DEBUG
 		char saddrbuf[NI_MAXHOST];
-		int gni;
+		int status;
 #endif 
 
 		init_core(0);
@@ -734,12 +734,12 @@ int main (int argc, char **argv)
 		}
 
 #if ENABLE_DEBUG
-		gni = getnameinfo((struct sockaddr *)&p->addr,
+		status = getnameinfo((struct sockaddr *)&p->addr,
 				  p->addrlen,
 				  saddrbuf, sizeof(saddrbuf),
 				  NULL, 0,
 				  NI_NUMERICHOST);
-		if (gni)
+		if (status)
 			sprintf(saddrbuf, "???");
 #endif
 		init_core(0);

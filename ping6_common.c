@@ -71,10 +71,6 @@
 #include <ifaddrs.h>
 #endif
 
-#ifdef USE_IDN
-#include <stringprep.h>
-#endif
-
 #include "ping6_common.h"
 #include "ping6_niquery.h"
 #include "in6_flowlabel.h"
@@ -449,16 +445,15 @@ static int niquery_set_subject_type(int type)
 
 static int niquery_option_subject_addr_handler(int index, const char *arg)
 {
-	struct addrinfo hints, *ai0, *ai;
+	struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_socktype = SOCK_DGRAM, .ai_flags = getaddrinfo_flags };
+	struct addrinfo *result, *ai;
+	int status;
 	int offset;
-	int gai;
 
 	if (niquery_set_subject_type(niquery_options[index].data) < 0)
 		return -1;
 
 	ni_subject_type = niquery_options[index].data;
-
-	memset(&hints, 0, sizeof(hints));
 
 	switch (niquery_options[index].data) {
 	case NI_SUBJ_IPV6:
@@ -476,18 +471,13 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 		offset = -1;
 	}
 
-	hints.ai_socktype = SOCK_DGRAM;
-#ifdef USE_IDN
-	hints.ai_flags = AI_IDN;
-#endif
-
-	gai = getaddrinfo(arg, 0, &hints, &ai0);
-	if (gai) {
-		fprintf(stderr, "Unknown host: %s\n", arg);
+	status = getaddrinfo(arg, 0, &hints, &result);
+	if (status) {
+		fprintf(stderr, "ping6: %s: %s\n", arg, gai_strerror(status));
 		return -1;
 	}
 
-	for (ai = ai0; ai; ai = ai->ai_next) {
+	for (ai = result; ai; ai = ai->ai_next) {
 		void *p = malloc(ni_subject_len);
 		if (!p)
 			continue;
@@ -496,7 +486,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 		ni_subject = p;
 		break;
 	}
-	freeaddrinfo(ai0);
+	freeaddrinfo(result);
 
 	return 0;
 }
@@ -703,8 +693,8 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 	int ch, hold, packlen;
 	unsigned char *packet;
 	char *target;
-	struct addrinfo hints, *ai;
-	int gai;
+	struct addrinfo hints, *result;
+	int status;
 	struct sockaddr_in6 firsthop;
 	struct icmp6_filter filter;
 	int err;
@@ -850,15 +840,13 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 
 		memset(&hints, 0, sizeof(hints));
 		hints.ai_family = AF_INET6;
-#ifdef USE_IDN
-		hints.ai_flags = AI_IDN;
-#endif
-		gai = getaddrinfo(target, NULL, &hints, &ai);
-		if (gai) {
-			fprintf(stderr, "unknown host\n");
+		hints.ai_flags = getaddrinfo_flags
+		status = getaddrinfo(target, NULL, &hints, &result);
+		if (status) {
+			fprintf(stderr, "ping6: %s: %s\n", target, gai_strerror(status));
 			exit(2);
 		}
-		addr = &((struct sockaddr_in6 *)(ai->ai_addr))->sin6_addr;
+		addr = &((struct sockaddr_in6 *)(result->ai_addr))->sin6_addr;
 #ifdef ENABLE_PING6_RTHDR_RFC3542
 		inet6_rth_add(CMSG_DATA(srcrt), addr);
 #else
@@ -867,7 +855,7 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 		if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
 			memcpy(&firsthop.sin6_addr, addr, 16);
 #ifdef HAVE_SIN6_SCOPEID
-			firsthop.sin6_scope_id = ((struct sockaddr_in6 *)(ai->ai_addr))->sin6_scope_id;
+			firsthop.sin6_scope_id = ((struct sockaddr_in6 *)(result->ai_addr))->sin6_scope_id;
 			/* Verify scope_id is the same as previous nodes */
 			if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id) {
 				fprintf(stderr, "scope discrepancy among the nodes\n");
@@ -877,7 +865,7 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 			}
 #endif
 		}
-		freeaddrinfo(ai);
+		freeaddrinfo(result);
 
 		argv++;
 		argc--;
@@ -910,21 +898,20 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET6;
 #ifdef USE_IDN
-	hints.ai_flags = AI_IDN;
+	hints.ai_flags = AI_IDN | AI_CANONIDN;
 #endif
-	gai = getaddrinfo(target, NULL, &hints, &ai);
-	if (gai) {
-		fprintf(stderr, "unknown host\n");
+	status = getaddrinfo(target, NULL, &hints, &result);
+	if (status) {
+		fprintf(stderr, "ping6: %s: %s\n", target, gai_strerror(status));
 		exit(2);
 	}
 
-	memcpy(&whereto, ai->ai_addr, sizeof(whereto));
+	memcpy(&whereto, result->ai_addr, sizeof(whereto));
 	whereto.sin6_port = htons(IPPROTO_ICMPV6);
+	freeaddrinfo(result);
 
 	if (memchr(target, ':', strlen(target)))
 		options |= F_NUMERIC;
-
-	freeaddrinfo(ai);
 
 	if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
 		memcpy(&firsthop.sin6_addr, &whereto.sin6_addr, 16);
