@@ -26,7 +26,7 @@ USE_CAP=yes
 # sysfs support (with libsysfs - deprecated) [no|yes|static]
 USE_SYSFS=no
 # IDN support (experimental) [no|yes|static]
-USE_IDN=no
+USE_IDN=yes
 
 # Do not use getifaddrs [no|yes|static]
 WITHOUT_IFADDRS=no
