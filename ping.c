@@ -113,34 +113,21 @@ static struct sockaddr_in source;
 static char *device;
 static int pmtudisc = -1;
 
-static void set_socket(socket_st *sock, int fd, int e)
-{
-	if (sock->fd != -1)
-		close(sock->fd);
-	sock->fd = fd;
-	sock->sock_errno = e;
-}
-
 int
 main(int argc, char **argv)
 {
-	struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
-	struct addrinfo *result;
+	static const struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
+	struct addrinfo *result, *ai;
 	int status;
-	int ch, hold, packlen;
-	unsigned char *packet;
+	int ch;
+	socket_st sock4 = { 0 };
+	socket_st sock6 = { 0 };
 	char *target;
-	socket_st sock;
 	int force_ipv4 = 0;
-	int sock6, sock6_errno;
 	unsigned unknown_option = 0;
-	char ipbuf[64];
 	int orig_argc = argc;
 	char **orig_argv = argv;
-	char hnamebuf[NI_MAXHOST];
-	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 
-	memset(&sock, 0, sizeof(sock));
 	limit_capabilities();
 
 #ifdef USE_IDN
@@ -149,20 +136,20 @@ main(int argc, char **argv)
 
 	enable_capability_raw();
 
-	sock.fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-	sock.sock_errno = errno;
+	sock4.fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	sock4.sock_errno = errno;
 
-	sock6 = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
-	sock6_errno = errno;
+	sock6.fd = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
+	sock6.sock_errno = errno;
 
 	disable_capability_raw();
 
-	if (sock.fd < 0 && sock6 < 0) {
-		sock.fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
-		sock.using_ping_socket = 1;
+	if (sock4.fd < 0 && sock6.fd < 0) {
+		sock4.fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
+		sock4.using_ping_socket = 1;
 		working_recverr = 1;
 
-		sock6 = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
+		sock6.fd = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
 	}
 
 	source.sin_family = AF_INET;
@@ -175,8 +162,7 @@ main(int argc, char **argv)
 				fprintf(stderr, "Only one of -4 or -6 may be specified\n");
 				exit(2);
 			}
-			set_socket(&sock, sock6, sock6_errno);
-			return ping6_main(orig_argc, orig_argv, &sock);
+			return ping6_main(orig_argc, orig_argv, &sock6);
 		case '4':
 			force_ipv4 = 1;
 			break;
@@ -186,7 +172,7 @@ main(int argc, char **argv)
 		case 'Q':
 			settos = parsetos(optarg);
 			if (settos &&
-			    (setsockopt(sock.fd, IPPROTO_IP, IP_TOS,
+			    (setsockopt(sock4.fd, IPPROTO_IP, IP_TOS,
 					(char *)&settos, sizeof(int)) < 0)) {
 				perror("ping: error setting QOS sockopts");
 				exit(2);
@@ -250,8 +236,51 @@ main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (argc == 0)
+	if (!argc || unknown_option)
 		usage();
+
+	if (force_ipv4)
+		return ping4_run(argc, argv, NULL, sock4);
+
+	target = argv[argc-1];
+
+	status = getaddrinfo(target, NULL, &hints, &result);
+	if (status) {
+		fprintf(stderr, "ping: %s: %s\n", target, gai_strerror(status));
+		exit(2);
+	}
+
+	for (ai = result; ai; ai = ai->ai_next) {
+		switch (ai->ai_family) {
+		case AF_INET:
+			status = ping4_run(argc, argv, ai, sock4);
+			break;
+		case AF_INET6:
+			status = ping6_run(argc, argv, ai, &sock6);
+			break;
+		default:
+			fprintf(stderr, "ping: unknown protocol family: %d\n", ai->ai_family);
+			exit(2);
+		}
+
+		if (status == 0)
+			break;
+	}
+
+	freeaddrinfo(result);
+
+	return status;
+}
+
+int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
+{
+	static const struct addrinfo hints = { .ai_family = AF_INET, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
+	int hold, packlen;
+	unsigned char *packet;
+	char *target;
+	char hnamebuf[NI_MAXHOST];
+	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
+
 	if (argc > 1) {
 		if (options & F_RROUTE)
 			usage();
@@ -269,16 +298,6 @@ main(int argc, char **argv)
 	while (argc > 0) {
 		target = *argv;
 
-		/* ipv6 detected */
-		if (force_ipv4 == 0 && strchr(target, ':') != 0 && inet_pton(AF_INET6, target, ipbuf) == 1) {
-			set_socket(&sock, sock6, sock6_errno);
-			return ping6_main(orig_argc, orig_argv, &sock);
-		}
-
-		if (unknown_option != 0) {
-			usage();
-		}
-
 		memset((char *)&whereto, 0, sizeof(whereto));
 		whereto.sin_family = AF_INET;
 		if (inet_aton(target, &whereto.sin_addr) == 1) {
@@ -286,26 +305,26 @@ main(int argc, char **argv)
 			if (argc == 1)
 				options |= F_NUMERIC;
 		} else {
-			hints.ai_family = AF_INET;
-			status = getaddrinfo(target, NULL, &hints, &result);
-			if (status && !force_ipv4) {
-				hints.ai_family = AF_INET6;
+			struct addrinfo *result = NULL;
+			int status;
+
+			if (argc > 1 || !ai) {
 				status = getaddrinfo(target, NULL, &hints, &result);
-				if (!status) {
-					set_socket(&sock, sock6, sock6_errno);
-					return ping6_main(orig_argc, orig_argv, &sock);
+				if (status) {
+					fprintf(stderr, "ping: %s: %s\n", target, gai_strerror(status));
+					exit(2);
 				}
+				ai = result;
 			}
-			if (status) {
-				fprintf(stderr, "ping: %s: %s\n", target, gai_strerror(status));
-				exit(2);
-			}
-			memcpy(&whereto, result->ai_addr, sizeof whereto);
+
+			memcpy(&whereto, ai->ai_addr, sizeof whereto);
 			memset(hnamebuf, 0, sizeof hnamebuf);
-			if (result->ai_canonname)
-				strncpy(hnamebuf, result->ai_canonname, sizeof hnamebuf - 1);
-			freeaddrinfo(result);
+			if (ai->ai_canonname)
+				strncpy(hnamebuf, ai->ai_canonname, sizeof hnamebuf - 1);
 			hostname = hnamebuf;
+
+			if (result)
+				freeaddrinfo(result);
 		}
 		if (argc > 1)
 			route[nroute++] = whereto.sin_addr.s_addr;

@@ -145,7 +145,8 @@ __u32 tclass;
 struct cmsghdr *srcrt;
 #endif
 
-struct sockaddr_in6 whereto;	/* who to ping */
+static struct sockaddr_in6 whereto;
+static struct sockaddr_in6 firsthop;
 
 static unsigned char cmsgbuf[4096];
 static int cmsglen = 0;
@@ -690,18 +691,7 @@ static int hextoui(const char *str)
 
 int ping6_main(int argc, char *argv[], socket_st *sock)
 {
-	int ch, hold, packlen;
-	unsigned char *packet;
-	char *target;
-	struct addrinfo hints, *result;
-	int status;
-	struct sockaddr_in6 firsthop;
-	struct icmp6_filter filter;
-	int err;
-#ifdef __linux__
-	int csum_offset, sz_opt;
-#endif
-	static uint32_t scope_id = 0;
+	int ch;
 
 	source.sin6_family = AF_INET6;
 	memset(&firsthop, 0, sizeof(firsthop));
@@ -792,6 +782,21 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 	argc -= optind;
 	argv += optind;
 
+	return ping6_run(argc, argv, NULL, sock);
+}
+
+int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock)
+{
+	static const struct addrinfo hints = { .ai_family = AF_INET6, .ai_flags = getaddrinfo_flags };
+	struct addrinfo *result = NULL;
+	int status;
+	int hold, packlen;
+	unsigned char *packet;
+	char *target;
+	struct icmp6_filter filter;
+	int err;
+	static uint32_t scope_id = 0;
+
 #ifdef ENABLE_PING6_RTHDR
 	while (argc > 1) {
 		struct in6_addr *addr;
@@ -838,9 +843,6 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 
 		target = *argv;
 
-		memset(&hints, 0, sizeof(hints));
-		hints.ai_family = AF_INET6;
-		hints.ai_flags = getaddrinfo_flags
 		status = getaddrinfo(target, NULL, &hints, &result);
 		if (status) {
 			fprintf(stderr, "ping6: %s: %s\n", target, gai_strerror(status));
@@ -895,20 +897,20 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 		target = ni_group;
 	}
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET6;
-#ifdef USE_IDN
-	hints.ai_flags = AI_IDN | AI_CANONIDN;
-#endif
-	status = getaddrinfo(target, NULL, &hints, &result);
-	if (status) {
-		fprintf(stderr, "ping6: %s: %s\n", target, gai_strerror(status));
-		exit(2);
+	if (!ai) {
+		status = getaddrinfo(target, NULL, &hints, &result);
+		if (status) {
+			fprintf(stderr, "ping6: %s: %s\n", target, gai_strerror(status));
+			exit(2);
+		}
+		ai = result;
 	}
 
-	memcpy(&whereto, result->ai_addr, sizeof(whereto));
+	memcpy(&whereto, ai->ai_addr, sizeof(whereto));
 	whereto.sin6_port = htons(IPPROTO_ICMPV6);
-	freeaddrinfo(result);
+
+	if (result)
+		freeaddrinfo(result);
 
 	if (memchr(target, ':', strlen(target)))
 		options |= F_NUMERIC;
@@ -1081,8 +1083,8 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 
 #ifdef __linux__
 	if (!sock->using_ping_socket) {
-		csum_offset = 2;
-		sz_opt = sizeof(int);
+		int csum_offset = 2;
+		int sz_opt = sizeof(int);
 
 		err = setsockopt(sock->fd, SOL_RAW, IPV6_CHECKSUM, &csum_offset, sz_opt);
 		if (err < 0) {
