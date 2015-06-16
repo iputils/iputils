@@ -27,6 +27,10 @@
 #ifdef USE_IDN
 #include <locale.h>
 #include <idna.h>
+#include <stringprep.h>
+#define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
+#else
+#define getaddrinfo_flags (AI_CANONNAME)
 #endif
 
 #include <netinet/in.h>
@@ -275,6 +279,7 @@ typedef struct socket_st {
 
 int is_ours(socket_st *sock, uint16_t id);
 
+int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock);
 int ping4_send_probe(socket_st *, void *packet, unsigned packet_size);
 int ping4_receive_error_msg(socket_st *);
 int ping4_parse_reply(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);

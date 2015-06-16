@@ -2,6 +2,7 @@
 # define PING6_COMMON_H
 
 int ping6_main(int argc, char *argv[], socket_st *sockets);
+int ping6_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock);
 void ping6_usage(unsigned from_ping);
 
 int ping6_send_probe(socket_st *sockets, void *packet, unsigned packet_size);

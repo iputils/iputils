@@ -249,6 +249,10 @@
 #ifdef USE_IDN
 #include <idna.h>
 #include <locale.h>
+
+#define getnameinfo_flags	NI_IDN
+#else
+#define getnameinfo_flags	0
 #endif
 
 #include <arpa/inet.h>
@@ -267,7 +271,6 @@
 #endif
 
 #define	MAXPACKET	65535
-#define MAX_HOSTNAMELEN	NI_MAXHOST
 
 #ifndef FD_SET
 #define NFDBITS         (8*sizeof(fd_set))
@@ -328,10 +331,12 @@ int datalen = sizeof(struct pkt_format);
 
 int main(int argc, char *argv[])
 {
-	char pa[MAX_HOSTNAMELEN];
+	char pa[NI_MAXHOST];
 	extern char *optarg;
 	extern int optind;
-	struct hostent *hp;
+	struct addrinfo hints6 = { .ai_family = AF_INET6, .ai_socktype = SOCK_RAW, .ai_flags = AI_CANONNAME };
+	struct addrinfo *result;
+	int status;
 	struct sockaddr_in6 from, *to;
 	int ch, i, on, probe, seq, tos, ttl;
 	int socket_errno;
@@ -448,15 +453,16 @@ int main(int argc, char *argv[])
 		if (idna_to_ascii_lz(*argv, &idn, 0) != IDNA_SUCCESS)
 			idn = NULL;
 #endif
-		hp = gethostbyname2(idn ? idn : *argv, AF_INET6);
-		if (hp) {
-			memmove((caddr_t)&to->sin6_addr, hp->h_addr, sizeof(to->sin6_addr));
-			hostname = (char *)hp->h_name;
-		} else {
+		status = getaddrinfo(idn ? idn : *argv, NULL, &hints6, &result);
+		if (status) {
 			(void)fprintf(stderr,
-			    "traceroute: unknown host %s\n", *argv);
+			    "traceroute: %s: %s\n", *argv, gai_strerror(status));
 			exit(1);
 		}
+
+		memcpy(to, result->ai_addr, sizeof *to);
+		hostname = result->ai_canonname;
+		freeaddrinfo(result);
 	}
 	firsthop = *to;
 	if (*++argv) {
@@ -859,8 +865,8 @@ int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 
 	if (verbose) {
 		unsigned char *p;
-		char pa1[MAX_HOSTNAMELEN];
-		char pa2[MAX_HOSTNAMELEN];
+		char pa1[NI_MAXHOST];
+		char pa2[NI_MAXHOST];
 		int i;
 
 		p = (unsigned char *) (icp + 1);
@@ -891,30 +897,17 @@ int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 
 void print(unsigned char *buf, int cc, struct sockaddr_in6 *from)
 {
-	char pa[MAX_HOSTNAMELEN];
+	char pa[NI_MAXHOST] = "";
+	char hnamebuf[NI_MAXHOST] = "";
 
 	if (nflag)
 		Printf(" %s", inet_ntop(AF_INET6, &from->sin6_addr,
 					pa, sizeof(pa)));
-	else
-	{
-		const char *hostname;
-		struct hostent *hp;
-		char *s = NULL;
+	else {
+		inet_ntop(AF_INET6, &from->sin6_addr, pa, sizeof(pa));
+		getnameinfo((struct sockaddr *) from, sizeof *from, hnamebuf, sizeof hnamebuf, NULL, 0, getnameinfo_flags);
 
-		hostname = inet_ntop(AF_INET6, &from->sin6_addr, pa, sizeof(pa));
-
-		if ((hp = gethostbyaddr((char *)&from->sin6_addr,
-					sizeof(from->sin6_addr), AF_INET6))) {
-#ifdef USE_IDN
-			if (idna_to_unicode_lzlz(hp->h_name, &s, 0) != IDNA_SUCCESS)
-				s = NULL;
-#endif
-		}
-
-		Printf(" %s (%s)", hp ? (s ? s : hp->h_name) : hostname, pa);
-
-		free(s);
+		Printf(" %s (%s)", hnamebuf[0] ? hnamebuf : pa, pa);
 	}
 }
 
