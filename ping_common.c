@@ -38,9 +38,6 @@ jmp_buf pr_addr_jmp;
  * confirm_flag fixes refusing service of kernels without MSG_CONFIRM.
  * i.e. for linux-2.2 */
 int confirm_flag = MSG_CONFIRM;
-/* And this is workaround for bug in IP_RECVERR on raw sockets which is present
- * in linux-2.2.[0-19], linux-2.4.[0-7] */
-int working_recverr;
 
 /* timing */
 int timing;			/* flag to do timing */
@@ -532,7 +529,7 @@ void setup(socket_st *sock)
 			*p++ = i;
 	}
 
-	if (!sock->using_ping_socket)
+	if (sock->socktype == SOCK_RAW)
 		ident = htons(getpid() & 0xFFFF);
 
 	set_signal(SIGINT, sigexit);
@@ -692,7 +689,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 			}
 
 			/* See? ... someone runs another ping on this host. */
-			if (not_ours && !sock->using_ping_socket)
+			if (not_ours && sock->socktype == SOCK_RAW)
 				fset->install_filter(sock);
 
 			/* If nothing is in flight, "break" returns us to pinger. */
@@ -929,5 +926,5 @@ void status(void)
 }
 
 inline int is_ours(socket_st *sock, uint16_t id) {
-       return sock->using_ping_socket || id == ident;
+       return sock->socktype == SOCK_DGRAM || id == ident;
 }

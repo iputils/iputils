@@ -161,7 +161,6 @@ extern volatile int exiting;
 extern volatile int status_snapshot;
 extern int confirm;
 extern int confirm_flag;
-extern int working_recverr;
 
 extern volatile int in_pr_addr;		/* pr_addr() is executing */
 extern jmp_buf pr_addr_jmp;
@@ -278,13 +277,15 @@ extern void drop_capabilities(void);
 
 typedef struct socket_st {
 	int fd;
-	int sock_errno;
-	int using_ping_socket;
+	int socktype;
+	/* And this is workaround for bug in IP_RECVERR on raw sockets which is present
+	 * in linux-2.2.[0-19], linux-2.4.[0-7] */
+	int working_recverr;
 } socket_st;
 
 int is_ours(socket_st *sock, uint16_t id);
 
-int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock);
+int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock);
 int ping4_send_probe(socket_st *, void *packet, unsigned packet_size);
 int ping4_receive_error_msg(socket_st *);
 int ping4_parse_reply(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);

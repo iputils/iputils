@@ -848,12 +848,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			    IN6_IS_ADDR_MC_LINKLOCAL(&source6.sin6_addr)))
 		source6.sin6_scope_id = if_name2index(device);
 
-	if (sock->fd < 0) {
-		errno = sock->sock_errno;
-		perror("ping: icmp open socket");
-		exit(2);
-	}
-
 	if (device) {
 		struct cmsghdr *cmsg;
 		struct in6_pktinfo *ipi;
@@ -907,11 +901,11 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		exit(2);
 	}
 
-	working_recverr = 1;
+	sock->working_recverr = 1;
 	hold = 1;
 	if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_RECVERR, &hold, sizeof hold)) {
 		fprintf(stderr, "WARNING: your kernel is veeery old. No problems.\n");
-		working_recverr = 0;
+		sock->working_recverr = 0;
 	}
 
 	/* Estimate memory eaten by single packet. It is rough estimate.
@@ -921,7 +915,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	sock_setbufs(sock, hold);
 
 #ifdef __linux__
-	if (!sock->using_ping_socket) {
+	if (sock->socktype == SOCK_RAW) {
 		int csum_offset = 2;
 		int sz_opt = sizeof(int);
 
@@ -940,7 +934,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 		ICMP6_FILTER_SETBLOCKALL(&filter);
 
-		if (!working_recverr) {
+		if (!sock->working_recverr) {
 			ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
 			ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
 			ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
@@ -1468,7 +1462,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 			    !is_ours(sock, icmph1->icmp6_id))
 				return 1;
 			acknowledge(ntohs(icmph1->icmp6_seq));
-			if (working_recverr)
+			if (sock->working_recverr)
 				return 0;
 			nerrors++;
 			if (options & F_FLOOD) {

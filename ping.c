@@ -111,6 +111,42 @@ static struct sockaddr_in source = { .sin_family = AF_INET };
 static char *device;
 static int pmtudisc = -1;
 
+static void create_socket(socket_st *sock, int family, int socktype, int protocol)
+{
+	errno = 0;
+
+	sock->fd = socket(family, socktype, protocol);
+
+	/* Fallback to raw socket when ping socket failed */
+	if (sock->fd == -1 && socktype == SOCK_DGRAM) {
+		if (options & F_VERBOSE)
+			fprintf(stderr, "ping: socket: %s, attempting raw socket...\n", strerror(errno));
+		create_socket(sock, family, SOCK_RAW, protocol);
+		return;
+	}
+
+	if (sock->fd == -1) {
+		if (socktype == SOCK_RAW)
+			fprintf(stderr, "ping: socket: %s (raw socket required by specified options).\n", strerror(errno));
+		else
+			fprintf(stderr, "ping: socket: %s\n", strerror(errno));
+		exit(2);
+	}
+
+	sock->socktype = socktype;
+}
+
+static void set_socket_option(socket_st *sock, int level, int optname, const void *optval, socklen_t optlen)
+{
+	if (sock->fd == -1)
+		return;
+
+	if (setsockopt(sock->fd, level, optname, optval, optlen) == -1) {
+		fprintf(stderr, "ping: setsockopt: %s\n", strerror(errno));
+		exit(2);
+	}
+}
+
 int
 main(int argc, char **argv)
 {
@@ -118,8 +154,8 @@ main(int argc, char **argv)
 	struct addrinfo *result, *ai;
 	int status;
 	int ch;
-	socket_st sock4 = { 0 };
-	socket_st sock6 = { 0 };
+	socket_st sock4 = { .fd = -1 };
+	socket_st sock6 = { .fd = -1 };
 	char *target;
 
 	limit_capabilities();
@@ -127,24 +163,6 @@ main(int argc, char **argv)
 #ifdef USE_IDN
 	setlocale(LC_ALL, "");
 #endif
-
-	enable_capability_raw();
-
-	sock4.fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-	sock4.sock_errno = errno;
-
-	sock6.fd = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
-	sock6.sock_errno = errno;
-
-	disable_capability_raw();
-
-	if (sock4.fd < 0 && sock6.fd < 0) {
-		sock4.fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
-		sock4.using_ping_socket = 1;
-
-		sock6.fd = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
-		sock6.using_ping_socket = 1;
-	}
 
 	/* Support being called using `ping4` or `ping6` symlinks */
 	if (argv[0][strlen(argv[0])-1] == '4')
@@ -422,15 +440,19 @@ main(int argc, char **argv)
 
 	target = argv[argc-1];
 
+	/* Create sockets */
+	enable_capability_raw();
+	if (hints.ai_family != AF_INET6)
+		create_socket(&sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP);
+	if (hints.ai_family != AF_INET)
+		create_socket(&sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6);
+	disable_capability_raw();
+
 	/* Set socket options */
-	if (settos && (setsockopt(sock4.fd, IPPROTO_IP, IP_TOS, &settos, sizeof settos) == -1)) {
-		perror("ping: error setting QOS socket option");
-		exit(2);
-	}
-	if (tclass && setsockopt(sock6.fd, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass) == -1) {
-		perror("ping: error setting traffic class socket option");
-		exit(2);
-	}
+	if (settos)
+		set_socket_option(&sock4, IPPROTO_IP, IP_TOS, &settos, sizeof settos);
+	if (tclass)
+		set_socket_option(&sock6, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass);
 
 	status = getaddrinfo(target, NULL, &hints, &result);
 	if (status) {
@@ -441,7 +463,7 @@ main(int argc, char **argv)
 	for (ai = result; ai; ai = ai->ai_next) {
 		switch (ai->ai_family) {
 		case AF_INET:
-			status = ping4_run(argc, argv, ai, sock4);
+			status = ping4_run(argc, argv, ai, &sock4);
 			break;
 		case AF_INET6:
 			status = ping6_run(argc, argv, ai, &sock6);
@@ -460,7 +482,7 @@ main(int argc, char **argv)
 	return status;
 }
 
-int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
+int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 {
 	static const struct addrinfo hints = { .ai_family = AF_INET, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
 	int hold, packlen;
@@ -624,18 +646,12 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 	if (whereto.sin_addr.s_addr == 0)
 		whereto.sin_addr.s_addr = source.sin_addr.s_addr;
 
-	if (sock.fd < 0) {
-		errno = sock.sock_errno;
-		perror("ping: icmp open socket");
-		exit(2);
-	}
-
 	if (device) {
 		struct ifreq ifr;
 
 		memset(&ifr, 0, sizeof(ifr));
 		strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
-		if (ioctl(sock.fd, SIOCGIFINDEX, &ifr) < 0) {
+		if (ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0) {
 			fprintf(stderr, "ping: unknown iface %s\n", device);
 			exit(2);
 		}
@@ -659,19 +675,19 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 	}
 
 	if (pmtudisc >= 0) {
-		if (setsockopt(sock.fd, SOL_IP, IP_MTU_DISCOVER, &pmtudisc, sizeof(pmtudisc)) == -1) {
+		if (setsockopt(sock->fd, SOL_IP, IP_MTU_DISCOVER, &pmtudisc, sizeof pmtudisc) == -1) {
 			perror("ping: IP_MTU_DISCOVER");
 			exit(2);
 		}
 	}
 
 	if ((options&F_STRICTSOURCE) &&
-	    bind(sock.fd, (struct sockaddr*)&source, sizeof(source)) == -1) {
+	    bind(sock->fd, (struct sockaddr *) &source, sizeof source) == -1) {
 		perror("bind");
 		exit(2);
 	}
 
-	if (!sock.using_ping_socket) {
+	if (sock->socktype == SOCK_RAW) {
 		struct icmp_filter filt;
 		filt.data = ~((1<<ICMP_SOURCE_QUENCH)|
 			      (1<<ICMP_DEST_UNREACH)|
@@ -679,20 +695,18 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 			      (1<<ICMP_PARAMETERPROB)|
 			      (1<<ICMP_REDIRECT)|
 			      (1<<ICMP_ECHOREPLY));
-		if (setsockopt(sock.fd, SOL_RAW, ICMP_FILTER, (char*)&filt, sizeof(filt)) == -1)
+		if (setsockopt(sock->fd, SOL_RAW, ICMP_FILTER, &filt, sizeof filt) == -1)
 			perror("WARNING: setsockopt(ICMP_FILTER)");
 	}
 
 	hold = 1;
-	if (setsockopt(sock.fd, SOL_IP, IP_RECVERR, (char *)&hold, sizeof(hold)))
+	if (setsockopt(sock->fd, SOL_IP, IP_RECVERR, &hold, sizeof hold))
 		fprintf(stderr, "WARNING: your kernel is veeery old. No problems.\n");
 
-	if (sock.using_ping_socket) {
-		if (setsockopt(sock.fd, SOL_IP, IP_RECVTTL,
-			       (char *)&hold, sizeof(hold)))
+	if (sock->socktype == SOCK_DGRAM) {
+		if (setsockopt(sock->fd, SOL_IP, IP_RECVTTL, &hold, sizeof hold))
 			perror("WARNING: setsockopt(IP_RECVTTL)");
-		if (setsockopt(sock.fd, SOL_IP, IP_RETOPTS,
-			       (char *)&hold, sizeof(hold)))
+		if (setsockopt(sock->fd, SOL_IP, IP_RETOPTS, &hold, sizeof hold))
 			perror("WARNING: setsockopt(IP_RETOPTS)");
 	}
 
@@ -704,7 +718,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 		rspace[1+IPOPT_OLEN] = sizeof(rspace)-1;
 		rspace[1+IPOPT_OFFSET] = IPOPT_MINOFF;
 		optlen = 40;
-		if (setsockopt(sock.fd, IPPROTO_IP, IP_OPTIONS, rspace, sizeof(rspace)) < 0) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, sizeof rspace) < 0) {
 			perror("ping: record route");
 			exit(2);
 		}
@@ -721,9 +735,9 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 			for (i=0; i<nroute; i++)
 				*(__u32*)&rspace[4+i*8] = route[i];
 		}
-		if (setsockopt(sock.fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0) {
 			rspace[3] = 2;
-			if (setsockopt(sock.fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0) {
+			if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0) {
 				perror("ping: ts option");
 				exit(2);
 			}
@@ -741,7 +755,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 		for (i=0; i<nroute; i++)
 			*(__u32*)&rspace[4+i*4] = route[i];
 
-		if (setsockopt(sock.fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + nroute*4) < 0) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + nroute*4) < 0) {
 			perror("ping: record route");
 			exit(2);
 		}
@@ -752,11 +766,10 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 	 * Actually, for small datalen's it depends on kernel side a lot. */
 	hold = datalen + 8;
 	hold += ((hold+511)/512)*(optlen + 20 + 16 + 64 + 160);
-	sock_setbufs(&sock, hold);
+	sock_setbufs(sock, hold);
 
 	if (broadcast_pings) {
-		if (setsockopt(sock.fd, SOL_SOCKET, SO_BROADCAST,
-			       &broadcast_pings, sizeof(broadcast_pings)) < 0) {
+		if (setsockopt(sock->fd, SOL_SOCKET, SO_BROADCAST, &broadcast_pings, sizeof broadcast_pings) < 0) {
 			perror ("ping: can't set broadcasting");
 			exit(2);
 		}
@@ -764,21 +777,18 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 
 	if (options & F_NOLOOP) {
 		int loop = 0;
-		if (setsockopt(sock.fd, IPPROTO_IP, IP_MULTICAST_LOOP,
-							&loop, 1) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, 1) == -1) {
 			perror ("ping: can't disable multicast loopback");
 			exit(2);
 		}
 	}
 	if (options & F_TTL) {
 		int ittl = ttl;
-		if (setsockopt(sock.fd, IPPROTO_IP, IP_MULTICAST_TTL,
-							&ttl, 1) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, 1) == -1) {
 			perror ("ping: can't set multicast time-to-live");
 			exit(2);
 		}
-		if (setsockopt(sock.fd, IPPROTO_IP, IP_TTL,
-							&ittl, sizeof(ittl)) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_TTL, &ittl, sizeof ittl) == -1) {
 			perror ("ping: can't set unicast time-to-live");
 			exit(2);
 		}
@@ -806,9 +816,9 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st sock)
 		printf("from %s %s: ", inet_ntoa(source.sin_addr), device ?: "");
 	printf("%d(%d) bytes of data.\n", datalen, datalen+8+optlen+20);
 
-	setup(&sock);
+	setup(sock);
 
-	main_loop(&ping4_func_set, &sock, packet, packlen);
+	main_loop(&ping4_func_set, sock, packet, packlen);
 }
 
 
@@ -875,9 +885,9 @@ int ping4_receive_error_msg(socket_st *sock)
 
 		acknowledge(ntohs(icmph.un.echo.sequence));
 
-		if (!sock->using_ping_socket && !working_recverr) {
+		if (sock->socktype == SOCK_RAW && !sock->working_recverr) {
 			struct icmp_filter filt;
-			working_recverr = 1;
+			sock->working_recverr = 1;
 			/* OK, it works. Add stronger filter. */
 			filt.data = ~((1<<ICMP_SOURCE_QUENCH)|  
 					(1<<ICMP_REDIRECT)|
@@ -985,7 +995,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 
 	/* Check the IP header */
 	ip = (struct iphdr *)buf;
-	if (!sock->using_ping_socket) {
+	if (sock->socktype == SOCK_RAW) {
 		hlen = ip->ihl*4;
 		if (cc < hlen + 8 || ip->ihl < 5) {
 			if (options & F_VERBOSE)
