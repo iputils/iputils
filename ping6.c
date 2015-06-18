@@ -24,8 +24,7 @@
  * SUCH DAMAGE.
  */
 
-#include "ping_common.h"
-#include "ping6_common.h"
+#include "ping.h"
 
 int main(int argc, char *argv[])
 {

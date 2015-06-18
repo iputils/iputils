@@ -18,6 +18,16 @@
 #include <string.h>
 #include <netdb.h>
 #include <setjmp.h>
+#include <netinet/icmp6.h>
+#include <asm/byteorder.h>
+#include <sched.h>
+#include <math.h>
+#include <netinet/ip.h>
+#include <netinet/ip6.h>
+#include <netinet/ip_icmp.h>
+#include <netinet/icmp6.h>
+#include <linux/filter.h>
+#include <resolv.h>
 
 #ifdef CAPABILITIES
 #include <sys/prctl.h>
@@ -33,11 +43,16 @@
 #define getaddrinfo_flags (AI_CANONNAME)
 #endif
 
+#ifndef WITHOUT_IFADDRS
+#include <ifaddrs.h>
+#endif
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <linux/types.h>
 #include <linux/errqueue.h>
 
+#include "in6_flowlabel.h"
 #include "SNAPSHOT.h"
 
 #define	DEFDATALEN	(64 - 8)	/* default data length */
@@ -307,3 +322,73 @@ extern int gather_statistics(__u8 *ptr, int icmplen,
 			     int csfailed, struct timeval *tv, char *from,
 			     void (*pr_reply)(__u8 *ptr, int cc));
 extern void print_timestamp(void);
+
+/* IPv6 */
+
+int ping6_main(int argc, char *argv[], socket_st *sockets);
+int ping6_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock);
+void ping6_usage(unsigned from_ping);
+
+int ping6_send_probe(socket_st *sockets, void *packet, unsigned packet_size);
+int ping6_receive_error_msg(socket_st *sockets);
+int ping6_parse_reply(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+void ping6_install_filter(socket_st *sockets);
+
+extern ping_func_set_st ping6_func_set;
+
+int niquery_option_handler(const char *opt_arg);
+int hextoui(const char *str);
+
+extern __u32 tclass;
+extern __u32 flowlabel;
+extern struct sockaddr_in6 source6;
+extern struct sockaddr_in6 whereto6;
+extern struct sockaddr_in6 firsthop6;
+
+/* IPv6 node information query */
+
+#define NI_NONCE_SIZE			8
+
+struct ni_hdr {
+	struct icmp6_hdr		ni_u;
+	__u8				ni_nonce[NI_NONCE_SIZE];
+};
+
+#define ni_type		ni_u.icmp6_type
+#define ni_code		ni_u.icmp6_code
+#define ni_cksum	ni_u.icmp6_cksum
+#define ni_qtype	ni_u.icmp6_data16[0]
+#define ni_flags	ni_u.icmp6_data16[1]
+
+/* Types */
+#ifndef ICMPV6_NI_QUERY
+# define ICMPV6_NI_QUERY		139
+# define ICMPV6_NI_REPLY		140
+#endif
+
+/* Query Codes */
+#define NI_SUBJ_IPV6			0
+#define NI_SUBJ_NAME			1
+#define NI_SUBJ_IPV4			2
+
+/* Reply Codes */
+#define NI_SUCCESS			0
+#define NI_REFUSED			1
+#define NI_UNKNOWN			2
+
+/* Qtypes */
+#define NI_QTYPE_NOOP			0
+#define NI_QTYPE_NAME			2
+#define NI_QTYPE_IPV6ADDR		3
+#define NI_QTYPE_IPV4ADDR		4
+
+/* Flags */
+#define NI_IPV6ADDR_F_TRUNCATE		__constant_cpu_to_be16(0x0001)
+#define NI_IPV6ADDR_F_ALL		__constant_cpu_to_be16(0x0002)
+#define NI_IPV6ADDR_F_COMPAT		__constant_cpu_to_be16(0x0004)
+#define NI_IPV6ADDR_F_LINKLOCAL		__constant_cpu_to_be16(0x0008)
+#define NI_IPV6ADDR_F_SITELOCAL		__constant_cpu_to_be16(0x0010)
+#define NI_IPV6ADDR_F_GLOBAL		__constant_cpu_to_be16(0x0020)
+
+#define NI_IPV4ADDR_F_TRUNCATE		NI_IPV6ADDR_F_TRUNCATE
+#define NI_IPV4ADDR_F_ALL		NI_IPV6ADDR_F_ALL

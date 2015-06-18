@@ -162,8 +162,8 @@ LIB_ping6 = $(LIB_CAP) $(LIB_IDN) $(LIB_RESOLV) $(LIB_CRYPTO)
 
 ping: ping_common.o ping6_common.o
 ping6: ping6_common.o ping_common.o
-ping.o ping_common.o ping6_common.o: ping_common.h in6_flowlabel.h ping6_common.h
-ping6.o ping6_common.o: ping_common.h in6_flowlabel.h ping6_common.h
+ping.o ping_common.o ping6_common.o: ping.h in6_flowlabel.h
+ping6.o ping6_common.o: ping.h in6_flowlabel.h
 
 # rarpd
 DEF_rarpd =

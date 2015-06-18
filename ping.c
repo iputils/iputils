@@ -53,15 +53,13 @@
  *	net_cap_raw enabled.
  */
 
-#include "ping_common.h"
+#include "ping.h"
 
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #ifndef WITHOUT_IFADDRS
 #include <ifaddrs.h>
 #endif
-
-#include "ping6_common.h"
 
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
@@ -1365,8 +1363,6 @@ int parsetos(char *str)
 	}
 	return(tos);
 }
-
-#include <linux/filter.h>
 
 void ping4_install_filter(socket_st *sock)
 {
