@@ -113,7 +113,7 @@ static char * pr_addr_n(struct in6_addr *addr);
 static int pr_icmph(__u8 type, __u8 code, __u32 info);
 void ping6_usage(unsigned) __attribute((noreturn));
 
-struct sockaddr_in6 source;
+struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
 char *device;
 int pmtudisc=-1;
 
@@ -650,8 +650,6 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 {
 	int ch;
 
-	source.sin6_family = AF_INET6;
-	memset(&firsthop, 0, sizeof(firsthop));
 	firsthop.sin6_family = AF_INET6;
 
 	preload = 1;
@@ -691,7 +689,7 @@ int ping6_main(int argc, char *argv[], socket_st *sock)
 					device = optarg + (p - addr) + 1;
 				}
 
-				if (inet_pton(AF_INET6, addr, (char*)&source.sin6_addr) <= 0) {
+				if (inet_pton(AF_INET6, addr, &source6.sin6_addr) <= 0) {
 					fprintf(stderr, "ping: invalid source address %s\n", optarg);
 					exit(2);
 				}
@@ -884,7 +882,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	hostname = target;
 
-	if (IN6_IS_ADDR_UNSPECIFIED(&source.sin6_addr)) {
+	if (IN6_IS_ADDR_UNSPECIFIED(&source6.sin6_addr)) {
 		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
@@ -920,12 +918,12 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			perror("connect");
 			exit(2);
 		}
-		alen = sizeof(source);
-		if (getsockname(probe_fd, (struct sockaddr*)&source, &alen) == -1) {
+		alen = sizeof source6;
+		if (getsockname(probe_fd, (struct sockaddr *) &source6, &alen) == -1) {
 			perror("getsockname");
 			exit(2);
 		}
-		source.sin6_port = 0;
+		source6.sin6_port = 0;
 		close(probe_fd);
 
 #ifndef WITHOUT_IFADDRS
@@ -942,7 +940,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 					continue;
 				if (!strncmp(ifa->ifa_name, device, sizeof(device) - 1) &&
 				    IN6_ARE_ADDR_EQUAL(&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr,
-						       &source.sin6_addr))
+						       &source6.sin6_addr))
 					break;
 			}
 			if (!ifa)
@@ -952,9 +950,9 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		}
 #endif
 	}
-	else if (device && (IN6_IS_ADDR_LINKLOCAL(&source.sin6_addr) ||
-			    IN6_IS_ADDR_MC_LINKLOCAL(&source.sin6_addr)))
-		source.sin6_scope_id = if_name2index(device);
+	else if (device && (IN6_IS_ADDR_LINKLOCAL(&source6.sin6_addr) ||
+			    IN6_IS_ADDR_MC_LINKLOCAL(&source6.sin6_addr)))
+		source6.sin6_scope_id = if_name2index(device);
 
 	if (sock->fd < 0) {
 		errno = sock->sock_errno;
@@ -1000,7 +998,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	}
 
 	if ((options&F_STRICTSOURCE) &&
-	    bind(sock->fd, (struct sockaddr*)&source, sizeof(source)) == -1) {
+	    bind(sock->fd, (struct sockaddr *) &source6, sizeof source6) == -1) {
 		perror("ping: bind icmp socket");
 		exit(2);
 	}
@@ -1162,7 +1160,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		printf(", flow 0x%05x, ", (unsigned)ntohl(flowlabel));
 	if (device || (options&F_STRICTSOURCE)) {
 		printf("from %s %s: ",
-		       pr_addr_n(&source.sin6_addr), device ? : "");
+		       pr_addr_n(&source6.sin6_addr), device ? : "");
 	}
 	printf("%d data bytes\n", datalen);
 
