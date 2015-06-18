@@ -61,19 +61,7 @@
  *	if -N option is used, this program has to run SUID to ROOT or
  *	with net_cap_raw enabled.
  */
-#include "ping_common.h"
-
-#include <linux/filter.h>
-#include <netinet/ip6.h>
-#include <netinet/icmp6.h>
-#include <resolv.h>
-#ifndef WITHOUT_IFADDRS
-#include <ifaddrs.h>
-#endif
-
-#include "ping6_common.h"
-#include "ping6_niquery.h"
-#include "in6_flowlabel.h"
+#include "ping.h"
 
 #if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
 #ifndef IPV6_SRCRT_TYPE_0
@@ -625,7 +613,7 @@ int niquery_option_handler(const char *opt_arg)
 	return ret;
 }
 
-static int hextoui(const char *str)
+int hextoui(const char *str)
 {
 	unsigned long val;
 	char *ep;
@@ -1679,8 +1667,6 @@ int pr_icmph(__u8 type, __u8 code, __u32 info)
 	}
 	return 0;
 }
-
-#include <linux/filter.h>
 
 void ping6_install_filter(socket_st *sock)
 {

@@ -1,7 +1,4 @@
-#include "ping_common.h"
-#include <ctype.h>
-#include <sched.h>
-#include <math.h>
+#include "ping.h"
 
 #ifndef HZ
 #define HZ sysconf(_SC_CLK_TCK)
