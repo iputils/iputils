@@ -11,6 +11,7 @@ LDFLAG_STATIC=-Wl,-Bstatic
 LDFLAG_DYNAMIC=-Wl,-Bdynamic
 LDFLAG_CAP=-lcap
 LDFLAG_GCRYPT=-lgcrypt
+LDFLAG_NETTLE=-lnettle
 LDFLAG_CRYPTO=-lcrypto
 LDFLAG_IDN=-lidn
 LDFLAG_RESOLV=-lresolv
@@ -33,8 +34,10 @@ WITHOUT_IFADDRS=no
 # arping default device (e.g. eth0) []
 ARPING_DEFAULT_DEVICE=
 
-# GNU TLS library for ping6 [yes|no|static]
-USE_GCRYPT=yes
+# nettle library for ipv6 ping [yes|no|static]
+USE_NETTLE=yes
+# libgcrypt library for ipv6 ping [no|yes|static]
+USE_GCRYPT=no
 # Crypto library for ping6 [shared|static|no]
 USE_CRYPTO=shared
 # Resolv library for ping6 [yes|static]
@@ -61,9 +64,14 @@ ifneq ($(USE_GCRYPT),no)
 	LIB_CRYPTO = $(call FUNC_LIB,$(USE_GCRYPT),$(LDFLAG_GCRYPT))
 	DEF_CRYPTO = -DUSE_GCRYPT
 else
+ifneq ($(USE_NETTLE),no)
+	LIB_CRYPTO = $(call FUNC_LIB,$(USE_NETTLE),$(LDFLAG_NETTLE))
+	DEF_CRYPTO = -DUSE_NETTLE
+else
 ifneq ($(USE_CRYPTO),no)
 	LIB_CRYPTO = $(call FUNC_LIB,$(USE_CRYPTO),$(LDFLAG_CRYPTO))
 	DEF_CRYPTO = -DUSE_OPENSSL
+endif
 endif
 endif
 
