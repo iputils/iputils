@@ -325,7 +325,6 @@ extern void print_timestamp(void);
 
 /* IPv6 */
 
-int ping6_main(int argc, char *argv[], socket_st *sockets);
 int ping6_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock);
 void ping6_usage(unsigned from_ping);
 

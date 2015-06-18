@@ -114,17 +114,14 @@ static int pmtudisc = -1;
 int
 main(int argc, char **argv)
 {
-	static const struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
+	struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
 	struct addrinfo *result, *ai;
 	int status;
 	int ch;
 	socket_st sock4 = { 0 };
 	socket_st sock6 = { 0 };
 	char *target;
-	int force_ipv4 = 0;
 	unsigned unknown_option = 0;
-	int orig_argc = argc;
-	char **orig_argv = argv;
 
 	limit_capabilities();
 
@@ -145,34 +142,51 @@ main(int argc, char **argv)
 	if (sock4.fd < 0 && sock6.fd < 0) {
 		sock4.fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
 		sock4.using_ping_socket = 1;
-		working_recverr = 1;
 
 		sock6.fd = socket(AF_INET6, SOCK_DGRAM, IPPROTO_ICMPV6);
+		sock6.using_ping_socket = 1;
 	}
 
 	source.sin_family = AF_INET;
 
+	/* Support being called using `ping4` or `ping6` symlinks */
+	if (argv[0][strlen(argv[0])-1] == '4')
+		hints.ai_family = AF_INET;
+	else if (argv[0][strlen(argv[0])-1] == '6')
+		hints.ai_family = AF_INET6;
+
 	preload = 1;
-	while ((ch = getopt(argc, argv, COMMON_OPTSTR "64bRT:")) != EOF) {
+	while ((ch = getopt(argc, argv, COMMON_OPTSTR "4bRT:" "6F:N:")) != EOF) {
 		switch(ch) {
-		case '6':
-			if (force_ipv4 != 0) {
-				fprintf(stderr, "Only one of -4 or -6 may be specified\n");
+		/* IPv4 specific options */
+		case '4':
+			if (hints.ai_family != AF_UNSPEC) {
+				fprintf(stderr, "ping: Only one -4 or -6 option may be specified\n");
 				exit(2);
 			}
-			return ping6_main(orig_argc, orig_argv, &sock6);
-		case '4':
-			force_ipv4 = 1;
+			hints.ai_family = AF_INET;
 			break;
 		case 'b':
 			broadcast_pings = 1;
 			break;
 		case 'Q':
+			/* IPv4 */
 			settos = parsetos(optarg);
 			if (settos &&
 			    (setsockopt(sock4.fd, IPPROTO_IP, IP_TOS,
 					(char *)&settos, sizeof(int)) < 0)) {
 				perror("ping: error setting QOS sockopts");
+				exit(2);
+			}
+			/* IPv6 */
+			tclass = hextoui(optarg);
+			if (errno || (tclass & ~0xff)) {
+				fprintf(stderr, "ping: Invalid tclass %s\n", optarg);
+				exit(2);
+			}
+			if (setsockopt(sock6.fd, IPPROTO_IPV6, IPV6_TCLASS,
+					   &tclass, sizeof(tclass)) == -1) {
+				perror ("setsockopt(IPV6_TCLASS)");
 				exit(2);
 			}
 			break;
@@ -206,6 +220,32 @@ main(int argc, char **argv)
 				options |= F_STRICTSOURCE;
 			else
 				device = optarg;
+			/* IPv6 */
+			if (strchr(optarg, ':')) {
+				char *p, *addr = strdup(optarg);
+
+				if (!addr) {
+					fprintf(stderr, "ping: out of memory\n");
+					exit(2);
+				}
+
+				p = strchr(addr, SCOPE_DELIMITER);
+				if (p) {
+					*p = '\0';
+					device = optarg + (p - addr) + 1;
+				}
+
+				if (inet_pton(AF_INET6, addr, (char*)&source6.sin6_addr) <= 0) {
+					fprintf(stderr, "ping: invalid source address %s\n", optarg);
+					exit(2);
+				}
+
+				options |= F_STRICTSOURCE;
+
+				free(addr);
+			} else {
+				device = optarg;
+			}
 			break;
 		}
 		case 'M':
@@ -223,6 +263,34 @@ main(int argc, char **argv)
 		case 'V':
 			printf("ping utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
+		/* IPv6 specific options */
+		case '6':
+			if (hints.ai_family != AF_UNSPEC) {
+				fprintf(stderr, "ping: Only one -4 or -6 option may be specified\n");
+				exit(2);
+			}
+			hints.ai_family = AF_INET6;
+			break;
+		case 'F':
+			flowlabel = hextoui(optarg);
+			if (errno || (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL)) {
+				fprintf(stderr, "ping: Invalid flowinfo %s\n", optarg);
+				exit(2);
+			}
+			options |= F_FLOWINFO;
+			break;
+		case 'N':
+			if (sock6.using_ping_socket) {
+				fprintf(stderr, "ping: -N requires raw socket permissions\n");
+				exit(2);
+			}
+
+			if (niquery_option_handler(optarg) < 0) {
+				ping6_usage(0);
+				break;
+			}
+			break;
+		/* Common options */
 		COMMON_OPTIONS
 			common_options(ch);
 			break;
@@ -231,14 +299,12 @@ main(int argc, char **argv)
 			break;
 		}
 	}
+
 	argc -= optind;
 	argv += optind;
 
 	if (!argc || unknown_option)
 		usage();
-
-	if (force_ipv4)
-		return ping4_run(argc, argv, NULL, sock4);
 
 	target = argv[argc-1];
 
