@@ -115,9 +115,7 @@ endif
 endif
 
 # -------------------------------------
-IPV4_TARGETS=tracepath ping clockdiff rdisc arping tftpd rarpd
-IPV6_TARGETS=tracepath6 traceroute6 ping6
-TARGETS=$(IPV4_TARGETS) $(IPV6_TARGETS)
+TARGETS=ping ping6 tracepath tracepath6 traceroute6 clockdiff rdisc arping tftpd rarpd
 
 LDLIBS=$(LDLIB) $(ADDLIB)
 
