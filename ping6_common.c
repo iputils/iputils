@@ -160,7 +160,7 @@ struct sockaddr_in6 source;
 char *device;
 int pmtudisc=-1;
 
-#if defined(USE_GNUTLS) || defined(USE_OPENSSL)
+#if defined(USE_GCRYPT) || defined(USE_OPENSSL) || defined(USE_NETTLE)
 #include "iputils_md5dig.h"
 #define USE_CRYPTO
 #endif
