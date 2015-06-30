@@ -13,7 +13,7 @@ int rtt;
 int rtt_addend;
 __u16 acked;
 
-static unsigned char outpack[MAXPACKET];
+unsigned char outpack[MAXPACKET];
 struct rcvd_table rcvd_tbl;
 
 /* counters */
@@ -24,7 +24,7 @@ long ntransmitted;		/* sequence # for outbound packets = #sent */
 long nchecksum;			/* replies with bad checksum */
 long nerrors;			/* icmp errors */
 int interval = 1000;		/* interval between packets (msec) */
-int preload;
+int preload = 1;
 int deadline = 0;		/* time to die */
 int lingertime = MAXWAIT*1000;
 struct timeval start_time, cur_time;
@@ -201,7 +201,7 @@ void drop_capabilities(void)
 /* Fills all the outpack, excluding ICMP header, but _including_
  * timestamp area with supplied pattern.
  */
-static void fill(char *patp, void *packet, unsigned packet_size)
+void fill(char *patp, void *packet, unsigned packet_size)
 {
 	int ii, jj, kk;
 	int pat[16];
@@ -241,154 +241,6 @@ static void fill(char *patp, void *packet, unsigned packet_size)
 	setlocale(LC_ALL, "");
 #endif
 }
-
-void common_options(int ch)
-{
-	switch(ch) {
-	case 'a':
-		options |= F_AUDIBLE;
-		break;
-	case 'A':
-		options |= F_ADAPTIVE;
-		break;
-	case 'c':
-		npackets = atoi(optarg);
-		if (npackets <= 0) {
-			fprintf(stderr, "ping: bad number of packets to transmit.\n");
-			exit(2);
-		}
-		break;
-	case 'd':
-		options |= F_SO_DEBUG;
-		break;
-	case 'D':
-		options |= F_PTIMEOFDAY;
-		break;
-	case 'i':		/* wait between sending packets */
-	{
-		double dbl;
-		char *ep;
-
-		errno = 0;
-		dbl = strtod(optarg, &ep);
-
-		if (errno || *ep != '\0' ||
-		    !finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0) {
-			fprintf(stderr, "ping: bad timing interval\n");
-			exit(2);
-		}
-
-		interval = (int)(dbl * 1000);
-
-		options |= F_INTERVAL;
-		break;
-	}
-	case 'm':
-	{
-		char *endp;
-		mark = (int)strtoul(optarg, &endp, 10);
-		if (mark < 0 || *endp != '\0') {
-			fprintf(stderr, "mark cannot be negative\n");
-			exit(2);
-		}
-		options |= F_MARK;
-		break;
-	}
-	case 'w':
-		deadline = atoi(optarg);
-		if (deadline < 0) {
-			fprintf(stderr, "ping: bad wait time.\n");
-			exit(2);
-		}
-		break;
-	case 'l':
-		preload = atoi(optarg);
-		if (preload <= 0) {
-			fprintf(stderr, "ping: bad preload value, should be 1..%d\n", MAX_DUP_CHK);
-			exit(2);
-		}
-		if (preload > MAX_DUP_CHK)
-			preload = MAX_DUP_CHK;
-		if (uid && preload > 3) {
-			fprintf(stderr, "ping: cannot set preload to value > 3\n");
-			exit(2);
-		}
-		break;
-	case 'O':
-		options |= F_OUTSTANDING;
-		break;
-	case 'S':
-		sndbuf = atoi(optarg);
-		if (sndbuf <= 0) {
-			fprintf(stderr, "ping: bad sndbuf value.\n");
-			exit(2);
-		}
-		break;
-	case 'f':
-		options |= F_FLOOD;
-		setbuf(stdout, (char *)NULL);
-		/* fallthrough to numeric - avoid gethostbyaddr during flood */
-	case 'n':
-		options |= F_NUMERIC;
-		break;
-	case 'p':		/* fill buffer with user pattern */
-		options |= F_PINGFILLED;
-		fill(optarg, outpack, sizeof(outpack));
-		break;
-	case 'q':
-		options |= F_QUIET;
-		break;
-	case 'r':
-		options |= F_SO_DONTROUTE;
-		break;
-	case 's':		/* size of packet to send */
-		datalen = atoi(optarg);
-		if (datalen < 0) {
-			fprintf(stderr, "ping: illegal negative packet size %d.\n", datalen);
-			exit(2);
-		}
-		if (datalen > MAXPACKET - 8) {
-			fprintf(stderr, "ping: packet size too large: %d\n",
-				datalen);
-			exit(2);
-		}
-		break;
-	case 'v':
-		options |= F_VERBOSE;
-		break;
-	case 'L':
-		options |= F_NOLOOP;
-		break;
-	case 't':
-		options |= F_TTL;
-		ttl = atoi(optarg);
-		if (ttl < 0 || ttl > 255) {
-			fprintf(stderr, "ping: ttl %u out of range\n", ttl);
-			exit(2);
-		}
-		break;
-	case 'U':
-		options |= F_LATENCY;
-		break;
-	case 'B':
-		options |= F_STRICTSOURCE;
-		break;
-	case 'W':
-		lingertime = atoi(optarg);
-		if (lingertime < 0 || lingertime > INT_MAX/1000000) {
-			fprintf(stderr, "ping: bad linger time.\n");
-			exit(2);
-		}
-		lingertime *= 1000;
-		break;
-	case 'V':
-		printf("ping utility, iputils-%s\n", SNAPSHOT);
-		exit(0);
-	default:
-		abort();
-	}
-}
-
 
 static void sigexit(int signo)
 {
