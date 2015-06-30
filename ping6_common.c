@@ -75,29 +75,10 @@
 #include "ping6_niquery.h"
 #include "in6_flowlabel.h"
 
-#ifndef SOL_IPV6
-#define SOL_IPV6 IPPROTO_IPV6
-#endif
-
-#ifndef SOL_ICMPV6
-#define SOL_ICMPV6 IPPROTO_ICMPV6
-#endif
-
-/* RFC3542 */
-#ifndef ICMP6_DST_UNREACH_BEYONDSCOPE
-#define ICMP6_DST_UNREACH_BEYONDSCOPE ICMP6_DST_UNREACH_NOTNEIGHBOR
-#endif
-
 #if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
 #ifndef IPV6_SRCRT_TYPE_0
 #define IPV6_SRCRT_TYPE_0	0
 #endif
-#endif
-
-#ifndef MLD_LISTENER_QUERY
-#define MLD_LISTENER_QUERY	130
-#define MLD_LISTENER_REPORT	131
-#define MLD_LISTENER_REDUCTION	132
 #endif
 
 ping_func_set_st ping6_func_set = {
@@ -110,30 +91,6 @@ ping_func_set_st ping6_func_set = {
 #define BIT_CLEAR(nr, addr) do { ((__u32 *)(addr))[(nr) >> 5] &= ~(1U << ((nr) & 31)); } while(0)
 #define BIT_SET(nr, addr) do { ((__u32 *)(addr))[(nr) >> 5] |= (1U << ((nr) & 31)); } while(0)
 #define BIT_TEST(nr, addr) do { (__u32 *)(addr))[(nr) >> 5] & (1U << ((nr) & 31)); } while(0)
-
-#ifndef ICMP6_FILTER_WILLPASS
-#define ICMP6_FILTER_WILLPASS(type, filterp) \
-	(BIT_TEST((type), filterp) == 0)
-
-#define ICMP6_FILTER_WILLBLOCK(type, filterp) \
-	BIT_TEST((type), filterp)
-
-#define ICMP6_FILTER_SETPASS(type, filterp) \
-	BIT_CLEAR((type), filterp)
-
-#define ICMP6_FILTER_SETBLOCK(type, filterp) \
-	BIT_SET((type), filterp)
-
-#define ICMP6_FILTER_SETPASSALL(filterp) \
-	memset(filterp, 0, sizeof(struct icmp6_filter));
-
-#define ICMP6_FILTER_SETBLOCKALL(filterp) \
-	memset(filterp, 0xFF, sizeof(struct icmp6_filter));
-#endif
-
-#ifdef SO_TIMESTAMP
-#define HAVE_SIN6_SCOPEID 1
-#endif
 
 #ifndef SCOPE_DELIMITER
 # define SCOPE_DELIMITER '%'
@@ -201,7 +158,7 @@ extern struct cmsghdr *	inet6_srcrt_init(void *bp, int type)
 	cmsg = (struct cmsghdr *) bp;
 
 	cmsg->cmsg_len = sizeof(struct cmsghdr) + sizeof(struct ip6_rthdr0);
-	cmsg->cmsg_level = SOL_IPV6;
+	cmsg->cmsg_level = IPPROTO_IPV6;
 	cmsg->cmsg_type = IPV6_RTHDR;
 
 	return cmsg;
@@ -856,7 +813,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #endif
 		if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
 			memcpy(&firsthop.sin6_addr, addr, 16);
-#ifdef HAVE_SIN6_SCOPEID
 			firsthop.sin6_scope_id = ((struct sockaddr_in6 *)(result->ai_addr))->sin6_scope_id;
 			/* Verify scope_id is the same as previous nodes */
 			if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id) {
@@ -865,7 +821,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			} else if (!scope_id) {
 				scope_id = firsthop.sin6_scope_id;
 			}
-#endif
 		}
 		freeaddrinfo(result);
 
@@ -917,7 +872,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
 		memcpy(&firsthop.sin6_addr, &whereto.sin6_addr, 16);
-#ifdef HAVE_SIN6_SCOPEID
 		firsthop.sin6_scope_id = whereto.sin6_scope_id;
 		/* Verify scope_id is the same as intermediate nodes */
 		if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id) {
@@ -926,7 +880,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		} else if (!scope_id) {
 			scope_id = firsthop.sin6_scope_id;
 		}
-#endif
 	}
 
 	hostname = target;
@@ -940,9 +893,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			exit(2);
 		}
 		if (device) {
-#if defined(IPV6_RECVPKTINFO) || defined(HAVE_SIN6_SCOPEID)
 			unsigned int iface = if_name2index(device);
-#endif
 #ifdef IPV6_RECVPKTINFO
 			struct in6_pktinfo ipi;
 
@@ -950,15 +901,13 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			ipi.ipi6_ifindex = iface;
 #endif
 
-#ifdef HAVE_SIN6_SCOPEID
 			if (IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) ||
 			    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
 				firsthop.sin6_scope_id = iface;
-#endif
 			enable_capability_raw();
 			if (
 #ifdef IPV6_RECVPKTINFO
-			    setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof(ipi)) == -1 &&
+			    setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 &&
 #endif
 			    setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 				perror("setsockopt(SO_BINDTODEVICE)");
@@ -1003,11 +952,9 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		}
 #endif
 	}
-#ifdef HAVE_SIN6_SCOPEID
 	else if (device && (IN6_IS_ADDR_LINKLOCAL(&source.sin6_addr) ||
 			    IN6_IS_ADDR_MC_LINKLOCAL(&source.sin6_addr)))
 		source.sin6_scope_id = if_name2index(device);
-#endif
 
 	if (sock->fd < 0) {
 		errno = sock->sock_errno;
@@ -1022,7 +969,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		cmsg = (struct cmsghdr*)(cmsgbuf+cmsglen);
 		cmsglen += CMSG_SPACE(sizeof(*ipi));
 		cmsg->cmsg_len = CMSG_LEN(sizeof(*ipi));
-		cmsg->cmsg_level = SOL_IPV6;
+		cmsg->cmsg_level = IPPROTO_IPV6;
 		cmsg->cmsg_type = IPV6_PKTINFO;
 
 		ipi = (struct in6_pktinfo*)CMSG_DATA(cmsg);
@@ -1046,7 +993,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	}
 
 	if (pmtudisc >= 0) {
-		if (setsockopt(sock->fd, SOL_IPV6, IPV6_MTU_DISCOVER, &pmtudisc, sizeof(pmtudisc)) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MTU_DISCOVER, &pmtudisc, sizeof pmtudisc) == -1) {
 			perror("ping: IPV6_MTU_DISCOVER");
 			exit(2);
 		}
@@ -1070,7 +1017,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	working_recverr = 1;
 	hold = 1;
-	if (setsockopt(sock->fd, SOL_IPV6, IPV6_RECVERR, (char *)&hold, sizeof(hold))) {
+	if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_RECVERR, &hold, sizeof hold)) {
 		fprintf(stderr, "WARNING: your kernel is veeery old. No problems.\n");
 		working_recverr = 0;
 	}
@@ -1113,8 +1060,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		else
 			ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
 
-		err = setsockopt(sock->fd, IPPROTO_ICMPV6, ICMP6_FILTER, &filter,
-				 sizeof(struct icmp6_filter));
+		err = setsockopt(sock->fd, IPPROTO_ICMPV6, ICMP6_FILTER, &filter, sizeof filter);
 
 		if (err < 0) {
 			perror("setsockopt(ICMP6_FILTER)");
@@ -1124,20 +1070,17 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	if (options & F_NOLOOP) {
 		int loop = 0;
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_LOOP,
-							&loop, sizeof(loop)) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &loop, sizeof loop) == -1) {
 			perror ("can't disable multicast loopback");
 			exit(2);
 		}
 	}
 	if (options & F_TTL) {
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS,
-			       &ttl, sizeof(ttl)) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &ttl, sizeof ttl) == -1) {
 			perror ("can't set multicast hop limit");
 			exit(2);
 		}
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_UNICAST_HOPS,
-			       &ttl, sizeof(ttl)) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof ttl) == -1) {
 			perror ("can't set unicast hop limit");
 			exit(2);
 		}
@@ -1146,13 +1089,10 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	const int on = 1;
 	if (
 #ifdef IPV6_RECVHOPLIMIT
-	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_RECVHOPLIMIT,
-		       &on, sizeof(on)) == -1 &&
-	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_2292HOPLIMIT,
-		       &on, sizeof(on)) == -1
+	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_RECVHOPLIMIT, &on, sizeof on) == -1 &&
+	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_2292HOPLIMIT, &on, sizeof on) == -1
 #else
-	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_HOPLIMIT,
-		       &on, sizeof(on)) == -1
+	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_HOPLIMIT, &on, sizeof on) == -1
 #endif
 	   ){
 		perror ("can't receive hop limit");
@@ -1161,8 +1101,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	if (options & F_TCLASS) {
 #ifdef IPV6_TCLASS
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS,
-			       &tclass, sizeof(tclass)) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass) == -1) {
 			perror ("setsockopt(IPV6_TCLASS)");
 			exit(2);
 		}
@@ -1190,8 +1129,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		if (srcrt)
 			memcpy(freq_buf + CMSG_ALIGN(sizeof(*freq)), srcrt, srcrt->cmsg_len);
 #endif
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR,
-			       freq, freq_len) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1) {
 			perror ("can't set flowlabel");
 			exit(2);
 		}
@@ -1209,8 +1147,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 #ifdef IPV6_FLOWINFO_SEND
 		whereto.sin6_flowinfo = flowlabel;
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND,
-			       &on, sizeof(on)) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1) {
 			perror ("can't send flowinfo");
 			exit(2);
 		}
@@ -1266,7 +1203,7 @@ int ping6_receive_error_msg(socket_st *sock)
 
 	e = NULL;
 	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
-		if (cmsg->cmsg_level == SOL_IPV6) {
+		if (cmsg->cmsg_level == IPPROTO_IPV6) {
 			if (cmsg->cmsg_type == IPV6_RECVERR)
 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
 		}
@@ -1567,7 +1504,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 	int hops = -1;
 
 	for (c = CMSG_FIRSTHDR(msg); c; c = CMSG_NXTHDR(msg, c)) {
-		if (c->cmsg_level != SOL_IPV6)
+		if (c->cmsg_level != IPPROTO_IPV6)
 			continue;
 		switch(c->cmsg_type) {
 		case IPV6_HOPLIMIT:
