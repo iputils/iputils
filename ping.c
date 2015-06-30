@@ -107,21 +107,20 @@ static struct {
 	   {0, }};
 int cmsg_len;
 
-static struct sockaddr_in source;
+static struct sockaddr_in source = { .sin_family = AF_INET };
 static char *device;
 static int pmtudisc = -1;
 
 int
 main(int argc, char **argv)
 {
-	struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_protocol = IPPROTO_UDP, .ai_flags = getaddrinfo_flags };
+	struct addrinfo hints = { .ai_family = AF_UNSPEC, .ai_protocol = IPPROTO_UDP, .ai_socktype = SOCK_DGRAM, .ai_flags = getaddrinfo_flags };
 	struct addrinfo *result, *ai;
 	int status;
 	int ch;
 	socket_st sock4 = { 0 };
 	socket_st sock6 = { 0 };
 	char *target;
-	unsigned unknown_option = 0;
 
 	limit_capabilities();
 
@@ -147,16 +146,14 @@ main(int argc, char **argv)
 		sock6.using_ping_socket = 1;
 	}
 
-	source.sin_family = AF_INET;
-
 	/* Support being called using `ping4` or `ping6` symlinks */
 	if (argv[0][strlen(argv[0])-1] == '4')
 		hints.ai_family = AF_INET;
 	else if (argv[0][strlen(argv[0])-1] == '6')
 		hints.ai_family = AF_INET6;
 
-	preload = 1;
-	while ((ch = getopt(argc, argv, COMMON_OPTSTR "4bRT:" "6F:N:")) != EOF) {
+	/* Parse command line options */
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:dDfi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -168,27 +165,6 @@ main(int argc, char **argv)
 			break;
 		case 'b':
 			broadcast_pings = 1;
-			break;
-		case 'Q':
-			/* IPv4 */
-			settos = parsetos(optarg);
-			if (settos &&
-			    (setsockopt(sock4.fd, IPPROTO_IP, IP_TOS,
-					(char *)&settos, sizeof(int)) < 0)) {
-				perror("ping: error setting QOS sockopts");
-				exit(2);
-			}
-			/* IPv6 */
-			tclass = hextoui(optarg);
-			if (errno || (tclass & ~0xff)) {
-				fprintf(stderr, "ping: Invalid tclass %s\n", optarg);
-				exit(2);
-			}
-			if (setsockopt(sock6.fd, IPPROTO_IPV6, IPV6_TCLASS,
-					   &tclass, sizeof(tclass)) == -1) {
-				perror ("setsockopt(IPV6_TCLASS)");
-				exit(2);
-			}
 			break;
 		case 'R':
 			if (options & F_TIMESTAMP) {
@@ -214,8 +190,72 @@ main(int argc, char **argv)
 				exit(2);
 			}
 			break;
-		case 'I':
+		/* IPv6 specific options */
+		case '6':
+			if (hints.ai_family != AF_UNSPEC) {
+				fprintf(stderr, "ping: Only one -4 or -6 option may be specified\n");
+				exit(2);
+			}
+			hints.ai_family = AF_INET6;
+			break;
+		case 'F':
+			flowlabel = hextoui(optarg);
+			if (errno || (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL)) {
+				fprintf(stderr, "ping: Invalid flowinfo %s\n", optarg);
+				exit(2);
+			}
+			options |= F_FLOWINFO;
+			break;
+		case 'N':
+			if (niquery_option_handler(optarg) < 0) {
+				ping6_usage(0);
+				exit(2);
+			}
+			hints.ai_socktype = SOCK_RAW;
+			break;
+		/* Common options */
+		case 'a':
+			options |= F_AUDIBLE;
+			break;
+		case 'A':
+			options |= F_ADAPTIVE;
+			break;
+		case 'B':
+			options |= F_STRICTSOURCE;
+			break;
+		case 'c':
+			npackets = atoi(optarg);
+			if (npackets <= 0) {
+				fprintf(stderr, "ping: bad number of packets to transmit.\n");
+				exit(2);
+			}
+			break;
+		case 'd':
+			options |= F_SO_DEBUG;
+			break;
+		case 'D':
+			options |= F_PTIMEOFDAY;
+			break;
+		case 'i':
 		{
+			double dbl;
+			char *ep;
+
+			errno = 0;
+			dbl = strtod(optarg, &ep);
+
+			if (errno || *ep != '\0' ||
+				!finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0) {
+				fprintf(stderr, "ping: bad timing interval\n");
+				exit(2);
+			}
+
+			interval = (int)(dbl * 1000);
+
+			options |= F_INTERVAL;
+			break;
+		}
+		case 'I':
 			if (inet_pton(AF_INET, optarg, &source.sin_addr) > 0)
 				options |= F_STRICTSOURCE;
 			else
@@ -247,6 +287,32 @@ main(int argc, char **argv)
 				device = optarg;
 			}
 			break;
+		case 'l':
+			preload = atoi(optarg);
+			if (preload <= 0) {
+				fprintf(stderr, "ping: bad preload value, should be 1..%d\n", MAX_DUP_CHK);
+				exit(2);
+			}
+			if (preload > MAX_DUP_CHK)
+				preload = MAX_DUP_CHK;
+			if (uid && preload > 3) {
+				fprintf(stderr, "ping: cannot set preload to value > 3\n");
+				exit(2);
+			}
+			break;
+		case 'L':
+			options |= F_NOLOOP;
+			break;
+		case 'm':
+		{
+			char *endp;
+			mark = (int)strtoul(optarg, &endp, 10);
+			if (mark < 0 || *endp != '\0') {
+				fprintf(stderr, "mark cannot be negative\n");
+				exit(2);
+			}
+			options |= F_MARK;
+			break;
 		}
 		case 'M':
 			if (strcmp(optarg, "do") == 0)
@@ -260,42 +326,90 @@ main(int argc, char **argv)
 				exit(2);
 			}
 			break;
+		case 'n':
+			options |= F_NUMERIC;
+			break;
+		case 'O':
+			options |= F_OUTSTANDING;
+			break;
+		case 'f':
+			/* avoid `getaddrinfo()` during flood */
+			options |= F_FLOOD | F_NUMERIC;
+			setbuf(stdout, (char *)NULL);
+			break;
+		case 'p':
+			options |= F_PINGFILLED;
+			fill(optarg, outpack, sizeof(outpack));
+			break;
+		case 'q':
+			options |= F_QUIET;
+			break;
+		case 'Q':
+			/* IPv4 */
+			settos = parsetos(optarg);
+			/* IPv6 */
+			tclass = hextoui(optarg);
+			if (errno || (tclass & ~0xff)) {
+				fprintf(stderr, "ping: Invalid tclass %s\n", optarg);
+				exit(2);
+			}
+			break;
+		case 'r':
+			options |= F_SO_DONTROUTE;
+			break;
+		case 's':
+			datalen = atoi(optarg);
+			if (datalen < 0) {
+				fprintf(stderr, "ping: illegal negative packet size %d.\n", datalen);
+				exit(2);
+			}
+			if (datalen > MAXPACKET - 8) {
+				fprintf(stderr, "ping: packet size too large: %d\n",
+					datalen);
+				exit(2);
+			}
+			break;
+		case 'S':
+			sndbuf = atoi(optarg);
+			if (sndbuf <= 0) {
+				fprintf(stderr, "ping: bad sndbuf value.\n");
+				exit(2);
+			}
+			break;
+		case 't':
+			options |= F_TTL;
+			ttl = atoi(optarg);
+			if (ttl < 0 || ttl > 255) {
+				fprintf(stderr, "ping: ttl %u out of range\n", ttl);
+				exit(2);
+			}
+			break;
+		case 'U':
+			options |= F_LATENCY;
+			break;
+		case 'v':
+			options |= F_VERBOSE;
+			break;
 		case 'V':
 			printf("ping utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
-		/* IPv6 specific options */
-		case '6':
-			if (hints.ai_family != AF_UNSPEC) {
-				fprintf(stderr, "ping: Only one -4 or -6 option may be specified\n");
+		case 'w':
+			deadline = atoi(optarg);
+			if (deadline < 0) {
+				fprintf(stderr, "ping: bad wait time.\n");
 				exit(2);
 			}
-			hints.ai_family = AF_INET6;
 			break;
-		case 'F':
-			flowlabel = hextoui(optarg);
-			if (errno || (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL)) {
-				fprintf(stderr, "ping: Invalid flowinfo %s\n", optarg);
+		case 'W':
+			lingertime = atoi(optarg);
+			if (lingertime < 0 || lingertime > INT_MAX/1000000) {
+				fprintf(stderr, "ping: bad linger time.\n");
 				exit(2);
 			}
-			options |= F_FLOWINFO;
-			break;
-		case 'N':
-			if (sock6.using_ping_socket) {
-				fprintf(stderr, "ping: -N requires raw socket permissions\n");
-				exit(2);
-			}
-
-			if (niquery_option_handler(optarg) < 0) {
-				ping6_usage(0);
-				break;
-			}
-			break;
-		/* Common options */
-		COMMON_OPTIONS
-			common_options(ch);
+			lingertime *= 1000;
 			break;
 		default:
-			unknown_option = 1;
+			usage();
 			break;
 		}
 	}
@@ -303,10 +417,20 @@ main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (!argc || unknown_option)
+	if (!argc)
 		usage();
 
 	target = argv[argc-1];
+
+	/* Set socket options */
+	if (settos && (setsockopt(sock4.fd, IPPROTO_IP, IP_TOS, &settos, sizeof settos) == -1)) {
+		perror("ping: error setting QOS socket option");
+		exit(2);
+	}
+	if (tclass && setsockopt(sock6.fd, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass) == -1) {
+		perror("ping: error setting traffic class socket option");
+		exit(2);
+	}
 
 	status = getaddrinfo(target, NULL, &hints, &result);
 	if (status) {

@@ -181,16 +181,6 @@ extern int rtt;
 extern __u16 acked;
 extern int pipesize;
 
-#define COMMON_OPTIONS \
-case 'a': case 'U': case 'c': case 'd': \
-case 'f': case 'i': case 'w': case 'l': \
-case 'S': case 'n': case 'p': case 'q': \
-case 'r': case 's': case 'v': case 'L': \
-case 't': case 'A': case 'W': case 'B': case 'm': \
-case 'D': case 'O':
-
-#define COMMON_OPTSTR "h?VQ:I:M:aUc:dfi:w:l:S:np:qrs:vLt:AW:Bm:DO"
-
 /*
  * Write to stdout
  */
@@ -322,6 +312,10 @@ extern int gather_statistics(__u8 *ptr, int icmplen,
 			     int csfailed, struct timeval *tv, char *from,
 			     void (*pr_reply)(__u8 *ptr, int cc));
 extern void print_timestamp(void);
+void fill(char *patp, void *packet, unsigned packet_size);
+
+extern int mark;
+extern unsigned char outpack[MAXPACKET];
 
 /* IPv6 */
 
