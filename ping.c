@@ -92,7 +92,6 @@ static int settos = 0;			/* Set TOS, Precendence or other QOS options */
 
 static int broadcast_pings = 0;
 
-static char *pr_addr(__u32);
 static void pr_options(unsigned char * cp, int hlen);
 static void pr_iph(struct iphdr *ip);
 static void usage(void) __attribute__((noreturn));
@@ -904,7 +903,7 @@ int ping4_receive_error_msg(socket_st *sock)
 			write_stdout("\bE", 2);
 		} else {
 			print_timestamp();
-			printf("From %s icmp_seq=%u ", pr_addr(sin->sin_addr.s_addr), ntohs(icmph.un.echo.sequence));
+			printf("From %s icmp_seq=%u ", pr_addr(sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
 			pr_icmph(e->ee_type, e->ee_code, e->ee_info, NULL);
 			fflush(stdout);
 		}
@@ -1000,7 +999,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 		if (cc < hlen + 8 || ip->ihl < 5) {
 			if (options & F_VERBOSE)
 				fprintf(stderr, "ping: packet too short (%d bytes) from %s\n", cc,
-					pr_addr(from->sin_addr.s_addr));
+					pr_addr(from, sizeof *from));
 			return 1;
 		}
 		ttl = ip->ttl;
@@ -1035,7 +1034,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			return 1;			/* 'Twas not our ECHO */
 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      ttl, 0, tv, pr_addr(from->sin_addr.s_addr),
+				      ttl, 0, tv, pr_addr(from, sizeof *from),
 				      pr_echo_reply)) {
 			fflush(stdout);
 			return 0;
@@ -1081,7 +1080,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 				}
 				print_timestamp();
 				printf("From %s: icmp_seq=%u ",
-				       pr_addr(from->sin_addr.s_addr),
+				       pr_addr(from, sizeof *from),
 				       ntohs(icp1->un.echo.sequence));
 				if (csfailed)
 					printf("(BAD CHECKSUM)");
@@ -1106,7 +1105,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			gettimeofday(&recv_time, NULL);
 			printf("%lu.%06lu ", (unsigned long)recv_time.tv_sec, (unsigned long)recv_time.tv_usec);
 		}
-		printf("From %s: ", pr_addr(from->sin_addr.s_addr));
+		printf("From %s: ", pr_addr(from, sizeof *from));
 		if (csfailed) {
 			printf("(BAD CHECKSUM)\n");
 			return 0;
@@ -1261,8 +1260,11 @@ void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp)
 			printf("Redirect, Bad Code: %d", code);
 			break;
 		}
-		printf("(New nexthop: %s)\n",
-		       pr_addr(icp ? icp->un.gateway : info));
+		{
+			struct sockaddr_in sin = { .sin_family = AF_INET, .sin_addr =  { icp ? icp->un.gateway : info } };
+
+			printf("(New nexthop: %s)\n", pr_addr(&sin, sizeof sin));
+		}
 		if (icp && (options & F_VERBOSE))
 			pr_iph((struct iphdr*)(icp + 1));
 		break;
@@ -1361,8 +1363,11 @@ void pr_options(unsigned char * cp, int hlen)
 					cp += 4;
 					if (address == 0)
 						printf("\t0.0.0.0");
-					else
-						printf("\t%s", pr_addr(address));
+					else {
+						struct sockaddr_in sin = { .sin_family = AF_INET, .sin_addr = { address } };
+
+						printf("\t%s", pr_addr(&sin, sizeof sin));
+					}
 					j -= 4;
 					putchar('\n');
 					if (j <= IPOPT_MINOFF)
@@ -1396,8 +1401,11 @@ void pr_options(unsigned char * cp, int hlen)
 				cp += 4;
 				if (address == 0)
 					printf("\t0.0.0.0");
-				else
-					printf("\t%s", pr_addr(address));
+				else {
+					struct sockaddr_in sin = { .sin_family = AF_INET, .sin_addr = { address } };
+
+					printf("\t%s", pr_addr(&sin, sizeof sin));
+				}
 				i -= 4;
 				putchar('\n');
 				if (i <= 0)
@@ -1427,8 +1435,11 @@ void pr_options(unsigned char * cp, int hlen)
 					cp += 4;
 					if (address == 0)
 						printf("\t0.0.0.0");
-					else
-						printf("\t%s", pr_addr(address));
+					else {
+						struct sockaddr_in sin = { .sin_family = AF_INET, .sin_addr = { address } };
+
+						printf("\t%s", pr_addr(&sin, sizeof sin));
+					}
 					i -= 4;
 					if (i <= 0)
 						break;
@@ -1496,44 +1507,37 @@ void pr_iph(struct iphdr *ip)
 
 /*
  * pr_addr --
- *	Return an ascii host address as a dotted quad and optionally with
- * a hostname.
+ *
+ * Return an ascii host address optionally with a hostname.
  */
 char *
-pr_addr(__u32 addr)
+pr_addr(void *sa, socklen_t salen)
 {
-	struct hostent *hp;
-	static char buf[4096] = "";
-	static __u32 last_addr = 0;
+	static char buffer[4096] = "";
+	static struct sockaddr_storage last_sa = { 0 };
+	static socklen_t last_salen = 0;
+	char name[NI_MAXHOST] = "";
+	char address[NI_MAXHOST] = "";
 
-	if(*buf && addr == last_addr)
-		return(buf);
+	if (salen == last_salen && !memcmp(sa, &last_sa, salen))
+		return buffer;
 
-	last_addr = addr;
+	memcpy(&last_sa, sa, (last_salen = salen));
 
 	in_pr_addr = !setjmp(pr_addr_jmp);
 
-	if (exiting || (options & F_NUMERIC) ||
-	    !(hp = gethostbyaddr((char *)&addr, 4, AF_INET)))
-		sprintf(buf, "%s", inet_ntoa(*(struct in_addr *)&addr));
-	else {
-		char *s;
-#if USE_IDN
-		if (idna_to_unicode_lzlz(hp->h_name, &s, 0) != IDNA_SUCCESS)
-			s = NULL;
-#else
-		s = NULL;
-#endif
-		snprintf(buf, sizeof(buf), "%s (%s)", s ? s : hp->h_name,
-			 inet_ntoa(*(struct in_addr *)&addr));
-#if USE_IDN
-		free(s);
-#endif
-	}
+	getnameinfo(sa, salen, address, sizeof address, NULL, 0, getnameinfo_flags | NI_NUMERICHOST);
+	if (!exiting && !(options & F_NUMERIC))
+		getnameinfo(sa, salen, name, sizeof name, NULL, 0, getnameinfo_flags);
+
+	if (*name)
+		snprintf(buffer, sizeof buffer, "%s (%s)", name, address);
+	else
+		snprintf(buffer, sizeof buffer, "%s", address);
 
 	in_pr_addr = 0;
 
-	return(buf);
+	return(buffer);
 }
 
 

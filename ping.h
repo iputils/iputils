@@ -39,8 +39,10 @@
 #include <idna.h>
 #include <stringprep.h>
 #define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
+#define getnameinfo_flags NI_IDN
 #else
 #define getaddrinfo_flags (AI_CANONNAME)
+#define getnameinfo_flags 0
 #endif
 
 #ifndef WITHOUT_IFADDRS
@@ -282,6 +284,8 @@ typedef struct socket_st {
 	 * in linux-2.2.[0-19], linux-2.4.[0-7] */
 	int working_recverr;
 } socket_st;
+
+char *pr_addr(void *sa, socklen_t salen);
 
 int is_ours(socket_st *sock, uint16_t id);
 

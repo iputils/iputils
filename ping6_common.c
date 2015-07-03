@@ -96,8 +96,6 @@ static struct sockaddr_in6 firsthop;
 static unsigned char cmsgbuf[4096];
 static int cmsglen = 0;
 
-static char * pr_addr(struct in6_addr *addr);
-static char * pr_addr_n(struct in6_addr *addr);
 static int pr_icmph(__u8 type, __u8 code, __u32 info);
 void ping6_usage(unsigned) __attribute((noreturn));
 
@@ -1043,12 +1041,15 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #endif
 	}
 
-	printf("PING %s(%s) ", hostname, pr_addr(&whereto.sin6_addr));
+	printf("PING %s(%s) ", hostname, pr_addr(&whereto, sizeof whereto));
 	if (flowlabel)
 		printf(", flow 0x%05x, ", (unsigned)ntohl(flowlabel));
 	if (device || (options&F_STRICTSOURCE)) {
-		printf("from %s %s: ",
-		       pr_addr_n(&source6.sin6_addr), device ? : "");
+		int saved_options = options;
+
+		options |= F_NUMERIC;
+		printf("from %s %s: ", pr_addr(&source6, sizeof source6), device ? : "");
+		options = saved_options;
 	}
 	printf("%d data bytes\n", datalen);
 
@@ -1128,7 +1129,7 @@ int ping6_receive_error_msg(socket_st *sock)
 			write_stdout("\bE", 2);
 		} else {
 			print_timestamp();
-			printf("From %s icmp_seq=%u ", pr_addr(&sin6->sin6_addr), ntohs(icmph.icmp6_seq));
+			printf("From %s icmp_seq=%u ", pr_addr(sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
 			pr_icmph(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
 			fflush(stdout);
@@ -1418,7 +1419,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 			return 1;
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
-				      hops, 0, tv, pr_addr(&from->sin6_addr),
+				      hops, 0, tv, pr_addr(from, sizeof *from),
 				      pr_echo_reply)) {
 			fflush(stdout);
 			return 0;
@@ -1430,7 +1431,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 			return 1;
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      seq,
-				      hops, 0, tv, pr_addr(&from->sin6_addr),
+				      hops, 0, tv, pr_addr(from, sizeof *from),
 				      pr_niquery_reply))
 			return 0;
 	} else {
@@ -1470,13 +1471,13 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 				return 0;
 			}
 			print_timestamp();
-			printf("From %s: icmp_seq=%u ", pr_addr(&from->sin6_addr), ntohs(icmph1->icmp6_seq));
+			printf("From %s: icmp_seq=%u ", pr_addr(from, sizeof *from), ntohs(icmph1->icmp6_seq));
 		} else {
 			/* We've got something other than an ECHOREPLY */
 			if (!(options & F_VERBOSE) || uid)
 				return 1;
 			print_timestamp();
-			printf("From %s: ", pr_addr(&from->sin6_addr));
+			printf("From %s: ", pr_addr(from, sizeof *from));
 		}
 		pr_icmph(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
@@ -1594,49 +1595,6 @@ void ping6_install_filter(socket_st *sock)
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		perror("WARNING: failed to install socket filter\n");
-}
-
-
-/*
- * pr_addr --
- *	Return an ascii host address as a dotted quad and optionally with
- * a hostname.
- */
-char * pr_addr(struct in6_addr *addr)
-{
-	static struct hostent *hp = NULL;
-	static char *s;
-	static struct in6_addr last_addr;
-
-#ifdef USE_IDN
-	free(s);
-#endif
-
-	in_pr_addr = !setjmp(pr_addr_jmp);
-
-	if (!(hp && memcmp(addr, &last_addr, sizeof(struct in6_addr))) &&
-	    !(exiting || options&F_NUMERIC)) {
-		hp = gethostbyaddr((__u8*)addr, sizeof(struct in6_addr), AF_INET6);
-		memcpy(&last_addr, addr, sizeof(struct in6_addr));
-	}
-
-	in_pr_addr = 0;
-
-	if (!hp
-#ifdef USE_IDN
-	    || idna_to_unicode_lzlz(hp->h_name, &s, 0) != IDNA_SUCCESS
-#endif
-	    )
-		s = NULL;
-
-	return hp ? (s ? s : hp->h_name) : pr_addr_n(addr);
-}
-
-char * pr_addr_n(struct in6_addr *addr)
-{
-	static char str[64];
-	inet_ntop(AF_INET6, addr, str, sizeof(str));
-	return str;
 }
 
 #define USAGE_NEWLINE	"\n            "
