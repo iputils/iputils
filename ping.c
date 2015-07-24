@@ -918,15 +918,14 @@ parse_reply(struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 		return 0;
 	}
 
+	if (options & F_AUDIBLE) {
+		putchar('\a');
+		if (options & F_FLOOD)
+			fflush(stdout);
+	}
 	if (!(options & F_FLOOD)) {
 		pr_options(opts, optlen + sizeof(struct iphdr));
-
-		if (options & F_AUDIBLE)
-			putchar('\a');
 		putchar('\n');
-		fflush(stdout);
-	} else {
-		putchar('\a');
 		fflush(stdout);
 	}
 	return 0;
