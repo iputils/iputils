@@ -249,7 +249,7 @@ snapshot:
 	@mv RELNOTES.NEW RELNOTES
 	@sed -e "s/^%define ssdate .*/%define ssdate $(DATE)/" iputils.spec > iputils.spec.tmp
 	@mv iputils.spec.tmp iputils.spec
-	@echo "static char SNAPSHOT[] = \"$(TAG)\";" > SNAPSHOT.h
+	@echo "#define SNAPSHOT \"$(TAG)\"" > SNAPSHOT.h
 	@$(MAKE) -C doc snapshot
 	@$(MAKE) man
 	@git commit -a -m "iputils-$(TAG)"
