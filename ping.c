@@ -110,26 +110,26 @@ static struct sockaddr_in source = { .sin_family = AF_INET };
 static char *device;
 static int pmtudisc = -1;
 
-static void create_socket(socket_st *sock, int family, int socktype, int protocol)
+static void create_socket(socket_st *sock, int family, int socktype, int protocol, int requisite)
 {
 	errno = 0;
 
 	sock->fd = socket(family, socktype, protocol);
 
-	/* Fallback to raw socket when ping socket failed */
-	if (sock->fd == -1 && socktype == SOCK_DGRAM) {
+	/* Attempt creating a raw socket when ping socket failed */
+	if (sock->fd == -1 && errno != EAFNOSUPPORT && socktype == SOCK_DGRAM) {
 		if (options & F_VERBOSE)
 			fprintf(stderr, "ping: socket: %s, attempting raw socket...\n", strerror(errno));
-		create_socket(sock, family, SOCK_RAW, protocol);
+		create_socket(sock, family, SOCK_RAW, protocol, requisite);
 		return;
 	}
 
 	if (sock->fd == -1) {
-		if (socktype == SOCK_RAW)
-			fprintf(stderr, "ping: socket: %s (raw socket required by specified options).\n", strerror(errno));
-		else
+		if (requisite || errno != EAFNOSUPPORT || options & F_VERBOSE)
 			fprintf(stderr, "ping: socket: %s\n", strerror(errno));
-		exit(2);
+		if (requisite)
+			exit(2);
+		return;
 	}
 
 	sock->socktype = socktype;
@@ -442,10 +442,18 @@ main(int argc, char **argv)
 	/* Create sockets */
 	enable_capability_raw();
 	if (hints.ai_family != AF_INET6)
-		create_socket(&sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP);
+		create_socket(&sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP, hints.ai_family == AF_INET);
 	if (hints.ai_family != AF_INET)
-		create_socket(&sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6);
+		create_socket(&sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6, sock4.fd == -1);
 	disable_capability_raw();
+
+	/* Limit address family on single-protocol systems */
+	if (hints.ai_family == AF_UNSPEC) {
+		if (sock4.fd == -1)
+			hints.ai_family = AF_INET6;
+		else if (sock6.fd == -1)
+			hints.ai_family = AF_INET;
+	}
 
 	/* Set socket options */
 	if (settos)
