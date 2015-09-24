@@ -7,14 +7,14 @@
 </refmeta>
 
 <refnamediv>
-<refname>ping, ping6</refname>
+<refname>ping</refname>
 <refpurpose>send ICMP ECHO_REQUEST to network hosts</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>ping</command>
-<arg choice="opt"><option>-aAbBdDfhLnOqrRUvV6</option></arg>
+<arg choice="opt"><option>-aAbBdDfhLnOqrRUvV46</option></arg>
 <arg choice="opt">-c <replaceable/count/</arg>
 <arg choice="opt">-F <replaceable/flowlabel/</arg>
 <arg choice="opt">-i <replaceable/interval/</arg>
@@ -45,7 +45,11 @@ header, followed by a <structname/struct timeval/ and then an arbitrary
 number of ``pad'' bytes used to fill out the packet.
 </para>
 <para>
-<command/ping6/ is IPv6 version of <command/ping/, and can also send Node Information Queries (RFC4620).
+<command/ping/ works with both IPv4 and IPv6. Using only one of them
+explicitly can be enforced by specifying <option/-4/ or <option/-6/.
+</para>
+<para>
+<command/ping/ can also send IPv6 Node Information Queries (RFC4620).
 Intermediate <replaceable/hop/s may not be allowed, because IPv6 source routing was deprecated (RFC5095).
 </para>
 </refsect1>
@@ -53,6 +57,18 @@ Intermediate <replaceable/hop/s may not be allowed, because IPv6 source routing 
 <refsect1><title>OPTIONS</title>
 
 <variablelist>
+ <varlistentry>
+  <term><option/-4/</term>
+  <listitem><para>
+Use IPv4 only.
+  </para></listitem>
+ </varlistentry>
+ <varlistentry>
+  <term><option/-6/</term>
+  <listitem><para>
+Use IPv6 only.
+  </para></listitem>
+ </varlistentry>
  <varlistentry>
   <term><option/-a/</term>
   <listitem><para>
@@ -120,7 +136,7 @@ Only the super-user may use this option with zero interval.
  <varlistentry>
   <term><option>-F <replaceable/flow label/</option></term>
   <listitem><para>
-<command/ping6/ only.
+IPv6 only.
 Allocate and set 20 bit flow label (in hex) on echo request packets.
 If value is zero, kernel allocates random flow label.
   </para></listitem>
@@ -148,7 +164,7 @@ If <replaceable/interface/ is an address, it sets source address
 to specified interface address.
 If <replaceable/interface/ in an interface name, it sets
 source interface to specified interface.
-For <command/ping6/, when doing ping to a link-local scope
+For IPv6, when doing ping to a link-local scope
 address, link specification (by the '%'-notation in
 <replaceable/destination/, or by this option) is required.
   </para></listitem>
@@ -189,7 +205,7 @@ is large), or <replaceable/dont/ (do not set DF flag).
  <varlistentry>
   <term><option>-N <replaceable/nodeinfo_option/</option></term>
   <listitem><para>
-<command/ping6/ only.
+IPv6 only.
 Send ICMPv6 Node Information Queries (RFC4620), instead of Echo Request.
 <constant/CAP_NET_RAW/ capability is required.
    <variablelist>
@@ -624,6 +640,12 @@ The <command/ping/ command appeared in 4.3BSD.
 </para>
 <para>
 The version described here is its descendant specific to Linux.
+</para>
+<para>
+As of version s20150815, the <command/ping6/ binary doesn't exist anymore.
+It has been merged into <command/ping/. Creating a symlink named
+<command/ping6/ pointing to <command/ping/ will result in the same
+funcionality as before.
 </para>
 </refsect1>
 
