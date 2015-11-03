@@ -57,6 +57,10 @@
 #include "in6_flowlabel.h"
 #include "SNAPSHOT.h"
 
+#ifndef SCOPE_DELIMITER
+#define SCOPE_DELIMITER '%'
+#endif
+
 #define	DEFDATALEN	(64 - 8)	/* default data length */
 
 #define	MAXWAIT		10		/* max seconds to wait for response */

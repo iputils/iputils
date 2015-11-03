@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <linux/types.h>
-#include <linux/errqueue.h>
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
@@ -22,6 +21,7 @@
 #include <netinet/in.h>
 #include <resolv.h>
 #include <sys/time.h>
+#include <linux/errqueue.h>
 #include <sys/uio.h>
 #include <arpa/inet.h>
 
