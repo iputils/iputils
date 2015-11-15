@@ -153,10 +153,10 @@ DEF_clockdiff = $(DEF_CAP)
 LIB_clockdiff = $(LIB_CAP)
 
 # ping / ping6
-DEF_ping_common = $(DEF_CAP) $(DEF_IDN)
-DEF_ping6_common = $(DEF_CAP) $(DEF_IDN)
-DEF_ping  = $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS)
-LIB_ping  = $(LIB_CAP) $(LIB_IDN) $(LIB_RESOLV)
+DEF_ping = $(DEF_CAP) $(DEF_IDN) $(DEF_CRYPTO) $(DEF_WITHOUT_IFADDRS)
+DEF_ping_common = $(DEF_ping)
+DEF_ping6_common = $(DEF_ping)
+LIB_ping = $(LIB_CAP) $(LIB_IDN) $(LIB_CRYPTO) $(LIB_RESOLV)
 
 ping: ping_common.o ping6_common.o
 ping.o ping_common.o ping6_common.o: ping.h in6_flowlabel.h
