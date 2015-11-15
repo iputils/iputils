@@ -1,3 +1,5 @@
+SHELL:=/bin/bash #required for pushd and popd
+
 SGMLFILES=$(shell echo *.sgml)
 HTMLFILES=$(subst .sgml,.html,$(SGMLFILES)) index.html
 MANFILES=$(subst .sgml,.8,$(SGMLFILES))
