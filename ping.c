@@ -259,7 +259,13 @@ main(int argc, char **argv)
 			char *ep;
 
 			errno = 0;
+#ifdef USE_IDN
+			setlocale(LC_ALL, "C");
+#endif
 			dbl = strtod(optarg, &ep);
+#ifdef USE_IDN
+			setlocale(LC_ALL, "");
+#endif
 
 			if (errno || *ep != '\0' ||
 				!finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0) {
