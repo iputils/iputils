@@ -266,7 +266,7 @@ sgml('</REFMETA>', sub {
 .\\" etc. to Steve Cheng <steve\@ggi-project.org>.
 _END_BANNER
 
-	my $manpage_date = `date "+%d %B %Y"`;
+	my $manpage_date = (@ARGV == 1) ? $ARGV[0] : `date "+%d %B %Y"`;
 		
 	output '.TH "';
 	
@@ -280,7 +280,7 @@ _END_BANNER
 	}
 	
 	output  '" "', fold_string($manpage_sect), 
-		'" "', fold_string(`date "+%d %B %Y"`), 
+		'" "', fold_string($manpage_date),
 		'" "', $manpage_misc, 
 		'" "', $manpage_manual, 
 		"\"\n";

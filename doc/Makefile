@@ -43,7 +43,7 @@ iputils.html: iputils.db
 $(MANFILES): index.db
 	@set -e; \
 	$(SETUP_TMPDIR); \
-	nsgmls ../$< | sgmlspl ../docbook2man-spec.pl; \
+	nsgmls ../$< | sgmlspl ../docbook2man-spec.pl ""; \
 	mv $@ ..; \
 	$(CLEAN_TMPDIR)
 
