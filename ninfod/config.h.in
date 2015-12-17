@@ -15,6 +15,9 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
+/* Define to 1 if you have the <gcrypt.h> header file. */
+#undef HAVE_GCRYPT_H
+
 /* Define to 1 if you have the <gnutls/openssl.h> header file. */
 #undef HAVE_GNUTLS_OPENSSL_H
 
