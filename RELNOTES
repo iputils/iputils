@@ -1,3 +1,43 @@
+[s20151218]
+
+Arjan van de Ven (1):
+      ping6: Fix build command line argument with gnutls.
+
+Jan Synacek (1):
+      ping doc: Fix typo.
+
+Mike Frysinger (1):
+      tracepath, tracepath6: re-use printf return in print_host
+
+Salvatore Mesoraca (2):
+      iputils ping/ping6: Add a function to check if a packet is ours
+      iputils ping/ping6: add (non-raw) ICMP socket support
+
+YOSHIFUJI Hideaki (22):
+      rdisc: Fix memory leakage in initifs() in error path.
+      ninfod: Clean up signal/logfile handling
+      ninfod: Open pidfile exclusively for write.
+      ping, ping6: fix building with older linux headers that don't define SO_MARK
+      tracepath, tracepath6: Support -m (maximum hops) option.
+      ping: Add <linux/types.h> to fix compilation error.
+      ping: Add <linux/types.h> to fix compilation error.
+      ping6: Use GNUTLS API directly for MD5.
+      ping6: Use libgcrypt instead of gnutls for MD5.
+      ninfod: Regenerate configure by autoconf-2.69.
+      ping6: Use libgcrypt for MD5, instead of gnutls.
+      ninfod: libgcrypt support.
+      tracepath: Fix missing end tag for OPTION.
+      spec: Configure before building ninfod.
+      spec: Update changelog.
+      spec: Fix date in %changelog.
+      tftpd: Exit if setuid()/setgid() failed.
+      make,spec: Add rpm target.
+      ping,ping6 doc: More description on CAP_NET_RAW usage.
+      tracepath,tracepath6: Fix incorrect 'back' hops.
+      ping,ping6: Do not emit audible pings without request.
+      arping: Exit when there is nothing left to do
+
+
 [s20121221]
 
 YOSHIFUJI Hideaki (14):

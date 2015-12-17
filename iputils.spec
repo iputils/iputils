@@ -2,7 +2,7 @@
 # This spec file is for _testing_.
 #
 
-%define ssdate 20121221
+%define ssdate 20151218
 %define srcbase iputils%{!?current:-s%{ssdate}}
 
 Summary: The ping program for checking to see if network hosts are alive.
