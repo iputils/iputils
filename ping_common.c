@@ -401,9 +401,14 @@ resend:
 		return MININTERVAL;
 	} else {
 		if ((i=fset->receive_error_msg(sock)) > 0) {
-			/* An ICMP error arrived. */
-			tokens += interval;
-			return MININTERVAL;
+			/* An ICMP error arrived. In this case, we've received
+			 * an error from sendto(), but we've also received an
+			 * ICMP message, which means the packet did in fact
+			 * send in some capacity. So, in this odd case, report
+			 * the more specific errno as the error, and treat this
+			 * as a hard local error. */
+			i = 0;
+			goto hard_local_error;
 		}
 		/* Compatibility with old linuces. */
 		if (i == 0 && confirm_flag && errno == EINVAL) {
@@ -414,6 +419,7 @@ resend:
 			goto resend;
 	}
 
+hard_local_error:
 	/* Hard local error. Pretend we sent packet. */
 	advance_ntransmitted();
 
