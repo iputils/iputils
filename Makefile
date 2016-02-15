@@ -17,6 +17,7 @@ LDFLAG_IDN=-lidn
 LDFLAG_RESOLV=-lresolv
 LDFLAG_SYSFS=-lsysfs
 LDFLAG_RT=-lrt
+LDFLAG_M=-lm
 
 #
 # Options
@@ -156,7 +157,7 @@ LIB_clockdiff = $(LIB_CAP)
 DEF_ping = $(DEF_CAP) $(DEF_IDN) $(DEF_CRYPTO) $(DEF_WITHOUT_IFADDRS)
 DEF_ping_common = $(DEF_ping)
 DEF_ping6_common = $(DEF_ping)
-LIB_ping = $(LIB_CAP) $(LIB_IDN) $(LIB_CRYPTO) $(LIB_RESOLV)
+LIB_ping = $(LIB_CAP) $(LIB_IDN) $(LIB_CRYPTO) $(LIB_RESOLV) $(LDFLAG_M)
 
 ping: ping_common.o ping6_common.o
 ping.o ping_common.o ping6_common.o: ping.h in6_flowlabel.h
