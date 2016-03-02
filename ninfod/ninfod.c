@@ -427,10 +427,8 @@ static void set_logfile(void)
 
 static void cleanup_pidfile(void)
 {
-	int err;
-
 	if (daemonized && opt_p) {
-		err = unlink(opt_p);
+		unlink(opt_p);
 		DEBUG(LOG_ERR, "failed to unlink file '%s' : %s\n",
 				opt_p, strerror(errno));
 	}
@@ -662,7 +660,6 @@ static void print_usage(void) {
 int main (int argc, char **argv)
 {
 	int sock_errno = 0;
-	int ret;
 
 	appname = argv[0];
 	set_logfile();
