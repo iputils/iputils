@@ -165,7 +165,8 @@
  * Other possible annotations after the time are !H, !N, !P (got a host,
  * network or protocol unreachable, respectively), !S or !F (source
  * route failed or fragmentation needed -- neither of these should
- * ever occur and the associated gateway is busted if you see one).  If
+ * ever occur and the associated gateway is busted if you see one),
+ * !X (communication administratively prohibited). If
  * almost all the probes result in some kind of unreachable, traceroute
  * will give up and exit.
  *
@@ -632,7 +633,7 @@ int main(int argc, char *argv[])
 
 					case ICMP6_DST_UNREACH_ADMIN:
 						++unreachable;
-						Printf(" !S");
+						Printf(" !X");
 						break;
 					}
 					break;
