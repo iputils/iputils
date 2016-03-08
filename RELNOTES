@@ -1,3 +1,84 @@
+[s20160308]
+
+Aaro Koskinen (1):
+      use syntax compatible with busybox date in Makefile
+
+Chris Morrow (1):
+      'admin prohibited' should print !X not !S.
+
+David Heidelberg (3):
+      Makefile: use #define as in previous code changes
+      iputils-s20150815
+      doc/Makefile: require bash, because we use pushd and popd
+
+David McMackins II (1):
+      ping: status() now returns received/transmitted instead of trans/recv
+
+Felix Janda (1):
+      ping: don't mess with internals of struct msghdr
+
+Jan Synacek (5):
+      tracepath,doc: fix corrupted tag
+      doc: ping: add missing options and remove ping6
+      ping: always use POSIX locale when parsing -i
+      doc: don't timestamp manpages by default
+      ninfod: remove unused variables
+
+Jason A. Donenfeld (1):
+      ping: ICMP error replies while errno < 0 is a hard error
+
+Kylie McClain (1):
+      Fix building with musl
+
+Martin Bark (1):
+      ping: link against libm
+
+Nikos Mavrogiannopoulos (10):
+      made ping functions protocol independent
+      Allow ping to use IPv6 addresses
+      if IPv4 resolving fails fallback to ping6
+      ping: in usage print the 'ping -6' options as well
+      ping: allow option -4 which forces IPv4
+      combine sock and errno into a single structure
+      This patch allows running ping and ping6 without root privileges on
+      use better names for socket variables
+      travis.yml: install nettle-dev
+      Allow using nettle instead of libgcrypt for MD5
+
+Pavel Šimerda (14):
+      avoid compiler warning caused by snapshot.h
+      make `getaddrinfo()` and `getnameinfo()` usage consistent
+      enable IDN by default
+      ping: perform dual-stack ping by default
+      remove IPV4_TARGETS and IPV6_TARGETS
+      ping: remove obsolete preprocessor directives
+      ping: avoid name clashes between IPv4 and IPv6 code
+      ping: merge all ping header files into a single one
+      ping: merge `ping6` command into `ping`
+      ping: refactor ping options
+      ping: refactor ping socket code
+      ping: merge IPv4 and IPv6 `pr_addr()`
+      ping: fix defines and libs in Makefile
+      ping: handle single protocol systems
+
+Peter Dave Hello (1):
+      Use svg instead of png to get better image quality
+
+Salvatore Mesoraca (1):
+      iputils ping/ping6: Add a function to check if a packet is ours
+
+YOSHIFUJI Hideaki (9):
+      ping: Add <linux/types.h> to fix compilation error.
+      ping6: Use GNUTLS API directly for MD5. (v2)
+      ping6: Use libgcrypt instead of gnutls for MD5.
+      ninfod: Regenerate configure by autoconf-2.69.
+      ninfod: libgcrypt support.
+      spec: Configure before building ninfod.
+      spec: Fix date in %changelog.
+      make,spec: Add rpm target.
+      ping,ping6 doc: More description on CAP_NET_RAW usage.
+
+
 [s20150815]
 
 Aaro Koskinen (1):
