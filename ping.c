@@ -279,10 +279,6 @@ main(int argc, char **argv)
 			break;
 		}
 		case 'I':
-			if (inet_pton(AF_INET, optarg, &source.sin_addr) > 0)
-				options |= F_STRICTSOURCE;
-			else
-				device = optarg;
 			/* IPv6 */
 			if (strchr(optarg, ':')) {
 				char *p, *addr = strdup(optarg);
@@ -306,6 +302,8 @@ main(int argc, char **argv)
 				options |= F_STRICTSOURCE;
 
 				free(addr);
+			} else if (inet_pton(AF_INET, optarg, &source.sin_addr) > 0) {
+				options |= F_STRICTSOURCE;
 			} else {
 				device = optarg;
 			}
