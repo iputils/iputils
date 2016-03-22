@@ -1052,9 +1052,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			return 0;
 		}
 	} else {
-		/* We fall here when a redirect or source quench arrived.
-		 * Also this branch processes icmp errors, when IP_RECVERR
-		 * is broken. */
+		/* We fall here when a redirect or source quench arrived. */
 
 		switch (icp->type) {
 		case ICMP_ECHO:
@@ -1082,14 +1080,8 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 					acknowledge(ntohs(icp1->un.echo.sequence));
 					return 0;
 				}
-				nerrors+=error_pkt;
-				if (options&F_QUIET)
-					return !error_pkt;
-				if (options & F_FLOOD) {
-					if (error_pkt)
-						write_stdout("\bE", 2);
-					return !error_pkt;
-				}
+				if (options & (F_QUIET | F_FLOOD))
+					return 1;
 				print_timestamp();
 				printf("From %s: icmp_seq=%u ",
 				       pr_addr(from, sizeof *from),
@@ -1097,7 +1089,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 				if (csfailed)
 					printf("(BAD CHECKSUM)");
 				pr_icmph(icp->type, icp->code, ntohl(icp->un.gateway), icp);
-				return !error_pkt;
+				return 1;
 			}
 		default:
 			/* MUST NOT */
