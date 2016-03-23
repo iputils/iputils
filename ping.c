@@ -163,6 +163,10 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 #endif
 
+	/* If no IPv6 support is available, use IPv4 */
+	if (access("/proc/net/if_inet6", F_OK))
+		hints.ai_family = AF_INET;
+
 	/* Support being called using `ping4` or `ping6` symlinks */
 	if (argv[0][strlen(argv[0])-1] == '4')
 		hints.ai_family = AF_INET;
