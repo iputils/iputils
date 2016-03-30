@@ -55,7 +55,6 @@ struct hhistory
 struct hhistory his[64];
 int hisptr;
 
-sa_family_t family = AF_INET6;
 struct sockaddr_storage target;
 socklen_t targetlen;
 __u16 base_port;
@@ -100,7 +99,7 @@ void print_host(const char *a, const char *b, int both)
 	printf("%*s", HOST_COLUMN_SIZE - plen, "");
 }
 
-int recverr(int fd, int ttl)
+int recverr(int fd, struct addrinfo *ai, int ttl)
 {
 	int res;
 	struct probehdr rcvbuf;
@@ -146,7 +145,7 @@ restart:
 	rettv = NULL;
 
 	slot = -base_port;
-	switch (family) {
+	switch (ai->ai_family) {
 	case AF_INET6:
 		slot += ntohs(((struct sockaddr_in6 *)&addr)->sin6_port);
 		break;
@@ -319,7 +318,7 @@ restart:
 	goto restart;
 }
 
-int probe_ttl(int fd, int ttl)
+int probe_ttl(int fd, struct addrinfo *ai, int ttl)
 {
 	int i;
 	struct probehdr *hdr = pktbuf;
@@ -331,7 +330,7 @@ restart:
 		int res;
 
 		hdr->ttl = ttl;
-		switch (family) {
+		switch (ai->ai_family) {
 		case AF_INET6:
 			((struct sockaddr_in6 *)&target)->sin6_port = htons(base_port + hisptr);
 			break;
@@ -344,7 +343,7 @@ restart:
 		his[hisptr].sendtime = hdr->tv;
 		if (sendto(fd, pktbuf, mtu-overhead, 0, (struct sockaddr *)&target, targetlen) > 0)
 			break;
-		res = recverr(fd, ttl);
+		res = recverr(fd, ai, ttl);
 		his[hisptr].hops = 0;
 		if (res==0)
 			return 0;
@@ -359,7 +358,7 @@ restart:
 			printf("%2d?: reply received 8)\n", ttl);
 			return 0;
 		}
-		return recverr(fd, ttl);
+		return recverr(fd, ai, ttl);
 	}
 
 	printf("%2d:  send failed\n", ttl);
@@ -382,7 +381,7 @@ int main(int argc, char **argv)
 	int ttl;
 	char *p;
 	struct addrinfo hints = {
-		.ai_family = family,
+		.ai_family = AF_INET6,
 		.ai_socktype = SOCK_DGRAM,
 		.ai_protocol = IPPROTO_UDP,
 #ifdef USE_IDN
@@ -451,13 +450,9 @@ int main(int argc, char **argv)
 
 	fd = -1;
 	for (ai = result; ai; ai = ai->ai_next) {
-		/* sanity check */
-		if (family && ai->ai_family != family)
-			continue;
 		if (ai->ai_family != AF_INET6 &&
 		    ai->ai_family != AF_INET)
 			continue;
-		family = ai->ai_family;
 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 		if (fd < 0)
 			continue;
@@ -469,9 +464,8 @@ int main(int argc, char **argv)
 		perror("socket/connect");
 		exit(1);
 	}
-	freeaddrinfo(result);
 
-	switch (family) {
+	switch (ai->ai_family) {
 	case AF_INET6:
 		overhead = 48;
 		if (!mtu)
@@ -540,7 +534,7 @@ int main(int argc, char **argv)
 		int i;
 
 		on = ttl;
-		switch (family) {
+		switch (ai->ai_family) {
 		case AF_INET6:
 			if (setsockopt(fd, SOL_IPV6, IPV6_UNICAST_HOPS, &on, sizeof(on))) {
 				perror("IPV6_UNICAST_HOPS");
@@ -561,7 +555,7 @@ restart:
 			int old_mtu;
 
 			old_mtu = mtu;
-			res = probe_ttl(fd, ttl);
+			res = probe_ttl(fd, ai, ttl);
 			if (mtu != old_mtu)
 				goto restart;
 			if (res == 0)
@@ -576,6 +570,8 @@ restart:
 	printf("     Too many hops: pmtu %d\n", mtu);
 
 done:
+	freeaddrinfo(result);
+
 	printf("     Resume: pmtu %d ", mtu);
 	if (hops_to>=0)
 		printf("hops %d ", hops_to);
