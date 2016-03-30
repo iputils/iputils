@@ -374,7 +374,7 @@ static void usage(void)
 int main(int argc, char **argv)
 {
 	struct addrinfo hints = {
-		.ai_family = AF_INET,
+		.ai_family = AF_UNSPEC,
 		.ai_socktype = SOCK_DGRAM,
 		.ai_protocol = IPPROTO_UDP,
 #ifdef USE_IDN
@@ -394,8 +394,22 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 #endif
 
-	while ((ch = getopt(argc, argv, "nbh?l:m:p:")) != EOF) {
+	while ((ch = getopt(argc, argv, "46nbh?l:m:p:")) != EOF) {
 		switch(ch) {
+		case '4':
+			if (hints.ai_family != AF_UNSPEC) {
+				fprintf(stderr, "tracepath: Only one -4 or -6 option may be specified\n");
+				exit(2);
+			}
+			hints.ai_family = AF_INET;
+			break;
+		case '6':
+			if (hints.ai_family != AF_UNSPEC) {
+				fprintf(stderr, "tracepath: Only one -4 or -6 option may be specified\n");
+				exit(2);
+			}
+			hints.ai_family = AF_INET6;
+			break;
 		case 'n':
 			no_resolve = 1;
 			break;
