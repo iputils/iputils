@@ -116,7 +116,7 @@ endif
 endif
 
 # -------------------------------------
-TARGETS=ping tracepath tracepath6 traceroute6 clockdiff rdisc arping tftpd rarpd
+TARGETS=ping tracepath traceroute6 clockdiff rdisc arping tftpd rarpd
 
 LDLIBS=$(LDLIB) $(ADDLIB)
 
@@ -174,10 +174,6 @@ LIB_rdisc =
 # tracepath
 DEF_tracepath = $(DEF_IDN)
 LIB_tracepath = $(LIB_IDN)
-
-# tracepath6
-DEF_tracepath6 = $(DEF_IDN)
-LIB_tracepath6 =
 
 # traceroute6
 DEF_traceroute6 = $(DEF_CAP) $(DEF_IDN)
