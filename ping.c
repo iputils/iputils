@@ -80,8 +80,6 @@ ping_func_set_st ping4_func_set = {
 #define	NROUTES		9		/* number of record route slots */
 #define TOS_MAX		255		/* 8-bit TOS field */
 
-static const int max_ping4_packet = 0x10000;
-
 static int ts_type;
 static int nroute = 0;
 static __u32 route[10];
@@ -806,12 +804,8 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	}
 
 	if (datalen > 0xFFFF - 8 - optlen - 20) {
-		if (uid || datalen > max_ping4_packet-8 || datalen > MAXPACKET-8) {
-			fprintf(stderr, "Error: packet size %d is too large. Maximum is %d\n", datalen, 0xFFFF-8-20-optlen);
-			exit(2);
-		}
-		/* Allow small oversize to root yet. It will cause EMSGSIZE. */
-		fprintf(stderr, "WARNING: packet size %d is too large. Maximum is %d\n", datalen, 0xFFFF-8-20-optlen);
+		fprintf(stderr, "Error: packet size %d is too large. Maximum is %d\n", datalen, 0xFFFF-8-20-optlen);
+		exit(2);
 	}
 
 	if (datalen >= sizeof(struct timeval))	/* can we time transfer */
