@@ -499,6 +499,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	char *target;
 	char hnamebuf[NI_MAXHOST];
 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
+	__u32 *tmp_rspace;
 
 	if (argc > 1) {
 		if (options & F_RROUTE)
@@ -741,8 +742,10 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 		if (ts_type == IPOPT_TS_PRESPEC) {
 			int i;
 			rspace[1] = 4+nroute*8;
-			for (i=0; i<nroute; i++)
-				*(__u32*)&rspace[4+i*8] = route[i];
+			for (i = 0; i < nroute; i++) {
+				tmp_rspace = (__u32*)&rspace[4+i*8];
+				*tmp_rspace = route[i];
+			}
 		}
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0) {
 			rspace[3] = 2;
@@ -761,8 +764,10 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			: IPOPT_LSRR;
 		rspace[1+IPOPT_OLEN] = 3 + nroute*4;
 		rspace[1+IPOPT_OFFSET] = IPOPT_MINOFF;
-		for (i=0; i<nroute; i++)
-			*(__u32*)&rspace[4+i*4] = route[i];
+		for (i = 0; i < nroute; i++) {
+			tmp_rspace = (__u32*)&rspace[4+i*4];
+			*tmp_rspace = route[i];
+		}
 
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + nroute*4) < 0) {
 			perror("ping: record route");
@@ -995,7 +1000,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 	int csfailed;
 	struct cmsghdr *cmsg;
 	int ttl;
-	__u8 *opts;
+	__u8 *opts, *tmp_ttl;
 	int optlen;
 
 	/* Check the IP header */
@@ -1022,7 +1027,8 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			if (cmsg->cmsg_type == IP_TTL) {
 				if (cmsg->cmsg_len < sizeof(int))
 					continue;
-				ttl = *(int *) CMSG_DATA(cmsg);
+				tmp_ttl = (__u8 *) CMSG_DATA(cmsg);
+				ttl = (int)*tmp_ttl;
 			} else if (cmsg->cmsg_type == IP_RETOPTS) {
 				opts = (__u8 *) CMSG_DATA(cmsg);
 				optlen = cmsg->cmsg_len;
