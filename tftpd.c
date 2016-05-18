@@ -54,6 +54,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <grp.h>
 
 #include "tftp.h"
 
@@ -101,6 +102,8 @@ int main(int ac, char **av)
 
 	/* Sanity. If parent forgot to setuid() on us. */
 	if (geteuid() == 0) {
+		/* Drop all supplementary groups. No error checking is needed */
+		setgroups(0, NULL);
 		if (setgid(65534) || setuid(65534)) {
 			syslog(LOG_ERR, "set*id failed: %m\n");
 			exit(1);
