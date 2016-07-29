@@ -797,9 +797,11 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			enable_capability_raw();
 			if (
 #ifdef IPV6_RECVPKTINFO
-			    setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 &&
+				setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 &&
+				setsockopt(sock->fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 &&
 #endif
-			    setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
+				setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1 &&
+				setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 				perror("setsockopt(SO_BINDTODEVICE)");
 				exit(2);
 			}
