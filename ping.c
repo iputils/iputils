@@ -55,6 +55,7 @@
 
 #include "ping.h"
 
+#include <assert.h>
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #ifndef WITHOUT_IFADDRS
@@ -110,27 +111,79 @@ static int pmtudisc = -1;
 
 static void create_socket(socket_st *sock, int family, int socktype, int protocol, int requisite)
 {
+	int do_fallback = 0;
+
 	errno = 0;
 
-	sock->fd = socket(family, socktype, protocol);
+	assert(sock->fd == -1);
+	assert(socktype == SOCK_DGRAM || socktype == SOCK_RAW);
 
-	/* Attempt creating a raw socket when ping socket failed */
-	if (sock->fd == -1 && errno != EAFNOSUPPORT && socktype == SOCK_DGRAM) {
-		if (options & F_VERBOSE)
+	/* Attempt to create a ping socket if requested. Attempt to create a raw
+	 * socket otherwise or as a fallback. Well known errno values follow.
+	 *
+	 * 1) EACCES
+	 *
+	 * Kernel returns EACCES for all ping socket creation attempts when the
+	 * user isn't allowed to use ping socket. A range of group ids is
+	 * configured using the `net.ipv4.ping_group_range` sysctl. Fallback
+	 * to raw socket is necessary.
+	 *
+	 * Kernel returns EACCES for all raw socket creation attempts when the
+	 * proces doesn't have the `CAP_NET_RAW` capability.
+	 *
+	 * 2) EAFNOSUPPORT
+	 *
+	 * Kernel returns EAFNOSUPPORT for IPv6 ping or raw socket creation
+	 * attempts when run with IPv6 support disabled (e.g. via `ipv6.disable=1`
+	 * kernel command-line option.
+	 *
+	 * https://github.com/iputils/iputils/issues/32
+	 *
+	 * OpenVZ 2.6.32-042stab113.11 and possibly other older kernels return
+	 * EAFNOSUPPORT for all IPv4 ping socket creation attempts due to lack
+	 * of support in the kernel. Fallback to raw socket is necessary.
+	 *
+	 * https://github.com/iputils/iputils/issues/54
+	 *
+	 * 3) EPROTONOSUPPORT
+	 *
+	 * OpenVZ 2.6.32-042stab113.11 and possibly other older kernels return
+	 * EAFNOSUPPORT for all IPv6 ping socket creation attempts due to lack
+	 * of support in the kernel. Fallback to raw socket is necessary.
+	 *
+	 * https://github.com/iputils/iputils/issues/54
+	 *
+	 */
+	if (socktype == SOCK_DGRAM)
+		sock->fd = socket(family, socktype, protocol);
+
+	/* Kernel doesn't support ping sockets. */
+	if (sock->fd == -1 && errno == EAFNOSUPPORT && family == AF_INET)
+		do_fallback = 1;
+	if (sock->fd == -1 && errno == EPROTONOSUPPORT && family == AF_INET6)
+		do_fallback = 1;
+
+	/* User is not allowed to use ping sockets. */
+	if (sock->fd == -1 && errno == EACCES)
+		do_fallback = 1;
+
+	if (socktype == SOCK_RAW || do_fallback) {
+		if (options & F_VERBOSE && do_fallback)
 			fprintf(stderr, "ping: socket: %s, attempting raw socket...\n", strerror(errno));
-		create_socket(sock, family, SOCK_RAW, protocol, requisite);
-		return;
+		socktype = SOCK_RAW;
+		sock->fd = socket(family, SOCK_RAW, protocol);
 	}
 
 	if (sock->fd == -1) {
-		if (requisite || errno != EAFNOSUPPORT || options & F_VERBOSE)
+		/* Report error related to disabled IPv6 only when IPv6 also failed or in
+		 * verbose mode. Report other errors always.
+		 */
+		if ((errno == EAFNOSUPPORT && socktype == AF_INET6) || options & F_VERBOSE || requisite)
 			fprintf(stderr, "ping: socket: %s\n", strerror(errno));
 		if (requisite)
 			exit(2);
-		return;
-	}
-
-	sock->socktype = socktype;
+	} else
+		sock->socktype = socktype;
 }
 
 static void set_socket_option(socket_st *sock, int level, int optname, const void *optval, socklen_t optlen)
