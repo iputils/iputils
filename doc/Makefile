@@ -47,8 +47,8 @@ $(MANFILES): index.db
 	mv $@ ..; \
 	$(CLEAN_TMPDIR)
 
-fix_sgml2man:
-	@sed -i -e 's!\\fB\\fIdestination\\fB\\fR \[\\fB/\\fIport\\fB\\fR\]!\\fB\\fIdestination\\fB\\fR[\\fB/\\fIport\\fB\\fR]!g' tracepath.8
+fix_sgml2man: tracepath.8
+	@sed -i -e 's!\\fB\\fIdestination\\fB\\fR \[\\fB/\\fIport\\fB\\fR\]!\\fB\\fIdestination\\fB\\fR[\\fB/\\fIport\\fB\\fR]!g' $<
 
 clean:
 	@rm -rf $(MANFILES) $(HTMLFILES) iputils.html tmp.db2html* tmp.db2man*
