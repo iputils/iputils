@@ -9,7 +9,7 @@
 
 <itemizedlist>
  <listitem><para>
-  <ulink url="ping.html">ping, ping6</ulink>.
+  <ulink url="ping.html">ping</ulink>.
  </para></listitem>
  <listitem><para>
   <ulink url="arping.html">arping</ulink>.
@@ -21,7 +21,7 @@
   <ulink url="rarpd.html">rarpd</ulink>.
  </para></listitem>
  <listitem><para>
-  <ulink url="tracepath.html">tracepath, tracepath6</ulink>.
+  <ulink url="tracepath.html">tracepath</ulink>.
  </para></listitem>
  <listitem><para>
   <ulink url="traceroute6.html">traceroute6</ulink>.
