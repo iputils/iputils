@@ -1357,8 +1357,6 @@ void pr_options(unsigned char * cp, int hlen)
 		case IPOPT_LSRR:
 			printf("\n%cSRR: ", *cp==IPOPT_SSRR ? 'S' : 'L');
 			j = *++cp;
-			i = *++cp;
-			i -= 4;
 			cp++;
 			if (j > IPOPT_MINOFF) {
 				for (;;) {
@@ -1391,8 +1389,6 @@ void pr_options(unsigned char * cp, int hlen)
 			    && !memcmp(cp, old_rr, i)
 			    && !(options & F_FLOOD)) {
 				printf("\t(same route)");
-				i = ((i + 3) / 4) * 4;
-				cp += i;
 				break;
 			}
 			old_rrlen = i;

@@ -133,7 +133,7 @@ measure(struct sockaddr_in * addr)
 	long delta1, delta2;
 	struct timeval tv1, tout;
 	unsigned char packet[PACKET_IN], opacket[64];
-	struct icmphdr *icp = (struct icmphdr *) packet;
+	struct icmphdr *icp;
 	struct icmphdr *oicp = (struct icmphdr *) opacket;
 	struct iphdr *ip = (struct iphdr *) packet;
 
@@ -175,7 +175,6 @@ empty:
 	((__u32*)(oicp+1))[1] = 0;
 	((__u32*)(oicp+1))[2] = 0;
 	FD_ZERO(&ready);
-	msgcount = 0;
 
 	acked = seqno = seqno0 = 0;
 
@@ -310,7 +309,7 @@ measure_opt(struct sockaddr_in * addr)
 	long delta1, delta2;
 	struct timeval tv1, tout;
 	unsigned char packet[PACKET_IN], opacket[64];
-	struct icmphdr *icp = (struct icmphdr *) packet;
+	struct icmphdr *icp;
 	struct icmphdr *oicp = (struct icmphdr *) opacket;
 	struct iphdr *ip = (struct iphdr *) packet;
 
@@ -352,7 +351,6 @@ empty:
 	((__u32*)(oicp+1))[2] = 0;
 
 	FD_ZERO(&ready);
-	msgcount = 0;
 
 	acked = seqno = seqno0 = 0;
 

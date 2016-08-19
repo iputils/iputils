@@ -609,7 +609,6 @@ int main(int argc, char *argv[])
 			while ((cc = wait_for_reply(icmp_sock, &from, &to, reset_timer)) != 0) {
 				gettimeofday(&t2, &tz);
 				if ((i = packet_ok(packet, cc, &from, &to, seq, &t1))) {
-					reset_timer = 1;
 					if (memcmp(&from.sin6_addr, &lastaddr, sizeof(from.sin6_addr))) {
 						print(packet, cc, &from);
 						memcpy(&lastaddr,

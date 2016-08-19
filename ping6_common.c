@@ -1294,7 +1294,7 @@ static
 void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 {
 	__u8 *h = (__u8 *)(nih + 1);
-	__u8 *p = h + 4;
+	__u8 *p;
 	__u8 *end = (__u8 *)nih + len;
 	int af;
 	int aflen;
