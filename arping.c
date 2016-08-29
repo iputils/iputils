@@ -113,7 +113,7 @@ static inline socklen_t sll_len(size_t halen)
 void usage(void)
 {
 	fprintf(stderr,
-		"Usage: arping [-fqbDUAV] [-c count] [-w timeout] [-I device] [-s source] destination\n"
+		"Usage: arping [-fqbDUAV] [-c count] [-w timeout] [-s source] -I device destination\n"
 		"  -f : quit on first reply\n"
 		"  -q : be quiet\n"
 		"  -b : keep broadcasting, don't go unicast\n"
@@ -123,12 +123,12 @@ void usage(void)
 		"  -V : print version and exit\n"
 		"  -c count : how many packets to send\n"
 		"  -w timeout : how long to wait for a reply\n"
+		"  -s source : source ip address\n"
 		"  -I device : which ethernet device to use"
 #ifdef DEFAULT_DEVICE_STR
 			" (" DEFAULT_DEVICE_STR ")"
 #endif
 			"\n"
-		"  -s source : source ip address\n"
 		"  destination : ask for what ip address\n"
 		);
 	exit(2);
