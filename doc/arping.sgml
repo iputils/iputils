@@ -19,7 +19,7 @@
 <arg choice="opt">-c <replaceable/count/</arg>
 <arg choice="opt">-w <replaceable/deadline/</arg>
 <arg choice="opt">-s <replaceable/source/</arg>
-<arg choice="req">-I <replaceable/interface/</arg>
+<arg choice="opt">-I <replaceable/interface/</arg>
 <arg choice="req"><replaceable/destination/</arg>
 </cmdsynopsis>
 </refsynopsisdiv>
