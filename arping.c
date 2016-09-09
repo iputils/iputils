@@ -1086,7 +1086,7 @@ main(int argc, char **argv)
 			fprintf(stderr, "arping: Device %s not available.\n", device.name);
 			exit(2);
 		}
-		fprintf(stderr, "arping: device (option -I) is required.\n");
+		fprintf(stderr, "arping: Suitable device could not be determined. Please, use option -I.\n");
 		usage();
 	}
 
