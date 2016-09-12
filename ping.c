@@ -655,7 +655,8 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 		if (connect(probe_fd, (struct sockaddr*)&dst, sizeof(dst)) == -1) {
 			if (errno == EACCES) {
 				if (broadcast_pings == 0) {
-					fprintf(stderr, "Do you want to ping broadcast? Then -b\n");
+					fprintf(stderr,
+						"Do you want to ping broadcast? Then -b. If not, check your local firewall rules.\n");
 					exit(2);
 				}
 				fprintf(stderr, "WARNING: pinging broadcast address\n");
