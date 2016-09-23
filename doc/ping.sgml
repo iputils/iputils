@@ -153,7 +153,7 @@ Show help.
 Wait <replaceable/interval/ seconds between sending each packet.
 The default is to wait for one second between each packet normally,
 or not to wait in flood mode. Only super-user may set interval
-to values less 0.2 seconds.
+to values less than 0.2 seconds.
   </para></listitem>
  </varlistentry>
  <varlistentry>
