@@ -1,3 +1,47 @@
+[s20161105]
+
+David Heidelberg (1):
+      ping: eliminate deadcode & simplify
+
+Jan Synacek (5):
+      ping: do not allow oversized packets to root
+      correctly initialize first hop
+      ping: fix ping -6 -I
+      arping,doc: fix documentation of -I
+      ping: fix error message when getting EACCES from connect()
+
+Karl-Philipp Richter (2):
+      renamed INSTALL to INSTALL.md
+      (re)structured INSTALL.md and transformed into markdown; added hint that installation into prefix has to be done with DESTDIR make variable and that there's no prefix support in configure, close #21
+
+Markos Chandras (2):
+      ping: Silence GCC warnings when building with -fstrict-aliasing
+      tftpd: Drop supplementary groups for root
+
+Martin Bark (1):
+      libgcrypt: fix static linking
+
+Olof Sjödin (1):
+      doc: Inserted a missing word
+
+Pavel Šimerda (8):
+      tracepath6: avoid redundant family variable
+      tracepath: borrow everything good from tracepath6
+      tracepath: switch to dual-stack operation
+      tracepath: remove now redundant tracepath6
+      docs: fix parallel build of manpages
+      ping: remove assignments of values that are never read
+      docs: remove references to ping6 and traceroute6
+      ping: work with older kernels that don't support ping sockets
+
+Robert Schiele (2):
+      Revert "ping_common.c: fix message flood when EPERM is encountered in ping"
+      reorder -I option parsing
+
+依云 (1):
+      ping: also bind the ICMP socket to the specific device
+
+
 [s20160308]
 
 Aaro Koskinen (1):

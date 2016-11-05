@@ -1,1 +1,1 @@
-#define SNAPSHOT "s20160308"
+#define SNAPSHOT "s20161105"
