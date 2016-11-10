@@ -444,7 +444,6 @@ int main(int argc, char *argv[])
 	(void) memset((char *)&whereto, 0, sizeof(whereto));
 
 	to->sin6_family = AF_INET6;
-	to->sin6_port = htons(port);
 
 	if (inet_pton(AF_INET6, *argv, &to->sin6_addr) > 0) {
 		hostname = *argv;
@@ -462,6 +461,7 @@ int main(int argc, char *argv[])
 		}
 
 		memcpy(to, result->ai_addr, sizeof *to);
+		to->sin6_port = htons(port);
 		hostname = result->ai_canonname;
 		freeaddrinfo(result);
 	}
