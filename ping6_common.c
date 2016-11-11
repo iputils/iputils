@@ -1420,6 +1420,8 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
 		if (!is_ours(sock, icmph->icmp6_id))
 			return 1;
+               if (!contains_pattern_in_payload((__u8*)(icmph+1)))
+               		return 1;            /* 'Twas really not our ECHO */
 		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(from, sizeof *from),

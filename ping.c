@@ -1103,6 +1103,8 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 	if (icp->type == ICMP_ECHOREPLY) {
 		if (!is_ours(sock, icp->un.echo.id))
 			return 1;			/* 'Twas not our ECHO */
+		if (!contains_pattern_in_payload((__u8*)(icp+1)))
+			return 1;			/* 'Twas really not our ECHO */
 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
 				      ttl, 0, tv, pr_addr(from, sizeof *from),
