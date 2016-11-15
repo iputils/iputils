@@ -565,6 +565,24 @@ void setup(socket_st *sock)
 	}
 }
 
+/*
+ * Return 0 if pattern in payload point to be ptr did not match the pattern that was sent  
+ */
+int contains_pattern_in_payload(__u8 *ptr)
+{
+	int i;
+	__u8 *cp, *dp;
+ 
+	/* check the data */
+	cp = ((u_char*)ptr) + sizeof(struct timeval);
+	dp = &outpack[8 + sizeof(struct timeval)];
+	for (i = sizeof(struct timeval); i < datalen; ++i, ++cp, ++dp) {
+		if (*cp != *dp)
+			return 0;
+	}
+	return 1;
+}
+
 void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packlen)
 {
 	char addrbuf[128];
