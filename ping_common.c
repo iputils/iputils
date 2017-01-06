@@ -159,6 +159,7 @@ int modify_capability(cap_value_t cap, cap_flag_value_t on)
 	}
 
 	cap_free(cap_p);
+	cap_p = NULL;
 
 	rc = 0;
 out:
