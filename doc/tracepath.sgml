@@ -15,6 +15,8 @@ traces path to a network host discovering MTU along this path</refpurpose>
 <refsynopsisdiv>
 <cmdsynopsis>
 <command>tracepath</command>
+<arg choice="opt">-4</arg>
+<arg choice="opt">-6</arg>
 <arg choice="opt">-n</arg>
 <arg choice="opt">-b</arg>
 <arg choice="opt">-l <replaceable/pktlen/</arg>
@@ -45,6 +47,20 @@ of UDP ports to maintain trace history.
 
 <refsect1><title>OPTIONS</title>
 <variablelist>
+
+ <varlistentry>
+  <term><option>-4</option></term>
+  <listitem><para>
+Use IPv4 only.
+  </para></listitem>
+ </varlistentry>
+
+ <varlistentry>
+  <term><option>-6</option></term>
+  <listitem><para>
+Use IPv6 only.
+  </para></listitem>
+ </varlistentry>
 
  <varlistentry>
   <term><option>-n</option></term>
