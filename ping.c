@@ -850,14 +850,14 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 	if (options & F_NOLOOP) {
 		int loop = 0;
-		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, 1) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof loop) == -1) {
 			perror ("ping: can't disable multicast loopback");
 			exit(2);
 		}
 	}
 	if (options & F_TTL) {
 		int ittl = ttl;
-		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, 1) == -1) {
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof ttl) == -1) {
 			perror ("ping: can't set multicast time-to-live");
 			exit(2);
 		}
