@@ -1227,6 +1227,8 @@ main(int argc, char **argv)
 		if ((cc = recvfrom(s, packet, sizeof(packet), 0,
 				   (struct sockaddr *)&from, &alen)) < 0) {
 			perror("arping: recvfrom");
+			if (errno == ENETDOWN)
+				exit(2);
 			continue;
 		}
 
