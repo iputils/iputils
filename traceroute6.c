@@ -467,7 +467,6 @@ int main(int argc, char *argv[])
 		}
 
 		memcpy(to, result->ai_addr, sizeof *to);
-		to->sin6_port = htons(port);
 		resolved_hostname = strdup(result->ai_canonname);
 		if (resolved_hostname == NULL) {
 			(void)fprintf(stderr,
@@ -477,6 +476,9 @@ int main(int argc, char *argv[])
 		hostname = resolved_hostname;
 		freeaddrinfo(result);
 	}
+
+	to->sin6_port = htons(port);
+
 	firsthop = *to;
 	if (*++argv) {
 		datalen = atoi(*argv);
