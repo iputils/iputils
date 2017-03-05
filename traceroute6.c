@@ -341,6 +341,7 @@ int main(int argc, char *argv[])
 	struct sockaddr_in6 from, *to;
 	int ch, i, on, probe, seq, tos, ttl;
 	int socket_errno;
+	char *resolved_hostname = NULL;
 
 	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 	socket_errno = errno;
@@ -462,7 +463,13 @@ int main(int argc, char *argv[])
 
 		memcpy(to, result->ai_addr, sizeof *to);
 		to->sin6_port = htons(port);
-		hostname = result->ai_canonname;
+		resolved_hostname = strdup(result->ai_canonname);
+		if (resolved_hostname == NULL) {
+			(void)fprintf(stderr,
+			    "traceroute: cannot allocate memory\n");
+			exit(1);
+		}
+		hostname = resolved_hostname;
 		freeaddrinfo(result);
 	}
 	firsthop = *to;
@@ -646,7 +653,11 @@ int main(int argc, char *argv[])
 		putchar('\n');
 		if (got_there ||
 		    (unreachable > 0 && unreachable >= nprobes-1))
-			exit(0);
+			break;
+	}
+
+	if (resolved_hostname != NULL) {
+		free(resolved_hostname);
 	}
 
 	return 0;
