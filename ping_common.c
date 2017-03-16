@@ -258,7 +258,6 @@ int __schedule_exit(int next)
 {
 	static unsigned long waittime;
 	struct itimerval it;
-        int deftime = 1;
 
 	if (waittime)
 		return next;
@@ -277,10 +276,8 @@ int __schedule_exit(int next)
 	it.it_interval.tv_usec = 0;
 	it.it_value.tv_sec = waittime/1000000;
 	it.it_value.tv_usec = waittime%1000000;
-	if (waittime /1000000 < DBL_EPSILON)
-	{
-	    it.it_value.tv_sec = deftime;  	
-	}
+	if (waittime == 0)
+	    waittime = 1000; /*set a default value for waittime*/	 
 	setitimer(ITIMER_REAL, &it, NULL);
 	return next;
 }
