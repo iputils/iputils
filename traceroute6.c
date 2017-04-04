@@ -461,6 +461,11 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 
+		if (idn != NULL) {
+			free(idn);
+			idn = NULL;
+		}
+
 		memcpy(to, result->ai_addr, sizeof *to);
 		to->sin6_port = htons(port);
 		resolved_hostname = strdup(result->ai_canonname);
