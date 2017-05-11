@@ -19,6 +19,7 @@
     <arg choice='opt'>-AbDfhqUV </arg>
     <arg choice='opt'>-c <replaceable>count</replaceable></arg>
     <arg choice='opt'>-w <replaceable>deadline</replaceable></arg>
+    <arg choice='opt'>-i <replaceable>interval</replaceable></arg>
     <arg choice='opt'>-s <replaceable>source</replaceable></arg>
     <arg choice='opt'>-I <replaceable>interface</replaceable></arg>
     <arg choice='plain'><replaceable>destination</replaceable></arg>
@@ -127,6 +128,11 @@ packet are sent, it waits either for
 expire or until
 <emphasis remap='I'>count</emphasis>
 probes are answered.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-i </option><emphasis remap='I'>interval</emphasis></term>
+  <listitem><para>Specify an interval, in seconds, between packets.</para>
   </listitem>
   </varlistentry>
 </variablelist>
