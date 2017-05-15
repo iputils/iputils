@@ -107,7 +107,7 @@ int cmsg_len;
 
 static struct sockaddr_in source = { .sin_family = AF_INET };
 char *device;
-static int pmtudisc = -1;
+int pmtudisc = -1;
 
 static void create_socket(socket_st *sock, int family, int socktype, int protocol, int requisite)
 {
@@ -498,8 +498,14 @@ main(int argc, char **argv)
 	enable_capability_raw();
 	if (hints.ai_family != AF_INET6)
 		create_socket(&sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP, hints.ai_family == AF_INET);
-	if (hints.ai_family != AF_INET)
+	if (hints.ai_family != AF_INET) {
 		create_socket(&sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6, sock4.fd == -1);
+		/* This may not be needed if both protocol versions always had the same value, but
+		 * since I don't know that, it's better to be safe than sorry. */
+		pmtudisc = pmtudisc == IP_PMTUDISC_DO   ? IPV6_PMTUDISC_DO :
+			   pmtudisc == IP_PMTUDISC_DONT ? IPV6_PMTUDISC_DONT :
+			   pmtudisc == IP_PMTUDISC_WANT ? IPV6_PMTUDISC_WANT : pmtudisc;
+	}
 	disable_capability_raw();
 
 	/* Limit address family on single-protocol systems */

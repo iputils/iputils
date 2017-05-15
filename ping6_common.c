@@ -101,7 +101,6 @@ void ping6_usage(unsigned) __attribute((noreturn));
 
 struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
 char *device;
-int pmtudisc=-1;
 
 #if defined(USE_GCRYPT) || defined(USE_OPENSSL) || defined(USE_NETTLE)
 #include "iputils_md5dig.h"

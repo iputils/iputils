@@ -168,6 +168,7 @@ extern volatile int status_snapshot;
 extern int confirm;
 extern int confirm_flag;
 extern char *device;
+extern int pmtudisc;
 
 extern volatile int in_pr_addr;		/* pr_addr() is executing */
 extern jmp_buf pr_addr_jmp;
