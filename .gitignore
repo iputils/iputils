@@ -11,6 +11,7 @@ core
 .gdb_history
 .gdbinit
 
+# Makefile build
 /arping
 /clockdiff
 /ping
@@ -21,3 +22,5 @@ core
 /tracepath
 /tracepath6
 /traceroute6
+# Meson build
+/builddir
