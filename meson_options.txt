@@ -1,0 +1,15 @@
+option('USE_CAP', type : 'boolean',  value : true,
+	description : 'Capatiblity support (with libcap)')
+option('USE_IDN', type : 'combo', choices : ['0', '1', '2'], value : '1',
+	description : 'IDN support')
+option('USE_CRYPTO', type : 'combo', choices : ['none', 'nettle', 'gcrypt','openssl'], value : 'nettle',
+	description: 'Crypto library support for ping 6. You can choose between none, Nettle, GCrypt or openssl/libressl')
+
+#option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
+#	description : 'default device for arping')
+
+#option('someoption', type : 'string', value : 'optval', description : 'An option')
+#option('other_one', type : 'boolean', value : false)
+#option('combo_opt', type : 'combo', choices : ['one', 'two', 'three'], value : 'three')
+
+
