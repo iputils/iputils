@@ -342,7 +342,6 @@ void ping6_install_filter(socket_st *sockets);
 extern ping_func_set_st ping6_func_set;
 
 int niquery_option_handler(const char *opt_arg);
-int hextoui(const char *str);
 
 extern __u32 tclass;
 extern __u32 flowlabel;

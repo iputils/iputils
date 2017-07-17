@@ -610,27 +610,6 @@ int niquery_option_handler(const char *opt_arg)
 	return ret;
 }
 
-int hextoui(const char *str)
-{
-	unsigned long val;
-	char *ep;
-
-	errno = 0;
-	val = strtoul(str, &ep, 16);
-	if (*ep) {
-		if (!errno)
-			errno = EINVAL;
-		return -1;
-	}
-
-	if (val > UINT_MAX) {
-		errno = ERANGE;
-		return UINT_MAX;
-	}
-
-	return val;
-}
-
 int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock)
 {
 	static const struct addrinfo hints = { .ai_family = AF_INET6, .ai_flags = getaddrinfo_flags };

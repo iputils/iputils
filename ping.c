@@ -97,6 +97,7 @@ static void usage(void) __attribute__((noreturn));
 static unsigned short in_cksum(const unsigned short *addr, int len, unsigned short salt);
 static void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp);
 static int parsetos(char *str);
+static int parseflow(char *str);
 
 static struct {
 	struct cmsghdr cm;
@@ -267,11 +268,7 @@ main(int argc, char **argv)
 			hints.ai_family = AF_INET6;
 			break;
 		case 'F':
-			flowlabel = hextoui(optarg);
-			if (errno || (flowlabel & ~IPV6_FLOWINFO_FLOWLABEL)) {
-				fprintf(stderr, "ping: Invalid flowinfo %s\n", optarg);
-				exit(2);
-			}
+			flowlabel = parseflow(optarg);
 			options |= F_FLOWINFO;
 			break;
 		case 'N':
@@ -1628,6 +1625,34 @@ int parsetos(char *str)
 	}
 	return(tos);
 }
+
+int parseflow(char *str)
+{
+	const char *cp;
+	unsigned long val;
+	char *ep;
+
+	/* handle both hex and decimal values */
+	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+		cp = str + 2;
+		val = (int)strtoul(cp, &ep, 16);
+	} else
+		val = (int)strtoul(str, &ep, 10);
+
+	/* doesn't look like decimal or hex, eh? */
+	if (*ep != '\0') {
+		fprintf(stderr, "ping: \"%s\" bad value for flowinfo\n", str);
+		exit(2);
+	}
+
+	if (val & ~IPV6_FLOWINFO_FLOWLABEL) { /* Flow is 20 bit value */
+		fprintf(stderr, "ping: \"%s\" value is greater than 20 bits.\n", str);
+		exit(2);
+	}
+	return(val);
+}
+
+
 
 void ping4_install_filter(socket_st *sock)
 {
