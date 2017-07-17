@@ -417,14 +417,8 @@ main(int argc, char **argv)
 			options |= F_QUIET;
 			break;
 		case 'Q':
-			/* IPv4 */
-			settos = parsetos(optarg);
-			/* IPv6 */
-			tclass = hextoui(optarg);
-			if (errno || (tclass & ~0xff)) {
-				fprintf(stderr, "ping: Invalid tclass %s\n", optarg);
-				exit(2);
-			}
+			settos = parsetos(optarg); /* IPv4 */
+			tclass = settos; /* IPv6 */
 			break;
 		case 'r':
 			options |= F_SO_DONTROUTE;
