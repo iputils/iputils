@@ -81,9 +81,7 @@ extern int options;
 #define	F_SO_DONTROUTE	0x080
 #define	F_VERBOSE	0x100
 #define	F_TIMESTAMP	0x200
-#define	F_FLOWINFO	0x200
 #define	F_SOURCEROUTE	0x400
-#define	F_TCLASS	0x400
 #define	F_FLOOD_POLL	0x800
 #define	F_LATENCY	0x1000
 #define	F_AUDIBLE	0x2000
@@ -94,6 +92,8 @@ extern int options;
 #define F_MARK		0x40000
 #define F_PTIMEOFDAY	0x80000
 #define F_OUTSTANDING	0x100000
+#define F_FLOWINFO	0x200000
+#define F_TCLASS	0x400000
 
 /*
  * MAX_DUP_CHK is the number of bits in received table, i.e. the maximum
