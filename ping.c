@@ -1629,7 +1629,7 @@ int parsetos(char *str)
 	}
 
 	if (tos > TOS_MAX) {
-		fprintf(stderr, "ping: the decimal value of TOS bits must be 0-254 (or zero)\n");
+		fprintf(stderr, "ping: the decimal value of TOS bits must be in range 0-255\n");
 		exit(2);
 	}
 	return(tos);
