@@ -887,8 +887,11 @@ void finish(void)
 	if (nerrors)
 		printf(", +%ld errors", nerrors);
 	if (ntransmitted) {
-		printf(", %d%% packet loss",
-		       (int) ((((long long)(ntransmitted - nreceived)) * 100) /
+#ifdef USE_IDN
+	setlocale(LC_ALL, "C");
+#endif
+		printf(", %g%% packet loss",
+		       (float) ((((long long)(ntransmitted - nreceived)) * 100.0) /
 			      ntransmitted));
 		printf(", time %ldms", 1000*tv.tv_sec+tv.tv_usec/1000);
 	}
