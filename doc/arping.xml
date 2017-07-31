@@ -1,0 +1,159 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- lifted from man+troff by doclifter -->
+<refentry id='arping8'>
+<refmeta>
+  <refentrytitle>ARPING</refentrytitle>
+  <manvolnum>8</manvolnum>
+  <refmiscinfo class='manual'>iputils</refmiscinfo>
+</refmeta>
+<refnamediv>
+  <refname>arping</refname>
+  <refpurpose>send ARP REQUEST to a neighbour host</refpurpose>
+</refnamediv>
+<!-- body begins here -->
+<refsynopsisdiv id='synopsis'>
+  <cmdsynopsis>
+    <command>arping</command>
+    <arg choice='opt'>-AbDfhqUV </arg>
+    <arg choice='opt'>-c <replaceable>count</replaceable></arg>
+    <arg choice='opt'>-w <replaceable>deadline</replaceable></arg>
+    <arg choice='opt'>-s <replaceable>source</replaceable></arg>
+    <arg choice='opt'>-I <replaceable>interface</replaceable></arg>
+    <arg choice='plain'><replaceable>destination</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+</refsynopsisdiv>
+
+
+<refsect1 id='description'>
+  <title>DESCRIPTION</title>
+  <para>Ping <emphasis remap='I'>destination</emphasis> on device <emphasis remap='I'>interface</emphasis> by ARP packets,
+using source address <emphasis remap='I'>source</emphasis>.</para>
+</refsect1>
+
+<refsect1 id='options'><title>OPTIONS</title>
+<variablelist remap='TP'>
+  <varlistentry>
+    <term><option>-A</option></term>
+    <listitem>
+      <para>The same as <option>-U</option>, but ARP REPLY packets used instead
+of ARP REQUEST.</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><option>-b</option></term>
+    <listitem>
+      <para>Send only MAC level broadcasts. Normally <command>arping</command> starts
+from sending broadcast, and switch to unicast after reply received.</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term><option>-c </option><emphasis remap='I'>count</emphasis></term>
+    <listitem>
+      <para>Stop after sending <emphasis remap='I'>count</emphasis> ARP REQUEST
+packets. With <emphasis remap='I'>deadline</emphasis> option, instead wait for
+<emphasis remap='I'>count</emphasis> ARP REPLY packets, or until the timeout expires.</para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-D</option></term>
+  <listitem><para>Duplicate address detection mode (DAD). See RFC2131, 4.4.1. Returns 0, if DAD succeeded i.e. no replies are received</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-f</option></term>
+  <listitem><para>Finish after the first reply confirming that target is alive.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-I </option><emphasis remap='I'>interface</emphasis></term>
+  <listitem><para>Name of network device where to send ARP REQUEST packets.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-h</option></term>
+  <listitem><para>Print help page and exit.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-q</option></term>
+  <listitem><para>Quiet output. Nothing is displayed.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-s </option><emphasis remap='I'>source</emphasis></term>
+  <listitem><para>IP source address to use in ARP packets. If this option is absent, source address is:</para>
+    <variablelist remap='TP'>
+      <varlistentry>
+      <listitem><para>&bull; In DAD mode (with option <option>-D</option>) set to 0.0.0.0.</para>
+      </listitem>
+      </varlistentry>
+      <varlistentry>
+      <listitem><para>&bull; In Unsolicited ARP mode (with options <option>-U</option> or <option>-A</option>)
+set to <emphasis remap='I'>destination</emphasis>.</para>
+      </listitem>
+      </varlistentry>
+      <varlistentry>
+      <listitem><para>&bull; Otherwise, it is calculated from routing tables.</para>
+      </listitem>
+      </varlistentry>
+    </variablelist>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-U</option></term>
+  <listitem><para>Unsolicited ARP mode to update neighbours' ARP caches.
+No replies are expected.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem><para>Print version of the program and exit.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-w </option><emphasis remap='I'>deadline</emphasis></term>
+  <listitem><para>Specify a timeout, in seconds, before
+<command>arping</command>
+exits regardless of how many
+packets have been sent or received. In this case
+<command>arping</command>
+does not stop after
+<emphasis remap='I'>count</emphasis>
+packet are sent, it waits either for
+<emphasis remap='I'>deadline</emphasis>
+expire or until
+<emphasis remap='I'>count</emphasis>
+probes are answered.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+</refsect1>
+
+<refsect1 id='see_also'>
+  <title>SEE ALSO</title>
+  <para><citerefentry><refentrytitle>ping</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>clockdiff</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>tracepath</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
+</refsect1>
+
+<refsect1 id='author'>
+  <title>AUTHOR</title>
+  <para><command>arping</command> was written by Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;.</para>
+</refsect1>
+
+<refsect1 id='security'>
+  <title>SECURITY</title>
+  <para><command>arping</command> requires CAP_NET_RAW capability
+to be executed. It is not recommended to be used as set-uid root,
+because it allows user to modify ARP caches of neighbour hosts.</para>
+</refsect1>
+
+<refsect1 id='availability'>
+  <title>AVAILABILITY</title>
+  <para><command>arping</command> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
+</refsect1>
+</refentry>
+

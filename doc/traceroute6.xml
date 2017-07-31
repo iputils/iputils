@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- lifted from man+troff by doclifter -->
+<refentry id='traceroute68'>
+<refmeta>
+  <refentrytitle>TRACEROUTE6</refentrytitle>
+  <manvolnum>8</manvolnum>
+<refmiscinfo class='manual'>iputils</refmiscinfo>
+</refmeta>
+<refnamediv>
+  <refname>traceroute6</refname>
+  <refpurpose>traces path to a network host</refpurpose>
+</refnamediv>
+<!-- body begins here -->
+<refsynopsisdiv id='synopsis'>
+  <cmdsynopsis>
+    <command>traceroute6</command>
+    <arg choice='opt'>-dnrvV </arg>
+    <arg choice='opt'>-i <replaceable>interface</replaceable></arg>
+    <arg choice='opt'>-m <replaceable>max_ttl</replaceable></arg>
+    <arg choice='opt'>-p <replaceable>port</replaceable></arg>
+    <arg choice='opt'>-q <replaceable>max_probes</replaceable></arg>
+    <arg choice='opt'>-s <replaceable>source</replaceable></arg>
+    <arg choice='opt'><arg choice='plain'>-w <replaceable>wait</replaceable></arg><arg choice='plain'><replaceable>time</replaceable></arg></arg>
+    <arg choice='plain'><replaceable>destination</replaceable></arg>
+    <arg choice='opt'><replaceable>size</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+</refsynopsisdiv>
+
+
+<refsect1 id='description'>
+  <title>DESCRIPTION</title>
+  <para>Description can be found in
+<citerefentry><refentrytitle>traceroute</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+all the references to IP replaced to IPv6. It is needless to copy
+the description from there.</para>
+</refsect1>
+
+<refsect1 id='see_also'>
+  <title>SEE ALSO</title>
+  <para><citerefentry><refentrytitle>traceroute</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>tracepath</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>ping</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
+</refsect1>
+
+<refsect1 id='history'>
+  <title>HISTORY</title>
+  <para>This program has long history. Author of <emphasis remap='B'>traceroute</emphasis>
+is Van Jacobson and it first appeared in 1988. This clone is
+based on a port of <emphasis remap='B'>traceroute</emphasis> to IPv6 published
+in NRL IPv6 distribution in 1996. In turn, it was ported
+to Linux by Pedro Roque. After this it was kept in sync by Alexey Kuznetsov
+&lt;kuznet@ms2.inr.ac.ru&gt;. And eventually entered
+<emphasis remap='B'>iputils</emphasis> package.</para>
+</refsect1>
+
+<refsect1 id='security'>
+  <title>SECURITY</title>
+  <para><emphasis remap='B'>tracepath6</emphasis> requires CAP_NET_RAW capability
+to be executed. It is safe to be used as set-uid root.</para>
+</refsect1>
+
+<refsect1 id='availability'>
+  <title>AVAILABILITY</title>
+  <para><command>traceroute6</command> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
+</refsect1>
+</refentry>

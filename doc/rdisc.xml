@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- lifted from man+troff by doclifter -->
+<refentry id='rdisc8'>
+<refmeta>
+  <refentrytitle>RDISC</refentrytitle>
+  <manvolnum>8</manvolnum>
+  <refmiscinfo class='manual'>iputils</refmiscinfo>
+</refmeta>
+<refnamediv>
+  <refname>rdisc</refname>
+  <refpurpose>network router discovery daemon</refpurpose>
+</refnamediv>
+<!-- body begins here -->
+<refsynopsisdiv id='synopsis'>
+  <cmdsynopsis>
+    <command>rdisc</command>
+    <arg choice='opt'>-abdfrstvV </arg>
+    <arg choice='opt'>-p <replaceable>preference</replaceable></arg>
+    <arg choice='opt'>-T <replaceable>max_interval</replaceable></arg>
+    <arg choice='opt'><replaceable>send_address</replaceable></arg>
+    <arg choice='opt'><replaceable>receive_address</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1 id='description'>
+  <title>DESCRIPTION</title>
+  <para><command>rdisc</command> implements client side of the ICMP router discover protocol.
+<command>rdisc</command> is invoked at boot time to populate the network
+routing tables with default routes.</para>
+
+  <para><command>rdisc</command> listens on the ALL_HOSTS (224.0.0.1) multicast address
+(or <emphasis remap='I'>receive_address</emphasis> provided it is given)
+for ROUTER_ADVERTISE messages from routers. The received
+messages are handled by first ignoring those listed router addresses
+with which the host does not share a network. Among the remaining addresses
+the ones with the highest preference are selected as default routers
+and a default route is entered in the kernel routing table
+for each one of them.</para>
+
+  <para>Optionally, <command>rdisc</command> can avoid waiting for routers to announce
+themselves by sending out a few ROUTER_SOLICITATION messages
+to the ALL_ROUTERS (224.0.0.2) multicast address
+(or <emphasis remap='I'>send_address</emphasis> provided it is given)
+when it is started.</para>
+
+  <para>A timer is associated with each router address and the address will
+no longer be considered for inclusion in the the routing tables if the
+timer expires before a new
+<emphasis remap='B'>advertise</emphasis> message is received from the router.
+The address will also be excluded from consideration if the host receives an
+<emphasis remap='B'>advertise</emphasis>
+message with the preference being maximally negative.</para>
+
+  <para>Server side of router discovery protocol is supported by Cisco IOS
+and by any more or less complete UNIX routing daemon, f.e <emphasis remap='B'>gated</emphasis>.
+Or, <command>rdisc</command> can act as responder, if compiled with -DRDISC_SERVER.</para>
+</refsect1>
+
+<refsect1 id='options'>
+  <title>OPTIONS</title>
+<variablelist remap='TP'>
+  <varlistentry>
+  <term><option>-a</option></term>
+  <listitem>
+<para>Accept all routers independently of the preference they have in their
+<emphasis remap='B'>advertise</emphasis> messages.
+Normally <command>rdisc</command> only accepts (and enters in the kernel routing
+tables) the router or routers with the highest preference.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-b</option></term>
+  <listitem>
+<para>Opposite to <option>-a</option>, i.e. install only router with the best
+preference value. It is default behaviour.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-d</option></term>
+  <listitem>
+<para>Send debugging messages to syslog.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-f</option></term>
+  <listitem>
+<para>Run <command>rdisc</command> forever even if no routers are found.
+Normally <command>rdisc</command> gives up if it has not received any
+<emphasis remap='B'>advertise</emphasis> message after after soliciting three times,
+in which case it exits with a non-zero exit code.
+If <option>-f</option> is not specified in the first form then
+<option>-s</option> must be specified.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-r</option></term>
+  <listitem>
+<para>Responder mode, available only if compiled with -DRDISC_SERVER.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-s</option></term>
+  <listitem>
+<para>Send three <emphasis remap='B'>solicitation</emphasis> messages initially to quickly discover
+the routers when the system is booted.
+When <option>-s</option> is specified <command>rdisc</command>
+exits with a non-zero exit code if it can not find any routers.
+This can be overridden with the <option>-f</option> option.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-p </option><emphasis remap='I'>preference</emphasis></term>
+  <listitem>
+<para>Set preference in advertisement.
+Available only with -r option.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-T </option><emphasis remap='I'>max_interval</emphasis></term>
+  <listitem>
+<para>Set maximum advertisement interval in seconds.  Default is 600 secs.
+Available only with -r option.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-t</option></term>
+  <listitem>
+<para>Test mode. Do not go to background.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-v</option></term>
+  <listitem>
+<para>Be verbose i.e. send lots of debugging messages to syslog.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+<para>Print version and exit.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+</refsect1>
+
+<refsect1 id='history'>
+  <title>HISTORY</title>
+  <para>This program was developed by Sun Microsystems (see copyright
+notice in source file). It was ported to Linux by
+Alexey Kuznetsov&lt;kuznet@ms2.inr.ac.ru&gt;.</para>
+</refsect1>
+
+<refsect1 id='see_also'>
+  <title>SEE ALSO</title>
+  <para><citerefentry><refentrytitle>icmp</refentrytitle><manvolnum>7</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>inet</refentrytitle><manvolnum>7</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>ping</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
+</refsect1>
+
+<refsect1 id='references'>
+  <title>REFERENCES</title>
+  <para>Deering, S.E.,ed "ICMP Router Discovery Messages",
+RFC1256, Network Information Center, SRI International,
+Menlo Park, Calif., September 1991.</para>
+</refsect1>
+
+<refsect1 id='security'>
+  <title>SECURITY</title>
+  <para><command>rdisc</command> requires CAP_NET_RAW to listen
+and send ICMP messages and capability CAP_NET_ADMIN
+to update routing tables.</para>
+</refsect1>
+
+<refsect1 id='availability'>
+  <title>AVAILABILITY</title>
+  <para><command>rdisc</command> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
+</refsect1>
+</refentry>
+

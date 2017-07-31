@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- lifted from man+troff by doclifter -->
+<refentry id='clockdiff8'>
+<refmeta>
+  <refentrytitle>CLOCKDIFF</refentrytitle>
+  <manvolnum>8</manvolnum>
+  <refmiscinfo class='manual'>iputils</refmiscinfo>
+</refmeta>
+<refnamediv>
+  <refname>clockdiff</refname>
+  <refpurpose>measure clock difference between hosts</refpurpose>
+</refnamediv>
+<!-- body begins here -->
+<refsynopsisdiv id='synopsis'>
+  <cmdsynopsis>
+    <command>clockdiff</command>
+    <arg choice='opt'>-o </arg>
+    <arg choice='opt'>-o1 </arg>
+    <arg choice='plain'><replaceable>destination</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+</refsynopsisdiv>
+
+
+<refsect1 id='description'>
+  <title>DESCRIPTION</title>
+  <para><command>clockdiff</command> Measures clock difference between us and
+<emphasis remap='I'>destination</emphasis> with 1 msec resolution using ICMP TIMESTAMP [2] packets or, optionally, IP TIMESTAMP option [3] option added to ICMP ECHO.
+[1]</para>
+</refsect1>
+
+<refsect1 id='options'>
+  <title>OPTIONS</title>
+  <variablelist remap='TP'>
+    <varlistentry>
+    <term><option>-o</option></term>
+    <listitem>
+<para>Use IP TIMESTAMP with ICMP ECHO instead of ICMP TIMESTAMP
+messages. It is useful with some destinations, which do not support
+ICMP TIMESTAMP (f.e. Solaris &lt;2.4).</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-o1</option></term>
+  <listitem>
+<para>Slightly different form of <option>-o</option>, namely it uses three-term
+IP TIMESTAMP with prespecified hop addresses instead of four term one.
+What flavor works better depends on target host. Particularly,
+<option>-o</option> is better for Linux.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+</refsect1>
+
+<refsect1 id='warnings'>
+  <title>WARNINGS</title>
+<variablelist remap='TP'>
+  <varlistentry>
+  <listitem><para>&bull; Some nodes (Cisco) use non-standard timestamps, which is allowed by RFC, but makes timestamps mostly useless.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <listitem><para>&bull; Some nodes generate messed timestamps (Solaris&gt;2.4), when run <emphasis remap='B'>xntpd</emphasis>. Seems, its IP stack uses a corrupted clock source, which is synchronized to time-of-day clock periodically and jumps
+randomly making timestamps mostly useless. Good news is that you can use NTP in this case, which is even better.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <listitem><para>&bull; <command>clockdiff</command> shows difference in time modulo 24 days.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+</refsect1>
+
+<refsect1 id='see_also'>
+  <title>SEE ALSO</title>
+<para><citerefentry><refentrytitle>ping</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>arping</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>tracepath</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
+</refsect1>
+
+<refsect1 id='references'>
+  <title>REFERENCES</title>
+  <para>[1] ICMP ECHO, RFC0792, page 14.</para>
+  <para>[2] ICMP TIMESTAMP, RFC0792, page 16.</para>
+  <para>[3] IP TIMESTAMP option, RFC0791, 3.1, page 16.</para>
+</refsect1>
+
+<refsect1 id='author'>
+  <title>AUTHOR</title>
+  <para><command>clockdiff</command> was compiled by
+Alexey Kuznetsov
+&lt;kuznet@ms2.inr.ac.ru&gt;. It was based on code borrowed
+from BSD <emphasis remap='B'>timed</emphasis> daemon.</para>
+</refsect1>
+
+<refsect1 id='security'>
+  <title>SECURITY</title>
+  <para><command>clockdiff</command> requires CAP_NET_RAW capability
+to be executed. It is safe to be used as set-uid root.</para>
+</refsect1>
+
+<refsect1 id='availability'>
+  <title>AVAILABILITY</title>
+  <para><command>clockdiff</command> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
+</refsect1>
+</refentry>

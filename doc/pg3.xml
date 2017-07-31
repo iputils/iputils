@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!-- lifted from man+troff by doclifter -->
+<refentry id='pg38'>
+<refmeta>
+  <refentrytitle>PG3</refentrytitle>
+  <manvolnum>8</manvolnum>
+  <refmiscinfo class='manual'>iputils</refmiscinfo>
+</refmeta>
+<refnamediv>
+  <refname>pg3</refname>
+  <refname>ipg</refname>
+  <refname>pgset</refname>
+  <refpurpose>send stream of UDP packets</refpurpose>
+</refnamediv>
+<!-- body begins here -->
+<refsynopsisdiv id='synopsis'>
+  <cmdsynopsis>
+    <command>source</command>
+    <arg choice='plain'><replaceable>ipg</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>pg</command>
+    <sbr/>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>pgset</command>    <arg choice='plain'><replaceable>COMMAND</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+</refsynopsisdiv>
+
+
+<refsect1 id='description'>
+  <title>DESCRIPTION</title>
+  <para><emphasis remap='B'>ipg</emphasis> is not a program, it is script which should be sourced
+to <emphasis remap='B'>bash</emphasis>. When sourced it loads module <emphasis remap='I'>pg3</emphasis> and
+exports a few of functions accessible from parent shell. These macros
+are <command>pg</command> to start packet injection and to get the results of run;
+and <command>pgset</command> to setup packet generator.</para>
+
+  <para><command>pgset</command> can send the following commands to module <emphasis remap='I'>pg3</emphasis>:</para>
+</refsect1>
+
+<refsect1 id='command'>
+  <title>COMMAND</title>
+<variablelist remap='TP'>
+  <varlistentry>
+  <term><emphasis remap='B'>odev </emphasis><emphasis remap='I'>DEVICE</emphasis></term>
+  <listitem>
+<para>Name of Ethernet device to test. See
+warning below.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><emphasis remap='B'>pkt_size </emphasis><emphasis remap='I'>BYTES</emphasis></term>
+  <listitem>
+<para>Size of packet to generate. The size includes all the headers: UDP, IP,
+MAC, but does not account for overhead internal to medium, i.e. FCS
+and various paddings.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><emphasis remap='B'>frags </emphasis><emphasis remap='I'>NUMBER</emphasis></term>
+  <listitem>
+<para>Each packet will contain <emphasis remap='I'>NUMBER</emphasis> of fragments.
+Maximal amount for linux-2.4 is 6. Far not all the devices support
+fragmented buffers.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><emphasis remap='B'>count </emphasis><emphasis remap='I'>NUMBER</emphasis></term>
+  <listitem>
+<para>Send stream of <emphasis remap='I'>NUMBER</emphasis> of packets and stop after this.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><emphasis remap='B'>ipg </emphasis><emphasis remap='I'>TIME</emphasis></term>
+  <listitem>
+<para>Introduce artificial delay between packets of <emphasis remap='I'>TIME</emphasis>
+microseconds.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><emphasis remap='B'>dst </emphasis><emphasis remap='I'>IP_ADDRESS</emphasis></term>
+  <listitem>
+<para>Select IP destination where the stream is sent to.
+Beware, never set this address at random. <emphasis remap='B'>pg3</emphasis> is not a toy,
+it creates really tough stream. Default value is 0.0.0.0.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><emphasis remap='B'>dst </emphasis><emphasis remap='I'>MAC_ADDRESS</emphasis></term>
+  <listitem>
+<para>Select MAC destination where the stream is sent to.
+Default value is 00:00:00:00:00:00 in hope that this will not be received
+by any node on LAN.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><emphasis remap='B'>stop</emphasis></term>
+  <listitem>
+<para>Abort packet injection.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+</refsect1>
+
+<refsect1 id='warning'>
+  <title>WARNING</title>
+  <para>When output device is set to some random device different
+of hardware Ethernet device, <emphasis remap='B'>pg3</emphasis> will crash kernel.</para>
+
+  <para>Do not use it on VLAN, ethertap, VTUN and other devices,
+which emulate Ethernet not being real Ethernet in fact.</para>
+</refsect1>
+
+<refsect1 id='author'>
+  <title>AUTHOR</title>
+  <para><emphasis remap='B'>pg3</emphasis> was written by Robert Olsson &lt;robert.olsson@its.uu.se&gt;.</para>
+</refsect1>
+
+<refsect1 id='security'>
+  <title>SECURITY</title>
+  <para>This can be used only by superuser.</para>
+
+  <para>This tool creates floods of packets which is unlikely to be handled
+even by high-end machines. For example, it saturates gigabit link with
+60 byte packets when used with Intel's e1000. In face of such stream
+switches, routers and end hosts may deadlock, crash, explode.
+Use only in test lab environment.</para>
+</refsect1>
+
+<refsect1 id='availability'>
+  <title>AVAILABILITY</title>
+  <para><emphasis remap='B'>pg3</emphasis> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
+</refsect1>
+</refentry>
+

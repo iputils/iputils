@@ -1,64 +1,26 @@
-SHELL:=/bin/bash #required for pushd and popd
+TARGETS_MAN =  arping.8 clockdiff.8 ninfod.8 pg3.8 ping.8 rarpd.8 rdisc.8 tftpd.8 tracepath.8 traceroute6.8
+TARGETS_HTML =  arping.html clockdiff.html ninfod.html pg3.html ping.html rarpd.html rdisc.html tftpd.html tracepath.html traceroute6.html
 
-SGMLFILES=$(shell echo *.sgml)
-HTMLFILES=$(subst .sgml,.html,$(SGMLFILES)) index.html
-MANFILES=$(subst .sgml,.8,$(SGMLFILES))
+IPUTILS_VERSION = s$(shell sed 's/[^0-9]*//g' ../SNAPSHOT.h)
 
-all: html
+XSLTPROC = /usr/bin/xsltproc
+XSLTPROC_FLAGS = --nonet --xinclude --stringparam man.output-quietly 1 --stringparam funcsynopsis.style ansi --stringparam man.authors.section.enabled 0 --stringparam iputils.version $(IPUTILS_VERSION)
 
-html: $(HTMLFILES) iputils.html
+XSL_MAN = custom-man.xsl
+XSL_HTML = custom-html.xsl
 
-man: $(MANFILES) fix_sgml2man
+%.html: %.xml $(XSL_HTML)
+	@$(XSLTPROC) -o $@ $(XSLTPROC_FLAGS) $(XSL_HTML) $<
+%.8: %.xml $(XSL_MAN)
+	@$(XSLTPROC) -o $@ $(XSLTPROC_FLAGS) $(XSL_MAN) $<
 
-# docbook scripts are incredibly dirty in the sense that they leak
-# lots of some strange temporary junk directories and files.
-# So, scope it to a temporary dir and clean all after each run.
+all: $(TARGETS_HTML) $(TARGETS_MAN)
 
-SETUP_TMPDIR = \
-	t="tmp.db2html.$@"; \
-	rm -rf $$t; \
-	mkdir $$t; \
-	pushd $$t >/dev/null
-CLEAN_TMPDIR = \
-	popd >/dev/null; \
-	rm -rf $$t
+man: $(TARGETS_MAN)
+html: $(TARGETS_HTML)
 
-MAKE_HTML = \
-	@set -e; \
-	$(SETUP_TMPDIR); \
-	docbook2html ../$<; \
-	mv *.html ..; \
-	$(CLEAN_TMPDIR)
-
-$(HTMLFILES): index.db
-	$(MAKE_HTML)
-
-iputils.html: iputils.db
-	$(MAKE_HTML)
-
-# docbook2man produces utterly ugly output and I did not find
-# any way to customize this but hacking backend perl script a little.
-# Well, hence...
-
-$(MANFILES): index.db
-	@set -e; \
-	$(SETUP_TMPDIR); \
-	nsgmls ../$< | sgmlspl ../docbook2man-spec.pl ""; \
-	mv $@ ..; \
-	$(CLEAN_TMPDIR)
-
-fix_sgml2man: tracepath.8
-	@sed -i -e 's!\\fB\\fIdestination\\fB\\fR \[\\fB/\\fIport\\fB\\fR\]!\\fB\\fIdestination\\fB\\fR[\\fB/\\fIport\\fB\\fR]!g' $<
 
 clean:
-	@rm -rf $(MANFILES) $(HTMLFILES) iputils.html tmp.db2html* tmp.db2man*
-
-snapshot:
-	@date "+%y%m%d" > snapshot.db
-
-
-$(MANFILES): $(SGMLFILES)
-
-$(HTMLFILES): $(SGMLFILES)
-
+	@rm -f *.html
+	@rm -f *.8
 

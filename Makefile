@@ -237,7 +237,6 @@ RPMBUILD=rpmbuild
 RPMTMP=.rpmtmp
 snapshot:
 	@echo "#define SNAPSHOT \"$(TAG)\"" > SNAPSHOT.h
-	@$(MAKE) -C doc snapshot
 	@$(MAKE) man
 	@git commit -a -m "iputils-$(TAG)"
 	@git tag -s -m "iputils-$(TAG)" $(TAG)
