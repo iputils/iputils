@@ -1,19 +1,14 @@
 language: c
+dist: trusty
 before_install:
-  - if [[ "$CC" == gcc-* ]]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
-  - if [[ "$CC" == clang-* ]]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
   - sudo apt-get update -qq
 install:
   - sudo apt-get install libcap-dev -qq
   - sudo apt-get install nettle-dev -qq
-  # gcc
-  - if [ "$CC" = "gcc-4.8" ]; then sudo apt-get install -qq gcc-4.8; fi
-  # clang
-  - if [ "$CC" == "clang-3.4" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
 
 compiler:
-  - gcc-4.8
-  - clang-3.4
+  - gcc
+  - clang
 env:
   matrix:
     - USE_CAP=true
