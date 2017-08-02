@@ -244,8 +244,6 @@ snapshot:
 	@echo >> RELNOTES.NEW
 	@cat RELNOTES >> RELNOTES.NEW
 	@mv RELNOTES.NEW RELNOTES
-	@sed -e "s/^%define ssdate .*/%define ssdate $(DATE)/" iputils.spec > iputils.spec.tmp
-	@mv iputils.spec.tmp iputils.spec
 	@echo "#define SNAPSHOT \"$(TAG)\"" > SNAPSHOT.h
 	@$(MAKE) -C doc snapshot
 	@$(MAKE) man
