@@ -120,8 +120,6 @@ TARGETS=ping tracepath traceroute6 clockdiff rdisc arping tftpd rarpd
 
 LDLIBS=$(LDLIB) $(ADDLIB)
 
-UNAME_N:=$(shell uname -n)
-LASTTAG:=$(shell git describe HEAD | sed -e 's/-.*//')
 TODAY=$(shell date +%Y-%m-%d)
 DATE=$(shell date -d $(TODAY) +%Y%m%d)
 TAG:=$(shell date -d $(TODAY) +s%Y%m%d)
@@ -238,12 +236,6 @@ distclean: clean
 RPMBUILD=rpmbuild
 RPMTMP=.rpmtmp
 snapshot:
-	@echo "[$(TAG)]" > RELNOTES.NEW
-	@echo >>RELNOTES.NEW
-	@git log --no-merges $(LASTTAG).. | git shortlog >> RELNOTES.NEW
-	@echo >> RELNOTES.NEW
-	@cat RELNOTES >> RELNOTES.NEW
-	@mv RELNOTES.NEW RELNOTES
 	@echo "#define SNAPSHOT \"$(TAG)\"" > SNAPSHOT.h
 	@$(MAKE) -C doc snapshot
 	@$(MAKE) man
