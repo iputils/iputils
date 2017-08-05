@@ -651,7 +651,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 			    ((options & (F_ADAPTIVE|F_FLOOD_POLL)) || interval)) {
 				struct pollfd pset;
 				pset.fd = sock->fd;
-				pset.events = POLLIN|POLLERR;
+				pset.events = POLLIN;
 				pset.revents = 0;
 				if (poll(&pset, 1, next) < 1 ||
 				    !(pset.revents&(POLLIN|POLLERR)))
