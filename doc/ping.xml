@@ -462,14 +462,23 @@ probes are answered or for some error notification from network.</para>
   <listitem>
 <para>Time to wait for a response, in seconds. The option affects only timeout
 in absence of any responses, otherwise <command>ping</command> waits for two RTTs.</para>
-
+  </listitem>
+  </varlistentry>
+</variablelist>
 <para>When using <command>ping</command> for fault isolation, it should first be run
 on the local host, to verify that the local network interface is up
 and running. Then, hosts and gateways further and further away should be
 &ldquo;pinged&rdquo;. Round-trip times and packet loss statistics are computed.
 If duplicate packets are received, they are not included in the packet
 loss calculation, although the round trip time of these packets is used
-in calculating the minimum/average/maximum round-trip time numbers.
+in calculating the minimum/average/maximum/mdev round-trip time numbers.
+</para>
+<para>
+Median deviation (mdev), essentially an average of how far each ping RTT is from the mean RTT. The higher mdev is, the more variable the RTT is (over time).
+
+With a high RTT variability, you will have speed issues with bulk transfers (they will take longer than is strictly speaking necessary, as the variability will eventually cause the sender to wait for ACKs) and you will have middling to poor VoIP quality.
+</para>
+<para>
 When the specified number of packets have been sent (and received) or
 if the program is terminated with a
 SIGINT, a brief summary is displayed. Shorter current statistics
@@ -494,9 +503,6 @@ not.</para>
 management.
 Because of the load it can impose on the network, it is unwise to use
 <command>ping</command> during normal operations or from automated scripts.</para>
-  </listitem>
-  </varlistentry>
-</variablelist>
 </refsect1>
 
 <refsect1 id='icmp_packet_details'><title>ICMP PACKET DETAILS</title>
