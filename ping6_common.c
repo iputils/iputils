@@ -430,14 +430,14 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	return 0;
 }
 
-static int niquery_option_subject_name_handler(int index, const char *arg)
+static int niquery_option_subject_name_handler(int index, const char *name)
 {
 #ifdef USE_CRYPTO
 	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
 	unsigned char *dnptrs[2], **dpp, **lastdnptr;
 	int n;
 	int i;
-	char *name, *p;
+	char *p;
 	char *canonname = NULL, *idn = NULL;
 	unsigned char *buf = NULL;
 	size_t namelen;
@@ -453,28 +453,7 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 		return -1;
 
 #ifdef USE_IDN
-	name = stringprep_locale_to_utf8(arg);
-	if (!name) {
-		fprintf(stderr, "ping6: IDN support failed.\n");
-		exit(2);
-	}
-#else
-	name = strdup(arg);
-	if (!name)
-		goto oomexit;
-#endif
-
-	p = strchr(name, SCOPE_DELIMITER);
-	if (p) {
-		*p = '\0';
-		if (strlen(p + 1) >= IFNAMSIZ) {
-			fprintf(stderr, "ping6: too long scope name.\n");
-			exit(1);
-		}
-	}
-
-#ifdef USE_IDN
-	rc = idna_to_ascii_8z(name, &idn, 0);
+	rc = idna_to_ascii_lz(name, &idn, 0);
 	if (rc) {
 		fprintf(stderr, "ping6: IDN encoding error: %s\n",
 			idna_strerror(rc));
@@ -485,6 +464,15 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 	if (!idn)
 		goto oomexit;
 #endif
+
+	p = strchr(idn, SCOPE_DELIMITER);
+	if (p) {
+		*p = '\0';
+		if (strlen(p + 1) >= IFNAMSIZ) {
+			fprintf(stderr, "ping6: too long scope name.\n");
+			exit(1);
+		}
+	}
 
 	namelen = strlen(idn);
 	canonname = malloc(namelen + 1);
@@ -547,7 +535,6 @@ static int niquery_option_subject_name_handler(int index, const char *arg)
 
 	free(canonname);
 	free(idn);
-	free(name);
 
 	return 0;
 oomexit:
@@ -556,7 +543,6 @@ errexit:
 	free(buf);
 	free(canonname);
 	free(idn);
-	free(name);
 	exit(1);
 #else
 	fprintf(stderr, "ping6: function not available; crypto disabled\n");
