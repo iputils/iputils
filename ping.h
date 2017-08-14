@@ -36,8 +36,7 @@
 
 #ifdef USE_IDN
 #include <locale.h>
-#include <idna.h>
-#include <stringprep.h>
+#include <idn2.h>
 #define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
 #define getnameinfo_flags NI_IDN
 #else

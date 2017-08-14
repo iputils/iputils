@@ -430,6 +430,14 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	return 0;
 }
 
+#ifdef USE_IDN
+# if IDN2_VERSION_NUMBER >= 0x02000000
+#  define IDN2_FLAGS IDN2_NONTRANSITIONAL
+# else
+#  define IDN2_FLAGS 0
+# endif
+#endif
+
 static int niquery_option_subject_name_handler(int index, const char *name)
 {
 #ifdef USE_CRYPTO
@@ -453,10 +461,10 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 		return -1;
 
 #ifdef USE_IDN
-	rc = idna_to_ascii_lz(name, &idn, 0);
+	rc = idn2_lookup_ul(name, &idn, IDN2_FLAGS);
 	if (rc) {
 		fprintf(stderr, "ping6: IDN encoding error: %s\n",
-			idna_strerror(rc));
+			idn2_strerror(rc));
 		exit(2);
 	}
 #else
