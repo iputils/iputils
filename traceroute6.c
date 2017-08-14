@@ -244,12 +244,13 @@
 #endif
 
 #ifdef USE_IDN
-#include <idna.h>
 #include <locale.h>
 
+#define ADDRINFO_IDN_FLAGS	AI_IDN
 #define getnameinfo_flags	NI_IDN
 #else
 #define getnameinfo_flags	0
+#define ADDRINFO_IDN_FLAGS	0
 #endif
 
 #include <arpa/inet.h>
@@ -331,7 +332,8 @@ int main(int argc, char *argv[])
 	char pa[NI_MAXHOST];
 	extern char *optarg;
 	extern int optind;
-	struct addrinfo hints6 = { .ai_family = AF_INET6, .ai_socktype = SOCK_RAW, .ai_flags = AI_CANONNAME };
+	struct addrinfo hints6 = { .ai_family = AF_INET6, .ai_socktype = SOCK_RAW,
+				   .ai_flags = AI_CANONNAME|ADDRINFO_IDN_FLAGS };
 	struct addrinfo *result;
 	int status;
 	struct sockaddr_in6 from, *to;
@@ -445,21 +447,11 @@ int main(int argc, char *argv[])
 	if (inet_pton(AF_INET6, *argv, &to->sin6_addr) > 0) {
 		hostname = *argv;
 	} else {
-		char *idn = NULL;
-#ifdef USE_IDN
-		if (idna_to_ascii_lz(*argv, &idn, 0) != IDNA_SUCCESS)
-			idn = NULL;
-#endif
-		status = getaddrinfo(idn ? idn : *argv, NULL, &hints6, &result);
+		status = getaddrinfo(*argv, NULL, &hints6, &result);
 		if (status) {
 			(void)fprintf(stderr,
 			    "traceroute: %s: %s\n", *argv, gai_strerror(status));
 			exit(1);
-		}
-
-		if (idn != NULL) {
-			free(idn);
-			idn = NULL;
 		}
 
 		memcpy(to, result->ai_addr, sizeof *to);
