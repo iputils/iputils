@@ -1,9 +1,9 @@
 arping: GPL v2 or later
 clockdiff: BSD
 ninfod: BSD-3
-ping: BSD-4
+ping: BSD-3
 rarp: GPL v2 or later
 rdisc: AS-IS, SUN MICROSYSTEMS license
-tftpd: BSD-4
+tftpd: BSD-3
 tracepath: GPL v2 or later
-traceroute: BSD-4
+traceroute: BSD-3
