@@ -46,8 +46,6 @@
 
 #include "tftp.h"
 
-#define PKTSIZE SEGSIZE+4       /* should be moved to tftp.h */
-
 struct bf {
 	int counter;            /* size of data in buffer, or flag */
 	char buf[PKTSIZE];      /* room for data packet */

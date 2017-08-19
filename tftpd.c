@@ -54,18 +54,11 @@
 
 #include "tftp.h"
 
-#ifndef MSG_CONFIRM
-#define MSG_CONFIRM 0
-#warning Please, upgrade kernel, otherwise this tftpd has no advantages.
-#endif
-
 #define	TIMEOUT		5
 
 int	peer;
 int	rexmtval = TIMEOUT;
 int	maxtimeout = 5*TIMEOUT;
-
-#define	PKTSIZE	SEGSIZE+4
 char	buf[PKTSIZE];
 char	ackbuf[PKTSIZE];
 union {

@@ -27,6 +27,8 @@
  * SUCH DAMAGE.
  */
 
+#define	PKTSIZE	SEGSIZE+4
+
 #ifndef _ARPA_TFTP_H
 #define _ARPA_TFTP_H
 /*

@@ -126,7 +126,7 @@ TAG:=$(shell date -d $(TODAY) +s%Y%m%d)
 
 
 # -------------------------------------
-.PHONY: all ninfod clean distclean man html check-kernel modules snapshot
+.PHONY: all ninfod clean distclean man html snapshot
 
 all: $(TARGETS)
 
@@ -195,20 +195,6 @@ ninfod:
 			cd ..; \
 		fi; \
 		$(MAKE) -C ninfod
-
-# -------------------------------------
-# modules / check-kernel are only for ancient kernels; obsolete
-check-kernel:
-ifeq ($(KERNEL_INCLUDE),)
-	@echo "Please, set correct KERNEL_INCLUDE"; false
-else
-	@set -e; \
-	if [ ! -r $(KERNEL_INCLUDE)/linux/autoconf.h ]; then \
-		echo "Please, set correct KERNEL_INCLUDE"; false; fi
-endif
-
-modules: check-kernel
-	$(MAKE) KERNEL_INCLUDE=$(KERNEL_INCLUDE) -C Modules
 
 # -------------------------------------
 man:
