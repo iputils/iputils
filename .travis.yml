@@ -3,8 +3,8 @@ dist: trusty
 before_install:
   - sudo apt-get update -qq
 install:
-  - sudo apt-get install libcap-dev -qq
-  - sudo apt-get install nettle-dev -qq
+  - sudo apt-get install libcap-dev libidn2-0-dev -qq
+  - sudo apt-get install nettle-dev libidn2-0-dev -qq
 
 compiler:
   - gcc
