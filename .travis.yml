@@ -11,9 +11,9 @@ compiler:
   - clang
 env:
   matrix:
-    - USE_CAP=true
-    - USE_CAP=false
-    - USE_IDN=true
-    - USE_IDN=false
-script: make
+    - USE_CAP=yes
+    - USE_CAP=no
+    - USE_IDN=yes
+    - USE_IDN=no
+script: make USE_CAP=${USE_CAP} USE_IDN=${USE_IDN}
 
