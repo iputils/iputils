@@ -15,7 +15,6 @@ LDFLAG_NETTLE=-lnettle
 LDFLAG_CRYPTO=-lcrypto
 LDFLAG_IDN=-lidn
 LDFLAG_RESOLV=-lresolv
-LDFLAG_SYSFS=-lsysfs
 LDFLAG_RT=-lrt
 LDFLAG_M=-lm
 
@@ -25,8 +24,8 @@ LDFLAG_M=-lm
 
 # Capability support (with libcap) [yes|static|no]
 USE_CAP=yes
-# sysfs support (with libsysfs - deprecated) [no|yes|static]
-USE_SYSFS=no
+# sysfs support
+USE_SYSFS=yes
 # IDN support  [yes|no|static]
 USE_IDN=yes
 
@@ -88,7 +87,6 @@ endif
 # USE_SYSFS: DEF_SYSFS, LIB_SYSFS
 ifneq ($(USE_SYSFS),no)
 	DEF_SYSFS = -DUSE_SYSFS
-	LIB_SYSFS = $(call FUNC_LIB,$(USE_SYSFS),$(LDFLAG_SYSFS))
 endif
 
 # USE_IDN: DEF_IDN, LIB_IDN
@@ -141,7 +139,7 @@ $(TARGETS): %: %.o
 # -------------------------------------
 # arping
 DEF_arping = $(DEF_SYSFS) $(DEF_CAP) $(DEF_IDN) $(DEF_WITHOUT_IFADDRS)
-LIB_arping = $(LIB_SYSFS) $(LIB_CAP) $(LIB_IDN) $(LDFLAG_RT)
+LIB_arping = $(LIB_CAP) $(LIB_IDN) $(LDFLAG_RT)
 
 ifneq ($(ARPING_DEFAULT_DEVICE),)
 DEF_arping += -DDEFAULT_DEVICE=\"$(ARPING_DEFAULT_DEVICE)\"

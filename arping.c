@@ -34,8 +34,8 @@
 #include <arpa/inet.h>
 
 #ifdef USE_SYSFS
-#include <sysfs/libsysfs.h>
-struct sysfs_devattr_values;
+#include <sys/types.h>
+#include <dirent.h>
 #endif
 
 #ifndef WITHOUT_IFADDRS
@@ -725,10 +725,8 @@ int find_device_by_sysfs(void)
 {
 	int rc = -1;
 #ifdef USE_SYSFS
-	struct sysfs_class *cls_net;
-	struct dlist *dev_list;
-	struct sysfs_class_device *dev;
-	struct sysfs_attribute *dev_attr;
+	DIR *dir;
+	struct dirent *dirp;
 	struct sysfs_devattr_values sysfs_devattr_values;
 	int n = 0;
 
@@ -736,44 +734,34 @@ int find_device_by_sysfs(void)
 		device.sysfs = malloc(sizeof(*device.sysfs));
 		sysfs_devattr_values_init(device.sysfs, 0);
 	}
-
-	cls_net = sysfs_open_class("net");
-	if (!cls_net) {
-		perror("sysfs_open_class");
-		return -1;
-	}
-
-	dev_list = sysfs_get_class_devices(cls_net);
-	if (!dev_list) {
-		perror("sysfs_get_class_devices");
-		goto out;
-	}
+	dir = opendir("/sys/class/net");
 
 	sysfs_devattr_values_init(&sysfs_devattr_values, 0);
 
-	dlist_for_each_data(dev_list, dev, struct sysfs_class_device) {
+	while ((dirp = readdir(dir)) != NULL) {
 		int i;
 		int rc = -1;
 
-		if (device.name && strcmp(dev->name, device.name))
+		if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
+			continue;
+		if (device.name && strcmp(dirp->d_name, device.name))
 			goto do_next;
 
 		sysfs_devattr_values_init(&sysfs_devattr_values, 1);
 
 		for (i = 0; i < SYSFS_DEVATTR_NUM; i++) {
+			char path[PATH_MAX];
+			char str[256];
+			FILE *f;
 
-			dev_attr = sysfs_get_classdev_attr(dev, sysfs_devattrs[i].name);
-			if (!dev_attr) {
-				perror("sysfs_get_classdev_attr");
-				rc = -1;
-				break;
-			}
-			if (sysfs_read_attribute(dev_attr)) {
-				perror("sysfs_read_attribute");
-				rc = -1;
-				break;
-			}
-			rc = sysfs_devattrs[i].handler(dev_attr->value, &sysfs_devattr_values, i);
+			sprintf(path, "/sys/class/net/%s/%s", dirp->d_name, sysfs_devattrs[i].name);
+			f = fopen(path, "r");
+			if (!f)
+				continue;
+			if (fscanf(f, "%255s", str) != 1)
+				str[0] = '\0';
+			fclose(f);
+			rc = sysfs_devattrs[i].handler(str, &sysfs_devattr_values, i);
 
 			if (rc < 0)
 				break;
@@ -794,7 +782,7 @@ int find_device_by_sysfs(void)
 				goto do_next;
 		}
 
-		sysfs_devattr_values.ifname = strdup(dev->name);
+		sysfs_devattr_values.ifname = strdup(dirp->d_name);
 		if (!sysfs_devattr_values.ifname) {
 			perror("malloc");
 			goto out;
@@ -818,7 +806,7 @@ do_next:
 	}
 	rc = !device.ifindex;
 out:
-	sysfs_close_class(cls_net);
+	closedir(dir);
 #endif
 	return rc;
 }
