@@ -470,7 +470,7 @@ int main(int argc, char **argv)
 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 		if (fd < 0)
 			continue;
-		memcpy(&target, ai->ai_addr, sizeof(target));
+		memcpy(&target, ai->ai_addr, sizeof(*ai->ai_addr));
 		targetlen = ai->ai_addrlen;
 		break;
 	}
