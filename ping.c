@@ -165,8 +165,6 @@ static void create_socket(socket_st *sock, int family, int socktype, int protoco
 		do_fallback = 1;
 
 	if (socktype == SOCK_RAW || do_fallback) {
-		if (options & F_VERBOSE && do_fallback)
-			fprintf(stderr, "ping: socket: %s, attempting raw socket...\n", strerror(errno));
 		socktype = SOCK_RAW;
 		sock->fd = socket(family, SOCK_RAW, protocol);
 	}
