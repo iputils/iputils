@@ -394,6 +394,12 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 #endif
 
+	/* Support being called using `tracepath4` or `tracepath6` symlinks */
+	if (argv[0][strlen(argv[0])-1] == '4')
+		hints.ai_family = AF_INET;
+	else if (argv[0][strlen(argv[0])-1] == '6')
+		hints.ai_family = AF_INET6;
+
 	while ((ch = getopt(argc, argv, "46nbh?l:m:p:")) != EOF) {
 		switch(ch) {
 		case '4':
