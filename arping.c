@@ -43,7 +43,6 @@
 #endif
 
 #ifdef USE_IDN
-#include <idna.h>
 #include <locale.h>
 #endif
 

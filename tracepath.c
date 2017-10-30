@@ -28,7 +28,6 @@
 #include <arpa/inet.h>
 
 #ifdef USE_IDN
-#include <idna.h>
 #include <locale.h>
 #define getnameinfo_flags	NI_IDN
 #else
