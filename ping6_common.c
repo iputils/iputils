@@ -870,12 +870,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		exit(2);
 	}
 
-	sock->working_recverr = 1;
 	hold = 1;
-	if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_RECVERR, &hold, sizeof hold)) {
-		fprintf(stderr, "WARNING: your kernel is veeery old. No problems.\n");
-		sock->working_recverr = 0;
-	}
 
 	/* Estimate memory eaten by single packet. It is rough estimate.
 	 * Actually, for small datalen's it depends on kernel side a lot. */
@@ -903,12 +898,10 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 		ICMP6_FILTER_SETBLOCKALL(&filter);
 
-		if (!sock->working_recverr) {
-			ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
-			ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
-			ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
-			ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
-		}
+		ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
+		ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
+		ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
+		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
 
 		if (niquery_is_enabled())
 			ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
@@ -1436,8 +1429,6 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 			    !is_ours(sock, icmph1->icmp6_id))
 				return 1;
 			acknowledge(ntohs(icmph1->icmp6_seq));
-			if (sock->working_recverr)
-				return 0;
 			nerrors++;
 			if (options & F_FLOOD) {
 				write_stdout("\bE", 2);

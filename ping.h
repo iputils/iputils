@@ -285,9 +285,6 @@ extern void drop_capabilities(void);
 typedef struct socket_st {
 	int fd;
 	int socktype;
-	/* And this is workaround for bug in IP_RECVERR on raw sockets which is present
-	 * in linux-2.2.[0-19], linux-2.4.[0-7] */
-	int working_recverr;
 } socket_st;
 
 char *pr_addr(void *sa, socklen_t salen);
