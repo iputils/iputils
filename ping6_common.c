@@ -775,7 +775,11 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			}
 			disable_capability_raw();
 		}
-		firsthop.sin6_family = AF_INET6;
+
+		if (!IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) &&
+			!IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
+			firsthop.sin6_family = AF_INET6;
+
 		firsthop.sin6_port = htons(1025);
 		if (connect(probe_fd, (struct sockaddr*)&firsthop, sizeof(firsthop)) == -1) {
 			perror("connect");
