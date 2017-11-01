@@ -163,9 +163,10 @@ If <emphasis remap='I'>interface</emphasis> is an address, it sets source addres
 to specified interface address.
 If <emphasis remap='I'>interface</emphasis> in an interface name, it sets
 source interface to specified interface.
-For IPv6, when doing ping to a link-local scope
+NOTE: For IPv6, when doing ping to a link-local scope
 address, link specification (by the '%'-notation in
-<emphasis remap='I'>destination</emphasis>, or by this option) is required.</para>
+<emphasis remap='I'>destination</emphasis>, or by this option)
+can be used but it is no longer required.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
