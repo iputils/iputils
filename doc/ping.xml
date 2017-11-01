@@ -628,8 +628,8 @@ broadcast address should only be done under very controlled conditions.</para>
 
 <refsect1 id='see_also'>
   <title>SEE ALSO</title>
-  <para><citerefentry><refentrytitle>netstat</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>ifconfig</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
+  <para><citerefentry><refentrytitle>ip</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+<citerefentry><refentrytitle>ss</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
 </refsect1>
 
 <refsect1 id='history'>
