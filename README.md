@@ -14,9 +14,9 @@ These tools are included in iputils
 - tracepath
 - traceroute6
 
-If you using [old version](http://www.skbuff.net/iputils/), please consider to move forward to new releases placed here.
+If you still use [old version](http://www.skbuff.net/iputils/), please consider moving forward to new releases placed here.
 
-This version also fully support support glibc, uClibc and musl-libc.
+This version also fully supports glibc, uClibc and musl-libc.
 
 <!-- vim: set tw=80: -->
 
