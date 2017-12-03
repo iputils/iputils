@@ -44,6 +44,13 @@
 
 #ifdef USE_IDN
 #include <locale.h>
+
+#ifndef AI_IDN
+#define AI_IDN 0x0040
+#endif
+#ifndef AI_CANONIDN
+#define AI_CANONIDN 0x0080
+#endif
 #endif
 
 #include "SNAPSHOT.h"

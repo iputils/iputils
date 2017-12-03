@@ -246,6 +246,10 @@
 #ifdef USE_IDN
 #include <locale.h>
 
+#ifndef NI_IDN
+#define NI_IDN 32
+#endif
+
 #define ADDRINFO_IDN_FLAGS	AI_IDN
 #define getnameinfo_flags	NI_IDN
 #else

@@ -37,6 +37,17 @@
 
 #ifdef USE_IDN
 #include <idn2.h>
+
+#ifndef AI_IDN
+#define AI_IDN 0x0040
+#endif
+#ifndef AI_CANONIDN
+#define AI_CANONIDN 0x0080
+#endif
+#ifndef NI_IDN
+#define NI_IDN 32
+#endif
+
 #define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
 #define getnameinfo_flags NI_IDN
 #else

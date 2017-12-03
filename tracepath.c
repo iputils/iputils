@@ -29,6 +29,14 @@
 
 #ifdef USE_IDN
 #include <locale.h>
+
+#ifndef AI_IDN
+#define AI_IDN 0x0040
+#endif
+#ifndef NI_IDN
+#define NI_IDN 32
+#endif
+
 #define getnameinfo_flags	NI_IDN
 #else
 #define getnameinfo_flags	0
