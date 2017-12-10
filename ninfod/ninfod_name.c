@@ -260,12 +260,12 @@ static int compare_dnsname(const char *s, size_t slen,
 }
 
 static int nodeinfo_group(const char *dnsname, int namelen, 
-			  struct in6_addr *nigroup)
+			  struct in6_addr *nigrp)
 {
 	MD5_CTX ctxt;
 	unsigned char digest[16];
 
-	if (!dnsname || !nigroup)
+	if (!dnsname || !nigrp)
 		return -1;
 
 	MD5_Init(&ctxt);
@@ -273,16 +273,16 @@ static int nodeinfo_group(const char *dnsname, int namelen,
 	MD5_Final(digest, &ctxt);
 
 #ifdef s6_addr32
-	nigroup->s6_addr32[0] = htonl(0xff020000);
-	nigroup->s6_addr32[1] = 0;
-	nigroup->s6_addr32[2] = htonl(0x00000002);
+	nigrp->s6_addr32[0] = htonl(0xff020000);
+	nigrp->s6_addr32[1] = 0;
+	nigrp->s6_addr32[2] = htonl(0x00000002);
 #else
-	memset(nigroup, 0, sizeof(*nigroup));
-	nigroup->s6_addr[ 0] = 0xff;
-	nigroup->s6_addr[ 1] = 0x02;
-	nigroup->s6_addr[11] = 0x02;
+	memset(nigrp, 0, sizeof(*nigrp));
+	nigrp->s6_addr[ 0] = 0xff;
+	nigrp->s6_addr[ 1] = 0x02;
+	nigrp->s6_addr[11] = 0x02;
 #endif
-	memcpy(&nigroup->s6_addr[12], digest, 4);
+	memcpy(&nigrp->s6_addr[12], digest, 4);
 
 	return 0;
 }

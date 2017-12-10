@@ -181,12 +181,12 @@ static void create_socket(socket_st *sock, int family, int socktype, int protoco
 		sock->socktype = socktype;
 }
 
-static void set_socket_option(socket_st *sock, int level, int optname, const void *optval, socklen_t optlen)
+static void set_socket_option(socket_st *sock, int level, int optname, const void *optval, socklen_t olen)
 {
 	if (sock->fd == -1)
 		return;
 
-	if (setsockopt(sock->fd, level, optname, optval, optlen) == -1) {
+	if (setsockopt(sock->fd, level, optname, optval, olen) == -1) {
 		fprintf(stderr, "ping: setsockopt: %s\n", strerror(errno));
 		exit(2);
 	}
@@ -890,7 +890,7 @@ int ping4_receive_error_msg(socket_st *sock)
 	char cbuf[512];
 	struct iovec  iov;
 	struct msghdr msg;
-	struct cmsghdr *cmsg;
+	struct cmsghdr *cmsgh;
 	struct sock_extended_err *e;
 	struct icmphdr icmph;
 	struct sockaddr_in target;
@@ -913,10 +913,10 @@ int ping4_receive_error_msg(socket_st *sock)
 		goto out;
 
 	e = NULL;
-	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
-		if (cmsg->cmsg_level == SOL_IP) {
-			if (cmsg->cmsg_type == IP_RECVERR)
-				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
+	for (cmsgh = CMSG_FIRSTHDR(&msg); cmsgh; cmsgh = CMSG_NXTHDR(&msg, cmsgh)) {
+		if (cmsgh->cmsg_level == SOL_IP) {
+			if (cmsgh->cmsg_type == IP_RECVERR)
+				e = (struct sock_extended_err *)CMSG_DATA(cmsgh);
 		}
 	}
 	if (e == NULL)
@@ -1039,10 +1039,10 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 	struct iphdr *ip;
 	int hlen;
 	int csfailed;
-	struct cmsghdr *cmsg;
-	int ttl;
+	struct cmsghdr *cmsgh;
+	int reply_ttl;
 	__u8 *opts, *tmp_ttl;
-	int optlen;
+	int olen;
 
 	/* Check the IP header */
 	ip = (struct iphdr *)buf;
@@ -1054,25 +1054,25 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 					pr_addr(from, sizeof *from));
 			return 1;
 		}
-		ttl = ip->ttl;
+		reply_ttl = ip->ttl;
 		opts = buf + sizeof(struct iphdr);
-		optlen = hlen - sizeof(struct iphdr);
+		olen = hlen - sizeof(struct iphdr);
 	} else {
 		hlen = 0;
-		ttl = 0;
+		reply_ttl = 0;
 		opts = buf;
-		optlen = 0;
-		for (cmsg = CMSG_FIRSTHDR(msg); cmsg; cmsg = CMSG_NXTHDR(msg, cmsg)) {
-			if (cmsg->cmsg_level != SOL_IP)
+		olen = 0;
+		for (cmsgh = CMSG_FIRSTHDR(msg); cmsgh; cmsgh = CMSG_NXTHDR(msg, cmsgh)) {
+			if (cmsgh->cmsg_level != SOL_IP)
 				continue;
-			if (cmsg->cmsg_type == IP_TTL) {
-				if (cmsg->cmsg_len < sizeof(int))
+			if (cmsgh->cmsg_type == IP_TTL) {
+				if (cmsgh->cmsg_len < sizeof(int))
 					continue;
-				tmp_ttl = (__u8 *) CMSG_DATA(cmsg);
-				ttl = (int)*tmp_ttl;
-			} else if (cmsg->cmsg_type == IP_RETOPTS) {
-				opts = (__u8 *) CMSG_DATA(cmsg);
-				optlen = cmsg->cmsg_len;
+				tmp_ttl = (__u8 *) CMSG_DATA(cmsgh);
+				reply_ttl = (int)*tmp_ttl;
+			} else if (cmsgh->cmsg_type == IP_RETOPTS) {
+				opts = (__u8 *) CMSG_DATA(cmsgh);
+				olen = cmsgh->cmsg_len;
 			}
 		}
 	}
@@ -1089,7 +1089,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			return 1;			/* 'Twas really not our ECHO */
 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      ttl, csfailed, tv, pr_addr(from, sizeof *from),
+				      reply_ttl, 0, tv, pr_addr(from, sizeof *from),
 				      pr_echo_reply)) {
 			fflush(stdout);
 			return 0;
@@ -1167,7 +1167,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			fflush(stdout);
 	}
 	if (!(options & F_FLOOD)) {
-		pr_options(opts, optlen + sizeof(struct iphdr));
+		pr_options(opts, olen + sizeof(struct iphdr));
 
 		putchar('\n');
 		fflush(stdout);
@@ -1373,7 +1373,7 @@ void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp)
 void pr_options(unsigned char * cp, int hlen)
 {
 	int i, j;
-	int optlen, totlen;
+	int olen, totlen;
 	unsigned char * optptr;
 	static int old_rrlen;
 	static char old_rr[MAX_IPOPTLEN];
@@ -1391,8 +1391,8 @@ void pr_options(unsigned char * cp, int hlen)
 			continue;
 		}
 		cp = optptr;
-		optlen = optptr[1];
-		if (optlen < 2 || optlen > totlen)
+		olen = optptr[1];
+		if (olen < 2 || olen > totlen)
 			break;
 
 		switch (*cp) {
@@ -1518,8 +1518,8 @@ void pr_options(unsigned char * cp, int hlen)
 			printf("\nunknown option %x", *cp);
 			break;
 		}
-		totlen -= optlen;
-		optptr += optlen;
+		totlen -= olen;
+		optptr += olen;
 	}
 }
 

@@ -994,14 +994,14 @@ graceful_finish()
 /* From libc/rpc/pmap_rmt.c */
 
 int
-sendbcast(int s, char *packet, int packetlen)
+sendbcast(int socket, char *packet, int packetlen)
 {
 	int i, cc;
 
 	for (i = 0; i < num_interfaces; i++) {
 		if ((interfaces[i].flags & (IFF_BROADCAST|IFF_POINTOPOINT)) == 0)
 			continue;
-		cc = sendbcastif(s, packet, packetlen, &interfaces[i]);
+		cc = sendbcastif(socket, packet, packetlen, &interfaces[i]);
 		if (cc!= packetlen) {
 			return (cc);
 		}
@@ -1010,7 +1010,7 @@ sendbcast(int s, char *packet, int packetlen)
 }
 
 int
-sendbcastif(int s, char *packet, int packetlen, struct interface *ifp)
+sendbcastif(int socket, char *packet, int packetlen, struct interface *ifp)
 {
 	int on;
 	int cc;
@@ -1022,8 +1022,8 @@ sendbcastif(int s, char *packet, int packetlen, struct interface *ifp)
 		logdebug("Broadcast to %s\n",
 			 pr_name(baddr.sin_addr));
 	on = 1;
-	setsockopt(s, SOL_SOCKET, SO_BROADCAST, (char*)&on, sizeof(on));
-	cc = sendto(s, packet, packetlen, 0,
+	setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char*)&on, sizeof(on));
+	cc = sendto(socket, packet, packetlen, 0,
 		    (struct sockaddr *)&baddr, sizeof (struct sockaddr));
 	if (cc!= packetlen) {
 		logperror("sendbcast: sendto");
@@ -1031,19 +1031,19 @@ sendbcastif(int s, char *packet, int packetlen, struct interface *ifp)
 		       pr_name(baddr.sin_addr));
 	}
 	on = 0;
-	setsockopt(s, SOL_SOCKET, SO_BROADCAST, (char*)&on, sizeof(on));
+	setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char*)&on, sizeof(on));
 	return (cc);
 }
 
 int
-sendmcast(int s, char *packet, int packetlen, struct sockaddr_in *sin)
+sendmcast(int socket, char *packet, int packetlen, struct sockaddr_in *sin)
 {
 	int i, cc;
 
 	for (i = 0; i < num_interfaces; i++) {
 		if ((interfaces[i].flags & (IFF_BROADCAST|IFF_POINTOPOINT|IFF_MULTICAST)) == 0)
 			continue;
-		cc = sendmcastif(s, packet, packetlen, sin, &interfaces[i]);
+		cc = sendmcastif(socket, packet, packetlen, sin, &interfaces[i]);
 		if (cc!= packetlen) {
 			return (cc);
 		}
@@ -1052,7 +1052,7 @@ sendmcast(int s, char *packet, int packetlen, struct sockaddr_in *sin)
 }
 
 int
-sendmcastif(int s, char *packet, int packetlen,	struct sockaddr_in *sin,
+sendmcastif(int socket, char *packet, int packetlen, struct sockaddr_in *sin,
 	    struct interface *ifp)
 {
 	int cc;
@@ -1065,7 +1065,7 @@ sendmcastif(int s, char *packet, int packetlen,	struct sockaddr_in *sin,
 		logdebug("Multicast to interface %s, %s\n",
 			 ifp->name,
 			 pr_name(mreq.imr_address));
-	if (setsockopt(s, IPPROTO_IP, IP_MULTICAST_IF,
+	if (setsockopt(socket, IPPROTO_IP, IP_MULTICAST_IF,
 		       (char *)&mreq,
 		       sizeof(mreq)) < 0) {
 		logperror("setsockopt (IP_MULTICAST_IF)");
@@ -1074,7 +1074,7 @@ sendmcastif(int s, char *packet, int packetlen,	struct sockaddr_in *sin,
 		       pr_name(mreq.imr_address));
 		return (-1);
 	}
-	cc = sendto(s, packet, packetlen, 0,
+	cc = sendto(socket, packet, packetlen, 0,
 		    (struct sockaddr *)sin, sizeof (struct sockaddr));
 	if (cc!= packetlen) {
 		logperror("sendmcast: sendto");
@@ -1361,12 +1361,12 @@ age_table(int time)
 		}
 	}
 	if (recalculate_max) {
-		int max = max_preference();
+		int max_pref = max_preference();
 
-		if (max != INELIGIBLE_PREF) {
+		if (max_pref != INELIGIBLE_PREF) {
 			tp = table;
 			while (tp) {
-				if (tp->preference == max && !tp->in_kernel) {
+				if (tp->preference == max_pref && !tp->in_kernel) {
 					add_route(tp->router);
 					tp->in_kernel++;
 				}
@@ -1392,7 +1392,7 @@ void discard_table(void)
 
 
 void
-record_router(struct in_addr router, int preference, int ttl)
+record_router(struct in_addr router, int pref, int ttl)
 {
 	struct table *tp;
 	int old_max = max_preference();
@@ -1400,24 +1400,24 @@ record_router(struct in_addr router, int preference, int ttl)
 	int changed_down = 0;	/* max preference could have decreased */
 
 	if (ttl < 4)
-		preference = INELIGIBLE_PREF;
+		pref = INELIGIBLE_PREF;
 
 	if (debug)
 		logdebug("Recording %s, ttl %d, preference 0x%x\n",
 			 pr_name(router),
 			 ttl,
-			 preference);
+			 pref);
 	tp = find_router(router);
 	if (tp) {
-		if (tp->preference > preference &&
+		if (tp->preference > pref &&
 		    tp->preference == old_max)
 			changed_down++;
-		else if (preference > tp->preference)
+		else if (pref > tp->preference)
 			changed_up++;
-		tp->preference = preference;
+		tp->preference = pref;
 		tp->remaining_time = ttl;
 	} else {
-		if (preference > old_max)
+		if (pref > old_max)
 			changed_up++;
 		tp = (struct table *)ALLIGN(malloc(sizeof(struct table)));
 		if (tp == NULL) {
@@ -1425,7 +1425,7 @@ record_router(struct in_addr router, int preference, int ttl)
 			return;
 		}
 		tp->router = router;
-		tp->preference = preference;
+		tp->preference = pref;
 		tp->remaining_time = ttl;
 		tp->in_kernel = 0;
 		tp->next = table;

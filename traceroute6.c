@@ -605,16 +605,16 @@ int main(int argc, char *argv[])
 		for (probe = 0; probe < nprobes; ++probe) {
 			int cc, reset_timer;
 			struct timeval t1, t2;
-			struct timezone tz;
-			struct in6_addr to;
+			struct timezone tzone;
+			struct in6_addr to_addr;
 
-			gettimeofday(&t1, &tz);
+			gettimeofday(&t1, &tzone);
 			send_probe(++seq, ttl);
 			reset_timer = 1;
 
-			while ((cc = wait_for_reply(icmp_sock, &from, &to, reset_timer)) != 0) {
-				gettimeofday(&t2, &tz);
-				if ((i = packet_ok(packet, cc, &from, &to, seq, &t1))) {
+			while ((cc = wait_for_reply(icmp_sock, &from, &to_addr, reset_timer)) != 0) {
+				gettimeofday(&t2, &tzone);
+				if ((i = packet_ok(packet, cc, &from, &to_addr, seq, &t1))) {
 					if (memcmp(&from.sin6_addr, &lastaddr, sizeof(from.sin6_addr))) {
 						print(packet, cc, &from);
 						memcpy(&lastaddr,

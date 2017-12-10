@@ -452,14 +452,14 @@ void serve_it(int fd)
 	if (verbose) {
 		int i;
 		char tmpbuf[16*3];
-		char *ptr = tmpbuf;
+		char *p = tmpbuf;
 		for (i=0; i<sll.sll_halen; i++) {
 			if (i) {
-				sprintf(ptr, ":%02x", sll.sll_addr[i]);
-				ptr++;
+				sprintf(p, ":%02x", sll.sll_addr[i]);
+				p++;
 			} else
-				sprintf(ptr, "%02x", sll.sll_addr[i]);
-			ptr += 2;
+				sprintf(p, "%02x", sll.sll_addr[i]);
+			p += 2;
 		}
 		syslog(LOG_INFO, "RARP request from %s on if%d", tmpbuf, sll.sll_ifindex);
 	}

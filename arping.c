@@ -79,14 +79,14 @@ struct device device = {
 	.name = DEFAULT_DEVICE,
 };
 char *source;
-struct in_addr src, dst;
+struct in_addr gsrc, gdst;
 char *target;
 int dad, unsolicited, advert;
 int quiet;
 int count=-1;
 int timeout;
 int unicasting;
-int s;
+int socketfd;
 int broadcast_only;
 
 struct sockaddr_storage me;
@@ -376,7 +376,7 @@ void catcher(void)
 	if (last.tv_sec==0 || timespec_later(&ts_s, &ts_o)) {
 		if (!timeout && (sent == count))
 			finish();
-		send_pack(s, src, dst,
+		send_pack(socketfd, gsrc, gdst,
 			  (struct sockaddr_ll *)&me, (struct sockaddr_ll *)&he);
 		if ((sent == count) && unsolicited)
 			/* We usually wait for an extra iteration
@@ -398,7 +398,8 @@ void print_hex(unsigned char *p, int len)
 	}
 }
 
-int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM)
+int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM,
+	      struct in_addr src, struct in_addr dst)
 {
 	struct timespec ts;
 	struct arphdr *ah = (struct arphdr*)buf;
@@ -746,7 +747,7 @@ int find_device_by_sysfs(void)
 
 	while ((dirp = readdir(dir)) != NULL) {
 		int i;
-		int rc = -1;
+		int ret = -1;
 
 		if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
 			continue;
@@ -767,13 +768,13 @@ int find_device_by_sysfs(void)
 			if (fscanf(f, "%255s", str) != 1)
 				str[0] = '\0';
 			fclose(f);
-			rc = sysfs_devattrs[i].handler(str, &sysfs_devattr_values, i);
+			ret = sysfs_devattrs[i].handler(str, &sysfs_devattr_values, i);
 
-			if (rc < 0)
+			if (ret < 0)
 				break;
 		}
 
-		if (rc < 0)
+		if (ret < 0)
 			goto do_next;
 
 		if (check_ifflags(sysfs_devattr_values.value[SYSFS_DEVATTR_FLAGS].ulong,
@@ -929,16 +930,18 @@ out:
  * This fills the device "broadcast address"
  * based on information found by find_device() funcion.
  */
-static int set_device_broadcast_ifaddrs_one(struct device *device, unsigned char *ba, size_t balen, int fatal)
+static int set_device_broadcast_ifaddrs_one(struct device *dev,
+					    unsigned char *ba, size_t balen,
+					    int fatal)
 {
 #ifndef WITHOUT_IFADDRS
 	struct ifaddrs *ifa;
 	struct sockaddr_ll *sll;
 
-	if (!device)
+	if (!dev)
 		return -1;
 
-	ifa = device->ifa;
+	ifa = dev->ifa;
 	if (!ifa)
 		return -1;
 
@@ -958,13 +961,13 @@ static int set_device_broadcast_ifaddrs_one(struct device *device, unsigned char
 	return -1;
 #endif
 }
-int set_device_broadcast_sysfs(struct device *device, unsigned char *ba, size_t balen)
+int set_device_broadcast_sysfs(struct device *dev, unsigned char *ba, size_t balen)
 {
 #ifdef USE_SYSFS
 	struct sysfs_devattr_values *v;
-	if (!device)
+	if (!dev)
 		return -1;
-	v = device->sysfs;
+	v = dev->sysfs;
 	if (!v)
 		return -1;
 	if (v->value[SYSFS_DEVATTR_ADDR_LEN].ulong != balen)
@@ -976,7 +979,7 @@ int set_device_broadcast_sysfs(struct device *device, unsigned char *ba, size_t 
 #endif
 }
 
-static int set_device_broadcast_fallback(struct device *device, unsigned char *ba, size_t balen)
+static int set_device_broadcast_fallback(unsigned char *ba, size_t balen)
 {
 	if (!quiet)
 		fprintf(stderr, "WARNING: using default broadcast address.\n");
@@ -990,7 +993,7 @@ static void set_device_broadcast(struct device *dev, unsigned char *ba, size_t b
 		return;
 	if (!set_device_broadcast_sysfs(dev, ba, balen))
 		return;
-	set_device_broadcast_fallback(dev, ba, balen);
+	set_device_broadcast_fallback(ba, balen);
 }
 
 int
@@ -1007,7 +1010,7 @@ main(int argc, char **argv)
 
 	enable_capability_raw();
 
-	s = socket(PF_PACKET, SOCK_DGRAM, 0);
+	socketfd = socket(PF_PACKET, SOCK_DGRAM, 0);
 	socket_errno = errno;
 
 	disable_capability_raw();
@@ -1066,7 +1069,7 @@ main(int argc, char **argv)
 	if (device.name && !*device.name)
 		device.name = NULL;
 
-	if (s < 0) {
+	if (socketfd < 0) {
 		errno = socket_errno;
 		perror("arping: socket");
 		exit(2);
@@ -1084,7 +1087,7 @@ main(int argc, char **argv)
 		usage();
 	}
 
-	if (inet_aton(target, &dst) != 1) {
+	if (inet_aton(target, &gdst) != 1) {
 		struct addrinfo hints = {
 			.ai_family = AF_INET,
 			.ai_socktype = SOCK_RAW,
@@ -1101,19 +1104,19 @@ main(int argc, char **argv)
 			exit(2);
 		}
 
-		memcpy(&dst, &((struct sockaddr_in *) result->ai_addr)->sin_addr, sizeof dst);
+		memcpy(&gdst, &((struct sockaddr_in *) result->ai_addr)->sin_addr, sizeof gdst);
 		freeaddrinfo(result);
 	}
 
-	if (source && inet_aton(source, &src) != 1) {
+	if (source && inet_aton(source, &gsrc) != 1) {
 		fprintf(stderr, "arping: invalid source %s\n", source);
 		exit(2);
 	}
 
-	if (!dad && unsolicited && src.s_addr == 0)
-		src = dst;
+	if (!dad && unsolicited && gsrc.s_addr == 0)
+		gsrc = gdst;
 
-	if (!dad || src.s_addr) {
+	if (!dad || gsrc.s_addr) {
 		struct sockaddr_in saddr;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -1131,8 +1134,8 @@ main(int argc, char **argv)
 		}
 		memset(&saddr, 0, sizeof(saddr));
 		saddr.sin_family = AF_INET;
-		if (src.s_addr) {
-			saddr.sin_addr = src;
+		if (gsrc.s_addr) {
+			saddr.sin_addr = gsrc;
 			if (bind(probe_fd, (struct sockaddr*)&saddr, sizeof(saddr)) == -1) {
 				perror("bind");
 				exit(2);
@@ -1142,7 +1145,7 @@ main(int argc, char **argv)
 			socklen_t alen = sizeof(saddr);
 
 			saddr.sin_port = htons(1025);
-			saddr.sin_addr = dst;
+			saddr.sin_addr = gdst;
 
 			if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char*)&on, sizeof(on)) == -1)
 				perror("WARNING: setsockopt(SO_DONTROUTE)");
@@ -1154,7 +1157,7 @@ main(int argc, char **argv)
 				perror("getsockname");
 				exit(2);
 			}
-			src = saddr.sin_addr;
+			gsrc = saddr.sin_addr;
 		}
 		close(probe_fd);
 	};
@@ -1162,14 +1165,14 @@ main(int argc, char **argv)
 	((struct sockaddr_ll *)&me)->sll_family = AF_PACKET;
 	((struct sockaddr_ll *)&me)->sll_ifindex = device.ifindex;
 	((struct sockaddr_ll *)&me)->sll_protocol = htons(ETH_P_ARP);
-	if (bind(s, (struct sockaddr*)&me, sizeof(me)) == -1) {
+	if (bind(socketfd, (struct sockaddr*)&me, sizeof(me)) == -1) {
 		perror("bind");
 		exit(2);
 	}
 
 	if (1) {
 		socklen_t alen = sizeof(me);
-		if (getsockname(s, (struct sockaddr*)&me, &alen) == -1) {
+		if (getsockname(socketfd, (struct sockaddr*)&me, &alen) == -1) {
 			perror("getsockname");
 			exit(2);
 		}
@@ -1186,11 +1189,11 @@ main(int argc, char **argv)
 			     ((struct sockaddr_ll *)&he)->sll_halen);
 
 	if (!quiet) {
-		printf("ARPING %s ", inet_ntoa(dst));
-		printf("from %s %s\n",  inet_ntoa(src), device.name ? : "");
+		printf("ARPING %s ", inet_ntoa(gdst));
+		printf("from %s %s\n",  inet_ntoa(gsrc), device.name ? : "");
 	}
 
-	if (!src.s_addr && !dad) {
+	if (!gsrc.s_addr && !dad) {
 		fprintf(stderr, "arping: no source address in not-DAD mode\n");
 		exit(2);
 	}
@@ -1218,7 +1221,7 @@ main(int argc, char **argv)
 		 * is received. */
 		sigprocmask(SIG_UNBLOCK, &sset, &osset);
 
-		if ((cc = recvfrom(s, packet, sizeof(packet), 0,
+		if ((cc = recvfrom(socketfd, packet, sizeof(packet), 0,
 				   (struct sockaddr *)&from, &alen)) < 0) {
 			perror("arping: recvfrom");
 			if (errno == ENETDOWN)
@@ -1227,7 +1230,7 @@ main(int argc, char **argv)
 		}
 
 		sigprocmask(SIG_BLOCK, &sset, NULL);
-		recv_pack(packet, cc, (struct sockaddr_ll *)&from);
+		recv_pack(packet, cc, (struct sockaddr_ll *)&from, gsrc, gdst);
 		sigprocmask(SIG_SETMASK, &osset, NULL);
 	}
 }

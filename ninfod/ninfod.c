@@ -207,20 +207,20 @@ static int __inline__ open_sock(void)
 	return socket(PF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 }
 
-static int set_recvpktinfo(int sock)
+static int set_recvpktinfo(int socket)
 {
 	int on, ret;
 
 	on = 1;
 
 #if defined(IPV6_RECVPKTINFO)
-	ret = setsockopt(sock,
+	ret = setsockopt(socket,
 			 IPPROTO_IPV6, IPV6_RECVPKTINFO,
 			 &on, sizeof(on));
 	if (!ret)
 		return 0;
 # if defined(IPV6_2292PKTINFO)
-	ret = setsockopt(sock,
+	ret = setsockopt(socket,
 			 IPPROTO_IPV6, IPV6_2292PKTINFO,
 			 &on, sizeof(on));
 	if (!ret) {
@@ -235,7 +235,7 @@ static int set_recvpktinfo(int sock)
 	      strerror(errno));
 # endif
 #else
-	ret = setsockopt(sock,
+	ret = setsockopt(socket,
 			 IPPROTO_IPV6, IPV6_PKTINFO,
 			 &on, sizeof(on));
 	if (!ret)
@@ -248,14 +248,14 @@ static int set_recvpktinfo(int sock)
 	return -1;
 }
 
-static int __inline__ init_sock(int sock)
+static int __inline__ init_sock(int socket)
 {
 	struct icmp6_filter filter;
 #if NEED_IPV6CHECKSUM
 	int i;
 
 	i = offsetof(struct icmp6_nodeinfo, ni_cksum);
-	if (setsockopt(sock,
+	if (setsockopt(socket,
 		       IPPROTO_IPV6, IPV6_CHECKSUM,
 		       &i, sizeof(i)) < 0) {
 		DEBUG(LOG_ERR, "setsockopt(IPV6_CHECKSUM): %s\n",
@@ -266,7 +266,7 @@ static int __inline__ init_sock(int sock)
 
 	ICMP6_FILTER_SETBLOCKALL(&filter);
 	ICMP6_FILTER_SETPASS(ICMP6_NI_QUERY, &filter);
-	if (setsockopt(sock,
+	if (setsockopt(socket,
 		       IPPROTO_ICMPV6, ICMP6_FILTER,
 		       &filter, sizeof(filter)) < 0) {
 		DEBUG(LOG_ERR, "setsockopt(ICMP6_FILTER): %s\n",
@@ -274,7 +274,7 @@ static int __inline__ init_sock(int sock)
 		return -1;
 	}
 
-	if (set_recvpktinfo(sock) < 0)
+	if (set_recvpktinfo(socket) < 0)
 		return -1;
 
 	return 0;
@@ -283,7 +283,7 @@ static int __inline__ init_sock(int sock)
 /* --------- */
 int ni_recv(struct packetcontext *p)
 {
-	int sock = p->sock;
+	int socket = p->sock;
 	struct iovec iov[1];
 	struct msghdr msgh;
 	char recvcbuf[CMSG_SPACE(sizeof(p->pktinfo))];
@@ -304,7 +304,7 @@ int ni_recv(struct packetcontext *p)
 	msgh.msg_control = recvcbuf;
 	msgh.msg_controllen = sizeof(recvcbuf);
 
-	if ((cc = recvmsg(sock, &msgh, 0)) < 0)
+	if ((cc = recvmsg(socket, &msgh, 0)) < 0)
 		return -1;
 
 	p->querylen = cc;
@@ -328,7 +328,7 @@ int ni_recv(struct packetcontext *p)
 
 int ni_send(struct packetcontext *p)
 {
-	int sock = p->sock;
+	int socket = p->sock;
 	struct iovec iov[2];
 	char cbuf[CMSG_SPACE(sizeof(p->pktinfo))];
 	struct msghdr msgh;
@@ -377,7 +377,7 @@ int ni_send(struct packetcontext *p)
 #endif
 	}
 
-	cc = sendmsg(sock, &msgh, 0);
+	cc = sendmsg(socket, &msgh, 0);
 	if (cc < 0)
 		DEBUG(LOG_DEBUG, "sendmsg(): %s\n", strerror(errno));
 
