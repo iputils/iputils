@@ -483,6 +483,7 @@ void serve_it(int fd)
 			if (a->ar_hrd == htons(ARPHRD_ETHER) ||
 			    a->ar_hrd == htons(ARPHRD_IEEE802))
 				break;
+			/* fallthrough */
 		default:
 			syslog(LOG_ERR, "rarp htype mismatch");
 			return;
