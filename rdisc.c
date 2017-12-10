@@ -62,7 +62,6 @@
 #include <string.h>
 #include <syslog.h>
 
-#include "SNAPSHOT.h"
 
 struct interface
 {
@@ -329,7 +328,7 @@ int main(int argc, char **argv)
 				forever = 1;
 				break;
 			case 'V':
-				printf("rdisc utility, iputils-%s\n", SNAPSHOT);
+				printf("rdisc utility, iputils-%s\n", PACKAGE_VERSION);
 				exit(0);
 #ifdef RDISC_SERVER
 			case 'T':

@@ -48,7 +48,7 @@
 #  include <stdlib.h>
 # endif
 #endif
-#if ENABLE_THREADS && HAVE_PTHREAD_H
+#if ENABLE_THREADS && HAVE_PTHREAD
 # include <pthread.h>
 #endif
 #if HAVE_STRING_H
@@ -121,7 +121,7 @@ static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_core.c,v 1.29 2003
 /* Variables */
 int initialized = 0;
 
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS && HAVE_PTHREAD
 pthread_attr_t pattr;
 #endif
 
@@ -411,7 +411,7 @@ void init_core(int forced)
 
 		srand(seed);
 
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS && HAVE_PTHREAD
 		if (initialized)
 			pthread_attr_destroy(&pattr);
 
@@ -439,7 +439,7 @@ void init_core(int forced)
 	return;
 }
 
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS && HAVE_PTHREAD
 static void *ni_send_thread(void *data)
 {
 	int ret;
@@ -519,7 +519,7 @@ int pr_nodeinfo(struct packetcontext *p)
 	int i;
 	char *cp;
 #endif
-#if ENABLE_THREADS && HAVE_PTHREAD_H
+#if ENABLE_THREADS && HAVE_PTHREAD
 	pthread_t thread;
 #endif
 	int rc;
@@ -677,7 +677,7 @@ int pr_nodeinfo(struct packetcontext *p)
 
 	/* Step 10: Send the reply
 	 * XXX: with possible random delay */
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS && HAVE_PTHREAD
 	/* ni_send_thread() frees p */
 	if (pthread_create(&thread, &pattr, ni_send_thread, p)) {
 		ni_free(p->replydata);

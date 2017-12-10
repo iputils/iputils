@@ -46,7 +46,6 @@
 #include <locale.h>
 #endif
 
-#include "SNAPSHOT.h"
 
 static void usage(void) __attribute__((noreturn));
 
@@ -1040,7 +1039,7 @@ main(int argc, char **argv)
 			source = optarg;
 			break;
 		case 'V':
-			printf("arping utility, iputils-%s\n", SNAPSHOT);
+			printf("arping utility, iputils-%s\n", PACKAGE_VERSION);
 			exit(0);
 		case 'h':
 		case '?':

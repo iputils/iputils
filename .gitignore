@@ -1,26 +1,49 @@
-*~
-*.o
-
+# regular expressions
 *.diff
+*.o
 *.orig
 *.patch
 *.plist
 *.rej
+*~
+/iputils*.tar.xz
 
-core
+# generic paths
 .gdb_history
 .gdbinit
+core
 
-# Makefile build
+# directories
+/.deps/
+/autom4te.cache/
+/builddir
+/ninfod/.deps/
+
+# exact paths
+/INSTALL
+/Makefile
+/Makefile.in
+/aclocal.m4
 /arping
+/build-aux/compile
+/build-aux/config.guess
+/build-aux/config.sub
+/build-aux/depcomp
+/build-aux/install-sh
+/build-aux/missing
 /clockdiff
+/config.h
+/config.h.in
+/config.log
+/config.status
+/configure
+/ninfod/.dirstamp
+/ninfod/ninfod
+/ninfod/ninfod.sh
 /ping
-/ping6
 /rarpd
 /rdisc
+/stamp-h1
 /tftpd
 /tracepath
-/tracepath6
 /traceroute6
-# Meson build
-/builddir

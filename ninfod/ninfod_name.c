@@ -120,7 +120,7 @@
 # include <syslog.h>
 #endif
 
-#include "ninfod.h"
+#include "ninfod/ninfod.h"
 
 #ifndef offsetof
 # define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
