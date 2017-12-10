@@ -156,7 +156,7 @@ static int encode_dnsname(const char *name,
 			  int fqdn)
 {
 	size_t namelen;
-	int i;
+	size_t i;
 
 	namelen = strlen(name);
 	if (namelen == 0)

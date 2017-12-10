@@ -90,7 +90,7 @@ static struct sockaddr_in6 whereto;
 static struct sockaddr_in6 firsthop;
 
 static unsigned char cmsgbuf[4096];
-static int cmsglen = 0;
+static size_t cmsglen = 0;
 
 static int pr_icmph(__u8 type, __u8 code, __u32 info);
 void ping6_usage(unsigned) __attribute((noreturn));
@@ -444,7 +444,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
 	unsigned char *dnptrs[2], **dpp, **lastdnptr;
 	int n;
-	int i;
+	size_t i;
 	char *p;
 	char *canonname = NULL, *idn = NULL;
 	unsigned char *buf = NULL;
@@ -517,7 +517,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	if (n < 0) {
 		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", canonname);
 		goto errexit;
-	} else if (n >= buflen) {
+	} else if ((size_t) n >= buflen) {
 		fprintf(stderr, "ping6: dn_comp() returned too long result.\n");
 		goto errexit;
 	}
@@ -617,7 +617,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		struct in6_addr *addr;
 
 		if (srcrt == NULL) {
-			int space;
+			size_t space;
 
 			fprintf(stderr, "ping6: Warning: "
 					"Source routing is deprecated by RFC5095.\n");
@@ -868,7 +868,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		exit(2);
 	}
 
-	if (datalen >= sizeof(struct timeval) && (ni_query < 0)) {
+	if ((ssize_t) datalen >= (ssize_t) sizeof(struct timeval) && (ni_query < 0)) {
 		/* can we time transfer */
 		timing = 1;
 	}
@@ -1034,7 +1034,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 int ping6_receive_error_msg(socket_st *sock)
 {
-	int res;
+	ssize_t res;
 	char cbuf[512];
 	struct iovec  iov;
 	struct msghdr msg;
@@ -1084,7 +1084,7 @@ int ping6_receive_error_msg(socket_st *sock)
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP6) {
 		struct sockaddr_in6 *sin6 = (struct sockaddr_in6*)(e+1);
 
-		if (res < sizeof(icmph) ||
+		if ((size_t) res < sizeof(icmph) ||
 		    memcmp(&target.sin6_addr, &whereto.sin6_addr, 16) ||
 		    icmph.icmp6_type != ICMP6_ECHO_REQUEST ||
 		    !is_ours(sock, icmph.icmp6_id)) {
@@ -1234,7 +1234,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 	}
 	while (p < end) {
 		int fqdn = 1;
-		int i;
+		size_t i;
 
 		memset(buf, 0xff, sizeof(buf));
 
@@ -1420,7 +1420,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 		 * using RECVRERR. :-)
 		 */
 
-		if (cc < 8+sizeof(struct ip6_hdr)+8)
+		if (cc < (int) (8 + sizeof(struct ip6_hdr) + 8))
 			return 1;
 
 		if (memcmp(&iph1->ip6_dst, &whereto.sin6_addr, 16))

@@ -233,7 +233,7 @@ void drop_capabilities(void)
  */
 void fill(char *patp, void *packet, unsigned packet_size)
 {
-	int ii, jj, kk;
+	int ii, jj;
 	int pat[16];
 	char *cp;
 	unsigned char *bp = packet+8;
@@ -256,6 +256,7 @@ void fill(char *patp, void *packet, unsigned packet_size)
 	    &pat[13], &pat[14], &pat[15]);
 
 	if (ii > 0) {
+		unsigned kk;
 		for (kk = 0; kk <= packet_size - (8 + ii); kk += ii)
 			for (jj = 0; jj < ii; ++jj)
 				bp[jj + kk] = pat[jj];
@@ -295,12 +296,12 @@ int __schedule_exit(int next)
 
 	if (nreceived) {
 		waittime = 2 * tmax;
-		if (waittime < 1000*interval)
+		if (waittime < (unsigned long) (1000*interval))
 			waittime = 1000*interval;
 	} else
 		waittime = lingertime*1000;
 
-	if (next < 0 || next < waittime/1000)
+	if (next < 0 || (unsigned long)next < waittime/1000)
 		next = waittime/1000;
 
 	it.it_interval.tv_sec = 0;
@@ -782,7 +783,7 @@ int gather_statistics(__u8 *icmph, int icmplen,
 	if (!csfailed)
 		acknowledge(seq);
 
-	if (timing && cc >= 8+sizeof(struct timeval)) {
+	if (timing && cc >= (int) (8+sizeof(struct timeval))) {
 		struct timeval tmp_tv;
 		memcpy(&tmp_tv, ptr, sizeof(tmp_tv));
 

@@ -62,7 +62,7 @@ struct packetcontext {
 	socklen_t addrlen;
 	struct in6_pktinfo pktinfo;
 	char query[MAX_QUERY_SIZE];
-	int querylen;
+	size_t querylen;
 
 	/* reply info */
 	struct icmp6_nodeinfo reply;	/* common */

@@ -420,7 +420,7 @@ void serve_it(int fd)
 	struct arphdr *a = (struct arphdr*)buf;
 	struct rarp_map *rmap;
 	unsigned char *ptr;
-	int n;
+	ssize_t n;
 
 	n = recvfrom(fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*)&sll, &sll_len);
 	if (n<0) {
@@ -438,8 +438,8 @@ void serve_it(int fd)
 	if (ifidx && sll.sll_ifindex != ifidx)
 		return;
 
-	if (n<sizeof(*a)) {
-		syslog(LOG_ERR, "truncated arp packet; len=%d", n);
+	if ((size_t)n<sizeof(*a)) {
+		syslog(LOG_ERR, "truncated arp packet; len=%zu", n);
 		return;
 	}
 
@@ -493,8 +493,8 @@ void serve_it(int fd)
 		return;
 	}
 	/* 4. Check packet length */
-	if (sizeof(*a) + 2*4 + 2*a->ar_hln > n) {
-		syslog(LOG_ERR, "truncated rarp request; len=%d", n);
+	if (sizeof(*a) + 2*4 + 2*a->ar_hln > (size_t) n) {
+		syslog(LOG_ERR, "truncated rarp request; len=%zu", n);
 		return;
 	}
 	/* 5. Silly check: if this guy set different source

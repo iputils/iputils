@@ -290,8 +290,8 @@ unsigned char	packet[512];		/* last inbound (icmp) packet */
 
 int	wait_for_reply(int, struct sockaddr_in6 *, struct in6_addr *, int);
 int	packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
-		  struct in6_addr *to, int seq, struct timeval *);
-void	send_probe(int seq, int ttl);
+		  struct in6_addr *to, uint32_t seq, struct timeval *);
+void	send_probe(uint32_t seq, int ttl);
 double	deltaT (struct timeval *, struct timeval *);
 void	print(unsigned char *buf, int cc, struct sockaddr_in6 *from);
 void	tvsub (struct timeval *, struct timeval *);
@@ -341,7 +341,8 @@ int main(int argc, char *argv[])
 	struct addrinfo *result;
 	int status;
 	struct sockaddr_in6 from, *to;
-	int ch, i, on, probe, seq, tos, ttl;
+	int ch, i, on, probe, tos, ttl;
+	uint32_t seq;
 	int socket_errno;
 	char *resolved_hostname = NULL;
 
@@ -732,7 +733,7 @@ wait_for_reply(sock, from, to, reset_timer)
 }
 
 
-void send_probe(int seq, int ttl)
+void send_probe(uint32_t seq, int ttl)
 {
 	struct pkt_format *pkt = (struct pkt_format *) sendbuff;
 	int i;
@@ -831,7 +832,7 @@ char * pr_type(unsigned char t)
 
 
 int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
-	      struct in6_addr *to, int seq,
+	      struct in6_addr *to, uint32_t seq,
 	      struct timeval *tv)
 {
 	struct icmp6_hdr *icp;
@@ -863,7 +864,7 @@ int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 
 			pkt = (struct pkt_format *) (up + 1);
 
-			if (ntohl(pkt->ident) == ident &&
+			if (ntohl(pkt->ident) == (uint32_t) ident &&
 			    ntohl(pkt->seq) == seq)
 			{
 				*tv = pkt->tv;

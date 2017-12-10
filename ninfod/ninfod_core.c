@@ -158,7 +158,7 @@ static struct subjinfo subjinfo_null = {
 	.checksubj = pr_nodeinfo_noop,
 };
 
-static __inline__ struct subjinfo *subjinfo_lookup(int code)
+static __inline__ struct subjinfo *subjinfo_lookup(size_t code)
 {
 	if (code >= ARRAY_SIZE(subjinfo_table))
 		return NULL;
@@ -224,7 +224,7 @@ static struct qtypeinfo qtypeinfo_refused = {
 	.flags = QTYPEINFO_F_RATELIMIT,
 };
 
-static __inline__ struct qtypeinfo *qtypeinfo_lookup(int qtype)
+static __inline__ struct qtypeinfo *qtypeinfo_lookup(size_t qtype)
 {
 	if (qtype >= ARRAY_SIZE(qtypeinfo_table))
 		return &qtypeinfo_unknown;
@@ -387,7 +387,7 @@ static int ni_policy(struct packetcontext *p)
 /* ---------- */
 void init_core(int forced)
 {
-	int i;
+	size_t i;
 
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 

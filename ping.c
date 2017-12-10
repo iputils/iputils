@@ -865,7 +865,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 		exit(2);
 	}
 
-	if (datalen >= sizeof(struct timeval))	/* can we time transfer */
+	if (datalen >= (int) sizeof(struct timeval))	/* can we time transfer */
 		timing = 1;
 	packlen = datalen + MAXIPLEN + MAXICMPLEN;
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen))) {
@@ -886,7 +886,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 int ping4_receive_error_msg(socket_st *sock)
 {
-	int res;
+	ssize_t res;
 	char cbuf[512];
 	struct iovec  iov;
 	struct msghdr msg;
@@ -936,7 +936,7 @@ int ping4_receive_error_msg(socket_st *sock)
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
 		struct sockaddr_in *sin = (struct sockaddr_in*)(e+1);
 
-		if (res < sizeof(icmph) ||
+		if (res < (ssize_t) sizeof(icmph) ||
 		    target.sin_addr.s_addr != whereto.sin_addr.s_addr ||
 		    icmph.type != ICMP_ECHO ||
 		    !is_ours(sock, icmph.un.echo.id)) {
@@ -1110,7 +1110,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 				struct iphdr * iph = (struct  iphdr *)(&icp[1]);
 				struct icmphdr *icp1 = (struct icmphdr*)((unsigned char *)iph + iph->ihl*4);
 				int error_pkt;
-				if (cc < 8+sizeof(struct iphdr)+8 ||
+				if (cc < (int) (8 + sizeof(struct iphdr) + 8) ||
 				    cc < 8+iph->ihl*4+8)
 					return 1;
 				if (icp1->type != ICMP_ECHO ||

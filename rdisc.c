@@ -778,7 +778,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 					 rap->icmp_wpa);
 			return;
 		}
-		if ((unsigned)cc <
+		if (cc <
 		    8 + rap->icmp_num_addrs * rap->icmp_wpa * 4) {
 			if (verbose)
 				logtrace("ICMP %s from %s: Too short %d, %d\n",
@@ -1363,7 +1363,7 @@ age_table(int time)
 	if (recalculate_max) {
 		int max_pref = max_preference();
 
-		if (max_pref != INELIGIBLE_PREF) {
+		if (max_pref != (int) INELIGIBLE_PREF) {
 			tp = table;
 			while (tp) {
 				if (tp->preference == max_pref && !tp->in_kernel) {
@@ -1433,18 +1433,18 @@ record_router(struct in_addr router, int pref, int ttl)
 	}
 	if (!tp->in_kernel &&
 	    (!best_preference || tp->preference == max_preference()) &&
-	    tp->preference != INELIGIBLE_PREF) {
+	    tp->preference != (int) INELIGIBLE_PREF) {
 		add_route(tp->router);
 		tp->in_kernel++;
 	}
-	if (tp->preference == INELIGIBLE_PREF && tp->in_kernel) {
+	if (tp->preference == (int) INELIGIBLE_PREF && tp->in_kernel) {
 		del_route(tp->router);
 		tp->in_kernel = 0;
 	}
 	if (best_preference && changed_down) {
 		/* Check if we should add routes */
 		int new_max = max_preference();
-		if (new_max != INELIGIBLE_PREF) {
+		if (new_max != (int) INELIGIBLE_PREF) {
 			tp = table;
 			while (tp) {
 				if (tp->preference == new_max &&

@@ -110,7 +110,7 @@ struct rtmaddr_ifamap {
 #endif
 
 /* ====================================================================== */
-static int nl_sendreq(int sd, int request, int flags, int *seq)
+static int nl_sendreq(int sd, int request, int flags, uint32_t *seq)
 {
 	char reqbuf[NLMSG_ALIGN(sizeof(struct nlmsghdr)) + NLMSG_ALIGN(sizeof(struct rtgenmsg))];
 	struct sockaddr_nl nladdr;
@@ -160,7 +160,7 @@ static int nl_recvmsg(int sd, int request, int seq, void *buf, size_t buflen, in
 	return read_len;
 }
 
-static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *done)
+static int nl_getmsg(int sd, int request, uint32_t seq, struct nlmsghdr **nlhp, int *done)
 {
 	struct nlmsghdr *nh;
 	size_t bufsize = 65536, lastbufsize = 0;
@@ -186,7 +186,7 @@ static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *
 			break;
 		nh = (struct nlmsghdr *) buff;
 		for (nh = (struct nlmsghdr *) buff; NLMSG_OK(nh, read_size); nh = (struct nlmsghdr *) NLMSG_NEXT(nh, read_size)) {
-			if (nh->nlmsg_pid != pid || nh->nlmsg_seq != seq)
+			if ((pid_t) nh->nlmsg_pid != pid || nh->nlmsg_seq != seq)
 				continue;
 			if (nh->nlmsg_type == NLMSG_DONE) {
 				(*done)++;
@@ -215,7 +215,7 @@ static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *
 	return result;
 }
 
-static int nl_getlist(int sd, int seq, int request, struct nlmsg_list **nlm_list, struct nlmsg_list **nlm_end)
+static int nl_getlist(int sd, uint32_t seq, int request, struct nlmsg_list **nlm_list, struct nlmsg_list **nlm_end)
 {
 	struct nlmsghdr *nlh = NULL;
 	int status;
@@ -252,7 +252,7 @@ static int nl_getlist(int sd, int seq, int request, struct nlmsg_list **nlm_list
 			}
 		}
 	}
-	return status >= 0 ? seq : status;
+	return status >= 0 ? (int) seq : status;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -392,7 +392,7 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 #endif
 
 				/* check if the message is what we want */
-				if (nlh->nlmsg_pid != pid || nlh->nlmsg_seq != nlm->seq)
+				if ((pid_t) nlh->nlmsg_pid != pid || nlh->nlmsg_seq != nlm->seq)
 					continue;
 				if (nlh->nlmsg_type == NLMSG_DONE) {
 					break;	/* ok */

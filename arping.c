@@ -398,7 +398,7 @@ void print_hex(unsigned char *p, int len)
 	}
 }
 
-int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM,
+int recv_pack(unsigned char *buf, ssize_t len, struct sockaddr_ll *FROM,
 	      struct in_addr src, struct in_addr dst)
 {
 	struct timespec ts;
@@ -431,7 +431,7 @@ int recv_pack(unsigned char *buf, int len, struct sockaddr_ll *FROM,
 		return 0;
 	if (ah->ar_hln != ((struct sockaddr_ll *)&me)->sll_halen)
 		return 0;
-	if (len < sizeof(*ah) + 2*(4 + ah->ar_hln))
+	if (len < (ssize_t) sizeof(*ah) + 2*(4 + ah->ar_hln))
 		return 0;
 	memcpy(&src_ip, p+ah->ar_hln, 4);
 	memcpy(&dst_ip, p+ah->ar_hln+4+ah->ar_hln, 4);
@@ -704,7 +704,7 @@ static int sysfs_devattr_ulong_hex(char *ptr, struct sysfs_devattr_values *v, un
 static int sysfs_devattr_macaddr(char *ptr, struct sysfs_devattr_values *v, unsigned int idx)
 {
 	unsigned char *m;
-	int i;
+	unsigned int i;
 	unsigned int addrlen;
 
 	if (!ptr || !v)
@@ -1210,7 +1210,7 @@ main(int argc, char **argv)
 		unsigned char packet[4096];
 		struct sockaddr_storage from;
 		socklen_t alen = sizeof(from);
-		int cc;
+		ssize_t cc;
 
 		sigemptyset(&sset);
 		sigaddset(&sset, SIGALRM);
