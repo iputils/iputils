@@ -124,9 +124,6 @@ int initialized = 0;
 pthread_attr_t pattr;
 #endif
 
-static uint32_t suptypes[(MAX_SUPTYPES+31)>>5];
-static size_t suptypes_len;
-
 /* ---------- */
 struct subjinfo {
 	uint8_t	code;

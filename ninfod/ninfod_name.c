@@ -158,9 +158,6 @@ static int encode_dnsname(const char *name,
 	size_t namelen;
 	int i;
 
-	if (buflen < 0)
-		return -1;
-
 	namelen = strlen(name);
 	if (namelen == 0)
 		return 0;
