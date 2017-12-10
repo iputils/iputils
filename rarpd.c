@@ -300,10 +300,8 @@ struct rarp_map *rarp_lookup(int ifindex, int hatype,
 			struct hostent *hp;
 			char ename[256];
 			static struct rarp_map emap = {
-				NULL,
-				0,
-				ARPHRD_ETHER,
-				6,
+				.arp_type = ARPHRD_ETHER,
+				.lladdr_len = 6
 			};
 
 			if (ether_ntohost(ename, lladdr) != 0 ||
