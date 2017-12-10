@@ -98,9 +98,8 @@ void ping6_usage(unsigned) __attribute((noreturn));
 struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
 char *device;
 
-#if defined(USE_GCRYPT) || defined(USE_OPENSSL) || defined(USE_NETTLE)
+#if defined(USE_CRYPTO)
 #include "iputils_md5dig.h"
-#define USE_CRYPTO
 #endif
 
 /* Node Information query */

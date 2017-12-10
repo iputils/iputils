@@ -262,7 +262,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "SNAPSHOT.h"
 
 #ifndef SOL_IPV6
 #define SOL_IPV6 IPPROTO_IPV6
@@ -426,7 +425,7 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case 'V':
-			printf("traceroute6 utility, iputils-%s\n", SNAPSHOT);
+			printf("traceroute6 utility, iputils-%s\n", PACKAGE_VERSION);
 			exit(0);
 		default:
 			usage();

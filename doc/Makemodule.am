@@ -1,0 +1,49 @@
+if BUILD_MAN
+
+XSLTPROC_FLAGS = \
+	--nonet \
+	--xinclude \
+	--stringparam man.output-quietly 1 \
+	--stringparam funcsynopsis.style ansi \
+	--stringparam man.authors.section.enabled 0 \
+	--stringparam iputils.version $(PACKAGE_VERSION)
+
+#XSL_HTML = doc/custom-html.xsl
+XSL_MAN = $(srcdir)/doc/custom-man.xsl
+
+EXTRA_DIST = \
+	$(XSL_HTML) \
+	$(XSL_MAN) \
+	doc/arping.8.xml \
+	doc/clockdiff.8.xml \
+	doc/ninfod.8.xml \
+	doc/ping.8.xml \
+	doc/rarpd.8.xml \
+	doc/rdisc.8.xml \
+	doc/tftpd.8.xml \
+	doc/tracepath.8.xml \
+	doc/traceroute6.8.xml
+
+man_MANS = \
+	doc/arping.8 \
+	doc/clockdiff.8 \
+	doc/ping.8 \
+	doc/rarpd.8 \
+	doc/rdisc.8 \
+	doc/tftpd.8 \
+	doc/tracepath.8 \
+	doc/tracepath6.8 \
+	doc/traceroute6.8
+
+if BUILD_NINFOD
+man_MANS += doc/ninfod.8
+endif
+
+$(man_MANS):
+	if test -f $(srcdir)/$@.xml; then \
+		$(XSLTPROC) -o $@ $(XSLTPROC_FLAGS) $(XSL_MAN) $(srcdir)/$@.xml; \
+	fi
+
+CLEANFILES = $(man_MANS)
+
+endif

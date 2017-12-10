@@ -3,17 +3,10 @@ dist: trusty
 before_install:
   - sudo apt-get update -qq
 install:
-  - sudo apt-get install libcap-dev libidn2-0-dev -qq
-  - sudo apt-get install nettle-dev libidn2-0-dev -qq
+  - sudo apt-get install libcap-dev libidn2-0-dev nettle-dev -qq
 
 compiler:
   - gcc
   - clang
-env:
-  matrix:
-    - USE_CAP=yes
-    - USE_CAP=no
-    - USE_IDN=yes
-    - USE_IDN=no
-script: make USE_CAP=${USE_CAP} USE_IDN=${USE_IDN}
+script: ./autogen.sh && ./configure --enable-rdisc-server --enable-ninfod --enable-pthreads && make
 

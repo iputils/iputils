@@ -1,0 +1,35 @@
+if BUILD_NINFOD
+sbin_PROGRAMS = ninfod/ninfod
+
+ninfod_ninfod_SOURCES = \
+	ninfod/icmp6_nodeinfo.h \
+	ninfod/iputils_md5dig.h \
+	ninfod/ni_ifaddrs.c \
+	ninfod/ni_ifaddrs.h \
+	ninfod/ninfod.c \
+	ninfod/ninfod.h \
+	ninfod/ninfod_addrs.c \
+	ninfod/ninfod_core.c \
+	ninfod/ninfod_name.c
+
+ninfod_ninfod_CFLAGS = \
+	$(LIBCAP_CFLAGS) \
+	$(LIBGCRYPT_CFLAGS)
+
+ninfod_ninfod_LDADD = \
+	$(LIBCAP_LIBS) \
+	$(LIBGCRYPT_LIBS) \
+	$(REALTIME_LIBS)
+
+if BUILD_THREADS
+ninfod_ninfod_CFLAGS += $(PTHREAD_CFLAGS)
+ninfod_ninfod_LDADD += $(PTHREAD_LIBS)
+endif
+
+initdir = $(sysconfdir)/init.d
+dist_init_DATA = ninfod/ninfod.sh
+endif
+
+ninfod/ninfod.sh:
+	sed -e 's|@prefix[@]|$(prefix)|' $(srcdir)/ninfod/ninfod.sh.in >$@
+
