@@ -10,6 +10,8 @@
  * 		YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
+#include "SNAPSHOT.h"
+
 #include <stdlib.h>
 #include <time.h>
 #include <signal.h>
@@ -52,8 +54,6 @@
 #define AI_CANONIDN 0x0080
 #endif
 #endif
-
-#include "SNAPSHOT.h"
 
 static void usage(void) __attribute__((noreturn));
 

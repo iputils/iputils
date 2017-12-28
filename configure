@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ $# -ne 0 ]; then
+	meson configure builddir
+	echo ''
+	echo 'Configuration can be changed like this:'
+	echo '  meson configure builddir -DBUILD_NINFOD=true'
+	echo '  More info: http://mesonbuild.com/Configuring-a-build-directory.html'
+	# See also: http://mesonbuild.com/howtox.html
+fi
+
+meson builddir

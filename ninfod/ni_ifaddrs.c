@@ -60,7 +60,7 @@
  * SUCH DAMAGE.
  */
 
-#include "config.h"
+#include "SNAPSHOT.h"
 
 #include <string.h>
 #include <time.h>

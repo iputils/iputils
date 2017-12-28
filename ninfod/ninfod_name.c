@@ -32,9 +32,7 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "SNAPSHOT.h"
 
 #if HAVE_SYS_TYPES_H
 # include <sys/types.h>

@@ -32,9 +32,7 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "SNAPSHOT.h"
 
 #if HAVE_SYS_TYPES_H
 # include <sys/types.h>
@@ -105,6 +103,7 @@
 #if HAVE_SYSLOG_H
 # include <syslog.h>
 #endif
+#include <sys/wait.h>
 
 #include "ninfod.h"
 
