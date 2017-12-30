@@ -1,23 +1,11 @@
 project('iputils', 'c',
-	default_options : ['c_std=c99'],
+	default_options : [
+		'c_std=c99',
+		'warning_level=2',
+	],
 	version : '20170717') # version hardcoded
 
 cc = meson.get_compiler('c')
-
-c_flags = '''
-	-D_GNU_SOURCE
-	-O3
-	-g
-	-fno-strict-aliasing
-	-Wstrict-prototypes
-	-Wall
-'''.split()
-
-foreach arg : c_flags
-	if cc.has_argument(arg)
-		add_project_arguments(arg, language : 'c')
-	endif
-endforeach
 
 conf = configuration_data()
 conf.set_quoted('SNAPSHOT', meson.project_version())
