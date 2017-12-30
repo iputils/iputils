@@ -3,6 +3,10 @@
                    "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- lifted from man+troff by doclifter -->
 <refentry id='rdisc8'>
+<refentryinfo>
+  <title>rdisc</title>
+  <productname>iputils</productname>
+</refentryinfo>
 <refmeta>
   <refentrytitle>RDISC</refentrytitle>
   <manvolnum>8</manvolnum>

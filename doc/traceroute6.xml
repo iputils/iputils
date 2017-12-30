@@ -3,6 +3,10 @@
                    "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- lifted from man+troff by doclifter -->
 <refentry id='traceroute68'>
+<refentryinfo>
+  <title>traceroute</title>
+  <productname>iputils</productname>
+</refentryinfo>
 <refmeta>
   <refentrytitle>TRACEROUTE6</refentrytitle>
   <manvolnum>8</manvolnum>
