@@ -9,13 +9,13 @@
 struct in6_flowlabel_req
 {
 	struct in6_addr	flr_dst;
-	__u32	flr_label;
-	__u8	flr_action;
-	__u8	flr_share;
-	__u16	flr_flags;
-	__u16 	flr_expires;
-	__u16	flr_linger;
-	__u32	__flr_pad;
+	uint32_t	flr_label;
+	uint8_t		flr_action;
+	uint8_t		flr_share;
+	uint16_t	flr_flags;
+	uint16_t 	flr_expires;
+	uint16_t	flr_linger;
+	uint32_t	__flr_pad;
 	/* Options in format of IPV6_PKTOPTIONS */
 };
 

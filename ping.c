@@ -61,7 +61,7 @@
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
 struct icmp_filter {
-	__u32	data;
+	uint32_t	data;
 };
 #endif
 
@@ -79,7 +79,7 @@ ping_func_set_st ping4_func_set = {
 
 static int ts_type;
 static int nroute = 0;
-static __u32 route[10];
+static uint32_t route[10];
 
 static struct sockaddr_in whereto;	/* who to ping */
 static int optlen = 0;
@@ -91,7 +91,7 @@ static void pr_options(unsigned char * cp, int hlen);
 static void pr_iph(struct iphdr *ip);
 static void usage(void) __attribute__((noreturn));
 static unsigned short in_cksum(const unsigned short *addr, int len, unsigned short salt);
-static void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp);
+static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *icp);
 static int parsetos(char *str);
 static int parseflow(char *str);
 
@@ -545,7 +545,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	char *target;
 	char hnamebuf[NI_MAXHOST];
 	unsigned char rspace[3 + 4 * NROUTES + 1];	/* record route space */
-	__u32 *tmp_rspace;
+	uint32_t *tmp_rspace;
 
 	if (argc > 1) {
 		if (options & F_RROUTE)
@@ -795,7 +795,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			int i;
 			rspace[1] = 4+nroute*8;
 			for (i = 0; i < nroute; i++) {
-				tmp_rspace = (__u32*)&rspace[4+i*8];
+				tmp_rspace = (uint32_t*)&rspace[4+i*8];
 				*tmp_rspace = route[i];
 			}
 		}
@@ -817,7 +817,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 		rspace[1+IPOPT_OLEN] = 3 + nroute*4;
 		rspace[1+IPOPT_OFFSET] = IPOPT_MINOFF;
 		for (i = 0; i < nroute; i++) {
-			tmp_rspace = (__u32*)&rspace[4+i*4];
+			tmp_rspace = (uint32_t*)&rspace[4+i*4];
 			*tmp_rspace = route[i];
 		}
 
@@ -1024,7 +1024,7 @@ int ping4_send_probe(socket_st *sock, void *packet, unsigned packet_size __attri
  * program to be run without having intermingled output (or statistics!).
  */
 static
-void pr_echo_reply(__u8 *_icp, int len __attribute__((__unused__)))
+void pr_echo_reply(uint8_t *_icp, int len __attribute__((__unused__)))
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
 	printf(" icmp_seq=%u", ntohs(icp->un.echo.sequence));
@@ -1034,14 +1034,14 @@ int
 ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 {
 	struct sockaddr_in *from = addr;
-	__u8 *buf = msg->msg_iov->iov_base;
+	uint8_t *buf = msg->msg_iov->iov_base;
 	struct icmphdr *icp;
 	struct iphdr *ip;
 	int hlen;
 	int csfailed;
 	struct cmsghdr *cmsgh;
 	int reply_ttl;
-	__u8 *opts, *tmp_ttl;
+	uint8_t *opts, *tmp_ttl;
 	int olen;
 
 	/* Check the IP header */
@@ -1068,10 +1068,10 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			if (cmsgh->cmsg_type == IP_TTL) {
 				if (cmsgh->cmsg_len < sizeof(int))
 					continue;
-				tmp_ttl = (__u8 *) CMSG_DATA(cmsgh);
+				tmp_ttl = (uint8_t *) CMSG_DATA(cmsgh);
 				reply_ttl = (int)*tmp_ttl;
 			} else if (cmsgh->cmsg_type == IP_RETOPTS) {
-				opts = (__u8 *) CMSG_DATA(cmsgh);
+				opts = (uint8_t *) CMSG_DATA(cmsgh);
 				olen = cmsgh->cmsg_len;
 			}
 		}
@@ -1085,9 +1085,9 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 	if (icp->type == ICMP_ECHOREPLY) {
 		if (!is_ours(sock, icp->un.echo.id))
 			return 1;			/* 'Twas not our ECHO */
-		if (!contains_pattern_in_payload((__u8*)(icp+1)))
+		if (!contains_pattern_in_payload((uint8_t*)(icp+1)))
 			return 1;			/* 'Twas really not our ECHO */
-		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
+		if (gather_statistics((uint8_t*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
 				      reply_ttl, 0, tv, pr_addr(from, sizeof *from),
 				      pr_echo_reply)) {
@@ -1220,7 +1220,7 @@ in_cksum(const unsigned short *addr, register int len, unsigned short csum)
  * pr_icmph --
  *	Print a descriptive string about an ICMP header.
  */
-void pr_icmph(__u8 type, __u8 code, __u32 info, struct icmphdr *icp)
+void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *icp)
 {
 	switch(type) {
 	case ICMP_ECHOREPLY:
@@ -1403,7 +1403,7 @@ void pr_options(unsigned char * cp, int hlen)
 			cp++;
 			if (j > IPOPT_MINOFF) {
 				for (;;) {
-					__u32 address;
+					uint32_t address;
 					memcpy(&address, cp, 4);
 					cp += 4;
 					if (address == 0)
@@ -1439,7 +1439,7 @@ void pr_options(unsigned char * cp, int hlen)
 			printf("\nRR: ");
 			cp++;
 			for (;;) {
-				__u32 address;
+				uint32_t address;
 				memcpy(&address, cp, 4);
 				cp += 4;
 				if (address == 0)
@@ -1458,7 +1458,7 @@ void pr_options(unsigned char * cp, int hlen)
 		case IPOPT_TS:
 		{
 			int stdtime = 0, nonstdtime = 0;
-			__u8 flags;
+			uint8_t flags;
 			j = *++cp;		/* get length */
 			i = *++cp;		/* and pointer */
 			if (i > j)
@@ -1473,7 +1473,7 @@ void pr_options(unsigned char * cp, int hlen)
 				long l;
 
 				if ((flags&0xF) != IPOPT_TS_TSONLY) {
-					__u32 address;
+					uint32_t address;
 					memcpy(&address, cp, 4);
 					cp += 4;
 					if (address == 0)

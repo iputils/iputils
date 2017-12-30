@@ -43,7 +43,7 @@ int sndbuf;
 int ttl;
 int rtt;
 int rtt_addend;
-__u16 acked;
+uint16_t acked;
 
 unsigned char outpack[MAXPACKET];
 struct rcvd_table rcvd_tbl;
@@ -602,10 +602,10 @@ void setup(socket_st *sock)
 /*
  * Return 0 if pattern in payload point to be ptr did not match the pattern that was sent  
  */
-int contains_pattern_in_payload(__u8 *ptr)
+int contains_pattern_in_payload(uint8_t *ptr)
 {
 	int i;
-	__u8 *cp, *dp;
+	uint8_t *cp, *dp;
  
 	/* check the data */
 	cp = ((u_char*)ptr) + sizeof(struct timeval);
@@ -617,7 +617,7 @@ int contains_pattern_in_payload(__u8 *ptr)
 	return 1;
 }
 
-void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packlen)
+void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int packlen)
 {
 	char addrbuf[128];
 	char ans_data[4096];
@@ -770,14 +770,14 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 	finish();
 }
 
-int gather_statistics(__u8 *icmph, int icmplen,
-		      int cc, __u16 seq, int hops,
+int gather_statistics(uint8_t *icmph, int icmplen,
+		      int cc, uint16_t seq, int hops,
 		      int csfailed, struct timeval *tv, char *from,
-		      void (*pr_reply)(__u8 *icmph, int cc))
+		      void (*pr_reply)(uint8_t *icmph, int cc))
 {
 	int dupflag = 0;
 	long triptime = 0;
-	__u8 *ptr = icmph + icmplen;
+	uint8_t *ptr = icmph + icmplen;
 
 	++nreceived;
 	if (!csfailed)
@@ -838,7 +838,7 @@ restamp:
 			write_stdout("\bC", 2);
 	} else {
 		int i;
-		__u8 *cp, *dp;
+		uint8_t *cp, *dp;
 
 		print_timestamp();
 		printf("%d bytes from %s:", cc, from);

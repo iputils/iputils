@@ -321,8 +321,8 @@ int nflag;			/* print addresses numerically */
 
 struct pkt_format
 {
-	__u32 ident;
-	__u32 seq;
+	uint32_t ident;
+	uint32_t seq;
 	struct timeval tv;
 };
 

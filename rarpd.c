@@ -59,9 +59,9 @@ struct iflink
 struct ifaddr
 {
 	struct ifaddr 	*next;
-	__u32		prefix;
-	__u32		mask;
-	__u32		local;
+	uint32_t		prefix;
+	uint32_t		mask;
+	uint32_t		local;
 };
 
 struct rarp_map
@@ -72,7 +72,7 @@ struct rarp_map
 	int		arp_type;
 	int		lladdr_len;
 	unsigned char	lladdr[16];
-	__u32		ipaddr;
+	uint32_t		ipaddr;
 } *rarp_db;
 
 void usage()
@@ -119,9 +119,9 @@ void load_if(void)
 
 	ifend = (struct ifreq *)((char *)ibuf + ifc.ifc_len);
 	for (ifrp = ibuf; ifrp < ifend; ifrp++) {
-		__u32 addr;
-		__u32 mask;
-		__u32 prefix;
+		uint32_t addr;
+		uint32_t mask;
+		uint32_t prefix;
 
 		if (ifrp->ifr_addr.sa_family != AF_INET)
 			continue;
@@ -191,7 +191,7 @@ void load_if(void)
 
 			if (verbose) {
 				int i;
-				__u32 m = ~0U;
+				uint32_t m = ~0U;
 				for (i=32; i>=0; i--) {
 					if (htonl(m) == mask)
 						break;
@@ -217,13 +217,13 @@ void configure(void)
 	load_db();
 }
 
-int bootable(__u32 addr)
+int bootable(uint32_t addr)
 {
 	struct dirent *dent;
 	DIR *d;
 	char name[9];
 
-	sprintf(name, "%08X", (__u32)ntohl(addr));
+	sprintf(name, "%08X", (uint32_t)ntohl(addr));
 	d = opendir(tftp_dir);
 	if (d == NULL) {
 		syslog(LOG_ERR, "opendir: %m");
@@ -237,7 +237,7 @@ int bootable(__u32 addr)
 	return dent != NULL;
 }
 
-struct ifaddr *select_ipaddr(int ifindex, __u32 *sel_addr, __u32 **alist)
+struct ifaddr *select_ipaddr(int ifindex, uint32_t *sel_addr, uint32_t **alist)
 {
 	struct iflink *ifl;
 	struct ifaddr *ifa;
@@ -257,7 +257,7 @@ retry:
 		return NULL;
 
 	for (i=0; alist[i]; i++) {
-		__u32 addr = *(alist[i]);
+		uint32_t addr = *(alist[i]);
 		for (ifa=ifl->ifa_list; ifa; ifa=ifa->next) {
 			if (!((ifa->prefix^addr)&ifa->mask)) {
 				*sel_addr = addr;
@@ -314,7 +314,7 @@ struct rarp_map *rarp_lookup(int ifindex, int hatype,
 				syslog(LOG_ERR, "no IP address");
 				return NULL;
 			}
-			ifa = select_ipaddr(ifindex, &emap.ipaddr, (__u32 **)hp->h_addr_list);
+			ifa = select_ipaddr(ifindex, &emap.ipaddr, (uint32_t **)hp->h_addr_list);
 			if (ifa) {
 				memcpy(emap.lladdr, lladdr, 6);
 				if (only_ethers || bootable(emap.ipaddr))
@@ -359,9 +359,9 @@ int put_mylladdr(unsigned char **ptr_p, int ifindex, int alen)
 	return 0;
 }
 
-int put_myipaddr(unsigned char **ptr_p, int ifindex, __u32 hisipaddr)
+int put_myipaddr(unsigned char **ptr_p, int ifindex, uint32_t hisipaddr)
 {
-	__u32 laddr = 0;
+	uint32_t laddr = 0;
 	struct iflink *ifl;
 	struct ifaddr *ifa;
 
@@ -383,7 +383,7 @@ int put_myipaddr(unsigned char **ptr_p, int ifindex, __u32 hisipaddr)
 	return 0;
 }
 
-void arp_advise(int ifindex, unsigned char *lladdr, int lllen, __u32 ipaddr)
+void arp_advise(int ifindex, unsigned char *lladdr, int lllen, uint32_t ipaddr)
 {
 	int fd;
 	struct arpreq req;

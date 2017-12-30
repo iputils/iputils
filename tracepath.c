@@ -67,7 +67,7 @@ int hisptr;
 
 struct sockaddr_storage target;
 socklen_t targetlen;
-__u16 base_port;
+uint16_t base_port;
 int max_hops = MAX_HOPS_DEFAULT;
 
 int overhead;
@@ -83,7 +83,7 @@ int mapped;
 
 struct probehdr
 {
-	__u32 ttl;
+	uint32_t ttl;
 	struct timeval tv;
 };
 
@@ -132,7 +132,7 @@ restart:
 	memset(&rcvbuf, -1, sizeof(rcvbuf));
 	iov.iov_base = &rcvbuf;
 	iov.iov_len = sizeof(rcvbuf);
-	msg.msg_name = (__u8*)&addr;
+	msg.msg_name = (uint8_t*)&addr;
 	msg.msg_namelen = sizeof(addr);
 	msg.msg_iov = &iov;
 	msg.msg_iovlen = 1;
@@ -203,7 +203,7 @@ restart:
 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
 				break;
 			case IP_TTL:
-				rethops = *(__u8*)CMSG_DATA(cmsg);
+				rethops = *(uint8_t*)CMSG_DATA(cmsg);
 				break;
 			default:
 				printf("cmsg4:%d\n ", cmsg->cmsg_type);

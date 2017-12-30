@@ -129,8 +129,8 @@ struct icmp_ra
 
 struct icmp_ra_addr
 {
-	__u32	ira_addr;
-	__u32	ira_preference;
+	uint32_t	ira_addr;
+	uint32_t	ira_preference;
 };
 #else
 #define icmp_ra icmp
@@ -1170,7 +1170,7 @@ initifs()
 		sin = (struct sockaddr_in *)ALLIGN(&ifr->ifr_addr);
 		interfaces[i].localaddr = sin->sin_addr;
 		interfaces[i].flags = ifreq.ifr_flags;
-		interfaces[i].netmask.s_addr = (__u32)0xffffffff;
+		interfaces[i].netmask.s_addr = (uint32_t)0xffffffff;
 		if (ioctl(sock, SIOCGIFINDEX, (char *)&ifreq) < 0) {
 			logperror("initifs: ioctl (get ifindex)");
 			continue;

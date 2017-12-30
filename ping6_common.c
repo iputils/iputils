@@ -72,16 +72,16 @@ ping_func_set_st ping6_func_set = {
 	.install_filter = ping6_install_filter
 };
 
-#define BIT_CLEAR(nr, addr) do { ((__u32 *)(addr))[(nr) >> 5] &= ~(1U << ((nr) & 31)); } while(0)
-#define BIT_SET(nr, addr) do { ((__u32 *)(addr))[(nr) >> 5] |= (1U << ((nr) & 31)); } while(0)
-#define BIT_TEST(nr, addr) do { (__u32 *)(addr))[(nr) >> 5] & (1U << ((nr) & 31)); } while(0)
+#define BIT_CLEAR(nr, addr) do { ((uint32_t *)(addr))[(nr) >> 5] &= ~(1U << ((nr) & 31)); } while(0)
+#define BIT_SET(nr, addr) do { ((uint32_t *)(addr))[(nr) >> 5] |= (1U << ((nr) & 31)); } while(0)
+#define BIT_TEST(nr, addr) do { (uint32_t *)(addr))[(nr) >> 5] & (1U << ((nr) & 31)); } while(0)
 
 #ifndef SCOPE_DELIMITER
 # define SCOPE_DELIMITER '%'
 #endif
 
-__u32 flowlabel;
-__u32 tclass;
+uint32_t flowlabel;
+uint32_t tclass;
 #ifdef ENABLE_PING6_RTHDR
 struct cmsghdr *srcrt;
 #endif
@@ -92,7 +92,7 @@ static struct sockaddr_in6 firsthop;
 static unsigned char cmsgbuf[4096];
 static size_t cmsglen = 0;
 
-static int pr_icmph(__u8 type, __u8 code, __u32 info);
+static int pr_icmph(uint8_t type, uint8_t code, uint32_t info);
 void ping6_usage(unsigned) __attribute((noreturn));
 
 struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
@@ -111,9 +111,9 @@ int ni_subject_len = 0;
 int ni_subject_type = -1;
 char *ni_group;
 
-static inline int ntohsp(__u16 *p)
+static inline int ntohsp(uint16_t *p)
 {
-	__u16 v;
+	uint16_t v;
 	memcpy(&v, p, sizeof(v));
 	return ntohs(v);
 }
@@ -222,7 +222,7 @@ static inline int niquery_is_enabled(void)
 }
 
 #if PING6_NONCE_MEMORY
-__u8 *ni_nonce_ptr;
+uint8_t *ni_nonce_ptr;
 #else
 struct {
 	struct timeval tv;
@@ -255,30 +255,30 @@ static void niquery_init_nonce(void)
 }
 
 #if !PING6_NONCE_MEMORY
-static int niquery_nonce(__u8 *nonce, int fill)
+static int niquery_nonce(uint8_t *nonce, int fill)
 {
 # ifdef USE_CRYPTO
-	static __u8 digest[MD5_DIGEST_LENGTH];
+	static uint8_t digest[MD5_DIGEST_LENGTH];
 	static int seq = -1;
 
-	if (fill || seq != *(__u16 *)nonce || seq < 0) {
+	if (fill || seq != *(uint16_t *)nonce || seq < 0) {
 		MD5_CTX ctxt;
 
 		MD5_Init(&ctxt);
 		MD5_Update(&ctxt, &ni_nonce_secret, sizeof(ni_nonce_secret));
-		MD5_Update(&ctxt, nonce, sizeof(__u16));
+		MD5_Update(&ctxt, nonce, sizeof(uint16_t));
 		MD5_Final(digest, &ctxt);
 
-		seq = *(__u16 *)nonce;
+		seq = *(uint16_t *)nonce;
 	}
 
 	if (fill) {
-		memcpy(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16));
+		memcpy(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t));
 		return 0;
 	} else {
-		if (memcmp(nonce + sizeof(__u16), digest, NI_NONCE_SIZE - sizeof(__u16)))
+		if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)))
 			return -1;
-		return ntohsp((__u16 *)nonce);
+		return ntohsp((uint16_t *)nonce);
 	}
 # else
 	fprintf(stderr, "ping6: function not available; crypto disabled\n");
@@ -287,9 +287,9 @@ static int niquery_nonce(__u8 *nonce, int fill)
 }
 #endif
 
-static inline void niquery_fill_nonce(__u16 seq, __u8 *nonce)
+static inline void niquery_fill_nonce(uint16_t seq, uint8_t *nonce)
 {
-	__u16 v = htons(seq);
+	uint16_t v = htons(seq);
 #if PING6_NONCE_MEMORY
 	int i;
 
@@ -305,10 +305,10 @@ static inline void niquery_fill_nonce(__u16 seq, __u8 *nonce)
 #endif
 }
 
-static inline int niquery_check_nonce(__u8 *nonce)
+static inline int niquery_check_nonce(uint8_t *nonce)
 {
 #if PING6_NONCE_MEMORY
-	__u16 seq = ntohsp((__u16 *)nonce);
+	uint16_t seq = ntohsp((uint16_t *)nonce);
 	if (memcmp(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE))
 		return -1;
 	return seq;
@@ -420,7 +420,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 		void *p = malloc(ni_subject_len);
 		if (!p)
 			continue;
-		memcpy(p, (__u8 *)ai->ai_addr + offset, ni_subject_len);
+		memcpy(p, (uint8_t *)ai->ai_addr + offset, ni_subject_len);
 		free(ni_subject);
 		ni_subject = p;
 		break;
@@ -452,7 +452,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	size_t buflen;
 	int dots, fqdn = niquery_options[index].data;
 	MD5_CTX ctxt;
-	__u8 digest[MD5_DIGEST_LENGTH];
+	uint8_t digest[MD5_DIGEST_LENGTH];
 #ifdef USE_IDN
 	int rc;
 #endif
@@ -1121,7 +1121,7 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int build_echo(__u8 *_icmph, unsigned packet_size __attribute__((__unused__)))
+int build_echo(uint8_t *_icmph, unsigned packet_size __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph;
 	int cc;
@@ -1143,7 +1143,7 @@ int build_echo(__u8 *_icmph, unsigned packet_size __attribute__((__unused__)))
 }
 
 
-int build_niquery(__u8 *_nih, unsigned packet_size __attribute__((__unused__)))
+int build_niquery(uint8_t *_nih, unsigned packet_size __attribute__((__unused__)))
 {
 	struct ni_hdr *nih;
 	int cc;
@@ -1202,7 +1202,7 @@ int ping6_send_probe(socket_st *sock, void *packet, unsigned packet_size)
 	return (cc == len ? 0 : cc);
 }
 
-void pr_echo_reply(__u8 *_icmph, int cc __attribute__((__unused__)))
+void pr_echo_reply(uint8_t *_icmph, int cc __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *) _icmph;
 	printf(" icmp_seq=%u", ntohs(icmph->icmp6_seq));
@@ -1219,9 +1219,9 @@ static void putchar_safe(char c)
 static
 void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 {
-	__u8 *h = (__u8 *)(nih + 1);
-	__u8 *p = h + 4;
-	__u8 *end = (__u8 *)nih + len;
+	uint8_t *h = (uint8_t *)(nih + 1);
+	uint8_t *p = h + 4;
+	uint8_t *end = (uint8_t *)nih + len;
 	int continued = 0;
 	char buf[1024];
 	int ret;
@@ -1264,9 +1264,9 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 static
 void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 {
-	__u8 *h = (__u8 *)(nih + 1);
-	__u8 *p;
-	__u8 *end = (__u8 *)nih + len;
+	uint8_t *h = (uint8_t *)(nih + 1);
+	uint8_t *p;
+	uint8_t *end = (uint8_t *)nih + len;
 	int af;
 	int aflen;
 	int continued = 0;
@@ -1298,16 +1298,16 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 		if (continued)
 			putchar(',');
 
-		if (p + sizeof(__u32) + aflen > end) {
+		if (p + sizeof(uint32_t) + aflen > end) {
 			printf(" parse error (truncated)");
 			break;
 		}
-		if (!inet_ntop(af, p + sizeof(__u32), buf, sizeof(buf)))
+		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf)))
 			printf(" unexpeced error in inet_ntop(%s)",
 			       strerror(errno));
 		else
 			printf(" %s", buf);
-		p += sizeof(__u32) + aflen;
+		p += sizeof(uint32_t) + aflen;
 
 		continued = 1;
 	}
@@ -1316,7 +1316,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 }
 
 static
-void pr_niquery_reply(__u8 *_nih, int len)
+void pr_niquery_reply(uint8_t *_nih, int len)
 {
 	struct ni_hdr *nih = (struct ni_hdr *)_nih;
 
@@ -1343,7 +1343,7 @@ void pr_niquery_reply(__u8 *_nih, int len)
 	default:
 		printf(" unknown code(%02x)", ntohs(nih->ni_code));
 	}
-	printf("; seq=%u;", ntohsp((__u16*)nih->ni_nonce));
+	printf("; seq=%u;", ntohsp((uint16_t*)nih->ni_nonce));
 }
 
 /*
@@ -1357,7 +1357,7 @@ int
 ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struct timeval *tv)
 {
 	struct sockaddr_in6 *from = addr;
-	__u8 *buf = msg->msg_iov->iov_base;
+	uint8_t *buf = msg->msg_iov->iov_base;
 	struct cmsghdr *c;
 	struct icmp6_hdr *icmph;
 	int hops = -1;
@@ -1389,9 +1389,9 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
 		if (!is_ours(sock, icmph->icmp6_id))
 			return 1;
-               if (!contains_pattern_in_payload((__u8*)(icmph+1)))
+               if (!contains_pattern_in_payload((uint8_t*)(icmph+1)))
                		return 1;            /* 'Twas really not our ECHO */
-		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
+		if (gather_statistics((uint8_t*)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(from, sizeof *from),
 				      pr_echo_reply)) {
@@ -1403,7 +1403,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 		int seq = niquery_check_nonce(nih->ni_nonce);
 		if (seq < 0)
 			return 1;
-		if (gather_statistics((__u8*)icmph, sizeof(*icmph), cc,
+		if (gather_statistics((uint8_t*)icmph, sizeof(*icmph), cc,
 				      seq,
 				      hops, 0, tv, pr_addr(from, sizeof *from),
 				      pr_niquery_reply))
@@ -1429,7 +1429,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 		nexthdr = iph1->ip6_nxt;
 
 		if (nexthdr == 44) {
-			nexthdr = *(__u8*)icmph1;
+			nexthdr = *(uint8_t*)icmph1;
 			icmph1++;
 		}
 		if (nexthdr == IPPROTO_ICMPV6) {
@@ -1467,7 +1467,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 }
 
 
-int pr_icmph(__u8 type, __u8 code, __u32 info)
+int pr_icmph(uint8_t type, uint8_t code, uint32_t info)
 {
 	switch(type) {
 	case ICMP6_DST_UNREACH:
