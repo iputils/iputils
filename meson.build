@@ -85,7 +85,15 @@ elif opt == 'none'
 	crypto_dep = []
 endif
 
+build_arping = get_option('BUILD_ARPING')
+build_clockdiff = get_option('BUILD_CLOCKDIFF')
+build_ping = get_option('BUILD_PING')
+build_rarpd = get_option('BUILD_RARPD')
 build_rinfod = get_option('BUILD_RDISC')
+build_tftpd = get_option('BUILD_TFTPD')
+build_tracepath = get_option('BUILD_TRACEPATH')
+build_traceroute6 = get_option('BUILD_TRACEROUTE6')
+
 build_mans = get_option('BUILD_MANS')
 
 build_ninfod = get_option('BUILD_NINFOD')
@@ -139,36 +147,50 @@ config_h = configure_file(
 	configuration : conf)
 
 ############################################################
-executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c'],
-	dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
-	install: true)
+if build_ping == true
+	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c'],
+		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
+		install: true)
+endif
 
-executable('tracepath', 'tracepath.c',
-	dependencies : idn_dep,
-	install: true)
+if build_tracepath == true
+	executable('tracepath', 'tracepath.c',
+		dependencies : idn_dep,
+		install: true)
+endif
 
-executable('traceroute6', 'traceroute6.c',
-	dependencies : [cap_dep, idn_dep],
-	install: true)
+if build_traceroute6 == true
+	executable('traceroute6', 'traceroute6.c',
+		dependencies : [cap_dep, idn_dep],
+		install: true)
+endif
 
-executable('clockdiff', 'clockdiff.c',
-	dependencies : [cap_dep],
-	install: true)
+if build_clockdiff == true
+	executable('clockdiff', 'clockdiff.c',
+		dependencies : [cap_dep],
+		install: true)
+endif
 
 if build_rinfod == true
 	executable('rdisc', 'rdisc.c',
 		install: true)
 endif
 
-executable('arping', 'arping.c',
-	dependencies : [rt_dep, cap_dep, idn_dep],
-	install: true)
+if build_arping == true
+	executable('arping', 'arping.c',
+		dependencies : [rt_dep, cap_dep, idn_dep],
+		install: true)
+endif
 
-executable('tftpd', ['tftpd.c', 'tftpsubs.c'],
-	install: true)
+if build_tftpd == true
+	executable('tftpd', ['tftpd.c', 'tftpsubs.c'],
+		install: true)
+endif
 
-executable('rarpd', 'rarpd.c',
-	install: true)
+if build_rarpd == true
+	executable('rarpd', 'rarpd.c',
+		install: true)
+endif
 
 if build_ninfod == true
 	subdir ('ninfod')

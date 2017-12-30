@@ -1,16 +1,36 @@
-manpages = '''
-	arping
-	clockdiff
-	ping
-	rarpd
-	tftpd
-	tracepath
-	traceroute6
-'''.split()
+manpages = []
 custom_man_xsl = files('custom-man.xsl')
+
+if build_arping == true
+	manpages += ['arping']
+endif
+
+if build_clockdiff == true
+	manpages += ['clockdiff']
+endif
+
+if build_ping == true
+	manpages += ['ping']
+endif
+
+if build_rarpd == true
+	manpages += ['rarpd']
+endif
 
 if build_rinfod == true
 	manpages += ['rdisc']
+endif
+
+if build_tftpd == true
+	manpages += ['tftpd']
+endif
+
+if build_tracepath == true
+	manpages += ['tracepath']
+endif
+
+if build_traceroute6 == true
+	manpages += ['traceroute6']
 endif
 
 if build_ninfod == true
