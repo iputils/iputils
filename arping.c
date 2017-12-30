@@ -83,7 +83,7 @@ struct in_addr gsrc, gdst;
 char *target;
 int dad, unsolicited, advert;
 int quiet;
-int count=-1;
+int count = -1;
 int timeout;
 int unicasting;
 int socketfd;
