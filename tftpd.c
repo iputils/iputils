@@ -317,7 +317,7 @@ int	confirmed;
 int	timeout;
 jmp_buf	timeoutbuf;
 
-void timer(int signo)
+void timer(int signo __attribute__((__unused__)))
 {
 	confirmed = 0;
 	timeout += rexmtval;
@@ -391,7 +391,7 @@ abort:
 	(void) fclose(file);
 }
 
-void justquit(int signo)
+void justquit(int signo __attribute__((__unused__)))
 {
 	exit(0);
 }

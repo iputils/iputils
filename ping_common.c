@@ -273,14 +273,14 @@ void fill(char *patp, void *packet, unsigned packet_size)
 #endif
 }
 
-static void sigexit(int signo)
+static void sigexit(int signo __attribute__((__unused__)))
 {
 	exiting = 1;
 	if (in_pr_addr)
 		longjmp(pr_addr_jmp, 0);
 }
 
-static void sigstatus(int signo)
+static void sigstatus(int signo __attribute__((__unused__)))
 {
 	status_snapshot = 1;
 }

@@ -125,7 +125,7 @@ static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_addrs.c,v 1.18 200
 
 /* ---------- */
 /* ipv6 address */
-void init_nodeinfo_ipv6addr(INIT_ARGS)
+void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)))
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 	return;
@@ -305,15 +305,10 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 }
 
 /* ipv4 address */
-void init_nodeinfo_ipv4addr(INIT_ARGS)
+void init_nodeinfo_ipv4addr(INIT_ARGS __attribute__((__unused__)))
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 	return;
-}
-
-int filter_ipv4addr(const struct in_addr *ifaddr, unsigned int flags)
-{
-	return 0;
 }
 
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
@@ -391,8 +386,6 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 			    ((subj_if && *subj_if) ? (ifa->ifa_ifindex != *subj_if) :
 						     (ifa->ifa_ifindex != p->pktinfo.ipi6_ifindex)))
 				continue;
-			if (filter_ipv4addr((struct in_addr *)ifa->ifa_addr, flags))
-				continue;
 
 			if (addrs0 + 1 >= ((MAX_REPLY_SIZE - sizeof(struct icmp6_nodeinfo)) / (sizeof(uint32_t) + sizeof(struct in_addr)))) {
 				flags |= NI_IPV4ADDR_FLAG_TRUNCATE;
@@ -434,8 +427,6 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 			if (!(flags & NI_NODEADDR_FLAG_ALL) &&
 			    (ifa->ifa_ifindex != ifindex))
 				continue;
-			if (filter_ipv4addr((struct in_addr *)ifa->ifa_addr, flags))
-				continue;	
 
 #if ENABLE_TTL
 			if (ifa->ifa_cacheinfo) {

@@ -188,8 +188,8 @@ struct niquery_option {
 		.handler = _handler				\
 	}
 
-static int niquery_option_name_handler(int index, const char *arg);
-static int niquery_option_ipv6_handler(int index, const char *arg);
+static int niquery_option_name_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
+static int niquery_option_ipv6_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
 static int niquery_option_ipv6_flag_handler(int index, const char *arg);
 static int niquery_option_ipv4_handler(int index, const char *arg);
 static int niquery_option_ipv4_flag_handler(int index, const char *arg);
@@ -327,21 +327,21 @@ static int niquery_set_qtype(int type)
 	return 0;
 }
 
-static int niquery_option_name_handler(int index, const char *arg)
+static int niquery_option_name_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
 	if (niquery_set_qtype(NI_QTYPE_NAME) < 0)
 		return -1;
 	return 0;
 }
 
-static int niquery_option_ipv6_handler(int index, const char *arg)
+static int niquery_option_ipv6_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
 	if (niquery_set_qtype(NI_QTYPE_IPV6ADDR) < 0)
 		return -1;
 	return 0;
 }
 
-static int niquery_option_ipv6_flag_handler(int index, const char *arg)
+static int niquery_option_ipv6_flag_handler(int index, const char *arg __attribute__((__unused__)))
 {
 	if (niquery_set_qtype(NI_QTYPE_IPV6ADDR) < 0)
 		return -1;
@@ -349,14 +349,14 @@ static int niquery_option_ipv6_flag_handler(int index, const char *arg)
 	return 0;
 }
 
-static int niquery_option_ipv4_handler(int index, const char *arg)
+static int niquery_option_ipv4_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
 	if (niquery_set_qtype(NI_QTYPE_IPV4ADDR) < 0)
 		return -1;
 	return 0;
 }
 
-static int niquery_option_ipv4_flag_handler(int index, const char *arg)
+static int niquery_option_ipv4_flag_handler(int index, const char *arg __attribute__((__unused__)))
 {
 	if (niquery_set_qtype(NI_QTYPE_IPV4ADDR) < 0)
 		return -1;
@@ -558,7 +558,7 @@ errexit:
 #endif
 }
 
-int niquery_option_help_handler(int index, const char *arg)
+int niquery_option_help_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
 	fprintf(stderr, "ping6 -N suboptions\n"
 			"\tHelp:\n"
@@ -1121,7 +1121,7 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int build_echo(__u8 *_icmph, unsigned packet_size)
+int build_echo(__u8 *_icmph, unsigned packet_size __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph;
 	int cc;
@@ -1143,7 +1143,7 @@ int build_echo(__u8 *_icmph, unsigned packet_size)
 }
 
 
-int build_niquery(__u8 *_nih, unsigned packet_size)
+int build_niquery(__u8 *_nih, unsigned packet_size __attribute__((__unused__)))
 {
 	struct ni_hdr *nih;
 	int cc;
@@ -1202,7 +1202,7 @@ int ping6_send_probe(socket_st *sock, void *packet, unsigned packet_size)
 	return (cc == len ? 0 : cc);
 }
 
-void pr_echo_reply(__u8 *_icmph, int cc)
+void pr_echo_reply(__u8 *_icmph, int cc __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *) _icmph;
 	printf(" icmp_seq=%u", ntohs(icmph->icmp6_seq));

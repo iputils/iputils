@@ -551,11 +551,11 @@ void catch_signal(int sig, void (*handler)(int))
 	sigaction(sig, &sa, NULL);
 }
 
-void sig_alarm(int signo)
+void sig_alarm(int signo __attribute__((__unused__)))
 {
 }
 
-void sig_hup(int signo)
+void sig_hup(int signo __attribute__((__unused__)))
 {
 	do_reload = 1;
 }

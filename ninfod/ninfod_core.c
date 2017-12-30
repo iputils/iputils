@@ -235,7 +235,7 @@ static __inline__ struct qtypeinfo *qtypeinfo_lookup(size_t qtype)
 
 /* ---------- */
 /* noop */
-int pr_nodeinfo_noop(CHECKANDFILL_ARGS)
+int pr_nodeinfo_noop(CHECKANDFILL_ARGS_3)
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
@@ -326,7 +326,7 @@ void init_nodeinfo_suptypes(INIT_ARGS)
 
 /* ---------- */
 /* unknown qtype response */
-int pr_nodeinfo_unknown(CHECKANDFILL_ARGS)
+int pr_nodeinfo_unknown(CHECKANDFILL_ARGS_1)
 {
 	if (!reply)
 		return -1;	/*???*/
@@ -344,7 +344,7 @@ int pr_nodeinfo_unknown(CHECKANDFILL_ARGS)
 }
 
 /* refused response */
-int pr_nodeinfo_refused(CHECKANDFILL_ARGS)
+int pr_nodeinfo_refused(CHECKANDFILL_ARGS_1)
 {
 	if (!reply)
 		return -1;	/*???*/
@@ -442,6 +442,7 @@ static void *ni_send_thread(void *data)
 	DEBUG(LOG_DEBUG, "%s(): thread=%ld\n", __func__, pthread_self());
 	ret = ni_send(data);
 	DEBUG(LOG_DEBUG, "%s(): thread=%ld => %d\n", __func__, pthread_self(), ret);
+	ret = ret;
 	return NULL;
 }
 #else

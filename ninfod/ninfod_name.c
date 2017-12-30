@@ -256,8 +256,7 @@ static int compare_dnsname(const char *s, size_t slen,
 	return retcode;
 }
 
-static int nodeinfo_group(const char *dnsname, int namelen, 
-			  struct in6_addr *nigrp)
+static int nodeinfo_group(const char *dnsname, struct in6_addr *nigrp)
 {
 	MD5_CTX ctxt;
 	unsigned char digest[16];
@@ -328,7 +327,7 @@ void init_nodeinfo_nodename(int forced)
 	if (changed || forced) {
 		if (nodenamelen) {
 			memset(&nigroup, 0, sizeof(nigroup));
-			nodeinfo_group(nodename, len, &nigroup.ipv6mr_multiaddr);
+			nodeinfo_group(nodename, &nigroup.ipv6mr_multiaddr);
 			nigroup.ipv6mr_interface = 0;
 			if (setsockopt(sock, IPPROTO_IPV6, IPV6_JOIN_GROUP, &nigroup, sizeof(nigroup)) < 0) {
 #if ENABLE_DEBUG
@@ -351,7 +350,7 @@ void init_nodeinfo_nodename(int forced)
 
 /* ---------- */
 /* nodename */
-int pr_nodeinfo_nodename(CHECKANDFILL_ARGS)
+int pr_nodeinfo_nodename(CHECKANDFILL_ARGS_2)
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 

@@ -974,7 +974,7 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int ping4_send_probe(socket_st *sock, void *packet, unsigned packet_size)
+int ping4_send_probe(socket_st *sock, void *packet, unsigned packet_size __attribute__((__unused__)))
 {
 	struct icmphdr *icp;
 	int cc;
@@ -1024,7 +1024,7 @@ int ping4_send_probe(socket_st *sock, void *packet, unsigned packet_size)
  * program to be run without having intermingled output (or statistics!).
  */
 static
-void pr_echo_reply(__u8 *_icp, int len)
+void pr_echo_reply(__u8 *_icp, int len __attribute__((__unused__)))
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
 	printf(" icmp_seq=%u", ntohs(icp->un.echo.sequence));

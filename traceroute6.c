@@ -293,7 +293,7 @@ int	packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 		  struct in6_addr *to, uint32_t seq, struct timeval *);
 void	send_probe(uint32_t seq, int ttl);
 double	deltaT (struct timeval *, struct timeval *);
-void	print(unsigned char *buf, int cc, struct sockaddr_in6 *from);
+void	print(struct sockaddr_in6 *from);
 void	tvsub (struct timeval *, struct timeval *);
 void	usage(void);
 
@@ -617,7 +617,7 @@ int main(int argc, char *argv[])
 				gettimeofday(&t2, &tzone);
 				if ((i = packet_ok(packet, cc, &from, &to_addr, seq, &t1))) {
 					if (memcmp(&from.sin6_addr, &lastaddr, sizeof(from.sin6_addr))) {
-						print(packet, cc, &from);
+						print(&from);
 						memcpy(&lastaddr,
 						       &from.sin6_addr,
 						       sizeof(lastaddr));
@@ -906,7 +906,7 @@ int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 }
 
 
-void print(unsigned char *buf, int cc, struct sockaddr_in6 *from)
+void print(struct sockaddr_in6 *from)
 {
 	char pa[NI_MAXHOST] = "";
 	char hnamebuf[NI_MAXHOST] = "";

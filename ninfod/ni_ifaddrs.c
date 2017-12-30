@@ -134,7 +134,7 @@ static int nl_sendreq(int sd, int request, int flags, uint32_t *seq)
 	return (sendto(sd, (void *) req_hdr, req_hdr->nlmsg_len, 0, (struct sockaddr *) &nladdr, sizeof(nladdr)));
 }
 
-static int nl_recvmsg(int sd, int request, int seq, void *buf, size_t buflen, int *flags)
+static int nl_recvmsg(int sd, void *buf, size_t buflen, int *flags)
 {
 	struct msghdr msg;
 	struct iovec iov = { buf, buflen };
@@ -160,7 +160,7 @@ static int nl_recvmsg(int sd, int request, int seq, void *buf, size_t buflen, in
 	return read_len;
 }
 
-static int nl_getmsg(int sd, int request, uint32_t seq, struct nlmsghdr **nlhp, int *done)
+static int nl_getmsg(int sd, uint32_t seq, struct nlmsghdr **nlhp, int *done)
 {
 	struct nlmsghdr *nh;
 	size_t bufsize = 65536, lastbufsize = 0;
@@ -176,7 +176,7 @@ static int nl_getmsg(int sd, int request, uint32_t seq, struct nlmsghdr **nlhp, 
 			break;
 		}
 		buff = newbuff;
-		result = read_size = nl_recvmsg(sd, request, seq, buff, bufsize, &msg_flags);
+		result = read_size = nl_recvmsg(sd, buff, bufsize, &msg_flags);
 		if (read_size < 0 || (msg_flags & MSG_TRUNC)) {
 			lastbufsize = bufsize;
 			bufsize *= 2;
@@ -227,7 +227,7 @@ static int nl_getlist(int sd, uint32_t seq, int request, struct nlmsg_list **nlm
 	if (seq == 0)
 		seq = (int) time(NULL);
 	while (!done) {
-		status = nl_getmsg(sd, request, seq, &nlh, &done);
+		status = nl_getmsg(sd, seq, &nlh, &done);
 		if (status < 0)
 			return status;
 		if (nlh) {

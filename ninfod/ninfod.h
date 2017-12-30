@@ -50,6 +50,25 @@
 				unsigned int flags,		\
 				unsigned int *subj_if,		\
 				int reply
+
+#define CHECKANDFILL_ARGS_1	struct packetcontext *p,\
+				char *subject __attribute__((__unused__)), size_t subjlen __attribute__((__unused__)),	\
+				unsigned int flags,		\
+				unsigned int *subj_if __attribute__((__unused__)),		\
+				int reply
+
+#define CHECKANDFILL_ARGS_2	struct packetcontext *p,\
+				char *subject, size_t subjlen,	\
+				unsigned int flags __attribute__((__unused__)),		\
+				unsigned int *subj_if,		\
+				int reply
+
+#define CHECKANDFILL_ARGS_3	struct packetcontext *p,\
+				char *subject __attribute__((__unused__)), size_t subjlen,	\
+				unsigned int flags,		\
+				unsigned int *subj_if,		\
+				int reply
+
 #define INIT_ARGS		\
 				int forced
 
@@ -124,9 +143,9 @@ void init_nodeinfo_suptypes(INIT_ARGS);
 int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS);
 
 /* ninfod_addrs.c */
-void init_nodeinfo_ipv6addr(INIT_ARGS);
+void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)));
 int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS);
-void init_nodeinfo_ipv4addr(INIT_ARGS);
+void init_nodeinfo_ipv4addr(INIT_ARGS __attribute__((__unused__)));
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS);
 
 /* ninfod_name.c */
