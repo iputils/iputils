@@ -202,7 +202,7 @@ void stderrlog(int pri, char *fmt, ...)
 #endif
 
 /* --------- */
-static int __inline__ open_sock(void)
+__inline__ static int open_sock(void)
 {
 	return socket(PF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 }
@@ -248,7 +248,7 @@ static int set_recvpktinfo(int socket)
 	return -1;
 }
 
-static int __inline__ init_sock(int socket)
+__inline__ static int init_sock(int socket)
 {
 	struct icmp6_filter filter;
 #if NEED_IPV6CHECKSUM
