@@ -234,7 +234,7 @@ void drop_capabilities(void)
 void fill(char *patp, void *packet, unsigned packet_size)
 {
 	int ii, jj;
-	int pat[16];
+	unsigned int pat[16];
 	char *cp;
 	unsigned char *bp = packet+8;
 
