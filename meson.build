@@ -96,6 +96,13 @@ build_traceroute6 = get_option('BUILD_TRACEROUTE6')
 
 build_mans = get_option('BUILD_MANS')
 
+if build_rinfod == true
+	opt = get_option('ENABLE_RDISC_SERVER')
+	if opt == true
+		conf.set('RDISC_SERVER', 1, description : 'If set build rdisc server.')
+	endif
+endif
+
 build_ninfod = get_option('BUILD_NINFOD')
 if build_ninfod == true
 	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h')

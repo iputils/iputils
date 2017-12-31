@@ -22,6 +22,9 @@ option('BUILD_RARPD', type : 'boolean', value : true,
 option('BUILD_RDISC', type : 'boolean', value : true,
 	description : 'Build rinfod')
 
+option('ENABLE_RDISC_SERVER', type : 'boolean', value : true,
+	description : 'Enable rinfod server code')
+
 option('BUILD_TFTPD', type : 'boolean', value : true,
         description : 'Build tftpd')
 
