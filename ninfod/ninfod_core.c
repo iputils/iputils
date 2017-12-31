@@ -107,15 +107,7 @@
 
 #include "ninfod.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
 #define ARRAY_SIZE(a)		(sizeof(a) / sizeof(a[0]))
-
-/* ---------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_core.c,v 1.29 2003-07-16 09:49:01 yoshfuji Exp $";
 
 /* Variables */
 int initialized = 0;

@@ -115,14 +115,6 @@
 #include "ninfod.h"
 #include "ni_ifaddrs.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
-/* ---------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_addrs.c,v 1.18 2003-07-16 09:49:01 yoshfuji Exp $";
-
 /* ---------- */
 /* ipv6 address */
 void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)))

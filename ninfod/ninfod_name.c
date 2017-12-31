@@ -120,19 +120,11 @@
 
 #include "ninfod.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
 /* Hmm,,, */
 #ifndef IPV6_JOIN_GROUP
 # define IPV6_JOIN_GROUP	IPV6_ADD_MEMBERSHIP
 # define IPV6_LEAVE_GROUP	IPV6_DROP_MEMBERSHIP
 #endif
-
-/* ---------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_name.c,v 1.15 2003-01-11 14:33:28 yoshfuji Exp $";
 
 /* Variables */
 static struct utsname utsname;

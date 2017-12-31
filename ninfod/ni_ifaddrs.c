@@ -82,13 +82,7 @@
 #include "ni_ifaddrs.h"
 #include <netinet/in.h>
 
-#ifdef _USAGI_LIBINET6
-#include "libc-compat.h"
-#endif
-
 //#define IFA_LOCAL	IFA_LOCAL
-
-static const char *RCSID __attribute__ ((unused)) = "$USAGI: ni_ifaddrs.c,v 1.8 2007-10-11 06:25:21 yoshfuji Exp $ based on USAGI: ifaddrs.c,v 1.18 2002/03/06 01:50:46 yoshfuji Exp";
 
 /* ====================================================================== */
 struct nlmsg_list {

@@ -121,14 +121,6 @@
 
 #include "ninfod.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
-/* --------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod.c,v 1.34 2003-01-15 06:41:23 mk Exp $";
-
 /* Variables */
 int sock;
 int daemonized;
@@ -251,18 +243,6 @@ static int set_recvpktinfo(int socket)
 __inline__ static int init_sock(int socket)
 {
 	struct icmp6_filter filter;
-#if NEED_IPV6CHECKSUM
-	int i;
-
-	i = offsetof(struct icmp6_nodeinfo, ni_cksum);
-	if (setsockopt(socket,
-		       IPPROTO_IPV6, IPV6_CHECKSUM,
-		       &i, sizeof(i)) < 0) {
-		DEBUG(LOG_ERR, "setsockopt(IPV6_CHECKSUM): %s\n",
-		      strerror(errno));
-		return -1;
-	}
-#endif
 
 	ICMP6_FILTER_SETBLOCKALL(&filter);
 	ICMP6_FILTER_SETPASS(ICMP6_NI_QUERY, &filter);
