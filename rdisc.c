@@ -1218,19 +1218,9 @@ initifs()
 				interfaces[i].bcastaddr = sin->sin_addr;
 			}
 		}
-#ifdef notdef
-		if (debug)
-			logdebug("Found interface %s, flags 0x%x\n",
-				 pr_name(interfaces[i].localaddr),
-				 interfaces[i].flags);
-#endif
 		i++;
 	}
 	num_interfaces = i;
-#ifdef notdef
-	if (debug)
-		logdebug("Found %d interfaces\n", num_interfaces);
-#endif
 	(void) close(sock);
 	(void) free(buf);
 }
