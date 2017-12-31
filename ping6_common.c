@@ -66,10 +66,6 @@ ping_func_set_st ping6_func_set = {
 	.install_filter = ping6_install_filter
 };
 
-#define BIT_CLEAR(nr, addr) do { ((uint32_t *)(addr))[(nr) >> 5] &= ~(1U << ((nr) & 31)); } while(0)
-#define BIT_SET(nr, addr) do { ((uint32_t *)(addr))[(nr) >> 5] |= (1U << ((nr) & 31)); } while(0)
-#define BIT_TEST(nr, addr) do { (uint32_t *)(addr))[(nr) >> 5] & (1U << ((nr) & 31)); } while(0)
-
 #ifndef SCOPE_DELIMITER
 # define SCOPE_DELIMITER '%'
 #endif
