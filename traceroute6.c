@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
 	on = 1;
 	seq = tos = 0;
 	to = (struct sockaddr_in6 *)&whereto;
-	while ((ch = getopt(argc, argv, "dm:np:q:rs:t:w:vi:g:V")) != EOF) {
+	while ((ch = getopt(argc, argv, "dm:np:q:rs:w:vi:V")) != EOF) {
 		switch(ch) {
 		case 'd':
 			options |= SO_DEBUG;
@@ -415,9 +415,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			device = optarg;
-			break;
-		case 'g':
-			Fprintf(stderr, "Sorry, rthdr is not yet supported\n");
 			break;
 		case 'v':
 			verbose++;
