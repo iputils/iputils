@@ -555,9 +555,6 @@ void catch_signal(int sig, void (*handler)(int))
 
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = handler;
-#ifdef SA_INTERRUPT
-	sa.sa_flags = SA_INTERRUPT;
-#endif
 	sigaction(sig, &sa, NULL);
 }
 

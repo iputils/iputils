@@ -284,9 +284,6 @@ void signal_setup(int signo, void (*handler)(void))
 	memset(&sa, 0, sizeof(sa));
 
 	sa.sa_handler = (void (*)(int))handler;
-#ifdef SA_INTERRUPT
-	sa.sa_flags = SA_INTERRUPT;
-#endif
 	sigaction(signo, &sa, NULL);
 }
 
