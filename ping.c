@@ -89,7 +89,6 @@ static int broadcast_pings = 0;
 
 static void pr_options(unsigned char * cp, int hlen);
 static void pr_iph(struct iphdr *ip);
-static void usage(void) __attribute__((noreturn));
 static unsigned short in_cksum(const unsigned short *addr, int len, unsigned short salt);
 static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *icp);
 static int parsetos(char *str);
@@ -268,10 +267,8 @@ main(int argc, char **argv)
 			options |= F_FLOWINFO;
 			break;
 		case 'N':
-			if (niquery_option_handler(optarg) < 0) {
-				ping6_usage(0);
-				exit(2);
-			}
+			if (niquery_option_handler(optarg) < 0)
+				usage();
 			hints.ai_socktype = SOCK_RAW;
 			break;
 		/* Common options */
@@ -1666,37 +1663,4 @@ void ping4_install_filter(socket_st *sock)
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		perror("WARNING: failed to install socket filter\n");
-}
-
-#define USAGE_NEWLINE	"\n           "
-
-void usage(void)
-{
-	fprintf(stderr,
-		"Usage: ping"
-		" [-"
-			"aAbBdDfhLnOqrRUvV64"
-		"]"
-		" [-c count]"
-		" [-i interval]"
-		" [-I interface]"
-		USAGE_NEWLINE
-		" [-m mark]"
-		" [-M pmtudisc_option]"
-		" [-l preload]"
-		" [-p pattern]"
-		" [-Q tos]"
-		USAGE_NEWLINE
-		" [-s packetsize]"
-		" [-S sndbuf]"
-		" [-t ttl]"
-		" [-T timestamp_option]"
-		USAGE_NEWLINE
-		" [-w deadline]"
-		" [-W timeout]"
-		" [hop1 ...] destination"
-		"\n"
-	);
-	ping6_usage(1);
-	exit(2);
 }

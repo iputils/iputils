@@ -162,15 +162,6 @@ static int interfaces_size;			/* Number of elements in interfaces */
 /* fraser */
 int debugfile;
 
-const char usage[] =
-"Usage:	rdisc [-b] [-d] [-s] [-v] [-f] [-a] [-V] [send_address] [receive_address]\n"
-#ifdef RDISC_SERVER
-"       rdisc -r [-b] [-d] [-s] [-v] [-f] [-a] [-V] [-p <preference>] [-T <secs>]\n"
-"		 [send_address] [receive_address]\n"
-#endif
-;
-
-
 int s;			/* Socket file descriptor */
 struct sockaddr_in whereto;/* Address to send to */
 
@@ -232,7 +223,27 @@ static __inline__ int ismulticast(struct sockaddr_in *sin)
 
 static void prusage(void)
 {
-	fputs(usage, stderr);
+	fprintf(stderr,
+		"\nUsage\n"
+		"  rdisc [options] <send address> <receive address>\n"
+		"\nOptions:\n"
+		"  -a               accept all routers\n"
+		"  -b               accept best only (default)\n"
+		"  -d               enable debug syslog messages\n"
+		"  -f               run forever\n"
+#ifdef RDISC_SERVER
+		"  -r               responder mode\n"
+#endif
+		"  -s               send solicitation messages at startup\n"
+#ifdef RDISC_SERVER
+		"  -p <preference>  set <preference> in advertisement\n"
+		"  -T <seconds>     set max advertisement interval in <seconds>\n"
+#endif
+		"  -t               test mode, do not go background\n"
+		"  -v               verbose mode\n"
+		"  -V               print version and exit\n"
+		"\nFor more details see rdisc(8).\n"
+	);
 	exit(1);
 }
 

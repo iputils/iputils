@@ -119,24 +119,27 @@ static inline socklen_t sll_len(size_t halen)
 void usage(void)
 {
 	fprintf(stderr,
-		"Usage: arping [-fqbDUAV] [-c count] [-w timeout] [-I device] [-s source] destination\n"
-		"  -f : quit on first reply\n"
-		"  -q : be quiet\n"
-		"  -b : keep broadcasting, don't go unicast\n"
-		"  -D : duplicate address detection mode\n"
-		"  -U : Unsolicited ARP mode, update your neighbours\n"
-		"  -A : ARP answer mode, update your neighbours\n"
-		"  -V : print version and exit\n"
-		"  -c count : how many packets to send\n"
-		"  -w timeout : how long to wait for a reply\n"
-		"  -I device : which ethernet device to use"
+		"\nUsage:\n"
+		"  arping [options] <destination>\n"
+		"\nOptions:\n"
+		"  -f            quit on first reply\n"
+		"  -q            be quiet\n"
+		"  -b            keep on broadcasting, do not unicast\n"
+		"  -D            duplicate address detection mode\n"
+		"  -U            unsolicited ARP mode, update your neighbours\n"
+		"  -A            ARP answer mode, update your neighbours\n"
+		"  -V            print version and exit\n"
+		"  -c <count>    how many packets to send\n"
+		"  -w <timeout>  how long to wait for a reply\n"
+		"  -I <device>   which ethernet device to use"
 #ifdef DEFAULT_DEVICE_STR
-			" (" DEFAULT_DEVICE_STR ")"
+				"(" DEFAULT_DEVICE_STR ")"
 #endif
-			"\n"
-		"  -s source : source ip address\n"
-		"  destination : ask for what ip address\n"
-		);
+				"\n"
+		"  -s <source>   source ip address\n"
+		"  <destination> dns name or ip address\n"
+		"\nFor more details see arping(8).\n"
+	);
 	exit(2);
 }
 

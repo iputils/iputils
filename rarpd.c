@@ -75,9 +75,19 @@ struct rarp_map
 	uint32_t		ipaddr;
 } *rarp_db;
 
-void usage()
+void usage(void)
 {
-	fprintf(stderr, "Usage: rarpd [ -dveaA ] [ -b tftpdir ] [ interface]\n");
+	fprintf(stderr,
+		"\nUsage:\n"
+		"  rarpd [options] [interface]\n"
+		"\nOptions:\n"
+		"  -A        listen also arp messages\n"
+		"  -b <dir>  tftpd boot directory\n"
+		"  -d        debug mode\n"
+		"  -e        /etc/ethers markup alone is fine\n"
+		"  -v        verbose mode\n"
+		"\nFor more details see rarpd(8).\n"
+	);
 	exit(1);
 }
 

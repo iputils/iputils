@@ -649,8 +649,15 @@ static void print_copying(void) {
 
 static void print_usage(void) {
 	fprintf(stderr, 
-		"Usage: %s [-d] [-p pidfile] [-u user] [-h] [-v]\n\n",
-		appname
+		"Usage:\n"
+		"  ninfod [options]\n"
+		"\nOptions:\n"
+		"  -d            debug mode\n"
+		"  -h            show help\n"
+		"  -p <pidfile>  file to store process-id\n"
+		"  -u <user>     run <user>\n"
+		"  -v            verbose mode\n"
+		"\nFor more details see ninfod(8).\n"
 	);
 }
 

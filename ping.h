@@ -273,6 +273,7 @@ static inline void advance_ntransmitted(void)
 		acked = (uint16_t)ntransmitted + 1;
 }
 
+extern void usage(void) __attribute__((noreturn));
 extern void limit_capabilities(void);
 static int enable_capability_raw(void);
 static int disable_capability_raw(void);

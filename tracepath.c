@@ -373,7 +373,20 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath [-4] [-6] [-n] [-b] [-l <len>] [-p port] <destination>\n");
+	fprintf(stderr,
+		"\nUsage\n"
+		"  tracepath [options] <destination>\n"
+		"\nOptions:\n"
+		"  -4             use IPv4\n"
+		"  -6             use IPv6\n"
+		"  -b             print both name and ip\n"
+		"  -l <length>    use packet <length>\n"
+		"  -m <hops>      use maximum <hops>\n"
+		"  -n             no dns name resolution\n"
+		"  -p <port>      use destination <port>\n"
+		"  <destination>  dns name or ip address\n"
+		"\nFor more details see tracepath(8).\n"
+	);
 	exit(-1);
 }
 

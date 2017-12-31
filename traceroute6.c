@@ -941,7 +941,20 @@ tvsub(out, in)
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: traceroute6 [-dnrvV] [-m max_ttl] [-p port#] [-q nqueries]\n\t\
-[-s src_addr] [-t tos] [-w wait] host [data size]\n");
+		"\nUsage:\n"
+		"  traceroute6 [options] <destination>\n"
+		"\nOptions:\n"
+		"  -d            use SO_DEBUG socket option\n"
+		"  -i <device>   bind to <device>\n"
+		"  -m <hops>     use maximum <hops>\n"
+		"  -n            no dns name resolution\n"
+		"  -p <port>     use destination <port>\n"
+		"  -q <nprobes>  number of probes\n"
+		"  -r            use SO_DONTROUTE socket option\n"
+		"  -s <address>  use source <address>\n"
+		"  -v            verbose output\n"
+		"  -w <timeout>  time to wait for response\n"
+		"\nFor more details see traceroute6(8).\n"
+	);
 	exit(1);
 }

@@ -93,7 +93,6 @@ static unsigned char cmsgbuf[4096];
 static size_t cmsglen = 0;
 
 static int pr_icmph(uint8_t type, uint8_t code, uint32_t info);
-void ping6_usage(unsigned) __attribute((noreturn));
 
 struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
 char *device;
@@ -560,15 +559,24 @@ errexit:
 
 int niquery_option_help_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	fprintf(stderr, "ping6 -N suboptions\n"
-			"\tHelp:\n"
-			"\t\thelp\n"
-			"\tQuery:\n"
-			"\t\tname,\n"
-			"\t\tipv6,ipv6-all,ipv6-compatible,ipv6-linklocal,ipv6-sitelocal,ipv6-global,\n"
-			"\t\tipv4,ipv4-all,\n"
-			"\tSubject:\n"
-			"\t\tsubject-ipv6=addr,subject-ipv4=addr,subject-name=name,subject-fqdn=name,\n"
+	fprintf(stderr, "ping -6 -N <nodeinfo opt>\n"
+			"Help:\n"
+			"  help\n"
+			"Query:\n"
+			"  name\n"
+			"  ipv6\n"
+			"  ipv6-all\n"
+			"  ipv6-compatible\n"
+			"  ipv6-global\n"
+			"  ipv6-linklocal\n"
+			"  ipv6-sitelocal\n"
+			"  ipv4\n"
+			"  ipv4-all\n"
+			"Subject:\n"
+			"  subject-ipv6=addr\n"
+			"  subject-ipv4=addr\n"
+			"  subject-name=name\n"
+			"  subject-fqdn=name\n"
 		);
 	exit(2);
 }
@@ -701,12 +709,12 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #ifndef ENABLE_PING6_RTHDR
 		fprintf(stderr, "ping6: Source routing is deprecated by RFC5095.\n");
 #endif
-		ping6_usage(0);
+		usage();
 	} else if (argc == 1) {
 		target = *argv;
 	} else {
 		if (ni_query < 0 && ni_subject_type != NI_SUBJ_NAME)
-			ping6_usage(0);
+			usage();
 		target = ni_group;
 	}
 
@@ -1567,46 +1575,4 @@ void ping6_install_filter(socket_st *sock)
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		perror("WARNING: failed to install socket filter\n");
-}
-
-#define USAGE_NEWLINE	"\n            "
-
-void ping6_usage(unsigned from_ping)
-{
-	const char *name;
-	if (from_ping)
-		name = "ping -6";
-	else
-		name = "ping6";
-	fprintf(stderr,
-		"Usage: %s"
-		" [-"
-			"aAbBdDfhLnOqrRUvV"
-		"]"
-		" [-c count]"
-		" [-i interval]"
-		" [-I interface]"
-		USAGE_NEWLINE
-		" [-l preload]"
-		" [-m mark]"
-		" [-M pmtudisc_option]"
-		USAGE_NEWLINE
-		" [-N nodeinfo_option]"
-		" [-p pattern]"
-		" [-Q tclass]"
-		" [-s packetsize]"
-		USAGE_NEWLINE
-		" [-S sndbuf]"
-		" [-t ttl]"
-		" [-T timestamp_option]"
-		" [-w deadline]"
-		USAGE_NEWLINE
-		" [-W timeout]"
-#ifdef ENABLE_PING6_RTHDR
-		" [hop1 ...]"
-#endif
-		" destination"
-		"\n", name
-	);
-	exit(2);
 }

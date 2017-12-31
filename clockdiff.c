@@ -552,10 +552,19 @@ good_exit:
  * be reduced by increasing the number of messages sent in each measurement.
  */
 
-void
-usage() {
-  fprintf(stderr, "Usage: clockdiff [-o] <host>\n");
-  exit(1);
+void usage(void)
+{
+	fprintf(stderr,
+		"\nUsage:\n"
+		"  clockdiff [options] <destination>\n"
+		"\nOptions:\n"
+		"                without -o, use ip timestamp only\n"
+		"  -o            use ip timestamp and icmp echo\n"
+		"  -o1           use three-term ip timestamp and icmp echo\n"
+		"  <destination> dns name or ip address\n"
+		"\nFor more details see clockdiff(8).\n"
+	);
+	exit(1);
 }
 
 void drop_rights(void) {
