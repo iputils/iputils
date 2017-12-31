@@ -59,12 +59,6 @@
  */
 #include "ping.h"
 
-#if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
-#ifndef IPV6_SRCRT_TYPE_0
-#define IPV6_SRCRT_TYPE_0	0
-#endif
-#endif
-
 ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,
 	.receive_error_msg = ping6_receive_error_msg,
@@ -82,9 +76,6 @@ ping_func_set_st ping6_func_set = {
 
 uint32_t flowlabel;
 uint32_t tclass;
-#ifdef ENABLE_PING6_RTHDR
-struct cmsghdr *srcrt;
-#endif
 
 static struct sockaddr_in6 whereto;
 static struct sockaddr_in6 firsthop;
@@ -116,49 +107,6 @@ static inline int ntohsp(uint16_t *p)
 	memcpy(&v, p, sizeof(v));
 	return ntohs(v);
 }
-
-#if defined(ENABLE_PING6_RTHDR) && !defined(ENABLE_PING6_RTHDR_RFC3542)
-size_t inet6_srcrt_space(int type, int segments)
-{
-	if (type != 0 || segments > 24)
-		return 0;
-
-	return (sizeof(struct cmsghdr) + sizeof(struct ip6_rthdr0) +
-		segments * sizeof(struct in6_addr));
-}
-
-extern struct cmsghdr *	inet6_srcrt_init(void *bp, int type)
-{
-	struct cmsghdr *cmsg;
-
-	if (type)
-		return NULL;
-
-	memset(bp, 0, sizeof(struct cmsghdr) + sizeof(struct ip6_rthdr0));
-	cmsg = (struct cmsghdr *) bp;
-
-	cmsg->cmsg_len = sizeof(struct cmsghdr) + sizeof(struct ip6_rthdr0);
-	cmsg->cmsg_level = IPPROTO_IPV6;
-	cmsg->cmsg_type = IPV6_RTHDR;
-
-	return cmsg;
-}
-
-int inet6_srcrt_add(struct cmsghdr *cmsg, const struct in6_addr *addr)
-{
-	struct ip6_rthdr0 *hdr;
-
-	hdr = (struct ip6_rthdr0 *) CMSG_DATA(cmsg);
-
-	cmsg->cmsg_len += sizeof(struct in6_addr);
-	hdr->ip6r0_len += sizeof(struct in6_addr) / 8;
-
-	memcpy(&hdr->ip6r0_addr[hdr->ip6r0_segleft++], addr,
-	       sizeof(struct in6_addr));
-
-	return 0;
-}
-#endif
 
 unsigned int if_name2index(const char *ifname)
 {
@@ -620,81 +568,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	int err;
 	static uint32_t scope_id = 0;
 
-#ifdef ENABLE_PING6_RTHDR
-	while (argc > 1) {
-		struct in6_addr *addr;
-
-		if (srcrt == NULL) {
-			size_t space;
-
-			fprintf(stderr, "ping6: Warning: "
-					"Source routing is deprecated by RFC5095.\n");
-
-#ifdef ENABLE_PING6_RTHDR_RFC3542
-			space = inet6_rth_space(IPV6_RTHDR_TYPE_0, argc - 1);
-#else
-			space = inet6_srcrt_space(IPV6_SRCRT_TYPE_0, argc - 1);
-#endif
-			if (space == 0)	{
-				fprintf(stderr, "srcrt_space failed\n");
-				exit(2);
-			}
-#ifdef ENABLE_PING6_RTHDR_RFC3542
-			if (cmsglen + CMSG_SPACE(space) > sizeof(cmsgbuf)) {
-				fprintf(stderr, "no room for options\n");
-				exit(2);
-			}
-#else
-			if (space + cmsglen > sizeof(cmsgbuf)) {
-				fprintf(stderr, "no room for options\n");
-				exit(2);
-			}
-#endif
-			srcrt = (struct cmsghdr*)(cmsgbuf+cmsglen);
-#ifdef ENABLE_PING6_RTHDR_RFC3542
-			memset(srcrt, 0, CMSG_SPACE(0));
-			srcrt->cmsg_len = CMSG_LEN(space);
-			srcrt->cmsg_level = IPPROTO_IPV6;
-			srcrt->cmsg_type = IPV6_RTHDR;
-			inet6_rth_init(CMSG_DATA(srcrt), space, IPV6_RTHDR_TYPE_0, argc - 1);
-			cmsglen += CMSG_SPACE(space);
-#else
-			cmsglen += CMSG_ALIGN(space);
-			inet6_srcrt_init(srcrt, IPV6_SRCRT_TYPE_0);
-#endif
-		}
-
-		target = *argv;
-
-		status = getaddrinfo(target, NULL, &hints, &result);
-		if (status) {
-			fprintf(stderr, "ping6: %s: %s\n", target, gai_strerror(status));
-			exit(2);
-		}
-		addr = &((struct sockaddr_in6 *)(result->ai_addr))->sin6_addr;
-#ifdef ENABLE_PING6_RTHDR_RFC3542
-		inet6_rth_add(CMSG_DATA(srcrt), addr);
-#else
-		inet6_srcrt_add(srcrt, addr);
-#endif
-		if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
-			memcpy(&firsthop.sin6_addr, addr, 16);
-			firsthop.sin6_scope_id = ((struct sockaddr_in6 *)(result->ai_addr))->sin6_scope_id;
-			/* Verify scope_id is the same as previous nodes */
-			if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id) {
-				fprintf(stderr, "scope discrepancy among the nodes\n");
-				exit(2);
-			} else if (!scope_id) {
-				scope_id = firsthop.sin6_scope_id;
-			}
-		}
-		freeaddrinfo(result);
-
-		argv++;
-		argc--;
-	}
-#endif
-
 	if (niquery_is_enabled()) {
 		niquery_init_nonce();
 
@@ -706,9 +579,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	}
 
 	if (argc > 1) {
-#ifndef ENABLE_PING6_RTHDR
-		fprintf(stderr, "ping6: Source routing is deprecated by RFC5095.\n");
-#endif
 		usage();
 	} else if (argc == 1) {
 		target = *argv;
@@ -979,31 +849,17 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
 		int freq_len = sizeof(*freq);
-#ifdef ENABLE_PING6_RTHDR
-		if (srcrt)
-			freq_len = CMSG_ALIGN(sizeof(*freq)) + srcrt->cmsg_len;
-#endif
 		memset(freq, 0, sizeof(*freq));
 		freq->flr_label = htonl(flowlabel & IPV6_FLOWINFO_FLOWLABEL);
 		freq->flr_action = IPV6_FL_A_GET;
 		freq->flr_flags = IPV6_FL_F_CREATE;
 		freq->flr_share = IPV6_FL_S_EXCL;
 		memcpy(&freq->flr_dst, &whereto.sin6_addr, 16);
-#ifdef ENABLE_PING6_RTHDR
-		if (srcrt)
-			memcpy(freq_buf + CMSG_ALIGN(sizeof(*freq)), srcrt, srcrt->cmsg_len);
-#endif
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1) {
 			perror ("can't set flowlabel");
 			exit(2);
 		}
 		flowlabel = freq->flr_label;
-#ifdef ENABLE_PING6_RTHDR
-		if (srcrt) {
-			cmsglen = (char*)srcrt - (char*)cmsgbuf;
-			srcrt = NULL;
-		}
-#endif
 #else
 		fprintf(stderr, "Flow labels are not supported.\n");
 		exit(2);

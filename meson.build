@@ -53,11 +53,6 @@ if opt != ''
 	conf.set_quoted('DEFAULT_DEVICE', opt, description : 'arping default device.')
 endif
 
-opt = get_option('USE_PING6_RTHDR')
-if opt == true
-	conf.set('ENABLE_PING6_RTHDR', 1, description : 'If set enable ping6 source routing (deprecated by RFC5095).')
-endif
-
 opt = get_option('USE_SYSFS')
 if opt == true
 	conf.set('USE_SYSFS', 1, description : 'If set use /sys file system.')

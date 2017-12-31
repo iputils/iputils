@@ -43,8 +43,5 @@ option('BUILD_MANS', type : 'boolean', value : true,
 option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 	description : 'Default device for arping')
 
-option('USE_PING6_RTHDR', type : 'boolean', value : false,
-	description : 'Use ping6 deprecated source routing')
-
 option('USE_SYSFS', type : 'boolean', value : true,
 	description : 'Use /sys file system (arping)')
