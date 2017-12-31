@@ -55,10 +55,7 @@
 #define getnameinfo_flags 0
 #endif
 
-#ifndef WITHOUT_IFADDRS
 #include <ifaddrs.h>
-#endif
-
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <linux/types.h>

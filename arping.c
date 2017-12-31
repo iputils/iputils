@@ -40,9 +40,7 @@
 #include <dirent.h>
 #endif
 
-#ifndef WITHOUT_IFADDRS
 #include <ifaddrs.h>
-#endif
 
 #ifdef USE_IDN
 #include <locale.h>
@@ -66,9 +64,7 @@ static void usage(void) __attribute__((noreturn));
 struct device {
 	char *name;
 	int ifindex;
-#ifndef WITHOUT_IFADDRS
 	struct ifaddrs *ifa;
-#endif
 #ifdef USE_SYSFS
 	struct sysfs_devattr_values *sysfs;
 #endif
@@ -609,7 +605,6 @@ static int check_ifflags(unsigned int ifflags, int fatal)
 
 static int find_device_by_ifaddrs(void)
 {
-#ifndef WITHOUT_IFADDRS
 	int rc;
 	struct ifaddrs *ifa0, *ifa;
 	int n = 0;
@@ -653,9 +648,6 @@ static int find_device_by_ifaddrs(void)
 		return 0;
 	}
 	return 1;
-#else
-	return -1;
-#endif
 }
 
 #ifdef USE_SYSFS
@@ -937,7 +929,6 @@ static int set_device_broadcast_ifaddrs_one(struct device *dev,
 					    unsigned char *ba, size_t balen,
 					    int fatal)
 {
-#ifndef WITHOUT_IFADDRS
 	struct ifaddrs *ifa;
 	struct sockaddr_ll *sll;
 
@@ -960,9 +951,6 @@ static int set_device_broadcast_ifaddrs_one(struct device *dev,
 	}
 	memcpy(ba, sll->sll_addr, sll->sll_halen);
 	return 0;
-#else
-	return -1;
-#endif
 }
 int set_device_broadcast_sysfs(struct device *dev, unsigned char *ba, size_t balen)
 {

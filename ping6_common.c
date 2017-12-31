@@ -675,7 +675,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		source6.sin6_port = 0;
 		close(probe_fd);
 
-#ifndef WITHOUT_IFADDRS
 		if (device) {
 			struct ifaddrs *ifa0, *ifa;
 
@@ -697,7 +696,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 			freeifaddrs(ifa0);
 		}
-#endif
 	}
 	else if (device && (IN6_IS_ADDR_LINKLOCAL(&source6.sin6_addr) ||
 			    IN6_IS_ADDR_MC_LINKLOCAL(&source6.sin6_addr)))

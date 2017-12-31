@@ -54,9 +54,7 @@
 #include <assert.h>
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
-#ifndef WITHOUT_IFADDRS
 #include <ifaddrs.h>
-#endif
 
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
@@ -676,7 +674,6 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 		}
 		source.sin_port = 0;
 
-#ifndef WITHOUT_IFADDRS
 		if (device) {
 			struct ifaddrs *ifa0, *ifa;
 			int ret;
@@ -698,7 +695,6 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			if (!ifa)
 				fprintf(stderr, "ping: Warning: source address might be selected on device other than %s.\n", device);
 		}
-#endif
 		close(probe_fd);
 	} while (0);
 
