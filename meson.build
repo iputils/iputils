@@ -83,6 +83,7 @@ elif opt == 'openssl'
 	add_project_arguments('-DUSE_OPENSSL', language : 'c')
 elif opt == 'none'
 	crypto_dep = []
+	conf.set('PING6_NONCE_MEMORY', 1, description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
 
 build_arping = get_option('BUILD_ARPING')
