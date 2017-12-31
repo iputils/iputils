@@ -108,9 +108,9 @@ int readit(FILE * file, struct tftphdr **dpp, int convert)
  */
 void read_ahead(FILE *file, int convert)
 {
-	register int i;
-	register char *p;
-	register int c;
+	int i;
+	char *p;
+	int c;
 	struct bf *b;
 	struct tftphdr *dp;
 
@@ -173,9 +173,9 @@ int write_behind(FILE *file, int convert)
 {
 	char *buf;
 	int count;
-	register int ct;
-	register char *p;
-	register int c;                 /* current character */
+	int ct;
+	char *p;
+	int c;                 /* current character */
 	struct bf *b;
 	struct tftphdr *dp;
 

@@ -763,7 +763,7 @@ void send_probe(uint32_t seq, int ttl)
 
 double deltaT(struct timeval *t1p, struct timeval *t2p)
 {
-	register double dt;
+	double dt;
 
 	dt = (double)(t2p->tv_sec - t1p->tv_sec) * 1000.0 +
 	     (double)(t2p->tv_usec - t1p->tv_usec) / 1000.0;
@@ -926,7 +926,7 @@ void print(struct sockaddr_in6 *from)
  */
 void
 tvsub(out, in)
-	register struct timeval *out, *in;
+	struct timeval *out, *in;
 {
 	if ((out->tv_usec -= in->tv_usec) < 0)   {
 		out->tv_sec--;

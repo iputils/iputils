@@ -928,10 +928,10 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 
 unsigned short in_cksum(unsigned short *addr, int len)
 {
-	register int nleft = len;
-	register unsigned short *w = addr;
-	register unsigned short answer;
-	register int sum = 0;
+	int nleft = len;
+	unsigned short *w = addr;
+	unsigned short answer;
+	int sum = 0;
 
 	/*
 	 *  Our algorithm is simple, using a 32 bit accumulator (sum),

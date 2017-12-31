@@ -1178,12 +1178,12 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 #endif
 
 unsigned short
-in_cksum(const unsigned short *addr, register int len, unsigned short csum)
+in_cksum(const unsigned short *addr, int len, unsigned short csum)
 {
-	register int nleft = len;
+	int nleft = len;
 	const unsigned short *w = addr;
-	register unsigned short answer;
-	register int sum = csum;
+	unsigned short answer;
+	int sum = csum;
 
 	/*
 	 *  Our algorithm is simple, using a 32 bit accumulator (sum),

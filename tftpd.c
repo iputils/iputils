@@ -83,8 +83,8 @@ void recvfile(struct formats *pf);
 
 int main(int ac, char **av)
 {
-	register struct tftphdr *tp;
-	register int n = 0;
+	struct tftphdr *tp;
+	int n = 0;
 	int on = 1;
 
 	openlog("tftpd", LOG_PID, LOG_DAEMON);
@@ -202,9 +202,9 @@ struct formats {
  */
 void tftp(struct tftphdr *tp, int size)
 {
-	register char *cp;
+	char *cp;
 	int first = 1, ecode;
-	register struct formats *pf;
+	struct formats *pf;
 	char *filename, *mode = NULL;
 
 	filename = cp = tp->th_stuff;
@@ -329,7 +329,7 @@ void timer(int signo __attribute__((__unused__)))
 void sendfile(struct formats *pf)
 {
 	struct tftphdr *dp;
-	register struct tftphdr *ap;    /* ack packet */
+	struct tftphdr *ap;    /* ack packet */
 	volatile int block = 1;
 	int size, n;
 
@@ -400,7 +400,7 @@ void justquit(int signo __attribute__((__unused__)))
 void recvfile(struct formats *pf)
 {
 	struct tftphdr *dp;
-	register struct tftphdr *ap;    /* ack buffer */
+	struct tftphdr *ap;    /* ack buffer */
 	volatile int block = 0, n, size;
 
 	confirmed = 0;
@@ -494,9 +494,9 @@ struct errmsg {
  */
 void nak(int error)
 {
-	register struct tftphdr *tp;
+	struct tftphdr *tp;
 	int length;
-	register struct errmsg *pe;
+	struct errmsg *pe;
 
 	tp = (struct tftphdr *)buf;
 	tp->th_opcode = htons((unsigned short)ERROR);
