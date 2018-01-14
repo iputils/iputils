@@ -24,7 +24,7 @@ static void iputils_md5dig_init(iputils_md5dig_ctx *ctx)
 }
 
 static void iputils_md5dig_update(iputils_md5dig_ctx *ctx,
-			   void *buf, int len)
+			   const void *buf, int len)
 {
 	gcry_md_write(ctx->dig, buf, len);
 	return;
@@ -63,7 +63,7 @@ static void iputils_md5dig_init(iputils_md5dig_ctx *ctx)
 }
 
 static void iputils_md5dig_update(iputils_md5dig_ctx *ctx,
-			   void *buf, int len)
+			   const void *buf, int len)
 {
 	md5_update(ctx, len, buf);
 	return;

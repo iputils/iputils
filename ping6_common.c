@@ -381,9 +381,9 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 # endif
 #endif
 
+#ifdef USE_CRYPTO
 static int niquery_option_subject_name_handler(int index, const char *name)
 {
-#ifdef USE_CRYPTO
 	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
 	unsigned char *dnptrs[2], **dpp, **lastdnptr;
 	int n;
@@ -495,11 +495,15 @@ errexit:
 	free(canonname);
 	free(idn);
 	exit(1);
+}
 #else
+static int niquery_option_subject_name_handler(int index __attribute__((__unused__)),
+					       const char *name __attribute__((__unused__)))
+{
 	fprintf(stderr, "ping6: function not available; crypto disabled\n");
 	exit(3);
-#endif
 }
+#endif
 
 int niquery_option_help_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {

@@ -1,7 +1,6 @@
 inc = include_directories('..')
 ninfod_sources = files('''
 	icmp6_nodeinfo.h
-	iputils_md5dig.h
 	ni_ifaddrs.c
 	ni_ifaddrs.h
 	ninfod.c
@@ -10,9 +9,8 @@ ninfod_sources = files('''
 	ninfod_core.c
 	ninfod_name.c
 '''.split())
-gcrypt_dep = cc.find_library('gcrypt')
 executable('ninfod', [ninfod_sources, git_version_h],
-	dependencies : [cap_dep, gcrypt_dep, rt_dep, threads],
+	dependencies : [cap_dep, crypto_dep, rt_dep, threads],
 	include_directories : inc,
 	install: true,
 	install_dir: 'sbin')

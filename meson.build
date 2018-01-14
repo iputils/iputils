@@ -208,6 +208,9 @@ if build_rarpd == true
 endif
 
 if build_ninfod == true
+	if crypto_dep == []
+		error('BUILD_NINFOD=true and USE_CRYPTO=none cannot be compiled')
+	endif
 	subdir ('ninfod')
 endif
 
