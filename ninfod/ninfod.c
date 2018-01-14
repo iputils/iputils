@@ -578,7 +578,7 @@ static void parse_args(int argc, char **argv)
 	char *ep;
 
 	/* parse options */
-	while ((c = getopt(argc, argv, "dhvp:u:")) != -1) {
+	while ((c = getopt(argc, argv, "dhvp:u:V")) != -1) {
 		switch(c) {
 		case 'd':	/* debug */
 			opt_d = 1;
@@ -601,6 +601,9 @@ static void parse_args(int argc, char **argv)
 			} else
 				opt_u = val;
 			break;
+		case 'V':
+			printf(IPUTILS_VERSION("ninfod"));
+			exit(0);
 		case 'h':	/* help */
 		default:
 			opt_h = 1;
@@ -635,6 +638,7 @@ static void print_usage(void) {
 		"  -p <pidfile>  file to store process-id\n"
 		"  -u <user>     run <user>\n"
 		"  -v            verbose mode\n"
+		"  -V            print version and exit\n"
 		"\nFor more details see ninfod(8).\n"
 	);
 }

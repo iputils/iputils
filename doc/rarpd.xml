@@ -22,6 +22,7 @@
     <command>arping</command>
     <arg choice='opt'>-aAvde </arg>
     <arg choice='opt'>-b <replaceable>bootdir</replaceable></arg>
+    <arg choice='opt'>-V </arg>
     <arg choice='opt'><replaceable>interface</replaceable></arg>
     <sbr/>
   </cmdsynopsis>
@@ -94,6 +95,12 @@ database and DNS.</para>
   <term><option>-b </option><emphasis remap='I'>bootdir</emphasis></term>
   <listitem>
 <para>TFTP boot directory. Default is <filename>/etc/tftpboot</filename></para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+  <para>Print version and exit.</para>
   </listitem>
   </varlistentry>
 </variablelist>

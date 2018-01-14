@@ -87,6 +87,11 @@ int main(int ac, char **av)
 	int n = 0;
 	int on = 1;
 
+	if (ac == 2 && !strcmp(av[1], "-V")) {
+		printf(IPUTILS_VERSION("tftpd"));
+		return 0;
+	}
+
 	openlog("tftpd", LOG_PID, LOG_DAEMON);
 
 	/* Sanity. If parent forgot to setuid() on us. */

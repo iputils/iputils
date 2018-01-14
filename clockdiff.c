@@ -561,6 +561,7 @@ void usage(void)
 		"                without -o, use ip timestamp only\n"
 		"  -o            use ip timestamp and icmp echo\n"
 		"  -o1           use three-term ip timestamp and icmp echo\n"
+		"  -V            print version and exit\n"
 		"  <destination> dns name or ip address\n"
 		"\nFor more details see clockdiff(8).\n"
 	);
@@ -593,6 +594,10 @@ main(int argc, char *argv[])
 	int s_errno = 0;
 	int n_errno = 0;
 
+	if (argc == 2 && !strcmp(argv[1], "-V")) {
+		printf(IPUTILS_VERSION("clockdiff"));
+		return 0;
+	}
 	if (argc < 2) {
 		drop_rights();
 		usage();

@@ -86,6 +86,7 @@ void usage(void)
 		"  -d        debug mode\n"
 		"  -e        /etc/ethers markup alone is fine\n"
 		"  -v        verbose mode\n"
+		"  -V        print version and exit\n"
 		"\nFor more details see rarpd(8).\n"
 	);
 	exit(1);
@@ -575,7 +576,7 @@ int main(int argc, char **argv)
 
 
 	opterr = 0;
-	while ((opt = getopt(argc, argv, "aAb:dvoe")) != EOF) {
+	while ((opt = getopt(argc, argv, "aAb:dvoeV")) != EOF) {
 		switch (opt) {
 		case 'a':
 			++all_ifaces;
@@ -604,7 +605,9 @@ int main(int argc, char **argv)
 		case 'b':
 			tftp_dir = optarg;
 			break;
-
+		case 'V':
+			printf(IPUTILS_VERSION("rarpd"));
+			return 0;
 		default:
 			usage();
 		}

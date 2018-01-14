@@ -384,6 +384,7 @@ static void usage(void)
 		"  -m <hops>      use maximum <hops>\n"
 		"  -n             no dns name resolution\n"
 		"  -p <port>      use destination <port>\n"
+		"  -V             print version and exit\n"
 		"  <destination>  dns name or ip address\n"
 		"\nFor more details see tracepath(8).\n"
 	);
@@ -420,7 +421,7 @@ int main(int argc, char **argv)
 	else if (argv[0][strlen(argv[0])-1] == '6')
 		hints.ai_family = AF_INET6;
 
-	while ((ch = getopt(argc, argv, "46nbh?l:m:p:")) != EOF) {
+	while ((ch = getopt(argc, argv, "46nbh?l:m:p:V")) != EOF) {
 		switch(ch) {
 		case '4':
 			if (hints.ai_family != AF_UNSPEC) {
@@ -460,6 +461,9 @@ int main(int argc, char **argv)
 		case 'p':
 			base_port = atoi(optarg);
 			break;
+		case 'V':
+			printf(IPUTILS_VERSION("tracepath"));
+			return 0;
 		default:
 			usage();
 		}
