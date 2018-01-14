@@ -97,6 +97,7 @@ build_tracepath = get_option('BUILD_TRACEPATH')
 build_traceroute6 = get_option('BUILD_TRACEROUTE6')
 
 build_mans = get_option('BUILD_MANS')
+build_html_mans = get_option('BUILD_HTML_MANS')
 
 if build_rinfod == true
 	opt = get_option('ENABLE_RDISC_SERVER')
@@ -210,7 +211,7 @@ if build_ninfod == true
 	subdir ('ninfod')
 endif
 
-if build_mans == true
+if build_mans == true or build_html_mans == true
 	subdir ('doc')
 endif
 

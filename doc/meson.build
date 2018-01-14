@@ -1,5 +1,6 @@
 manpages = []
 custom_man_xsl = files('custom-man.xsl')
+custom_html_xsl = files('custom-html.xsl')
 
 if build_arping == true
 	manpages += ['arping']
@@ -38,7 +39,15 @@ if build_ninfod == true
 endif
 
 xsltproc = find_program('xsltproc', required : false)
-if xsltproc.found()
+xsltproc_args = [
+	'--nonet',
+	'--stringparam', 'man.output.quietly', '1',
+	'--stringparam', 'funcsynopsis.style', 'ansi',
+	'--stringparam', 'man.th.extra1.suppress', '1',
+	'--stringparam', 'iputils.version', meson.project_version(),
+]
+
+if xsltproc.found() and build_mans == true
 	foreach man : manpages
 		custom_target(man + '.8',
 			output : man + '.8',
@@ -46,16 +55,30 @@ if xsltproc.found()
 			command : [
 				xsltproc,
 				'-o', '@OUTPUT@',
-				'--nonet',
-				'--stringparam', 'man.output.quietly', '1',
-				'--stringparam', 'funcsynopsis.style', 'ansi',
-				'--stringparam', 'man.th.extra1.suppress', '1',
-				'--stringparam', 'iputils.version', meson.project_version(),
+				xsltproc_args,
 				custom_man_xsl,
 				'@INPUT@',
 			],
 			install : true,
 			install_dir : join_paths(get_option('mandir'), 'man8'),
+		)
+	endforeach
+endif
+
+if xsltproc.found() and build_html_mans == true
+	foreach man : manpages
+		custom_target(man + '.html',
+			output : man + '.html',
+			input : man + '.xml',
+			command : [
+				xsltproc,
+				'-o', '@OUTPUT@',
+				xsltproc_args,
+				custom_html_xsl,
+				'@INPUT@',
+			],
+			install : true,
+			install_dir : join_paths(get_option('datadir'), meson.project_name()),
 		)
 	endforeach
 endif

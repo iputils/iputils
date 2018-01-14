@@ -40,6 +40,9 @@ option('BUILD_NINFOD', type : 'boolean', value : false,
 option('BUILD_MANS', type : 'boolean', value : true,
 	description : 'Build manuals')
 
+option('BUILD_HTML_MANS', type : 'boolean', value : false,
+	description : 'Build html manuals')
+
 option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 	description : 'Default device for arping')
 
