@@ -10,8 +10,6 @@
  * 		YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#include "SNAPSHOT.h"
-
 #include <stdlib.h>
 #include <time.h>
 #include <signal.h>
@@ -1041,7 +1039,7 @@ main(int argc, char **argv)
 			source = optarg;
 			break;
 		case 'V':
-			printf("arping utility, iputils-%s\n", SNAPSHOT);
+			printf(IPUTILS_VERSION("arping"));
 			exit(0);
 		case 'h':
 		case '?':

@@ -60,8 +60,6 @@
  * SUCH DAMAGE.
  */
 
-#include "SNAPSHOT.h"
-
 #include <string.h>
 #include <time.h>
 #include <malloc.h>

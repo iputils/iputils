@@ -11,7 +11,7 @@ ninfod_sources = files('''
 	ninfod_name.c
 '''.split())
 gcrypt_dep = cc.find_library('gcrypt')
-executable('ninfod', ninfod_sources,
+executable('ninfod', [ninfod_sources, git_version_h],
 	dependencies : [cap_dep, gcrypt_dep, rt_dep, threads],
 	include_directories : inc,
 	install: true,

@@ -3,12 +3,18 @@ project('iputils', 'c',
 		'c_std=c99',
 		'warning_level=2',
 	],
-	version : '20170717') # version hardcoded
+	version : 's20161105') # keep in sync with: git describe | awk -F- '{print $1}'
 
 cc = meson.get_compiler('c')
 
+add_project_arguments(
+	'-include', 'config.h',
+	'-include', 'git-version.h',
+	language : 'c'
+)
+
 conf = configuration_data()
-conf.set_quoted('SNAPSHOT', meson.project_version())
+conf.set_quoted('PACKAGE_NAME', meson.project_name())
 
 if cc.compiles('''
 	#include <sys/types.h>
@@ -145,53 +151,58 @@ if build_ninfod == true
 	endif
 endif
 
+git_version_h = vcs_tag(
+	input : 'git-version.h.meson',
+	output : 'git-version.h'
+)
+
 config_h = configure_file(
-	output : 'SNAPSHOT.h',
+	output : 'config.h',
 	configuration : conf)
 
 ############################################################
 if build_ping == true
-	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c'],
+	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c', git_version_h],
 		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
 		install: true)
 endif
 
 if build_tracepath == true
-	executable('tracepath', 'tracepath.c',
+	executable('tracepath', ['tracepath.c', git_version_h],
 		dependencies : idn_dep,
 		install: true)
 endif
 
 if build_traceroute6 == true
-	executable('traceroute6', 'traceroute6.c',
+	executable('traceroute6', ['traceroute6.c', git_version_h],
 		dependencies : [cap_dep, idn_dep],
 		install: true)
 endif
 
 if build_clockdiff == true
-	executable('clockdiff', 'clockdiff.c',
+	executable('clockdiff', ['clockdiff.c', git_version_h],
 		dependencies : [cap_dep],
 		install: true)
 endif
 
 if build_rinfod == true
-	executable('rdisc', 'rdisc.c',
+	executable('rdisc', ['rdisc.c', git_version_h],
 		install: true)
 endif
 
 if build_arping == true
-	executable('arping', 'arping.c',
+	executable('arping', ['arping.c', git_version_h],
 		dependencies : [rt_dep, cap_dep, idn_dep],
 		install: true)
 endif
 
 if build_tftpd == true
-	executable('tftpd', ['tftpd.c', 'tftpsubs.c'],
+	executable('tftpd', ['tftpd.c', 'tftpsubs.c', git_version_h],
 		install: true)
 endif
 
 if build_rarpd == true
-	executable('rarpd', 'rarpd.c',
+	executable('rarpd', ['rarpd.c', git_version_h],
 		install: true)
 endif
 

@@ -62,8 +62,6 @@
 #include <string.h>
 #include <syslog.h>
 
-#include "SNAPSHOT.h"
-
 struct interface
 {
 	struct in_addr 	address;	/* Used to identify the interface */
@@ -337,7 +335,7 @@ int main(int argc, char **argv)
 				forever = 1;
 				break;
 			case 'V':
-				printf("rdisc utility, iputils-%s\n", SNAPSHOT);
+				printf(IPUTILS_VERSION("rdisc"));
 				exit(0);
 #ifdef RDISC_SERVER
 			case 'T':
