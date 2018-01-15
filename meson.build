@@ -114,34 +114,32 @@ if build_ninfod == true
 	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h')
 		conf.set('STDC_HEADERS', 1, description : 'Defined if we have standard c headers.')
 	endif
-	check_headers = [
-		['HAVE_GCRYPT_H', 'gcrypt.h'],
-		['HAVE_GNUTLS_OPENSSL_H', 'gnutls/openssl.h'],
-		['HAVE_INTTYPES_H', 'inttypes.h'],
-		['HAVE_LIMITS_H', 'limits.h'],
-		['HAVE_LINUX_RTNETLINK_H', 'linux/rtnetlink.h'],
-		['HAVE_MEMORY_H', 'memory.h'],
-		['HAVE_NETDB_H', 'netdb.h'],
-		['HAVE_NETINET_ICMP6_H', 'netinet/icmp6.h'],
-		['HAVE_NETINET_IN_H', 'netinet/in.h'],
-		['HAVE_NETINET_IP6_H', 'netinet/ip6.h'],
-		['HAVE_OPENSSL_MD5_H', 'openssl/md5.h'],
-		['HAVE_PTHREAD_H', 'pthread.h'],
-		['HAVE_PWD_H', 'pwd.h'],
-		['HAVE_STRINGS_H', 'strings.h'],
-		['HAVE_STRING_H', 'string.h'],
-		['HAVE_SYSLOG_H', 'syslog.h'],
-		['HAVE_SYS_CAPABILITY_H', 'sys/capability.h'],
-		['HAVE_SYS_TIME_H', 'sys/time.h'],
-		['HAVE_SYS_TYPES_H', 'sys/types.h'],
-		['HAVE_SYS_UIO_H', 'sys/uio.h'],
-		['HAVE_SYS_UTSNAME_H', 'sys/utsname.h'],
-		['HAVE_UNISTD_H', 'unistd.h'],
+	foreach h : [
+		'gcrypt.h',
+		'gnutls/openssl.h',
+		'inttypes.h',
+		'limits.h',
+		'linux/rtnetlink.h',
+		'memory.h',
+		'netdb.h',
+		'netinet/icmp6.h',
+		'netinet/in.h',
+		'netinet/ip6.h',
+		'openssl/md5.h',
+		'pthread.h',
+		'pwd.h',
+		'string.h',
+		'strings.h',
+		'sys/capability.h',
+		'syslog.h',
+		'sys/time.h',
+		'sys/types.h',
+		'sys/uio.h',
+		'sys/utsname.h',
+		'unistd.h',
 	]
-	foreach p : check_headers
-		h = p.get(1)
 		if cc.has_header(h)
-			conf.set(p.get(0), 1,
+			conf.set('HAVE_' + h.to_upper().underscorify(), 1,
 				description : 'Define if ' + h + ' can be included.')
 		endif
 	endforeach
