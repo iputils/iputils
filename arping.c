@@ -19,7 +19,7 @@
 #include <net/if_arp.h>
 #include <sys/ioctl.h>
 #include <sys/param.h>
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 #include <sys/prctl.h>
 #include <sys/capability.h>
 #endif
@@ -91,7 +91,7 @@ struct timespec start, last;
 int sent, brd_sent;
 int received, brd_recv, req_recv;
 
-#ifndef CAPABILITIES
+#ifndef HAVE_LIBCAP
 static uid_t euid;
 #endif
 
@@ -147,14 +147,14 @@ void set_signal(int signo, void (*handler)(void))
 	sigaction(signo, &sa, NULL);
 }
 
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 static const cap_value_t caps[] = { CAP_NET_RAW, };
 static cap_flag_value_t cap_raw = CAP_CLEAR;
 #endif
 
 void limit_capabilities(void)
 {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t cap_p;
 
 	cap_p = cap_get_proc();
@@ -203,7 +203,7 @@ void limit_capabilities(void)
 
 int modify_capability_raw(int on)
 {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t cap_p;
 
 	if (cap_raw != CAP_SET)
@@ -244,7 +244,7 @@ static inline int disable_capability_raw(void)
 
 void drop_capabilities(void)
 {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t cap_p = cap_init();
 
 	if (!cap_p) {

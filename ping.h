@@ -29,7 +29,7 @@
 #include <linux/filter.h>
 #include <resolv.h>
 
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 #include <sys/prctl.h>
 #include <sys/capability.h>
 #endif
@@ -272,7 +272,7 @@ static int enable_capability_raw(void);
 static int disable_capability_raw(void);
 static int enable_capability_admin(void);
 static int disable_capability_admin(void);
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 extern int modify_capability(cap_value_t, cap_flag_value_t);
 static inline int enable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_SET);   };
 static inline int disable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_CLEAR); };

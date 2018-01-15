@@ -95,7 +95,7 @@ static int screen_width = INT_MAX;
 
 #define ARRAY_SIZE(a)	(sizeof(a) / sizeof(a[0]))
 
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 static cap_value_t cap_raw = CAP_NET_RAW;
 static cap_value_t cap_admin = CAP_NET_ADMIN;
 #endif
@@ -150,7 +150,7 @@ void usage(void)
 
 void limit_capabilities(void)
 {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t cap_cur_p;
 	cap_t cap_p;
 	cap_flag_value_t cap_ok;
@@ -204,7 +204,7 @@ void limit_capabilities(void)
 #endif
 	uid = getuid();
 	euid = geteuid();
-#ifndef CAPABILITIES
+#ifndef HAVE_LIBCAP
 	if (seteuid(uid)) {
 		perror("ping: setuid");
 		exit(-1);
@@ -212,7 +212,7 @@ void limit_capabilities(void)
 #endif
 }
 
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 int modify_capability(cap_value_t cap, cap_flag_value_t on)
 {
 	cap_t cap_p = cap_get_proc();
@@ -261,7 +261,7 @@ int modify_capability(int on)
 
 void drop_capabilities(void)
 {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t cap = cap_init();
 	if (cap_set_proc(cap) < 0) {
 		perror("ping: cap_set_proc");

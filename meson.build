@@ -49,7 +49,8 @@ rt_dep = cc.find_library('rt')
 opt = get_option('USE_CAP')
 if opt == true
 	cap_dep = cc.find_library('cap')
-	add_project_arguments('-DCAPABILITIES', language : 'c')
+	conf.set('HAVE_LIBCAP', 1,
+		description : 'Defined if libcap exists.')
 else
 	cap_dep = []
 endif

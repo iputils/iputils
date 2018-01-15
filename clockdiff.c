@@ -48,7 +48,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <linux/types.h>
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 #include <sys/capability.h>
 #endif
 
@@ -569,7 +569,7 @@ void usage(void)
 }
 
 void drop_rights(void) {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t caps = cap_init();
 	if (cap_set_proc(caps)) {
 		perror("clockdiff: cap_set_proc");

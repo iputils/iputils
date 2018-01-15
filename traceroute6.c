@@ -239,7 +239,7 @@
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
 #include <linux/types.h>
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 #include <sys/capability.h>
 #endif
 
@@ -351,7 +351,7 @@ int main(int argc, char *argv[])
 		perror("traceroute6: setuid");
 		exit(-1);
 	}
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	{
 		cap_t caps = cap_init();
 		if (cap_set_proc(caps)) {
