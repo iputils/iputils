@@ -26,6 +26,7 @@
  * Mountain View, California  94043
  */
 #include <stdio.h>
+#include <stdarg.h>
 #include <errno.h>
 #include <signal.h>
 #include <unistd.h>
@@ -201,12 +202,18 @@ static unsigned short in_cksum(unsigned short *addr, int len);
 
 static int logging = 0;
 
-#define logerr(fmt...) ({ if (logging) syslog(LOG_ERR, fmt); \
-			  else fprintf(stderr, fmt); })
-#define logtrace(fmt...) ({ if (logging) syslog(LOG_INFO, fmt); \
-			  else fprintf(stderr, fmt); })
-#define logdebug(fmt...) ({ if (logging) syslog(LOG_DEBUG, fmt); \
-			  else fprintf(stderr, fmt); })
+static void logmsg(int prio, char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	if (logging)
+		vsyslog(prio, fmt, ap);
+	else
+		vfprintf(stderr, fmt, ap);
+	va_end(ap);
+}
+
 static void logperror(char *str);
 
 static __inline__ int isbroadcast(struct sockaddr_in *sin)
@@ -459,7 +466,7 @@ next:
 
 	init();
 	if (join(s, &joinaddr) < 0) {
-		logerr("Failed joining addresses\n");
+		logmsg(LOG_ERR, "Failed joining addresses\n");
 		exit (2);
 	}
 
@@ -551,7 +558,7 @@ solicitor(struct sockaddr_in *sin)
 	int packetlen, i;
 
 	if (verbose) {
-		logtrace("Sending solicitation to %s\n",
+		logmsg(LOG_INFO, "Sending solicitation to %s\n",
 			 pr_name(sin->sin_addr));
 	}
 	icp->type = ICMP_ROUTER_SOLICITATION;
@@ -575,7 +582,7 @@ solicitor(struct sockaddr_in *sin)
 		if( i<0 ) {
 		    logperror("solicitor:sendto");
 		}
-		logerr("wrote %s %d chars, ret=%d\n",
+		logmsg(LOG_ERR, "wrote %s %d chars, ret=%d\n",
 			sendaddress, packetlen, i );
 	}
 }
@@ -596,7 +603,7 @@ advertise(struct sockaddr_in *sin, int lft)
 	int packetlen, i, cc;
 
 	if (verbose) {
-		logtrace("Sending advertisement to %s\n",
+		logmsg(LOG_INFO, "Sending advertisement to %s\n",
 			 pr_name(sin->sin_addr));
 	}
 
@@ -638,9 +645,9 @@ advertise(struct sockaddr_in *sin, int lft)
 			if ((sin->sin_addr.s_addr & ifp->netmask.s_addr) ==
 			    (ifp->address.s_addr & ifp->netmask.s_addr)) {
 				if (debug) {
-					logdebug("Unicast to %s ",
+					logmsg(LOG_DEBUG, "Unicast to %s ",
 						 pr_name(sin->sin_addr));
-					logdebug("on interface %s, %s\n",
+					logmsg(LOG_DEBUG, "on interface %s, %s\n",
 						 ifp->name,
 						 pr_name(ifp->address));
 				}
@@ -654,7 +661,7 @@ advertise(struct sockaddr_in *sin, int lft)
 			if (cc < 0) {
 				logperror("sendto");
 			} else {
-				logerr("wrote %s %d chars, ret=%d\n",
+				logmsg(LOG_ERR, "wrote %s %d chars, ret=%d\n",
 				       sendaddress, packetlen, cc );
 			}
 		}
@@ -734,7 +741,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 	hlen = ip->ihl << 2;
 	if (cc < hlen + 8) {
 		if (verbose)
-			logtrace("packet too short (%d bytes) from %s\n", cc,
+			logmsg(LOG_INFO, "packet too short (%d bytes) from %s\n", cc,
 				 pr_name(from->sin_addr));
 		return;
 	}
@@ -756,14 +763,14 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 		/* XXX Find out the link it came in over? */
 		if (in_cksum((unsigned short *)ALLIGN(buf+hlen), cc)) {
 			if (verbose)
-				logtrace("ICMP %s from %s: Bad checksum\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: Bad checksum\n",
 					 pr_type((int)rap->icmp_type),
 					 pr_name(from->sin_addr));
 			return;
 		}
 		if (rap->icmp_code != 0) {
 			if (verbose)
-				logtrace("ICMP %s from %s: Code = %d\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: Code = %d\n",
 					 pr_type((int)rap->icmp_type),
 					 pr_name(from->sin_addr),
 					 rap->icmp_code);
@@ -771,14 +778,14 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 		}
 		if (rap->icmp_num_addrs < 1) {
 			if (verbose)
-				logtrace("ICMP %s from %s: No addresses\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: No addresses\n",
 					 pr_type((int)rap->icmp_type),
 					 pr_name(from->sin_addr));
 			return;
 		}
 		if (rap->icmp_wpa < 2) {
 			if (verbose)
-				logtrace("ICMP %s from %s: Words/addr = %d\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: Words/addr = %d\n",
 					 pr_type((int)rap->icmp_type),
 					 pr_name(from->sin_addr),
 					 rap->icmp_wpa);
@@ -787,7 +794,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 		if (cc <
 		    8 + rap->icmp_num_addrs * rap->icmp_wpa * 4) {
 			if (verbose)
-				logtrace("ICMP %s from %s: Too short %d, %d\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: Too short %d, %d\n",
 					      pr_type((int)rap->icmp_type),
 					      pr_name(from->sin_addr),
 					      cc,
@@ -796,7 +803,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 		}
 
 		if (verbose)
-			logtrace("ICMP %s from %s, lifetime %d\n",
+			logmsg(LOG_INFO, "ICMP %s from %s, lifetime %d\n",
 				      pr_type((int)rap->icmp_type),
 				      pr_name(from->sin_addr),
 				      ntohs(rap->icmp_lifetime));
@@ -811,7 +818,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 				       i * rap->icmp_wpa * 4);
 			ina.s_addr = ap->ira_addr;
 			if (verbose)
-				logtrace("\taddress %s, preference 0x%x\n",
+				logmsg(LOG_INFO, "\taddress %s, preference 0x%x\n",
 					      pr_name(ina),
 					      (unsigned int)ntohl(ap->ira_preference));
 			if (is_directly_connected(ina))
@@ -845,14 +852,14 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 
 		if (in_cksum((unsigned short *)ALLIGN(buf+hlen), cc)) {
 			if (verbose)
-				logtrace("ICMP %s from %s: Bad checksum\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: Bad checksum\n",
 					      pr_type((int)icp->type),
 					      pr_name(from->sin_addr));
 			return;
 		}
 		if (icp->code != 0) {
 			if (verbose)
-				logtrace("ICMP %s from %s: Code = %d\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: Code = %d\n",
 					      pr_type((int)icp->type),
 					      pr_name(from->sin_addr),
 					      icp->code);
@@ -861,7 +868,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 
 		if (cc < ICMP_MINLEN) {
 			if (verbose)
-				logtrace("ICMP %s from %s: Too short %d, %d\n",
+				logmsg(LOG_INFO, "ICMP %s from %s: Too short %d, %d\n",
 					      pr_type((int)icp->type),
 					      pr_name(from->sin_addr),
 					      cc,
@@ -870,7 +877,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 		}
 
 		if (verbose)
-			logtrace("ICMP %s from %s\n",
+			logmsg(LOG_INFO, "ICMP %s from %s\n",
 				      pr_type((int)icp->type),
 				      pr_name(from->sin_addr));
 
@@ -894,7 +901,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 			sin.sin_addr.s_addr = ip->saddr;
 			if (!is_directly_connected(sin.sin_addr)) {
 				if (verbose)
-					logtrace("ICMP %s from %s: source not directly connected\n",
+					logmsg(LOG_INFO, "ICMP %s from %s: source not directly connected\n",
 						      pr_type((int)icp->type),
 						      pr_name(from->sin_addr));
 				break;
@@ -975,15 +982,15 @@ finish()
 		 * Wrong comment, wrong code.
 		 *	ttl must be set to 0 instead. --ANK
 		 */
-		logerr("terminated\n");
+		logmsg(LOG_ERR, "terminated\n");
 		ntransmitted++;
 		advertise(&whereto, 0);
 	}
 #endif
-	logtrace("\n----%s rdisc Statistics----\n", sendaddress );
-	logtrace("%d packets transmitted, ", ntransmitted );
-	logtrace("%d packets received, ", nreceived );
-	logtrace("\n");
+	logmsg(LOG_INFO, "\n----%s rdisc Statistics----\n"
+			 "%d packets transmitted, "
+			 "%d packets received, \n",
+			 sendaddress, ntransmitted, nreceived);
 	(void) fflush(stdout);
 	exit(0);
 }
@@ -1025,7 +1032,7 @@ sendbcastif(int socket, char *packet, int packetlen, struct interface *ifp)
 	baddr.sin_family = AF_INET;
 	baddr.sin_addr = ifp->bcastaddr;
 	if (debug)
-		logdebug("Broadcast to %s\n",
+		logmsg(LOG_DEBUG, "Broadcast to %s\n",
 			 pr_name(baddr.sin_addr));
 	on = 1;
 	setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char*)&on, sizeof(on));
@@ -1033,7 +1040,7 @@ sendbcastif(int socket, char *packet, int packetlen, struct interface *ifp)
 		    (struct sockaddr *)&baddr, sizeof (struct sockaddr));
 	if (cc!= packetlen) {
 		logperror("sendbcast: sendto");
-		logerr("Cannot send broadcast packet to %s\n",
+		logmsg(LOG_ERR, "Cannot send broadcast packet to %s\n",
 		       pr_name(baddr.sin_addr));
 	}
 	on = 0;
@@ -1068,14 +1075,14 @@ sendmcastif(int socket, char *packet, int packetlen, struct sockaddr_in *sin,
 	mreq.imr_ifindex = ifp->ifindex;
 	mreq.imr_address = ifp->localaddr;
 	if (debug)
-		logdebug("Multicast to interface %s, %s\n",
+		logmsg(LOG_DEBUG, "Multicast to interface %s, %s\n",
 			 ifp->name,
 			 pr_name(mreq.imr_address));
 	if (setsockopt(socket, IPPROTO_IP, IP_MULTICAST_IF,
 		       (char *)&mreq,
 		       sizeof(mreq)) < 0) {
 		logperror("setsockopt (IP_MULTICAST_IF)");
-		logerr("Cannot send multicast packet over interface %s, %s\n",
+		logmsg(LOG_ERR, "Cannot send multicast packet over interface %s, %s\n",
 		       ifp->name,
 		       pr_name(mreq.imr_address));
 		return (-1);
@@ -1084,7 +1091,7 @@ sendmcastif(int socket, char *packet, int packetlen, struct sockaddr_in *sin,
 		    (struct sockaddr *)sin, sizeof (struct sockaddr));
 	if (cc!= packetlen) {
 		logperror("sendmcast: sendto");
-		logerr("Cannot send multicast packet over interface %s, %s\n",
+		logmsg(LOG_ERR, "Cannot send multicast packet over interface %s, %s\n",
 		       ifp->name, pr_name(mreq.imr_address));
 	}
 	return (cc);
@@ -1130,7 +1137,7 @@ initifs()
 	bufsize = numifs * sizeof(struct ifreq);
 	buf = (char *)malloc(bufsize);
 	if (buf == NULL) {
-		logerr("out of memory\n");
+		logmsg(LOG_ERR, "out of memory\n");
 		(void) close(sock);
 		return;
 	}
@@ -1139,7 +1146,7 @@ initifs()
 	interfaces = (struct interface *)ALLIGN(malloc(numifs *
 					sizeof(struct interface)));
 	if (interfaces == NULL) {
-		logerr("out of memory\n");
+		logmsg(LOG_ERR, "out of memory\n");
 		(void) close(sock);
 		(void) free(buf);
 		return;
@@ -1399,7 +1406,7 @@ record_router(struct in_addr router, int pref, int ttl)
 		pref = INELIGIBLE_PREF;
 
 	if (debug)
-		logdebug("Recording %s, ttl %d, preference 0x%x\n",
+		logmsg(LOG_DEBUG, "Recording %s, ttl %d, preference 0x%x\n",
 			 pr_name(router),
 			 ttl,
 			 pref);
@@ -1417,7 +1424,7 @@ record_router(struct in_addr router, int pref, int ttl)
 			changed_up++;
 		tp = (struct table *)ALLIGN(malloc(sizeof(struct table)));
 		if (tp == NULL) {
-			logerr("Out of memory\n");
+			logmsg(LOG_ERR, "Out of memory\n");
 			return;
 		}
 		tp->router = router;
@@ -1470,7 +1477,7 @@ void
 add_route(struct in_addr addr)
 {
 	if (debug)
-		logdebug("Add default route to %s\n", pr_name(addr));
+		logmsg(LOG_DEBUG, "Add default route to %s\n", pr_name(addr));
 	rtioctl(addr, SIOCADDRT);
 }
 
@@ -1478,7 +1485,7 @@ void
 del_route(struct in_addr addr)
 {
 	if (debug)
-		logdebug("Delete default route to %s\n", pr_name(addr));
+		logmsg(LOG_DEBUG, "Delete default route to %s\n", pr_name(addr));
 	rtioctl(addr, SIOCDELRT);
 }
 
