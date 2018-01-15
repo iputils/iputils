@@ -363,7 +363,7 @@ int pr_nodeinfo_nodename(CHECKANDFILL_ARGS_2)
 		p->reply.ni_flags = 0;
 
 		p->replydatalen = nodenamelen ? sizeof(ttl)+nodenamelen : 0;
-		p->replydata = nodenamelen ? ni_malloc(p->replydatalen) : NULL;
+		p->replydata = nodenamelen ? malloc(p->replydatalen) : NULL;
 		if (p->replydata) {
 			memcpy(p->replydata, &ttl, sizeof(ttl));
 			memcpy(p->replydata + sizeof(ttl), &nodename, nodenamelen);

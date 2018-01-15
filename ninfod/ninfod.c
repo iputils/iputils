@@ -341,8 +341,8 @@ int ni_send(struct packetcontext *p)
 	if (cc < 0)
 		DEBUG(LOG_DEBUG, "sendmsg(): %s\n", strerror(errno));
 
-	ni_free(p->replydata);
-	ni_free(p);
+	free(p->replydata);
+	free(p);
 
 	return cc;
 }
@@ -676,7 +676,7 @@ int main (int argc, char **argv)
 
 		init_core(0);
 
-		p = ni_malloc(sizeof(*p));
+		p = malloc(sizeof(*p));
 		if (!p) {
 			DEBUG(LOG_WARNING, "%s(): failed to allocate packet context; sleep 1 sec.\n",
 			      __func__);
@@ -711,7 +711,7 @@ int main (int argc, char **argv)
 		init_core(0);
 
 		if (p->querylen < sizeof(struct icmp6_hdr)) {
-			ni_free(p);
+			free(p);
 #if ENABLE_DEBUG
 			DEBUG(LOG_WARNING, "Too short icmp message from %s\n", saddrbuf);
 #endif
@@ -731,7 +731,7 @@ int main (int argc, char **argv)
 			      "Strange icmp type %d from %s\n", 
 			      icmph->icmp6_type, saddrbuf);
 #endif
-			ni_free(p);
+			free(p);
 			continue;
 		}
 

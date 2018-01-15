@@ -270,7 +270,7 @@ int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS)
 		p->reply.ni_flags = flags&~NI_SUPTYPE_FLAG_COMPRESS;
 		
 		p->replydatalen = suptypes_len<<2;
-		p->replydata = ni_malloc(p->replydatalen);
+		p->replydata = malloc(p->replydatalen);
 		if (p->replydata == NULL) {
 			p->replydatalen = -1;
 			return -1;	/*XXX*/
@@ -454,13 +454,13 @@ static int ni_send_fork(struct packetcontext *p)
 			      __func__, getpid(), ret);
 			exit(ret > 0 ? 1 : 0);
 		}
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		exit(0);
 	} else {
 		waitpid(child, NULL, 0);
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 	}
 	return 0;
 }
@@ -519,7 +519,7 @@ int pr_nodeinfo(struct packetcontext *p)
 		if (!IN6_IS_ADDR_MC_LINKLOCAL(&p->pktinfo.ipi6_addr)) {
 			DEBUG(LOG_WARNING,
 			      "Destination is non-link-local multicast address.\n");
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 #if 0
@@ -530,7 +530,7 @@ int pr_nodeinfo(struct packetcontext *p)
 			DEBUG(LOG_WARNING,
 			      "Destination is link-local multicast address other than "
 			      "NI Group address.\n");
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 #endif
@@ -539,7 +539,7 @@ int pr_nodeinfo(struct packetcontext *p)
 	/* Step 1: Check length */
 	if (p->querylen < sizeof(struct icmp6_nodeinfo)) {
 		DEBUG(LOG_WARNING, "Query too short\n");
-		ni_free(p);
+		free(p);
 		return -1;
 	}
 
@@ -573,7 +573,7 @@ int pr_nodeinfo(struct packetcontext *p)
 			DEBUG(LOG_WARNING,
 			      "%s(): unknown code %u\n",
 			      __func__, query->ni_code);
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 	}
@@ -597,19 +597,19 @@ int pr_nodeinfo(struct packetcontext *p)
 			      "failed to make reply: %s\n",
 			      strerror(errno));
 		}
-		ni_free(p);
+		free(p);
 		return -1;
 	}
 
 	/* XXX: Step 5: Check the policy */
 	rc = ni_policy(p);
 	if (rc <= 0) {
-		ni_free(p->replydata);
+		free(p->replydata);
 		p->replydata = NULL;
 		p->replydatalen = 0;
 		if (rc < 0) {
 			DEBUG(LOG_WARNING, "Ignored by policy.\n");
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 		DEBUG(LOG_WARNING, "Refused by policy.\n");
@@ -629,7 +629,7 @@ int pr_nodeinfo(struct packetcontext *p)
 				      "failed to make reply: %s\n",
 				      strerror(errno));
 			}
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 	}
@@ -637,8 +637,8 @@ int pr_nodeinfo(struct packetcontext *p)
 	/* Step 7: Rate Limit */
 	if (qtypeinfo->flags&QTYPEINFO_F_RATELIMIT &&
 	    ni_ratelimit()) {
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		return -1;
 	}
 
@@ -667,15 +667,15 @@ int pr_nodeinfo(struct packetcontext *p)
 #if ENABLE_THREADS && HAVE_LIBPTHREAD
 	/* ni_send_thread() frees p */
 	if (pthread_create(&thread, &pattr, ni_send_thread, p)) {
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		return -1;
 	}
 #else
 	/* ni_send_fork() frees p */
 	if (ni_send_fork(p)) {
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		return -1;
 	}
 #endif

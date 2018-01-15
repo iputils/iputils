@@ -108,20 +108,6 @@ int ni_send(struct packetcontext *p);
 /* ninfod_core.c */
 extern void DEBUG(int pri, char *fmt, ...);
 
-#define ni_malloc(size)	({										\
-				size_t _size = (size);							\
-				void *ptr = malloc(_size);						\
-				DEBUG(LOG_DEBUG, "%s(): malloc(%zu) = %p\n", __func__, _size, ptr);	\
-				ptr;									\
-			})
-#define ni_free(p)	({										\
-				void *_p = (p);								\
-				int saved_errno = errno;						\
-				DEBUG(LOG_DEBUG, "%s(): free(%p)\n", __func__, _p);			\
-				free(_p);								\
-				errno = saved_errno;							\
-			})
-
 void init_core(int forced);
 int pr_nodeinfo(struct packetcontext *p);
 

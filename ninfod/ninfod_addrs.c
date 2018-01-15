@@ -242,7 +242,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 
 		/* pass 2: store addresses */
 		p->replydatalen = (sizeof(uint32_t)+sizeof(struct in6_addr)) * addrs0;
-		p->replydata = p->replydatalen ? ni_malloc(p->replydatalen) : NULL;
+		p->replydata = p->replydatalen ? malloc(p->replydatalen) : NULL;
 
 		if (p->replydatalen && !p->replydata) {
 			p->reply.ni_flags |= NI_NODEADDR_FLAG_TRUNCATE;
@@ -395,7 +395,7 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 
 		/* pass 2: store addresses */
 		p->replydatalen = (sizeof(uint32_t)+sizeof(struct in_addr)) * addrs0;
-		p->replydata = addrs0 ? ni_malloc(p->replydatalen) : NULL;
+		p->replydata = addrs0 ? malloc(p->replydatalen) : NULL;
 
 		if (p->replydatalen && !p->replydata) {
 			p->reply.ni_flags |= NI_NODEADDR_FLAG_TRUNCATE;
