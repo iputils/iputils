@@ -32,6 +32,10 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
+#if 1
+# define ENABLE_DEBUG 1
+#endif
+
 /* definitions */
 #define NINFOD			"ninfod"
 #define NINFOD_PIDFILE		"/var/run/ninfod.pid"
@@ -102,22 +106,7 @@ int ni_recv(struct packetcontext *p);
 int ni_send(struct packetcontext *p);
 
 /* ninfod_core.c */
-#if ENABLE_DEBUG
-void stderrlog(int priority, char *format, ...);
-# define DEBUG(pri, fmt, args...)	do {									\
-						int saved_errno = errno;					\
-						if (opt_v || pri != LOG_DEBUG) {				\
-							if (daemonized) {					\
-								syslog(pri, fmt, ## args);			\
-							} else {						\
-								stderrlog(pri, fmt, ## args);			\
-							}							\
-						}								\
-						errno = saved_errno;						\
-					} while(0)
-#else
-# define DEBUG(pri, fmt, args...)	do { ; } while(0)
-#endif
+extern void DEBUG(int pri, char *fmt, ...);
 
 #define ni_malloc(size)	({										\
 				size_t _size = (size);							\

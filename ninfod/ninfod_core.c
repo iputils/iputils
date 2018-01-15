@@ -545,7 +545,7 @@ int pr_nodeinfo(struct packetcontext *p)
 
 #if ENABLE_DEBUG
 	cp = printbuf;
-	for (i = 0; i < sizeof(query->icmp6_ni_nonce); i++) {
+	for (i = 0; (size_t)i < sizeof(query->icmp6_ni_nonce); i++) {
 		cp += sprintf(cp, " %02x", query->icmp6_ni_nonce[i]);
 	}
 	DEBUG(LOG_DEBUG, "%s(): qtype=%d, flags=0x%04x, nonce[] = {%s }\n",

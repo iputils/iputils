@@ -135,7 +135,7 @@ static int ipv6_pktinfo = IPV6_PKTINFO;
 
 /* --------- */
 #if ENABLE_DEBUG
-static const __inline__ char * log_level(int priority) {
+__inline__ static const char * log_level(int priority) {
 	switch(priority) {
 	case LOG_EMERG:		return "EMERG";
 	case LOG_ALERT:		return "ALERT";
@@ -149,45 +149,27 @@ static const __inline__ char * log_level(int priority) {
 	}
 }
 
-void stderrlog(int pri, char *fmt, ...)
+void DEBUG(int pri, char *fmt, ...)
 {
+	int saved_errno = errno;
 	va_list ap;
-	char ebuf[512];
-	char *buf;
-	size_t buflen;
 
-	va_start(ap, fmt);
-
-	for (buf = ebuf, buflen = sizeof(ebuf);
-	     buflen < SIZE_MAX / 2;
-	     free(buf != ebuf ? buf : NULL), buf = NULL, buflen *= 2) {
-		size_t rem;
-		size_t res;
-
-		buf = malloc(buflen);
-		if (!buf)
-			break;	/*XXX*/
-
-		rem = buflen;
-
-		res = snprintf(buf, rem, "[%s] ", log_level(pri));
-		if (res >= rem)
-			continue;
-		rem -= res;
-
-		res = vsnprintf(buf + res, rem, fmt, ap);
-
-		if (res >= rem)
-			continue;
-		break;
+	if (opt_v || pri != LOG_DEBUG) {
+		va_start(ap, fmt);
+		if (daemonized) {
+			vsyslog(pri, fmt, ap);
+		} else {
+			fprintf(stderr, "[%s] ", log_level(pri));
+			vfprintf(stderr, fmt, ap);
+		}
+		va_end(ap);
 	}
-
-	if (buf) {
-		fputs(buf, stderr);
-		free(buf != ebuf ? buf : NULL);
-	}
-
-	va_end(ap);
+	errno = saved_errno;
+}
+#else
+void DEBUG(int pri __attribute__((__unused__)),
+	   char *fmt __attribute__((__unused__)), ...)
+{
 }
 #endif
 
@@ -730,7 +712,9 @@ int main (int argc, char **argv)
 
 		if (p->querylen < sizeof(struct icmp6_hdr)) {
 			ni_free(p);
+#if ENABLE_DEBUG
 			DEBUG(LOG_WARNING, "Too short icmp message from %s\n", saddrbuf);
+#endif
 			continue;
 		}
 
@@ -742,9 +726,11 @@ int main (int argc, char **argv)
 		      ntohs(icmph->icmp6_cksum));
 
 		if (icmph->icmp6_type != ICMP6_NI_QUERY) {
+#if ENABLE_DEBUG
 			DEBUG(LOG_WARNING,
 			      "Strange icmp type %d from %s\n", 
 			      icmph->icmp6_type, saddrbuf);
+#endif
 			ni_free(p);
 			continue;
 		}

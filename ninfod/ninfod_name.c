@@ -296,10 +296,10 @@ void init_nodeinfo_nodename(int forced)
 			char niaddrbuf[INET6_ADDRSTRLEN];
 			if (inet_ntop(AF_INET6, &nigroup, niaddrbuf, sizeof(niaddrbuf)) == NULL)
 				strcpy(niaddrbuf, "???");
-#endif
 			DEBUG(LOG_WARNING,
 			      "%s(): failed to leave group %s.\n",
 			      __func__, niaddrbuf);
+#endif
 			memset(&nigroup, 0, sizeof(nigroup));
 		}
 	}
@@ -323,10 +323,10 @@ void init_nodeinfo_nodename(int forced)
 				char niaddrbuf[INET6_ADDRSTRLEN];
 				if (inet_ntop(AF_INET6, &nigroup, niaddrbuf, sizeof(niaddrbuf)) == NULL)
 					strcpy(niaddrbuf, "???");
-#endif
 				DEBUG(LOG_WARNING,
 				      "%s(): failed to join group %s.\n",
 				      __func__, niaddrbuf);
+#endif
 				memset(&nigroup, 0, sizeof(nigroup));
 			}
 		} else {
