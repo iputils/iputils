@@ -15,6 +15,7 @@ add_project_arguments(
 
 conf = configuration_data()
 conf.set_quoted('PACKAGE_NAME', meson.project_name())
+conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that have them.')
 
 if cc.compiles('''
 	#include <sys/types.h>
@@ -69,6 +70,7 @@ opt = get_option('USE_IDN')
 if opt == true
 	idn_dep = cc.find_library('idn2', required : false)
 	add_project_arguments('-DUSE_IDN', language : 'c')
+	conf.set('USE_IDN', 1, description : 'If set use Internationalized Domain Name library.')
 else
 	idn_dep = []
 endif
@@ -76,13 +78,13 @@ endif
 opt = get_option('USE_CRYPTO')
 if opt == 'nettle'
 	crypto_dep = dependency('nettle')
-	add_project_arguments('-DUSE_NETTLE', language : 'c')
+	conf.set('USE_NETTLE', 1, description : 'If set use nettle crypto library.')
 elif opt == 'gcrypt'
 	crypto_dep = cc.find_library('gcrypt')
-	add_project_arguments('-DUSE_GCRYPT', language : 'c')
+	conf.set('USE_GCRYPT', 1, description : 'If set use gcrypt crypto library.')
 elif opt == 'openssl'
 	crypto_dep = dependency('openssl')
-	add_project_arguments('-DUSE_OPENSSL', language : 'c')
+	conf.set('USE_OPENSSL', 1, description : 'if set use openssl crypto library.')
 elif opt == 'none'
 	crypto_dep = []
 	conf.set('PING6_NONCE_MEMORY', 1, description : 'If set RFC6744 random does not use any CRYPTO lib.')
