@@ -279,7 +279,7 @@ void drop_capabilities(void)
 /* Fills all the outpack, excluding ICMP header, but _including_
  * timestamp area with supplied pattern.
  */
-void fill(char *patp, void *packet, unsigned packet_size)
+void fill(char *patp, unsigned char *packet, unsigned packet_size)
 {
 	int ii, jj;
 	unsigned int pat[16];

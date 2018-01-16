@@ -1068,7 +1068,7 @@ void pr_echo_reply(uint8_t *_icmph, int cc __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *) _icmph;
 	printf(" icmp_seq=%u", ntohs(icmph->icmp6_seq));
-};
+}
 
 static void putchar_safe(char c)
 {
