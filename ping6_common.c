@@ -107,10 +107,8 @@ static inline int ntohsp(uint16_t *p)
 unsigned int if_name2index(const char *ifname)
 {
 	unsigned int i = if_nametoindex(ifname);
-	if (!i) {
-		fprintf(stderr, "ping: unknown iface %s\n", ifname);
-		exit(2);
-	}
+	if (!i)
+		error(2, 0, "unknown iface: %s", ifname);
 	return i;
 }
 
@@ -185,10 +183,8 @@ static void niquery_init_nonce(void)
 	srand(seed);
 
 	ni_nonce_ptr = calloc(NI_NONCE_SIZE, MAX_DUP_CHK);
-	if (!ni_nonce_ptr) {
-		perror("ping6: calloc");
-		exit(2);
-	}
+	if (!ni_nonce_ptr)
+		error(2, errno, "calloc");
 
 	ni_nonce_ptr[0] = ~0;
 #else
@@ -224,8 +220,7 @@ static int niquery_nonce(uint8_t *nonce, int fill)
 		return ntohsp((uint16_t *)nonce);
 	}
 # else
-	fprintf(stderr, "ping6: function not available; crypto disabled\n");
-	exit(3);
+	error(3, ENOSYS, "niquery_nonce() crypto disabled");
 # endif
 }
 #endif
@@ -355,7 +350,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 
 	status = getaddrinfo(arg, 0, &hints, &result);
 	if (status) {
-		fprintf(stderr, "ping6: %s: %s\n", arg, gai_strerror(status));
+		error(0, 0, "%s: %s", arg, gai_strerror(status));
 		return -1;
 	}
 
@@ -405,11 +400,8 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 
 #ifdef USE_IDN
 	rc = idn2_lookup_ul(name, &idn, IDN2_FLAGS);
-	if (rc) {
-		fprintf(stderr, "ping6: IDN encoding error: %s\n",
-			idn2_strerror(rc));
-		exit(2);
-	}
+	if (rc)
+		error(2, 0, "IDN encoding error: %s", idn2_strerror(rc));
 #else
 	idn = strdup(name);
 	if (!idn)
@@ -419,10 +411,8 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	p = strchr(idn, SCOPE_DELIMITER);
 	if (p) {
 		*p = '\0';
-		if (strlen(p + 1) >= IFNAMSIZ) {
-			fprintf(stderr, "ping6: too long scope name.\n");
-			exit(1);
-		}
+		if (strlen(p + 1) >= IFNAMSIZ)
+			error(1, 0, "too long scope name");
 	}
 
 	namelen = strlen(idn);
@@ -446,7 +436,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 					   plus non-fqdn indicator. */
 	buf = malloc(buflen);
 	if (!buf) {
-		fprintf(stderr, "ping6: out of memory.\n");
+		error(0, errno, "memory allocation failed");
 		goto errexit;
 	}
 
@@ -458,10 +448,10 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 
 	n = dn_comp(canonname, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
 	if (n < 0) {
-		fprintf(stderr, "ping6: Inappropriate subject name: %s\n", canonname);
+		error(0, 0, "inappropriate subject name: %s", canonname);
 		goto errexit;
 	} else if ((size_t) n >= buflen) {
-		fprintf(stderr, "ping6: dn_comp() returned too long result.\n");
+		error(0, 0, "dn_comp() returned too long result");
 		goto errexit;
 	}
 
@@ -489,7 +479,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 
 	return 0;
 oomexit:
-	fprintf(stderr, "ping6: out of memory.\n");
+	error(0, errno, "memory allocation failed");
 errexit:
 	free(buf);
 	free(canonname);
@@ -500,8 +490,7 @@ errexit:
 static int niquery_option_subject_name_handler(int index __attribute__((__unused__)),
 					       const char *name __attribute__((__unused__)))
 {
-	fprintf(stderr, "ping6: function not available; crypto disabled\n");
-	exit(3);
+	error(3, ENOSYS, "niquery_option_subject_name_handler() crypto disabled");
 }
 #endif
 
@@ -590,10 +579,8 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	if (!ai) {
 		status = getaddrinfo(target, NULL, &hints, &result);
-		if (status) {
-			fprintf(stderr, "ping6: %s: %s\n", target, gai_strerror(status));
-			exit(2);
-		}
+		if (status)
+			error(2, 0, "%s: %s", target, gai_strerror(status));
 		ai = result;
 	}
 
@@ -610,12 +597,10 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		memcpy(&firsthop.sin6_addr, &whereto.sin6_addr, 16);
 		firsthop.sin6_scope_id = whereto.sin6_scope_id;
 		/* Verify scope_id is the same as intermediate nodes */
-		if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id) {
-			fprintf(stderr, "scope discrepancy among the nodes\n");
-			exit(2);
-		} else if (!scope_id) {
+		if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id)
+			error(2, 0, "scope discrepancy among the nodes");
+		else if (!scope_id)
 			scope_id = firsthop.sin6_scope_id;
-		}
 	}
 
 	hostname = target;
@@ -624,10 +609,8 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
-		if (probe_fd < 0) {
-			perror("socket");
-			exit(2);
-		}
+		if (probe_fd < 0)
+			error(2, errno, "socket");
 		if (device) {
 			unsigned int iface = if_name2index(device);
 #ifdef IPV6_RECVPKTINFO
@@ -652,8 +635,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			if (
 				setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1 ||
 				setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
-				perror("setsockopt(SO_BINDTODEVICE)");
-				exit(2);
+					error(2, errno, "setsockopt(SO_BINDTODEVICE) %s", device);
 			}
 			disable_capability_raw();
 		}
@@ -663,25 +645,19 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			firsthop.sin6_family = AF_INET6;
 
 		firsthop.sin6_port = htons(1025);
-		if (connect(probe_fd, (struct sockaddr*)&firsthop, sizeof(firsthop)) == -1) {
-			perror("connect");
-			exit(2);
-		}
+		if (connect(probe_fd, (struct sockaddr*)&firsthop, sizeof(firsthop)) == -1)
+			error(2, errno, "connect");
 		alen = sizeof source6;
-		if (getsockname(probe_fd, (struct sockaddr *) &source6, &alen) == -1) {
-			perror("getsockname");
-			exit(2);
-		}
+		if (getsockname(probe_fd, (struct sockaddr *) &source6, &alen) == -1)
+			error(2, errno, "getsockname");
 		source6.sin6_port = 0;
 		close(probe_fd);
 
 		if (device) {
 			struct ifaddrs *ifa0, *ifa;
 
-			if (getifaddrs(&ifa0)) {
-				perror("getifaddrs");
-				exit(2);
-			}
+			if (getifaddrs(&ifa0))
+				error(2, errno, "getifaddrs");
 
 			for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
 				if (!ifa->ifa_addr || ifa->ifa_addr->sa_family != AF_INET6)
@@ -692,7 +668,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 					break;
 			}
 			if (!ifa)
-				fprintf(stderr, "ping6: Warning: source address might be selected on device other than %s.\n", device);
+				error(0, 0, "Warning: source address might be selected on device other than: %s", device);
 
 			freeifaddrs(ifa0);
 		}
@@ -718,41 +694,31 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	if ((whereto.sin6_addr.s6_addr16[0]&htons(0xff00)) == htons (0xff00)) {
 		if (uid) {
-			if (interval < 1000) {
-				fprintf(stderr, "ping: multicast ping with too short interval.\n");
-				exit(2);
-			}
-			if (pmtudisc >= 0 && pmtudisc != IPV6_PMTUDISC_DO) {
-				fprintf(stderr, "ping: multicast ping does not fragment.\n");
-				exit(2);
-			}
+			if (interval < 1000)
+				error(2, 0, "multicast ping with too short interval: %d", interval);
+			if (pmtudisc >= 0 && pmtudisc != IPV6_PMTUDISC_DO)
+				error(2, 0, "multicast ping does not fragment");
 		}
 		if (pmtudisc < 0)
 			pmtudisc = IPV6_PMTUDISC_DO;
 	}
 
 	if (pmtudisc >= 0) {
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MTU_DISCOVER, &pmtudisc, sizeof pmtudisc) == -1) {
-			perror("ping: IPV6_MTU_DISCOVER");
-			exit(2);
-		}
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MTU_DISCOVER, &pmtudisc, sizeof pmtudisc) == -1)
+			error(2, errno, "IPV6_MTU_DISCOVER");
 	}
 
 	if ((options&F_STRICTSOURCE) &&
-	    bind(sock->fd, (struct sockaddr *) &source6, sizeof source6) == -1) {
-		perror("ping: bind icmp socket");
-		exit(2);
-	}
+	    bind(sock->fd, (struct sockaddr *) &source6, sizeof source6) == -1)
+		error(2, errno, "bind icmp socket");
 
 	if ((ssize_t) datalen >= (ssize_t) sizeof(struct timeval) && (ni_query < 0)) {
 		/* can we time transfer */
 		timing = 1;
 	}
 	packlen = datalen + 8 + 4096 + 40 + 8; /* 4096 for rthdr */
-	if (!(packet = (unsigned char *)malloc((unsigned int)packlen))) {
-		fprintf(stderr, "ping: out of memory.\n");
-		exit(2);
-	}
+	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
+		error(2, errno, "memory allocation failed");
 
 	hold = 1;
 
@@ -772,7 +738,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			/* checksum should be enabled by default and setting this
 			 * option might fail anyway.
 			 */
-			fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
+			error(0, errno, "setsockopt(RAW_CHECKSUM) failed - try to continue");
 		}
 #endif
 
@@ -794,28 +760,20 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 		err = setsockopt(sock->fd, IPPROTO_ICMPV6, ICMP6_FILTER, &filter, sizeof filter);
 
-		if (err < 0) {
-			perror("setsockopt(ICMP6_FILTER)");
-			exit(2);
-		}
+		if (err < 0)
+			error(2, errno, "setsockopt(ICMP6_FILTER)");
 	}
 
 	if (options & F_NOLOOP) {
 		int loop = 0;
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &loop, sizeof loop) == -1) {
-			perror ("can't disable multicast loopback");
-			exit(2);
-		}
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &loop, sizeof loop) == -1)
+			error(2, errno, "can't disable multicast loopback");
 	}
 	if (options & F_TTL) {
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &ttl, sizeof ttl) == -1) {
-			perror ("can't set multicast hop limit");
-			exit(2);
-		}
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof ttl) == -1) {
-			perror ("can't set unicast hop limit");
-			exit(2);
-		}
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &ttl, sizeof ttl) == -1)
+			error(2, errno, "can't set multicast hop limit");
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof ttl) == -1)
+			error(2, errno, "can't set unicast hop limit");
 	}
 
 	const int on = 1;
@@ -826,19 +784,15 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #else
 	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_HOPLIMIT, &on, sizeof on) == -1
 #endif
-	   ){
-		perror ("can't receive hop limit");
-		exit(2);
-	}
+	   )
+		error(2, errno, "can't receive hop limit");
 
 	if (options & F_TCLASS) {
 #ifdef IPV6_TCLASS
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass) == -1) {
-			perror ("setsockopt(IPV6_TCLASS)");
-			exit(2);
-		}
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass) == -1)
+			error(2, errno, "setsockopt(IPV6_TCLASS)");
 #else
-		fprintf(stderr, "Traffic class is not supported.\n");
+		error(0, 0, "traffic class is not supported");
 #endif
 	}
 
@@ -853,25 +807,19 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		freq->flr_flags = IPV6_FL_F_CREATE;
 		freq->flr_share = IPV6_FL_S_EXCL;
 		memcpy(&freq->flr_dst, &whereto.sin6_addr, 16);
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1) {
-			perror ("can't set flowlabel");
-			exit(2);
-		}
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1)
+			error(2, errno, "can't set flowlabel");
 		flowlabel = freq->flr_label;
 #else
-		fprintf(stderr, "Flow labels are not supported.\n");
-		exit(2);
+		error(2, 0, "flow labels are not supported");
 #endif
 
 #ifdef IPV6_FLOWINFO_SEND
 		whereto.sin6_flowinfo = flowlabel;
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1) {
-			perror ("can't send flowinfo");
-			exit(2);
-		}
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1)
+			error(2, errno, "can't send flowinfo");
 #else
-		fprintf(stderr, "Flowinfo is not supported.\n");
-		exit(2);
+		error(2, 0, "flowinfo is not supported");
 #endif
 	}
 
@@ -939,9 +887,9 @@ int ping6_receive_error_msg(socket_st *sock)
 		if (options & F_FLOOD)
 			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
-			fprintf(stderr, "ping: local error: %s\n", strerror(e->ee_errno));
+			error(0, e->ee_errno, "local error");
 		else
-			fprintf(stderr, "ping: local error: Message too long, mtu=%u\n", e->ee_info);
+			error(0, 0, "local error: message too long, mtu: %u", e->ee_info);
 		nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP6) {
 		struct sockaddr_in6 *sin6 = (struct sockaddr_in6*)(e+1);
@@ -1244,7 +1192,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 	icmph = (struct icmp6_hdr *) buf;
 	if (cc < 8) {
 		if (options & F_VERBOSE)
-			fprintf(stderr, "ping: packet too short (%d bytes)\n", cc);
+			error(0, 0, "packet too short: %d bytes", cc);
 		return 1;
 	}
 
@@ -1428,5 +1376,5 @@ void ping6_install_filter(socket_st *sock)
 	insns[1] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, htons(ident), 0, 1);
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
-		perror("WARNING: failed to install socket filter\n");
+		error(0, errno, "WARNING: failed to install socket filter");
 }

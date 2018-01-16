@@ -156,59 +156,35 @@ void limit_capabilities(void)
 	cap_flag_value_t cap_ok;
 
 	cap_cur_p = cap_get_proc();
-	if (!cap_cur_p) {
-		perror("ping: cap_get_proc");
-		exit(-1);
-	}
-
+	if (!cap_cur_p)
+		error(-1, errno, "cap_get_proc");
 	cap_p = cap_init();
-	if (!cap_p) {
-		perror("ping: cap_init");
-		exit(-1);
-	}
-
+	if (!cap_p)
+		error(-1, errno, "cap_init");
 	cap_ok = CAP_CLEAR;
 	cap_get_flag(cap_cur_p, CAP_NET_ADMIN, CAP_PERMITTED, &cap_ok);
-
 	if (cap_ok != CAP_CLEAR)
 		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_admin, CAP_SET);
-
 	cap_ok = CAP_CLEAR;
 	cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok);
-
 	if (cap_ok != CAP_CLEAR)
 		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_raw, CAP_SET);
-
-	if (cap_set_proc(cap_p) < 0) {
-		perror("ping: cap_set_proc");
-		exit(-1);
-	}
-
-	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
-		perror("ping: prctl");
-		exit(-1);
-	}
-
-	if (setuid(getuid()) < 0) {
-		perror("setuid");
-		exit(-1);
-	}
-
-	if (prctl(PR_SET_KEEPCAPS, 0) < 0) {
-		perror("ping: prctl");
-		exit(-1);
-	}
-
+	if (cap_set_proc(cap_p) < 0)
+		error(-1, errno, "cap_set_proc");
+	if (prctl(PR_SET_KEEPCAPS, 1) < 0)
+		error(-1, errno, "prctl");
+	if (setuid(getuid()) < 0)
+		error(-1, errno, "setuid");
+	if (prctl(PR_SET_KEEPCAPS, 0) < 0)
+		error(-1, errno, "prctl");
 	cap_free(cap_p);
 	cap_free(cap_cur_p);
 #endif
 	uid = getuid();
 	euid = geteuid();
 #ifndef HAVE_LIBCAP
-	if (seteuid(uid)) {
-		perror("ping: setuid");
-		exit(-1);
-	}
+	if (seteuid(uid))
+		error(-1, errno, "setuid");
 #endif
 }
 
@@ -220,7 +196,7 @@ int modify_capability(cap_value_t cap, cap_flag_value_t on)
 	int rc = -1;
 
 	if (!cap_p) {
-		perror("ping: cap_get_proc");
+		error(0, errno, "cap_get_proc");
 		goto out;
 	}
 
@@ -234,7 +210,7 @@ int modify_capability(cap_value_t cap, cap_flag_value_t on)
 	cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap, on);
 
 	if (cap_set_proc(cap_p) < 0) {
-		perror("ping: cap_set_proc");
+		error(0, errno, "cap_set_proc");
 		goto out;
 	}
 
@@ -251,7 +227,7 @@ out:
 int modify_capability(int on)
 {
 	if (seteuid(on ? euid : getuid())) {
-		perror("seteuid");
+		error(0, errno, "seteuid");
 		return -1;
 	}
 
@@ -263,16 +239,12 @@ void drop_capabilities(void)
 {
 #ifdef HAVE_LIBCAP
 	cap_t cap = cap_init();
-	if (cap_set_proc(cap) < 0) {
-		perror("ping: cap_set_proc");
-		exit(-1);
-	}
+	if (cap_set_proc(cap) < 0)
+		error(-1, errno, "cap_set_proc");
 	cap_free(cap);
 #else
-	if (setuid(getuid())) {
-		perror("ping: setuid");
-		exit(-1);
-	}
+	if (setuid(getuid()))
+		error(-1, errno, "setuid");
 #endif
 }
 
@@ -291,11 +263,8 @@ void fill(char *patp, unsigned char *packet, unsigned packet_size)
 #endif
 
 	for (cp = patp; *cp; cp++) {
-		if (!isxdigit(*cp)) {
-			fprintf(stderr,
-				"ping: patterns must be specified as hex digits.\n");
-			exit(2);
-		}
+		if (!isxdigit(*cp))
+			error(2, 0, "patterns must be specified as hex digits: %s", cp);
 	}
 	ii = sscanf(patp,
 	    "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
@@ -530,7 +499,7 @@ void sock_setbufs(socket_st *sock, int alloc)
 	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
 	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
-			fprintf(stderr, "WARNING: probably, rcvbuf is not enough to hold preload.\n");
+			error(0, 0, "WARNING: probably, rcvbuf is not enough to hold preload");
 	}
 }
 
@@ -545,15 +514,11 @@ void setup(socket_st *sock)
 	if ((options & F_FLOOD) && !(options & F_INTERVAL))
 		interval = 0;
 
-	if (uid && interval < MINUSERINTERVAL) {
-		fprintf(stderr, "ping: cannot flood; minimal interval allowed for user is %dms\n", MINUSERINTERVAL);
-		exit(2);
-	}
+	if (uid && interval < MINUSERINTERVAL)
+		error(2, 0, "cannot flood; minimal interval allowed for user is %dms", MINUSERINTERVAL);
 
-	if (interval >= INT_MAX/preload) {
-		fprintf(stderr, "ping: illegal preload and/or interval\n");
-		exit(2);
-	}
+	if (interval >= INT_MAX/preload)
+		error(2, 0, "illegal preload and/or interval: %d", interval);
 
 	hold = 1;
 	if (options & F_SO_DEBUG)
@@ -565,22 +530,24 @@ void setup(socket_st *sock)
 	if (!(options&F_LATENCY)) {
 		int on = 1;
 		if (setsockopt(sock->fd, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
-			fprintf(stderr, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP\n");
+			error(0, 0, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP");
 	}
 #endif
 #ifdef SO_MARK
 	if (options & F_MARK) {
 		int ret;
+		int errno_save;
 
 		enable_capability_admin();
 		ret = setsockopt(sock->fd, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
+		errno_save = errno;
 		disable_capability_admin();
 
 		if (ret == -1) {
 			/* we probably dont wanna exit since old kernels
 			 * dont support mark ..
 			*/
-			fprintf(stderr, "Warning: Failed to set mark %d\n", mark);
+			error(0, errno_save, "Warning: Failed to set mark: %d", mark);
 		}
 	}
 #endif
@@ -773,7 +740,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int pac
 				recv_error = 0;
 				if (!fset->receive_error_msg(sock)) {
 					if (errno) {
-						perror("ping: recvmsg");
+						error(0, errno, "recvmsg");
 						break;
 					}
 					not_ours = 1;
@@ -839,7 +806,7 @@ restamp:
 		tvsub(tv, &tmp_tv);
 		triptime = tv->tv_sec * 1000000 + tv->tv_usec;
 		if (triptime < 0) {
-			fprintf(stderr, "Warning: time of day goes back (%ldus), taking countermeasures.\n", triptime);
+			error(0, 0, "Warning: time of day goes back (%ldus), taking countermeasures", triptime);
 			triptime = 0;
 			if (!(options & F_LATENCY)) {
 				gettimeofday(tv, NULL);

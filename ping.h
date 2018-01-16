@@ -15,6 +15,7 @@
 #include <sys/uio.h>
 #include <ctype.h>
 #include <errno.h>
+#include <error.h>
 #include <string.h>
 #include <netdb.h>
 #include <setjmp.h>
