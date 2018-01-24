@@ -830,7 +830,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		int saved_options = options;
 
 		options |= F_NUMERIC;
-		printf("from %s %s: ", pr_addr(&source6, sizeof source6), device ? : "");
+		printf("from %s %s: ", pr_addr(&source6, sizeof source6), device ? device : "");
 		options = saved_options;
 	}
 	printf("%d data bytes\n", datalen);
@@ -920,7 +920,7 @@ int ping6_receive_error_msg(socket_st *sock)
 
 out:
 	errno = saved_errno;
-	return net_errors ? : -local_errors;
+	return net_errors ? net_errors : -local_errors;
 }
 
 /*

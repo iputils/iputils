@@ -1179,7 +1179,7 @@ main(int argc, char **argv)
 
 	if (!quiet) {
 		printf("ARPING %s ", inet_ntoa(gdst));
-		printf("from %s %s\n",  inet_ntoa(gsrc), device.name ? : "");
+		printf("from %s %s\n",  inet_ntoa(gsrc), device.name ? device.name : "");
 	}
 
 	if (!gsrc.s_addr && !dad) {

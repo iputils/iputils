@@ -778,7 +778,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 	printf("PING %s (%s) ", hostname, inet_ntoa(whereto.sin_addr));
 	if (device || (options&F_STRICTSOURCE))
-		printf("from %s %s: ", inet_ntoa(source.sin_addr), device ?: "");
+		printf("from %s %s: ", inet_ntoa(source.sin_addr), device ? device : "");
 	printf("%d(%d) bytes of data.\n", datalen, datalen+8+optlen+20);
 
 	setup(sock);
@@ -866,7 +866,7 @@ int ping4_receive_error_msg(socket_st *sock)
 
 out:
 	errno = saved_errno;
-	return net_errors ? : -local_errors;
+	return net_errors ? net_errors : -local_errors;
 }
 
 /*
