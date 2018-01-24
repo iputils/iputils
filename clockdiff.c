@@ -267,7 +267,7 @@ empty:
 			  if (diff < 0)
 			    continue;
 			  rtt = (rtt * 3 + diff)/4;
-			  rtt_sigma = (rtt_sigma *3 + abs(diff-rtt))/4;
+			  rtt_sigma = (rtt_sigma *3 + labs(diff-rtt))/4;
 			  msgcount++;
 			  histime = ntohl(((__u32*)(icp+1))[1]);
 		/*
@@ -482,7 +482,7 @@ empty:
 				if (diff < 0)
 					continue;
 				rtt = (rtt * 3 + diff)/4;
-				rtt_sigma = (rtt_sigma *3 + abs(diff-rtt))/4;
+				rtt_sigma = (rtt_sigma *3 + labs(diff-rtt))/4;
 				msgcount++;
 
 				if (interactive) {
