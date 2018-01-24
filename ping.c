@@ -96,7 +96,7 @@ static struct {
 	struct cmsghdr cm;
 	struct in_pktinfo ipi;
 } cmsg = { {sizeof(struct cmsghdr) + sizeof(struct in_pktinfo), SOL_IP, IP_PKTINFO},
-	   {0, }};
+	   {0, {0}, {0}}};
 int cmsg_len;
 
 static struct sockaddr_in source = { .sin_family = AF_INET };
@@ -1460,7 +1460,7 @@ char *
 pr_addr(void *sa, socklen_t salen)
 {
 	static char buffer[4096] = "";
-	static struct sockaddr_storage last_sa = { 0 };
+	static struct sockaddr_storage last_sa = { 0, {0}, 0 };
 	static socklen_t last_salen = 0;
 	char name[NI_MAXHOST] = "";
 	char address[NI_MAXHOST] = "";

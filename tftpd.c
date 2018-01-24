@@ -199,7 +199,7 @@ struct formats {
 } formats[] = {
 	{ "netascii",	validate_access,	sendfile,	recvfile, 1 },
 	{ "octet",	validate_access,	sendfile,	recvfile, 0 },
-	{ 0 }
+	{ NULL, 0, NULL, NULL, 0 }
 };
 
 /*

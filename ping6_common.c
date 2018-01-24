@@ -154,7 +154,7 @@ struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("subject-name",		1,	0,				niquery_option_subject_name_handler),
 	NIQUERY_OPTION("subject-fqdn",		1,	-1,				niquery_option_subject_name_handler),
 	NIQUERY_OPTION("help",			0,	0,				niquery_option_help_handler),
-	{},
+	{NULL, 0, 0, 0, NULL}
 };
 
 static inline int niquery_is_enabled(void)
