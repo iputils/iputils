@@ -192,6 +192,29 @@ static void set_socket_option(socket_st *sock, int level, int optname, const voi
 	}
 }
 
+static void parse_optarg_msec(int *dest, const char *err_msg)
+{
+	double dbl;
+	char *ep;
+
+	errno = 0;
+#ifdef USE_IDN
+	setlocale(LC_ALL, "C");
+#endif
+	dbl = strtod(optarg, &ep);
+#ifdef USE_IDN
+	setlocale(LC_ALL, "");
+#endif
+
+	if (errno || *ep != '\0' ||
+		!finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0) {
+		fprintf(stderr, err_msg);
+		exit(2);
+	}
+
+	*dest = (int)(dbl * 1000);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -297,26 +320,7 @@ main(int argc, char **argv)
 			break;
 		case 'i':
 		{
-			double dbl;
-			char *ep;
-
-			errno = 0;
-#ifdef USE_IDN
-			setlocale(LC_ALL, "C");
-#endif
-			dbl = strtod(optarg, &ep);
-#ifdef USE_IDN
-			setlocale(LC_ALL, "");
-#endif
-
-			if (errno || *ep != '\0' ||
-				!finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0) {
-				fprintf(stderr, "ping: bad timing interval\n");
-				exit(2);
-			}
-
-			interval = (int)(dbl * 1000);
-
+			parse_optarg_msec(&interval, "ping: bad timing interval.\n");
 			options |= F_INTERVAL;
 			break;
 		}
@@ -458,12 +462,12 @@ main(int argc, char **argv)
 			}
 			break;
 		case 'W':
-			lingertime = atoi(optarg);
-			if (lingertime <= 0 || lingertime > INT_MAX/1000000) {
+			parse_optarg_msec(&lingertime, "ping: bad linger time.\n");
+			/* lingertime will be converted to usec later */
+			if (lingertime <= 0 || lingertime > INT_MAX/1000) {
 				fprintf(stderr, "ping: bad linger time.\n");
 				exit(2);
 			}
-			lingertime *= 1000;
 			break;
 		default:
 			usage();
