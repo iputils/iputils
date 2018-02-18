@@ -412,7 +412,7 @@ main(int argc, char **argv)
 			break;
 		case 'W':
 			lingertime = atoi(optarg);
-			if (lingertime < 0 || lingertime > INT_MAX/1000000)
+			if (lingertime <= 0 || lingertime > INT_MAX / 1000000) {
 				error(2, 0, "bad linger time: %s", optarg);
 			lingertime *= 1000;
 			break;
