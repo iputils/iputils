@@ -845,13 +845,13 @@ restamp:
 		}
 		if (timing) {
 			if (triptime >= 100000)
-				printf(" time=%ld ms", triptime/1000);
+				printf(" time=%ld ms", (triptime+500)/1000);
 			else if (triptime >= 10000)
 				printf(" time=%ld.%01ld ms", triptime/1000,
-				       (triptime%1000)/100);
+				       ((triptime%1000)+50)/100);
 			else if (triptime >= 1000)
 				printf(" time=%ld.%02ld ms", triptime/1000,
-				       (triptime%1000)/10);
+				       ((triptime%1000)+5)/10);
 			else
 				printf(" time=%ld.%03ld ms", triptime/1000,
 				       triptime%1000);
@@ -925,7 +925,7 @@ void finish(void)
 		printf(", %g%% packet loss",
 		       (float) ((((long long)(ntransmitted - nreceived)) * 100.0) /
 			      ntransmitted));
-		printf(", time %ldms", 1000*tv.tv_sec+tv.tv_usec/1000);
+		printf(", time %ldms", (1000*tv.tv_sec+tv.tv_usec+500)/1000);
 	}
 	putchar('\n');
 
