@@ -55,6 +55,7 @@
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 #include <ifaddrs.h>
+#include <math.h>
 
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
@@ -182,6 +183,40 @@ static void set_socket_option(socket_st *sock, int level, int optname, const voi
 		error(2, errno, "setsockopt");
 }
 
+/* Much like stdtod(3, but will fails if str is not valid number. */
+static double ping_strtod(const char *str, const char *err_msg)
+{
+	double num;
+	char *end = NULL;
+
+	if (str == NULL || *str == '\0')
+		goto err;
+	errno = 0;
+#ifdef USE_IDN
+	setlocale(LC_ALL, "C");
+#endif
+	num = strtod(str, &end);
+#ifdef USE_IDN
+	setlocale(LC_ALL, "");
+#endif
+	if (errno || str == end || (end && *end))
+		goto err;
+	switch (fpclassify(num)) {
+	case FP_NORMAL:
+	case FP_ZERO:
+		break;
+	default:
+		errno = ERANGE;
+		goto err;
+	}
+	return num;
+ err:
+	if (errno == ERANGE)
+		error(2, errno, "%s: %s", err_msg, str);
+	error(2, 0, "%s: %s", err_msg, str);
+	return num;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -275,27 +310,15 @@ main(int argc, char **argv)
 			break;
 		case 'i':
 		{
-			double dbl;
-			char *ep;
+			double optval;
 
-			errno = 0;
-#ifdef USE_IDN
-			setlocale(LC_ALL, "C");
-#endif
-			dbl = strtod(optarg, &ep);
-#ifdef USE_IDN
-			setlocale(LC_ALL, "");
-#endif
-
-			if (errno || *ep != '\0' ||
-				!finite(dbl) || dbl < 0.0 || dbl >= (double)INT_MAX / 1000 - 1.0)
+			optval = ping_strtod(optarg, "bad timing interval");
+			if (isgreater(optval, (double)(INT_MAX / 1000)))
 				error(2, 0, "bad timing interval: %s", optarg);
-
-			interval = (int)(dbl * 1000);
-
+			interval = (int)(optval * 1000);
 			options |= F_INTERVAL;
-			break;
 		}
+			break;
 		case 'I':
 			/* IPv6 */
 			if (strchr(optarg, ':')) {
@@ -411,10 +434,15 @@ main(int argc, char **argv)
 				error(2, 0, "bad wait time: %s", optarg);
 			break;
 		case 'W':
-			lingertime = atoi(optarg);
-			if (lingertime <= 0 || lingertime > INT_MAX / 1000000) {
+		{
+			double optval;
+
+			optval = ping_strtod(optarg, "bad linger time");
+			if (isless(optval, 0.001) || isgreater(optval, (double)(INT_MAX / 1000)))
 				error(2, 0, "bad linger time: %s", optarg);
-			lingertime *= 1000;
+			/* lingertime will be converted to usec later */
+			lingertime = (int)(optval * 1000);
+		}
 			break;
 		default:
 			usage();
