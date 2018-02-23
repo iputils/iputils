@@ -108,7 +108,7 @@ unsigned int if_name2index(const char *ifname)
 {
 	unsigned int i = if_nametoindex(ifname);
 	if (!i)
-		error(2, 0, "unknown iface: %s", ifname);
+		error(2, 0, _("unknown iface: %s"), ifname);
 	return i;
 }
 
@@ -220,7 +220,7 @@ static int niquery_nonce(uint8_t *nonce, int fill)
 		return ntohsp((uint16_t *)nonce);
 	}
 # else
-	error(3, ENOSYS, "niquery_nonce() crypto disabled");
+	error(3, ENOSYS, _("niquery_nonce() crypto disabled"));
 # endif
 }
 #endif
@@ -258,7 +258,7 @@ static inline int niquery_check_nonce(uint8_t *nonce)
 static int niquery_set_qtype(int type)
 {
 	if (niquery_is_enabled() && ni_query != type) {
-		printf("Qtype conflict\n");
+		printf(_("Qtype conflict\n"));
 		return -1;
 	}
 	ni_query = type;
@@ -310,7 +310,7 @@ static inline int niquery_is_subject_valid(void)
 static int niquery_set_subject_type(int type)
 {
 	if (niquery_is_subject_valid() && ni_subject_type != type) {
-		printf("Subject type conflict\n");
+		printf(_("Subject type conflict\n"));
 		return -1;
 	}
 	ni_subject_type = type;
@@ -401,7 +401,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 #ifdef USE_IDN
 	rc = idn2_lookup_ul(name, &idn, IDN2_FLAGS);
 	if (rc)
-		error(2, 0, "IDN encoding error: %s", idn2_strerror(rc));
+		error(2, 0, _("IDN encoding error: %s"), idn2_strerror(rc));
 #else
 	idn = strdup(name);
 	if (!idn)
@@ -412,7 +412,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	if (p) {
 		*p = '\0';
 		if (strlen(p + 1) >= IFNAMSIZ)
-			error(1, 0, "too long scope name");
+			error(1, 0, _("too long scope name"));
 	}
 
 	namelen = strlen(idn);
@@ -436,7 +436,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 					   plus non-fqdn indicator. */
 	buf = malloc(buflen);
 	if (!buf) {
-		error(0, errno, "memory allocation failed");
+		error(0, errno, _("memory allocation failed"));
 		goto errexit;
 	}
 
@@ -448,10 +448,10 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 
 	n = dn_comp(canonname, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
 	if (n < 0) {
-		error(0, 0, "inappropriate subject name: %s", canonname);
+		error(0, 0, _("inappropriate subject name: %s"), canonname);
 		goto errexit;
 	} else if ((size_t) n >= buflen) {
-		error(0, 0, "dn_comp() returned too long result");
+		error(0, 0, _("dn_comp() returned too long result"));
 		goto errexit;
 	}
 
@@ -479,7 +479,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 
 	return 0;
 oomexit:
-	error(0, errno, "memory allocation failed");
+	error(0, errno, _("memory allocation failed"));
 errexit:
 	free(buf);
 	free(canonname);
@@ -490,13 +490,13 @@ errexit:
 static int niquery_option_subject_name_handler(int index __attribute__((__unused__)),
 					       const char *name __attribute__((__unused__)))
 {
-	error(3, ENOSYS, "niquery_option_subject_name_handler() crypto disabled");
+	error(3, ENOSYS, _("niquery_option_subject_name_handler() crypto disabled"));
 }
 #endif
 
 int niquery_option_help_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	fprintf(stderr, "ping -6 -N <nodeinfo opt>\n"
+	fprintf(stderr, _("ping -6 -N <nodeinfo opt>\n"
 			"Help:\n"
 			"  help\n"
 			"Query:\n"
@@ -514,7 +514,7 @@ int niquery_option_help_handler(int index __attribute__((__unused__)), const cha
 			"  subject-ipv4=addr\n"
 			"  subject-name=name\n"
 			"  subject-fqdn=name\n"
-		);
+		));
 	exit(2);
 }
 
@@ -580,7 +580,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	if (!ai) {
 		status = getaddrinfo(target, NULL, &hints, &result);
 		if (status)
-			error(2, 0, "%s: %s", target, gai_strerror(status));
+			error(2, 0, _("%s: %s"), target, gai_strerror(status));
 		ai = result;
 	}
 
@@ -598,7 +598,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		firsthop.sin6_scope_id = whereto.sin6_scope_id;
 		/* Verify scope_id is the same as intermediate nodes */
 		if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id)
-			error(2, 0, "scope discrepancy among the nodes");
+			error(2, 0, _("scope discrepancy among the nodes"));
 		else if (!scope_id)
 			scope_id = firsthop.sin6_scope_id;
 	}
@@ -669,7 +669,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 					break;
 			}
 			if (!ifa)
-				error(0, 0, "Warning: source address might be selected on device other than: %s", device);
+				error(0, 0, _("Warning: source address might be selected on device other than: %s"), device);
 
 			freeifaddrs(ifa0);
 		}
@@ -696,9 +696,9 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	if ((whereto.sin6_addr.s6_addr16[0]&htons(0xff00)) == htons (0xff00)) {
 		if (uid) {
 			if (interval < 1000)
-				error(2, 0, "multicast ping with too short interval: %d", interval);
+				error(2, 0, _("multicast ping with too short interval: %d"), interval);
 			if (pmtudisc >= 0 && pmtudisc != IPV6_PMTUDISC_DO)
-				error(2, 0, "multicast ping does not fragment");
+				error(2, 0, _("multicast ping does not fragment"));
 		}
 		if (pmtudisc < 0)
 			pmtudisc = IPV6_PMTUDISC_DO;
@@ -719,7 +719,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	}
 	packlen = datalen + 8 + 4096 + 40 + 8; /* 4096 for rthdr */
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
-		error(2, errno, "memory allocation failed");
+		error(2, errno, _("memory allocation failed"));
 
 	hold = 1;
 
@@ -739,7 +739,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			/* checksum should be enabled by default and setting this
 			 * option might fail anyway.
 			 */
-			error(0, errno, "setsockopt(RAW_CHECKSUM) failed - try to continue");
+			error(0, errno, _("setsockopt(RAW_CHECKSUM) failed - try to continue"));
 		}
 #else
 	{
@@ -770,13 +770,13 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	if (options & F_NOLOOP) {
 		int loop = 0;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &loop, sizeof loop) == -1)
-			error(2, errno, "can't disable multicast loopback");
+			error(2, errno, _("can't disable multicast loopback"));
 	}
 	if (options & F_TTL) {
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &ttl, sizeof ttl) == -1)
-			error(2, errno, "can't set multicast hop limit");
+			error(2, errno, _("can't set multicast hop limit"));
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof ttl) == -1)
-			error(2, errno, "can't set unicast hop limit");
+			error(2, errno, _("can't set unicast hop limit"));
 	}
 
 	const int on = 1;
@@ -788,14 +788,14 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_HOPLIMIT, &on, sizeof on) == -1
 #endif
 	   )
-		error(2, errno, "can't receive hop limit");
+		error(2, errno, _("can't receive hop limit"));
 
 	if (options & F_TCLASS) {
 #ifdef IPV6_TCLASS
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass) == -1)
-			error(2, errno, "setsockopt(IPV6_TCLASS)");
+			error(2, errno, _("setsockopt(IPV6_TCLASS)"));
 #else
-		error(0, 0, "traffic class is not supported");
+		error(0, 0, _("traffic class is not supported"));
 #endif
 	}
 
@@ -811,32 +811,32 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		freq->flr_share = IPV6_FL_S_EXCL;
 		memcpy(&freq->flr_dst, &whereto.sin6_addr, 16);
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1)
-			error(2, errno, "can't set flowlabel");
+			error(2, errno, _("can't set flowlabel"));
 		flowlabel = freq->flr_label;
 #else
-		error(2, 0, "flow labels are not supported");
+		error(2, 0, _("flow labels are not supported"));
 #endif
 
 #ifdef IPV6_FLOWINFO_SEND
 		whereto.sin6_flowinfo = flowlabel;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1)
-			error(2, errno, "can't send flowinfo");
+			error(2, errno, _("can't send flowinfo"));
 #else
-		error(2, 0, "flowinfo is not supported");
+		error(2, 0, _("flowinfo is not supported"));
 #endif
 	}
 
-	printf("PING %s(%s) ", hostname, pr_addr(&whereto, sizeof whereto));
+	printf(_("PING %s(%s) "), hostname, pr_addr(&whereto, sizeof whereto));
 	if (flowlabel)
-		printf(", flow 0x%05x, ", (unsigned)ntohl(flowlabel));
+		printf(_(", flow 0x%05x, "), (unsigned)ntohl(flowlabel));
 	if (device || (options&F_STRICTSOURCE)) {
 		int saved_options = options;
 
 		options |= F_NUMERIC;
-		printf("from %s %s: ", pr_addr(&source6, sizeof source6), device ? device : "");
+		printf(_("from %s %s: "), pr_addr(&source6, sizeof source6), device ? device : "");
 		options = saved_options;
 	}
-	printf("%d data bytes\n", datalen);
+	printf(_("%d data bytes\n"), datalen);
 
 	setup(sock);
 
@@ -890,9 +890,9 @@ int ping6_receive_error_msg(socket_st *sock)
 		if (options & F_FLOOD)
 			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
-			error(0, e->ee_errno, "local error");
+			error(0, e->ee_errno, _("local error"));
 		else
-			error(0, 0, "local error: message too long, mtu: %u", e->ee_info);
+			error(0, 0, _("local error: message too long, mtu: %u"), e->ee_info);
 		nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP6) {
 		struct sockaddr_in6 *sin6 = (struct sockaddr_in6*)(e+1);
@@ -914,7 +914,7 @@ int ping6_receive_error_msg(socket_st *sock)
 			write_stdout("\bE", 2);
 		} else {
 			print_timestamp();
-			printf("From %s icmp_seq=%u ", pr_addr(sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
+			printf(_("From %s icmp_seq=%u "), pr_addr(sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
 			pr_icmph(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
 			fflush(stdout);
@@ -1018,7 +1018,7 @@ int ping6_send_probe(socket_st *sock, void *packet, unsigned packet_size)
 void pr_echo_reply(uint8_t *_icmph, int cc __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *) _icmph;
-	printf(" icmp_seq=%u", ntohs(icmph->icmp6_seq));
+	printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq));
 }
 
 static void putchar_safe(char c)
@@ -1042,7 +1042,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 	len -= sizeof(struct ni_hdr) + 4;
 
 	if (len < 0) {
-		printf(" parse error (too short)");
+		printf(_(" parse error (too short)"));
 		return;
 	}
 	while (p < end) {
@@ -1056,7 +1056,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 
 		ret = dn_expand(h, end, p, buf, sizeof(buf));
 		if (ret < 0) {
-			printf(" parse error (truncated)");
+			printf(_(" parse error (truncated)"));
 			break;
 		}
 		if (p + ret < end && *(p + ret) == '\0')
@@ -1103,7 +1103,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 	}
 	p = h;
 	if (len < 0) {
-		printf(" parse error (too short)");
+		printf(_(" parse error (too short)"));
 		return;
 	}
 
@@ -1112,11 +1112,11 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 			putchar(',');
 
 		if (p + sizeof(uint32_t) + aflen > end) {
-			printf(" parse error (truncated)");
+			printf(_(" parse error (truncated)"));
 			break;
 		}
 		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf)))
-			printf(" unexpeced error in inet_ntop(%s)",
+			printf(_(" unexpeced error in inet_ntop(%s)"),
 			       strerror(errno));
 		else
 			printf(" %s", buf);
@@ -1125,7 +1125,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 		continued = 1;
 	}
 	if (truncated)
-		printf(" (truncated)");
+		printf(_(" (truncated)"));
 }
 
 static
@@ -1144,19 +1144,19 @@ void pr_niquery_reply(uint8_t *_nih, int len)
 			pr_niquery_reply_addr(nih, len);
 			break;
 		default:
-			printf(" unknown qtype(0x%02x)", ntohs(nih->ni_qtype));
+			printf(_(" unknown qtype(0x%02x)"), ntohs(nih->ni_qtype));
 		}
 		break;
 	case NI_REFUSED:
-		printf(" refused");
+		printf(_(" refused"));
 		break;
 	case NI_UNKNOWN:
-		printf(" unknown");
+		printf(_(" unknown"));
 		break;
 	default:
-		printf(" unknown code(%02x)", ntohs(nih->ni_code));
+		printf(_(" unknown code(%02x)"), ntohs(nih->ni_code));
 	}
-	printf("; seq=%u;", ntohsp((uint16_t*)nih->ni_nonce));
+	printf(_("; seq=%u;"), ntohsp((uint16_t*)nih->ni_nonce));
 }
 
 /*
@@ -1195,7 +1195,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 	icmph = (struct icmp6_hdr *) buf;
 	if (cc < 8) {
 		if (options & F_VERBOSE)
-			error(0, 0, "packet too short: %d bytes", cc);
+			error(0, 0, _("packet too short: %d bytes"), cc);
 		return 1;
 	}
 
@@ -1256,13 +1256,13 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 				return 0;
 			}
 			print_timestamp();
-			printf("From %s: icmp_seq=%u ", pr_addr(from, sizeof *from), ntohs(icmph1->icmp6_seq));
+			printf(_("From %s: icmp_seq=%u "), pr_addr(from, sizeof *from), ntohs(icmph1->icmp6_seq));
 		} else {
 			/* We've got something other than an ECHOREPLY */
 			if (!(options & F_VERBOSE) || uid)
 				return 1;
 			print_timestamp();
-			printf("From %s: ", pr_addr(from, sizeof *from));
+			printf(_("From %s: "), pr_addr(from, sizeof *from));
 		}
 		pr_icmph(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
@@ -1284,71 +1284,71 @@ int pr_icmph(uint8_t type, uint8_t code, uint32_t info)
 {
 	switch(type) {
 	case ICMP6_DST_UNREACH:
-		printf("Destination unreachable: ");
+		printf(_("Destination unreachable: "));
 		switch (code) {
 		case ICMP6_DST_UNREACH_NOROUTE:
-			printf("No route");
+			printf(_("No route"));
 			break;
 		case ICMP6_DST_UNREACH_ADMIN:
-			printf("Administratively prohibited");
+			printf(_("Administratively prohibited"));
 			break;
 		case ICMP6_DST_UNREACH_BEYONDSCOPE:
-			printf("Beyond scope of source address");
+			printf(_("Beyond scope of source address"));
 			break;
 		case ICMP6_DST_UNREACH_ADDR:
-			printf("Address unreachable");
+			printf(_("Address unreachable"));
 			break;
 		case ICMP6_DST_UNREACH_NOPORT:
-			printf("Port unreachable");
+			printf(_("Port unreachable"));
 			break;
 		default:
-			printf("Unknown code %d", code);
+			printf(_("Unknown code %d"), code);
 			break;
 		}
 		break;
 	case ICMP6_PACKET_TOO_BIG:
-		printf("Packet too big: mtu=%u", info);
+		printf(_("Packet too big: mtu=%u"), info);
 		if (code)
-			printf(", code=%d", code);
+			printf(_(", code=%d"), code);
 		break;
 	case ICMP6_TIME_EXCEEDED:
-		printf("Time exceeded: ");
+		printf(_("Time exceeded: "));
 		if (code == ICMP6_TIME_EXCEED_TRANSIT)
-			printf("Hop limit");
+			printf(_("Hop limit"));
 		else if (code == ICMP6_TIME_EXCEED_REASSEMBLY)
-			printf("Defragmentation failure");
+			printf(_("Defragmentation failure"));
 		else
-			printf("code %d", code);
+			printf(_("code %d"), code);
 		break;
 	case ICMP6_PARAM_PROB:
-		printf("Parameter problem: ");
+		printf(_("Parameter problem: "));
 		if (code == ICMP6_PARAMPROB_HEADER)
-			printf("Wrong header field ");
+			printf(_("Wrong header field "));
 		else if (code == ICMP6_PARAMPROB_NEXTHEADER)
-			printf("Unknown header ");
+			printf(_("Unknown header "));
 		else if (code == ICMP6_PARAMPROB_OPTION)
-			printf("Unknown option ");
+			printf(_("Unknown option "));
 		else
-			printf("code %d ", code);
-		printf ("at %u", info);
+			printf(_("code %d "), code);
+		printf (_("at %u"), info);
 		break;
 	case ICMP6_ECHO_REQUEST:
-		printf("Echo request");
+		printf(_("Echo request"));
 		break;
 	case ICMP6_ECHO_REPLY:
-		printf("Echo reply");
+		printf(_("Echo reply"));
 		break;
 	case MLD_LISTENER_QUERY:
-		printf("MLD Query");
+		printf(_("MLD Query"));
 		break;
 	case MLD_LISTENER_REPORT:
-		printf("MLD Report");
+		printf(_("MLD Report"));
 		break;
 	case MLD_LISTENER_REDUCTION:
-		printf("MLD Reduction");
+		printf(_("MLD Reduction"));
 		break;
 	default:
-		printf("unknown icmp type: %u", type);
+		printf(_("unknown icmp type: %u"), type);
 
 	}
 	return 0;
@@ -1379,5 +1379,5 @@ void ping6_install_filter(socket_st *sock)
 	insns[1] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, htons(ident), 0, 1);
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
-		error(0, errno, "WARNING: failed to install socket filter");
+		error(0, errno, _("WARNING: failed to install socket filter"));
 }
