@@ -251,8 +251,22 @@
 # include <sys/capability.h>
 #endif
 
-#ifdef USE_IDN
+#if defined(USE_IDN) || defined(ENABLE_NLS)
 # include <locale.h>
+#endif
+
+#ifdef ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# undef bindtextdomain
+# define bindtextdomain(Domain, Directory) /* empty */
+# undef textdomain
+# define textdomain(Domain) /* empty */
+# define _(Text) Text
+#endif
+
+#ifdef USE_IDN
 # ifndef NI_IDN
 #  define NI_IDN 32
 # endif
@@ -441,7 +455,7 @@ static void send_probe(struct run_state *ctl, uint32_t seq, int ttl)
 	if (i < 0 || i != ctl->datalen) {
 		if (i < 0)
 			perror("sendto");
-		printf("traceroute: wrote %s %d chars, ret=%d\n", ctl->hostname, ctl->datalen, i);
+		printf(_("traceroute: wrote %s %d chars, ret=%d\n"), ctl->hostname, ctl->datalen, i);
 		fflush(stdout);
 	}
 }
@@ -470,51 +484,51 @@ static char const *pr_type(const uint8_t t)
 	switch (t) {
 		/* Unknown */
 	case 0:
-		return "Error";
+		return _("Error");
 	case ICMPV6_DEST_UNREACH:
-		return "Destination Unreachable";
+		return _("Destination Unreachable");
 	case ICMPV6_PKT_TOOBIG:
-		return "Packet Too Big";
+		return _("Packet Too Big");
 	case ICMPV6_TIME_EXCEED:
-		return "Time Exceeded in Transit";
+		return _("Time Exceeded in Transit");
 	case ICMPV6_PARAMPROB:
-		return "Parameter Problem";
+		return _("Parameter Problem");
 	case ICMPV6_ECHO_REQUEST:
-		return "Echo Request";
+		return _("Echo Request");
 	case ICMPV6_ECHO_REPLY:
-		return "Echo Reply";
+		return _("Echo Reply");
 	case ICMPV6_MGM_QUERY:
-		return "Membership Query";
+		return _("Membership Query");
 	case ICMPV6_MGM_REPORT:
-		return "Membership Report";
+		return _("Membership Report");
 	case ICMPV6_MGM_REDUCTION:
-		return "Membership Reduction";
+		return _("Membership Reduction");
 	case NDISC_ROUTER_SOLICITATION:
-		return "Router Solicitation";
+		return _("Router Solicitation");
 	case NDISC_ROUTER_ADVERTISEMENT:
-		return "Router Advertisement";
+		return _("Router Advertisement");
 	case NDISC_NEIGHBOUR_SOLICITATION:
-		return "Neighbor Solicitation";
+		return _("Neighbor Solicitation");
 	case NDISC_NEIGHBOUR_ADVERTISEMENT:
-		return "Neighbor Advertisement";
+		return _("Neighbor Advertisement");
 	case NDISC_REDIRECT:
-		return "Redirect";
+		return _("Redirect");
 	case ICMPV6_NI_QUERY:
-		return "Neighbor Query";
+		return _("Neighbor Query");
 	case ICMPV6_NI_REPLY:
-		return "Neighbor Reply";
+		return _("Neighbor Reply");
 	case ICMPV6_MLD2_REPORT:
-		return "Multicast Listener Report packet";
+		return _("Multicast Listener Report packet");
 	case ICMPV6_DHAAD_REQUEST:
-		return "Home Agent Address Discovery Request Message";
+		return _("Home Agent Address Discovery Request Message");
 	case ICMPV6_DHAAD_REPLY:
-		return "Home Agent Address Discovery Reply message";
+		return _("Home Agent Address Discovery Reply message");
 	case ICMPV6_MOBILE_PREFIX_SOL:
-		return "Mobile Prefix Solicitation Message";
+		return _("Mobile Prefix Solicitation Message");
 	case ICMPV6_MOBILE_PREFIX_ADV:
-		return "Mobile Prefix Solicitation Advertisement";
+		return _("Mobile Prefix Solicitation Advertisement");
 	default:
-		return "OUT-OF-RANGE";
+		return _("OUT-OF-RANGE");
 	}
 	abort();
 }
@@ -603,7 +617,7 @@ static void print(struct run_state *ctl, struct sockaddr_in6 *from)
 
 static __attribute__((noreturn)) void usage(void)
 {
-	fprintf(stderr,
+	fprintf(stderr, _(
 		"\nUsage:\n"
 		"  traceroute6 [options] <destination>\n"
 		"\nOptions:\n"
@@ -617,7 +631,7 @@ static __attribute__((noreturn)) void usage(void)
 		"  -s <address>  use source <address>\n"
 		"  -v            verbose output\n"
 		"  -w <timeout>  time to wait for response\n"
-		"\nFor more details see traceroute6(8).\n");
+		"\nFor more details see traceroute6(8).\n"));
 	exit(1);
 }
 
@@ -681,8 +695,12 @@ int main(int argc, char **argv)
 	}
 #endif
 
-#ifdef USE_IDN
+#if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
+#ifdef ENABLE_NLS
+	bindtextdomain (PACKAGE_NAME, LOCALEDIR);
+	textdomain (PACKAGE_NAME);
+#endif
 #endif
 	while ((ch = getopt(argc, argv, "dm:np:q:rs:w:vi:V")) != EOF) {
 		switch (ch) {
@@ -692,7 +710,7 @@ int main(int argc, char **argv)
 		case 'm':
 			ctl.max_ttl = atoi(optarg);
 			if (ctl.max_ttl <= 1) {
-				fprintf(stderr, "traceroute: max ttl must be >1.\n");
+				fprintf(stderr, _("traceroute: max ttl must be >1.\n"));
 				exit(1);
 			}
 			break;
@@ -702,14 +720,14 @@ int main(int argc, char **argv)
 		case 'p':
 			ctl.port = atoi(optarg);
 			if (ctl.port < 1) {
-				fprintf(stderr, "traceroute: port must be >0.\n");
+				fprintf(stderr, _("traceroute: port must be >0.\n"));
 				exit(1);
 			}
 			break;
 		case 'q':
 			ctl.nprobes = atoi(optarg);
 			if (ctl.nprobes < 1) {
-				fprintf(stderr, "traceroute: nprobes must be >0.\n");
+				fprintf(stderr, _("traceroute: nprobes must be >0.\n"));
 				exit(1);
 			}
 			break;
@@ -732,7 +750,7 @@ int main(int argc, char **argv)
 		case 'w':
 			ctl.waittime = atoi(optarg);
 			if (ctl.waittime <= 1) {
-				fprintf(stderr, "traceroute: wait must be >1 sec.\n");
+				fprintf(stderr, _("traceroute: wait must be >1 sec.\n"));
 				exit(1);
 			}
 			break;
@@ -760,7 +778,7 @@ int main(int argc, char **argv)
 	} else {
 		status = getaddrinfo(*argv, NULL, &hints6, &result);
 		if (status) {
-			fprintf(stderr, "traceroute: %s: %s\n", *argv, gai_strerror(status));
+			fprintf(stderr, _("traceroute: %s: %s\n"), *argv, gai_strerror(status));
 			exit(1);
 		}
 
@@ -788,7 +806,7 @@ int main(int argc, char **argv)
 			ctl.datalen = sizeof(struct pkt_format);
 		else if (ctl.datalen < (int)sizeof(struct pkt_format) || ctl.datalen >= MAXPACKET) {
 			fprintf(stderr,
-				"traceroute: packet size must be %d <= s < %d.\n",
+				_("traceroute: packet size must be %d <= s < %d.\n"),
 				(int)sizeof(struct pkt_format), MAXPACKET);
 			exit(1);
 		}
@@ -798,7 +816,7 @@ int main(int argc, char **argv)
 
 	ctl.sendbuff = malloc(ctl.datalen);
 	if (ctl.sendbuff == NULL) {
-		fprintf(stderr, "malloc failed\n");
+		fprintf(stderr, _("malloc failed\n"));
 		exit(1);
 	}
 
@@ -826,7 +844,7 @@ int main(int argc, char **argv)
 		 * checksum should be enabled by default and setting this
 		 * option might fail anyway.
 		 */
-		fprintf(stderr, "setsockopt(RAW_CHECKSUM) failed - try to continue.");
+		fprintf(stderr, _("setsockopt(RAW_CHECKSUM) failed - try to continue."));
 	}
 #endif
 
@@ -859,7 +877,7 @@ int main(int argc, char **argv)
 			if (setsockopt
 			    (probe_fd, SOL_SOCKET, SO_BINDTODEVICE, ctl.device,
 			     strlen(ctl.device) + 1) == -1)
-				perror("WARNING: interface is ignored");
+				perror(_("WARNING: interface is ignored"));
 		}
 		ctl.firsthop.sin6_port = htons(get_ip_unprivileged_port_start(1025));
 		if (connect(probe_fd, (struct sockaddr *)&ctl.firsthop,
@@ -878,7 +896,7 @@ int main(int argc, char **argv)
 		memset((char *)&ctl.saddr, 0, sizeof(ctl.saddr));
 		ctl.saddr.sin6_family = AF_INET6;
 		if (inet_pton(AF_INET6, ctl.source, &ctl.saddr.sin6_addr) <= 0) {
-			printf("traceroute: unknown addr %s\n", ctl.source);
+			printf(_("traceroute: unknown addr %s\n"), ctl.source);
 			exit(1);
 		}
 	}
@@ -892,11 +910,11 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	fprintf(stderr, "traceroute to %s (%s)", ctl.hostname,
+	fprintf(stderr, _("traceroute to %s (%s)"), ctl.hostname,
 		inet_ntop(AF_INET6, &to->sin6_addr, pa, sizeof(pa)));
 
-	fprintf(stderr, " from %s", inet_ntop(AF_INET6, &ctl.saddr.sin6_addr, pa, sizeof(pa)));
-	fprintf(stderr, ", %d hops max, %d byte packets\n", ctl.max_ttl, ctl.datalen);
+	fprintf(stderr, _(" from %s"), inet_ntop(AF_INET6, &ctl.saddr.sin6_addr, pa, sizeof(pa)));
+	fprintf(stderr, _(", %d hops max, %d byte packets\n"), ctl.max_ttl, ctl.datalen);
 	fflush(stderr);
 
 	for (ttl = 1; ttl <= ctl.max_ttl; ++ttl) {
@@ -922,7 +940,7 @@ int main(int argc, char **argv)
 						memcpy(&lastaddr,
 						       &from.sin6_addr, sizeof(lastaddr));
 					}
-					printf("  %.4f ms", deltaT(&t1, &t2));
+					printf(_("  %.4f ms"), deltaT(&t1, &t2));
 					switch (i - 1) {
 					case ICMP6_DST_UNREACH_NOPORT:
 						got_there = 1;

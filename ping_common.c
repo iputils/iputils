@@ -264,7 +264,7 @@ void fill(char *patp, unsigned char *packet, unsigned packet_size)
 
 	for (cp = patp; *cp; cp++) {
 		if (!isxdigit(*cp))
-			error(2, 0, "patterns must be specified as hex digits: %s", cp);
+			error(2, 0, _("patterns must be specified as hex digits: %s"), cp);
 	}
 	ii = sscanf(patp,
 	    "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
@@ -279,7 +279,7 @@ void fill(char *patp, unsigned char *packet, unsigned packet_size)
 				bp[jj + kk] = pat[jj];
 	}
 	if (!(options & F_QUIET)) {
-		printf("PATTERN: 0x");
+		printf(_("PATTERN: 0x"));
 		for (jj = 0; jj < ii; ++jj)
 			printf("%02x", bp[jj] & 0xFF);
 		printf("\n");
@@ -399,7 +399,7 @@ int pinger(ping_func_set_st *fset, socket_st *sock)
 	if (options & F_OUTSTANDING) {
 		if (ntransmitted > 0 && !rcvd_test(ntransmitted)) {
 			print_timestamp();
-			printf("no answer yet for icmp_seq=%lu\n", (ntransmitted % MAX_DUP_CHK));
+			printf(_("no answer yet for icmp_seq=%lu\n"), (ntransmitted % MAX_DUP_CHK));
 			fflush(stdout);
 		}
 	}
@@ -499,7 +499,7 @@ void sock_setbufs(socket_st *sock, int alloc)
 	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
 	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
-			error(0, 0, "WARNING: probably, rcvbuf is not enough to hold preload");
+			error(0, 0, _("WARNING: probably, rcvbuf is not enough to hold preload"));
 	}
 }
 
@@ -515,10 +515,10 @@ void setup(socket_st *sock)
 		interval = 0;
 
 	if (uid && interval < MINUSERINTERVAL)
-		error(2, 0, "cannot flood; minimal interval allowed for user is %dms", MINUSERINTERVAL);
+		error(2, 0, _("cannot flood; minimal interval allowed for user is %dms"), MINUSERINTERVAL);
 
 	if (interval >= INT_MAX/preload)
-		error(2, 0, "illegal preload and/or interval: %d", interval);
+		error(2, 0, _("illegal preload and/or interval: %d"), interval);
 
 	hold = 1;
 	if (options & F_SO_DEBUG)
@@ -530,7 +530,7 @@ void setup(socket_st *sock)
 	if (!(options&F_LATENCY)) {
 		int on = 1;
 		if (setsockopt(sock->fd, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
-			error(0, 0, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP");
+			error(0, 0, _("Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"));
 	}
 #endif
 #ifdef SO_MARK
@@ -547,7 +547,7 @@ void setup(socket_st *sock)
 			/* we probably dont wanna exit since old kernels
 			 * dont support mark ..
 			*/
-			error(0, errno_save, "Warning: Failed to set mark: %d", mark);
+			error(0, errno_save, _("Warning: Failed to set mark: %d"), mark);
 		}
 	}
 #endif
@@ -806,7 +806,7 @@ restamp:
 		tvsub(tv, &tmp_tv);
 		triptime = tv->tv_sec * 1000000 + tv->tv_usec;
 		if (triptime < 0) {
-			error(0, 0, "Warning: time of day goes back (%ldus), taking countermeasures", triptime);
+			error(0, 0, _("Warning: time of day goes back (%ldus), taking countermeasures"), triptime);
 			triptime = 0;
 			if (!(options & F_LATENCY)) {
 				gettimeofday(tv, NULL);
@@ -856,42 +856,42 @@ restamp:
 		uint8_t *cp, *dp;
 
 		print_timestamp();
-		printf("%d bytes from %s:", cc, from);
+		printf(_("%d bytes from %s:"), cc, from);
 
 		if (pr_reply)
 			pr_reply(icmph, cc);
 
 		if (hops >= 0)
-			printf(" ttl=%d", hops);
+			printf(_(" ttl=%d"), hops);
 
 		if (cc < datalen+8) {
-			printf(" (truncated)\n");
+			printf(_(" (truncated)\n"));
 			return 1;
 		}
 		if (timing) {
 			if (triptime >= 100000)
-				printf(" time=%ld ms", (triptime+500)/1000);
+				printf(_(" time=%ld ms"), (triptime+500)/1000);
 			else if (triptime >= 10000)
-				printf(" time=%ld.%01ld ms", (triptime+50)/1000,
+				printf(_(" time=%ld.%01ld ms"), (triptime+50)/1000,
 				       ((triptime+50)%1000)/100);
 			else if (triptime >= 1000)
-				printf(" time=%ld.%02ld ms", (triptime+5)/1000,
+				printf(_(" time=%ld.%02ld ms"), (triptime+5)/1000,
 				       ((triptime+5)%1000)/10);
 			else
-				printf(" time=%ld.%03ld ms", triptime/1000,
+				printf(_(" time=%ld.%03ld ms"), triptime/1000,
 				       triptime%1000);
 		}
 		if (dupflag)
-			printf(" (DUP!)");
+			printf(_(" (DUP!)"));
 		if (csfailed)
-			printf(" (BAD CHECKSUM!)");
+			printf(_(" (BAD CHECKSUM!)"));
 
 		/* check the data */
 		cp = ((unsigned char*)ptr) + sizeof(struct timeval);
 		dp = &outpack[8 + sizeof(struct timeval)];
 		for (i = sizeof(struct timeval); i < datalen; ++i, ++cp, ++dp) {
 			if (*cp != *dp) {
-				printf("\nwrong data byte #%d should be 0x%x but was 0x%x",
+				printf(_("\nwrong data byte #%d should be 0x%x but was 0x%x"),
 				       i, *dp, *cp);
 				cp = (unsigned char*)ptr + sizeof(struct timeval);
 				for (i = sizeof(struct timeval); i < datalen; ++i, ++cp) {
@@ -934,23 +934,23 @@ void finish(void)
 
 	putchar('\n');
 	fflush(stdout);
-	printf("--- %s ping statistics ---\n", hostname);
-	printf("%ld packets transmitted, ", ntransmitted);
-	printf("%ld received", nreceived);
+	printf(_("--- %s ping statistics ---\n"), hostname);
+	printf(_("%ld packets transmitted, "), ntransmitted);
+	printf(_("%ld received"), nreceived);
 	if (nrepeats)
-		printf(", +%ld duplicates", nrepeats);
+		printf(_(", +%ld duplicates"), nrepeats);
 	if (nchecksum)
-		printf(", +%ld corrupted", nchecksum);
+		printf(_(", +%ld corrupted"), nchecksum);
 	if (nerrors)
-		printf(", +%ld errors", nerrors);
+		printf(_(", +%ld errors"), nerrors);
 	if (ntransmitted) {
 #ifdef USE_IDN
 	setlocale(LC_ALL, "C");
 #endif
-		printf(", %g%% packet loss",
+		printf(_(", %g%% packet loss"),
 		       (float) ((((long long)(ntransmitted - nreceived)) * 100.0) /
 			      ntransmitted));
-		printf(", time %ldms", 1000*tv.tv_sec+(tv.tv_usec+500)/1000);
+		printf(_(", time %ldms"), 1000*tv.tv_sec+(tv.tv_usec+500)/1000);
 	}
 	putchar('\n');
 
@@ -961,7 +961,7 @@ void finish(void)
 		tsum2 /= nreceived + nrepeats;
 		tmdev = llsqrt(tsum2 - tsum * tsum);
 
-		printf("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms",
+		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
 		       (long)tmin/1000, (long)tmin%1000,
 		       (unsigned long)(tsum/1000), (long)(tsum%1000),
 		       (long)tmax/1000, (long)tmax%1000,
@@ -970,12 +970,12 @@ void finish(void)
 		comma = ", ";
 	}
 	if (pipesize > 1) {
-		printf("%spipe %d", comma, pipesize);
+		printf(_("%spipe %d"), comma, pipesize);
 		comma = ", ";
 	}
 	if (nreceived && (!interval || (options&(F_FLOOD|F_ADAPTIVE))) && ntransmitted > 1) {
 		int ipg = (1000000*(long long)tv.tv_sec+tv.tv_usec)/(ntransmitted-1);
-		printf("%sipg/ewma %d.%03d/%d.%03d ms",
+		printf(_("%sipg/ewma %d.%03d/%d.%03d ms"),
 		       comma, ipg/1000, ipg%1000, rtt/8000, (rtt/8)%1000);
 	}
 	putchar('\n');
@@ -993,12 +993,13 @@ void status(void)
 	if (ntransmitted)
 		loss = (((long long)(ntransmitted - nreceived)) * 100) / ntransmitted;
 
-	fprintf(stderr, "\r%ld/%ld packets, %d%% loss", nreceived, ntransmitted, loss);
+	fprintf(stderr, "\r");
+	fprintf(stderr, _("%ld/%ld packets, %d%% loss"), nreceived, ntransmitted, loss);
 
 	if (nreceived && timing) {
 		tavg = tsum / (nreceived + nrepeats);
 
-		fprintf(stderr, ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms",
+		fprintf(stderr, _(", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"),
 		       (long)tmin/1000, (long)tmin%1000,
 		       tavg/1000, tavg%1000,
 		       rtt/8000, (rtt/8)%1000,

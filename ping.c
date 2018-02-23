@@ -229,10 +229,14 @@ main(int argc, char **argv)
 
 	limit_capabilities();
 
-#ifdef USE_IDN
+#if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
 	if (!strcmp(setlocale(LC_ALL, NULL), "C"))
 		hints.ai_flags &= ~ AI_CANONIDN;
+#ifdef ENABLE_NLS
+	bindtextdomain (PACKAGE_NAME, LOCALEDIR);
+	textdomain (PACKAGE_NAME);
+#endif
 #endif
 
 	/* Support being called using `ping4` or `ping6` symlinks */
@@ -247,7 +251,7 @@ main(int argc, char **argv)
 		/* IPv4 specific options */
 		case '4':
 			if (hints.ai_family != AF_UNSPEC)
-				error(2, 0, "only one -4 or -6 option may be specified");
+				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET;
 			break;
 		case 'b':
@@ -255,12 +259,12 @@ main(int argc, char **argv)
 			break;
 		case 'R':
 			if (options & F_TIMESTAMP)
-				error(2, 0, "only one of -T or -R may be used");
+				error(2, 0, _("only one of -T or -R may be used"));
 			options |= F_RROUTE;
 			break;
 		case 'T':
 			if (options & F_RROUTE)
-				error(2, 0, "only one of -T or -R may be used");
+				error(2, 0, _("only one of -T or -R may be used"));
 			options |= F_TIMESTAMP;
 			if (strcmp(optarg, "tsonly") == 0)
 				ts_type = IPOPT_TS_TSONLY;
@@ -269,12 +273,12 @@ main(int argc, char **argv)
 			else if (strcmp(optarg, "tsprespec") == 0)
 				ts_type = IPOPT_TS_PRESPEC;
 			else
-				error(2, 0, "invalid timestamp type: %s", optarg);
+				error(2, 0, _("invalid timestamp type: %s"), optarg);
 			break;
 		/* IPv6 specific options */
 		case '6':
 			if (hints.ai_family != AF_UNSPEC)
-				error(2, 0, "only one -4 or -6 option may be specified");
+				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET6;
 			break;
 		case 'F':
@@ -299,7 +303,7 @@ main(int argc, char **argv)
 		case 'c':
 			npackets = atoi(optarg);
 			if (npackets <= 0)
-				error(2, 0, "bad number of packets to transmit: %ld", npackets);
+				error(2, 0, _("bad number of packets to transmit: %ld"), npackets);
 			break;
 		case 'd':
 			options |= F_SO_DEBUG;
@@ -311,9 +315,9 @@ main(int argc, char **argv)
 		{
 			double optval;
 
-			optval = ping_strtod(optarg, "bad timing interval");
+			optval = ping_strtod(optarg, _("bad timing interval"));
 			if (isgreater(optval, (double)(INT_MAX / 1000)))
-				error(2, 0, "bad timing interval: %s", optarg);
+				error(2, 0, _("bad timing interval: %s"), optarg);
 			interval = (int)(optval * 1000);
 			options |= F_INTERVAL;
 		}
@@ -324,7 +328,7 @@ main(int argc, char **argv)
 				char *p, *addr = strdup(optarg);
 
 				if (!addr)
-					error(2, errno, "cannot copy: %s", optarg);
+					error(2, errno, _("cannot copy: %s"), optarg);
 
 				p = strchr(addr, SCOPE_DELIMITER);
 				if (p) {
@@ -333,7 +337,7 @@ main(int argc, char **argv)
 				}
 
 				if (inet_pton(AF_INET6, addr, (char*)&source6.sin6_addr) <= 0)
-					error(2, 0, "invalid source address: %s", optarg);
+					error(2, 0, _("invalid source address: %s"), optarg);
 
 				options |= F_STRICTSOURCE;
 
@@ -347,11 +351,11 @@ main(int argc, char **argv)
 		case 'l':
 			preload = atoi(optarg);
 			if (preload <= 0)
-				error(2, 0, "bad preload value: %s, should be 1..%d", optarg, MAX_DUP_CHK);
+				error(2, 0, _("bad preload value: %s, should be 1..%d"), optarg, MAX_DUP_CHK);
 			if (preload > MAX_DUP_CHK)
 				preload = MAX_DUP_CHK;
 			if (uid && preload > 3)
-				error(2, 0, "cannot set preload to value greater than 3: %d", preload);
+				error(2, 0, _("cannot set preload to value greater than 3: %d"), preload);
 			break;
 		case 'L':
 			options |= F_NOLOOP;
@@ -361,7 +365,7 @@ main(int argc, char **argv)
 			char *endp;
 			mark = (int)strtoul(optarg, &endp, 10);
 			if (mark < 0 || *endp != '\0')
-				error(2, 0, "mark cannot be negative: %s", optarg);
+				error(2, 0, _("mark cannot be negative: %s"), optarg);
 			options |= F_MARK;
 			break;
 		}
@@ -373,7 +377,7 @@ main(int argc, char **argv)
 			else if (strcmp(optarg, "want") == 0)
 				pmtudisc = IP_PMTUDISC_WANT;
 			else
-				error(2, 0, "invalid -M argument: %s", optarg);
+				error(2, 0, _("invalid -M argument: %s"), optarg);
 			break;
 		case 'n':
 			options |= F_NUMERIC;
@@ -403,20 +407,20 @@ main(int argc, char **argv)
 		case 's':
 			datalen = atoi(optarg);
 			if (datalen < 0)
-				error(2, 0, "illegal packet size: %d", datalen);
+				error(2, 0, _("illegal packet size: %d"), datalen);
 			if (datalen > MAXPACKET - 8)
-				error(2, 0, "packet size too large: %d", datalen);
+				error(2, 0, _("packet size too large: %d"), datalen);
 			break;
 		case 'S':
 			sndbuf = atoi(optarg);
 			if (sndbuf <= 0)
-				error(2, 0, "bad sndbuf value: %s", optarg);
+				error(2, 0, _("bad sndbuf value: %s"), optarg);
 			break;
 		case 't':
 			options |= F_TTL;
 			ttl = atoi(optarg);
 			if (ttl < 0 || ttl > 255)
-				error(2, 0, "ttl out of range: %s", optarg);
+				error(2, 0, _("ttl out of range: %s"), optarg);
 			break;
 		case 'U':
 			options |= F_LATENCY;
@@ -430,15 +434,15 @@ main(int argc, char **argv)
 		case 'w':
 			deadline = atoi(optarg);
 			if (deadline < 0)
-				error(2, 0, "bad wait time: %s", optarg);
+				error(2, 0, _("bad wait time: %s"), optarg);
 			break;
 		case 'W':
 		{
 			double optval;
 
-			optval = ping_strtod(optarg, "bad linger time");
+			optval = ping_strtod(optarg, _("bad linger time"));
 			if (isless(optval, 0.001) || isgreater(optval, (double)(INT_MAX / 1000)))
-				error(2, 0, "bad linger time: %s", optarg);
+				error(2, 0, _("bad linger time: %s"), optarg);
 			/* lingertime will be converted to usec later */
 			lingertime = (int)(optval * 1000);
 		}
@@ -498,7 +502,7 @@ main(int argc, char **argv)
 			status = ping6_run(argc, argv, ai, &sock6);
 			break;
 		default:
-			error(2, 0, "unknown protocol family: %d", ai->ai_family);
+			error(2, 0, _("unknown protocol family: %d"), ai->ai_family);
 		}
 
 		if (status == 0)
@@ -598,7 +602,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 					if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
 						struct ip_mreqn imr;
 						if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
-							error(2, 0, "unknown iface: %s", device);
+							error(2, 0, _("unknown iface: %s"), device);
 						memset(&imr, 0, sizeof(imr));
 						imr.imr_ifindex = ifr.ifr_ifindex;
 						if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF, &imr, sizeof(imr)) == -1)
@@ -611,7 +615,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 		if (settos &&
 		    setsockopt(probe_fd, IPPROTO_IP, IP_TOS, (char *)&settos, sizeof(int)) < 0)
-			error(0, errno, "warning: QOS sockopts");
+			error(0, errno, _("warning: QOS sockopts"));
 
 		dst.sin_port = htons(1025);
 		if (nroute)
@@ -620,11 +624,11 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			if (errno == EACCES) {
 				if (broadcast_pings == 0)
 					error(2, 0,
-						"Do you want to ping broadcast? Then -b. If not, check your local firewall rules");
-				fprintf(stderr, "WARNING: pinging broadcast address\n");
+						_("Do you want to ping broadcast? Then -b. If not, check your local firewall rules"));
+				fprintf(stderr, _("WARNING: pinging broadcast address\n"));
 				if (setsockopt(probe_fd, SOL_SOCKET, SO_BROADCAST,
 					       &broadcast_pings, sizeof(broadcast_pings)) < 0)
-					error(2, errno, "cannot set broadcasting");
+					error(2, errno, _("cannot set broadcasting"));
 				if (connect(probe_fd, (struct sockaddr*)&dst, sizeof(dst)) == -1)
 					error(2, errno, "connect");
 			} else
@@ -641,7 +645,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 			ret = getifaddrs(&ifa0);
 			if (ret)
-				error(2, errno, "gatifaddrs failed");
+				error(2, errno, _("gatifaddrs failed"));
 			for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
 				if (!ifa->ifa_name || !ifa->ifa_addr ||
 				    ifa->ifa_addr->sa_family != AF_INET)
@@ -659,7 +663,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			}
 			freeifaddrs(ifa0);
 			if (!ifa)
-				error(0, 0, "Warning: source address might be selected on device other than: %s", device);
+				error(0, 0, _("Warning: source address might be selected on device other than: %s"), device);
 		}
 		close(probe_fd);
 	} while (0);
@@ -673,15 +677,15 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 		memset(&ifr, 0, sizeof(ifr));
 		strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
 		if (ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0)
-			error(2, 0, "unknown iface: %s", device);
+			error(2, 0, _("unknown iface: %s"), device);
 	}
 
 	if (broadcast_pings || IN_MULTICAST(ntohl(whereto.sin_addr.s_addr))) {
 		if (uid) {
 			if (interval < 1000)
-				error(2, 0, "broadcast ping with too short interval: %d", interval);
+				error(2, 0, _("broadcast ping with too short interval: %d"), interval);
 			if (pmtudisc >= 0 && pmtudisc != IP_PMTUDISC_DO)
-				error(2, 0, "broadcast ping does not fragment");
+				error(2, 0, _("broadcast ping does not fragment"));
 		}
 		if (pmtudisc < 0)
 			pmtudisc = IP_PMTUDISC_DO;
@@ -705,18 +709,18 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			      (1<<ICMP_REDIRECT)|
 			      (1<<ICMP_ECHOREPLY));
 		if (setsockopt(sock->fd, SOL_RAW, ICMP_FILTER, &filt, sizeof filt) == -1)
-			error(0, errno, "WARNING: setsockopt(ICMP_FILTER)");
+			error(0, errno, _("WARNING: setsockopt(ICMP_FILTER)"));
 	}
 
 	hold = 1;
 	if (setsockopt(sock->fd, SOL_IP, IP_RECVERR, &hold, sizeof hold))
-		error(0, 0, "WARNING: your kernel is veeery old. No problems.");
+		error(0, 0, _("WARNING: your kernel is veeery old. No problems."));
 
 	if (sock->socktype == SOCK_DGRAM) {
 		if (setsockopt(sock->fd, SOL_IP, IP_RECVTTL, &hold, sizeof hold))
-			error(0, errno, "WARNING: setsockopt(IP_RECVTTL)");
+			error(0, errno, _("WARNING: setsockopt(IP_RECVTTL)"));
 		if (setsockopt(sock->fd, SOL_IP, IP_RETOPTS, &hold, sizeof hold))
-			error(0, errno, "WARNING: setsockopt(IP_RETOPTS)");
+			error(0, errno, _("WARNING: setsockopt(IP_RETOPTS)"));
 	}
 
 	/* record route option */
@@ -777,42 +781,41 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 	if (broadcast_pings) {
 		if (setsockopt(sock->fd, SOL_SOCKET, SO_BROADCAST, &broadcast_pings, sizeof broadcast_pings) < 0)
-			error(2, errno, "cannot set broadcasting");
+			error(2, errno, _("cannot set broadcasting"));
 	}
 
 	if (options & F_NOLOOP) {
 		int loop = 0;
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof loop) == -1)
-			error(2, errno, "cannot disable multicast loopback");
+			error(2, errno, _("cannot disable multicast loopback"));
 	}
 	if (options & F_TTL) {
 		int ittl = ttl;
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof ttl) == -1)
-			error(2, errno, "cannot set multicast time-to-live");
+			error(2, errno, _("cannot set multicast time-to-live"));
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_TTL, &ittl, sizeof ittl) == -1)
-			error(2, errno, "cannot set unicast time-to-live");
+			error(2, errno, _("cannot set unicast time-to-live"));
 	}
 
 	if (datalen > 0xFFFF - 8 - optlen - 20)
-		error(2, 0, "packet size %d is too large. Maximum is %d",
+		error(2, 0, _("packet size %d is too large. Maximum is %d"),
 		      datalen, 0xFFFF - 8 - 20 - optlen);
 
 	if (datalen >= (int) sizeof(struct timeval))	/* can we time transfer */
 		timing = 1;
 	packlen = datalen + MAXIPLEN + MAXICMPLEN;
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
-		error(2, errno, "memory allocation failed");
+		error(2, errno, _("memory allocation failed"));
 
-	printf("PING %s (%s) ", hostname, inet_ntoa(whereto.sin_addr));
+	printf(_("PING %s (%s) "), hostname, inet_ntoa(whereto.sin_addr));
 	if (device || (options&F_STRICTSOURCE))
-		printf("from %s %s: ", inet_ntoa(source.sin_addr), device ? device : "");
-	printf("%d(%d) bytes of data.\n", datalen, datalen+8+optlen+20);
+		printf(_("from %s %s: "), inet_ntoa(source.sin_addr), device ? device : "");
+	printf(_("%d(%d) bytes of data.\n"), datalen, datalen+8+optlen+20);
 
 	setup(sock);
 
 	main_loop(&ping4_func_set, sock, packet, packlen);
 }
-
 
 int ping4_receive_error_msg(socket_st *sock)
 {
@@ -859,9 +862,9 @@ int ping4_receive_error_msg(socket_st *sock)
 		if (options & F_FLOOD)
 			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
-			error(0, 0, "local error: %s", strerror(e->ee_errno));
+			error(0, 0, _("local error: %s"), strerror(e->ee_errno));
 		else
-			error(0, 0, "local error: message too long, mtu=%u", e->ee_info);
+			error(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
 		nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
 		struct sockaddr_in *sin = (struct sockaddr_in*)(e+1);
@@ -885,7 +888,7 @@ int ping4_receive_error_msg(socket_st *sock)
 			write_stdout("\bE", 2);
 		} else {
 			print_timestamp();
-			printf("From %s icmp_seq=%u ", pr_addr(sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
+			printf(_("From %s icmp_seq=%u "), pr_addr(sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
 			pr_icmph(e->ee_type, e->ee_code, e->ee_info, NULL);
 			fflush(stdout);
 		}
@@ -957,7 +960,7 @@ static
 void pr_echo_reply(uint8_t *_icp, int len __attribute__((__unused__)))
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
-	printf(" icmp_seq=%u", ntohs(icp->un.echo.sequence));
+	printf(_(" icmp_seq=%u"), ntohs(icp->un.echo.sequence));
 }
 
 int
@@ -980,7 +983,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 		hlen = ip->ihl*4;
 		if (cc < hlen + 8 || ip->ihl < 5) {
 			if (options & F_VERBOSE)
-				error(0, 0, "packet too short (%d bytes) from %s", cc,
+				error(0, 0, _("packet too short (%d bytes) from %s"), cc,
 					pr_addr(from, sizeof *from));
 			return 1;
 		}
@@ -1056,11 +1059,11 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 				if (options & (F_QUIET | F_FLOOD))
 					return 1;
 				print_timestamp();
-				printf("From %s: icmp_seq=%u ",
+				printf(_("From %s: icmp_seq=%u "),
 				       pr_addr(from, sizeof *from),
 				       ntohs(icp1->un.echo.sequence));
 				if (csfailed)
-					printf("(BAD CHECKSUM)");
+					printf(_("(BAD CHECKSUM)"));
 				pr_icmph(icp->type, icp->code, ntohl(icp->un.gateway), icp);
 				return 1;
 			}
@@ -1082,9 +1085,9 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			gettimeofday(&recv_time, NULL);
 			printf("%lu.%06lu ", (unsigned long)recv_time.tv_sec, (unsigned long)recv_time.tv_usec);
 		}
-		printf("From %s: ", pr_addr(from, sizeof *from));
+		printf(_("From %s: "), pr_addr(from, sizeof *from));
 		if (csfailed) {
-			printf("(BAD CHECKSUM)\n");
+			printf(_("(BAD CHECKSUM)\n"));
 			return 0;
 		}
 		pr_icmph(icp->type, icp->code, ntohl(icp->un.gateway), icp);
@@ -1154,149 +1157,149 @@ void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *icp)
 {
 	switch(type) {
 	case ICMP_ECHOREPLY:
-		printf("Echo Reply\n");
+		printf(_("Echo Reply\n"));
 		/* XXX ID + Seq + Data */
 		break;
 	case ICMP_DEST_UNREACH:
 		switch(code) {
 		case ICMP_NET_UNREACH:
-			printf("Destination Net Unreachable\n");
+			printf(_("Destination Net Unreachable\n"));
 			break;
 		case ICMP_HOST_UNREACH:
-			printf("Destination Host Unreachable\n");
+			printf(_("Destination Host Unreachable\n"));
 			break;
 		case ICMP_PROT_UNREACH:
-			printf("Destination Protocol Unreachable\n");
+			printf(_("Destination Protocol Unreachable\n"));
 			break;
 		case ICMP_PORT_UNREACH:
-			printf("Destination Port Unreachable\n");
+			printf(_("Destination Port Unreachable\n"));
 			break;
 		case ICMP_FRAG_NEEDED:
-			printf("Frag needed and DF set (mtu = %u)\n", info);
+			printf(_("Frag needed and DF set (mtu = %u)\n"), info);
 			break;
 		case ICMP_SR_FAILED:
-			printf("Source Route Failed\n");
+			printf(_("Source Route Failed\n"));
 			break;
 		case ICMP_NET_UNKNOWN:
-			printf("Destination Net Unknown\n");
+			printf(_("Destination Net Unknown\n"));
 			break;
 		case ICMP_HOST_UNKNOWN:
-			printf("Destination Host Unknown\n");
+			printf(_("Destination Host Unknown\n"));
 			break;
 		case ICMP_HOST_ISOLATED:
-			printf("Source Host Isolated\n");
+			printf(_("Source Host Isolated\n"));
 			break;
 		case ICMP_NET_ANO:
-			printf("Destination Net Prohibited\n");
+			printf(_("Destination Net Prohibited\n"));
 			break;
 		case ICMP_HOST_ANO:
-			printf("Destination Host Prohibited\n");
+			printf(_("Destination Host Prohibited\n"));
 			break;
 		case ICMP_NET_UNR_TOS:
-			printf("Destination Net Unreachable for Type of Service\n");
+			printf(_("Destination Net Unreachable for Type of Service\n"));
 			break;
 		case ICMP_HOST_UNR_TOS:
-			printf("Destination Host Unreachable for Type of Service\n");
+			printf(_("Destination Host Unreachable for Type of Service\n"));
 			break;
 		case ICMP_PKT_FILTERED:
-			printf("Packet filtered\n");
+			printf(_("Packet filtered\n"));
 			break;
 		case ICMP_PREC_VIOLATION:
-			printf("Precedence Violation\n");
+			printf(_("Precedence Violation\n"));
 			break;
 		case ICMP_PREC_CUTOFF:
-			printf("Precedence Cutoff\n");
+			printf(_("Precedence Cutoff\n"));
 			break;
 		default:
-			printf("Dest Unreachable, Bad Code: %d\n", code);
+			printf(_("Dest Unreachable, Bad Code: %d\n"), code);
 			break;
 		}
 		if (icp && (options & F_VERBOSE))
 			pr_iph((struct iphdr*)(icp + 1));
 		break;
 	case ICMP_SOURCE_QUENCH:
-		printf("Source Quench\n");
+		printf(_("Source Quench\n"));
 		if (icp && (options & F_VERBOSE))
 			pr_iph((struct iphdr*)(icp + 1));
 		break;
 	case ICMP_REDIRECT:
 		switch(code) {
 		case ICMP_REDIR_NET:
-			printf("Redirect Network");
+			printf(_("Redirect Network"));
 			break;
 		case ICMP_REDIR_HOST:
-			printf("Redirect Host");
+			printf(_("Redirect Host"));
 			break;
 		case ICMP_REDIR_NETTOS:
-			printf("Redirect Type of Service and Network");
+			printf(_("Redirect Type of Service and Network"));
 			break;
 		case ICMP_REDIR_HOSTTOS:
-			printf("Redirect Type of Service and Host");
+			printf(_("Redirect Type of Service and Host"));
 			break;
 		default:
-			printf("Redirect, Bad Code: %d", code);
+			printf(_("Redirect, Bad Code: %d"), code);
 			break;
 		}
 		{
 			struct sockaddr_in sin = { .sin_family = AF_INET, .sin_addr =  { icp ? icp->un.gateway : info } };
 
-			printf("(New nexthop: %s)\n", pr_addr(&sin, sizeof sin));
+			printf(_("(New nexthop: %s)\n"), pr_addr(&sin, sizeof sin));
 		}
 		if (icp && (options & F_VERBOSE))
 			pr_iph((struct iphdr*)(icp + 1));
 		break;
 	case ICMP_ECHO:
-		printf("Echo Request\n");
+		printf(_("Echo Request\n"));
 		/* XXX ID + Seq + Data */
 		break;
 	case ICMP_TIME_EXCEEDED:
 		switch(code) {
 		case ICMP_EXC_TTL:
-			printf("Time to live exceeded\n");
+			printf(_("Time to live exceeded\n"));
 			break;
 		case ICMP_EXC_FRAGTIME:
-			printf("Frag reassembly time exceeded\n");
+			printf(_("Frag reassembly time exceeded\n"));
 			break;
 		default:
-			printf("Time exceeded, Bad Code: %d\n", code);
+			printf(_("Time exceeded, Bad Code: %d\n"), code);
 			break;
 		}
 		if (icp && (options & F_VERBOSE))
 			pr_iph((struct iphdr*)(icp + 1));
 		break;
 	case ICMP_PARAMETERPROB:
-		printf("Parameter problem: pointer = %u\n", icp ? (ntohl(icp->un.gateway)>>24) : info);
+		printf(_("Parameter problem: pointer = %u\n"), icp ? (ntohl(icp->un.gateway)>>24) : info);
 		if (icp && (options & F_VERBOSE))
 			pr_iph((struct iphdr*)(icp + 1));
 		break;
 	case ICMP_TIMESTAMP:
-		printf("Timestamp\n");
+		printf(_("Timestamp\n"));
 		/* XXX ID + Seq + 3 timestamps */
 		break;
 	case ICMP_TIMESTAMPREPLY:
-		printf("Timestamp Reply\n");
+		printf(_("Timestamp Reply\n"));
 		/* XXX ID + Seq + 3 timestamps */
 		break;
 	case ICMP_INFO_REQUEST:
-		printf("Information Request\n");
+		printf(_("Information Request\n"));
 		/* XXX ID + Seq */
 		break;
 	case ICMP_INFO_REPLY:
-		printf("Information Reply\n");
+		printf(_("Information Reply\n"));
 		/* XXX ID + Seq */
 		break;
 #ifdef ICMP_MASKREQ
 	case ICMP_MASKREQ:
-		printf("Address Mask Request\n");
+		printf(_("Address Mask Request\n"));
 		break;
 #endif
 #ifdef ICMP_MASKREPLY
 	case ICMP_MASKREPLY:
-		printf("Address Mask Reply\n");
+		printf(_("Address Mask Reply\n"));
 		break;
 #endif
 	default:
-		printf("Bad ICMP type: %d\n", type);
+		printf(_("Bad ICMP type: %d\n"), type);
 	}
 }
 
@@ -1317,7 +1320,7 @@ void pr_options(unsigned char * cp, int hlen)
 		if (*optptr == IPOPT_NOP) {
 			totlen--;
 			optptr++;
-			printf("\nNOP");
+			printf(_("\nNOP"));
 			continue;
 		}
 		cp = optptr;
@@ -1328,7 +1331,7 @@ void pr_options(unsigned char * cp, int hlen)
 		switch (*cp) {
 		case IPOPT_SSRR:
 		case IPOPT_LSRR:
-			printf("\n%cSRR: ", *cp==IPOPT_SSRR ? 'S' : 'L');
+			printf(_("\n%cSRR: "), *cp==IPOPT_SSRR ? 'S' : 'L');
 			j = *++cp;
 			cp++;
 			if (j > IPOPT_MINOFF) {
@@ -1361,12 +1364,12 @@ void pr_options(unsigned char * cp, int hlen)
 			if (i == old_rrlen
 			    && !memcmp(cp, old_rr, i)
 			    && !(options & F_FLOOD)) {
-				printf("\t(same route)");
+				printf(_("\t(same route)"));
 				break;
 			}
 			old_rrlen = i;
 			memcpy(old_rr, (char *)cp, i);
-			printf("\nRR: ");
+			printf(_("\nRR: "));
 			cp++;
 			for (;;) {
 				uint32_t address;
@@ -1397,7 +1400,7 @@ void pr_options(unsigned char * cp, int hlen)
 			if (i <= 0)
 				break;
 			flags = *++cp;
-			printf("\nTS: ");
+			printf(_("\nTS: "));
 			cp++;
 			for (;;) {
 				long l;
@@ -1424,13 +1427,13 @@ void pr_options(unsigned char * cp, int hlen)
 
 				if  (l & 0x80000000) {
 					if (nonstdtime==0)
-						printf("\t%ld absolute not-standard", l&0x7fffffff);
+						printf(_("\t%ld absolute not-standard"), l&0x7fffffff);
 					else
-						printf("\t%ld not-standard", (l&0x7fffffff) - nonstdtime);
+						printf(_("\t%ld not-standard"), (l&0x7fffffff) - nonstdtime);
 					nonstdtime = l&0x7fffffff;
 				} else {
 					if (stdtime==0)
-						printf("\t%ld absolute", l);
+						printf(_("\t%ld absolute"), l);
 					else
 						printf("\t%ld", l - stdtime);
 					stdtime = l;
@@ -1441,11 +1444,11 @@ void pr_options(unsigned char * cp, int hlen)
 					break;
 			}
 			if (flags>>4)
-				printf("Unrecorded hops: %d\n", flags>>4);
+				printf(_("Unrecorded hops: %d\n"), flags>>4);
 			break;
 		}
 		default:
-			printf("\nunknown option %x", *cp);
+			printf(_("\nunknown option %x"), *cp);
 			break;
 		}
 		totlen -= olen;
@@ -1466,12 +1469,12 @@ void pr_iph(struct iphdr *ip)
 	hlen = ip->ihl << 2;
 	cp = (unsigned char *)ip + 20;		/* point to options */
 
-	printf("Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n");
-	printf(" %1x  %1x  %02x %04x %04x",
+	printf(_("Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"));
+	printf(_(" %1x  %1x  %02x %04x %04x"),
 	       ip->version, ip->ihl, ip->tos, ip->tot_len, ip->id);
-	printf("   %1x %04x", ((ip->frag_off) & 0xe000) >> 13,
+	printf(_("   %1x %04x"), ((ip->frag_off) & 0xe000) >> 13,
 	       (ip->frag_off) & 0x1fff);
-	printf("  %02x  %02x %04x", ip->ttl, ip->protocol, ip->check);
+	printf(_("  %02x  %02x %04x"), ip->ttl, ip->protocol, ip->check);
 	printf(" %s ", inet_ntoa(*(struct in_addr *)&ip->saddr));
 	printf(" %s ", inet_ntoa(*(struct in_addr *)&ip->daddr));
 	printf("\n");
@@ -1530,10 +1533,10 @@ int parsetos(char *str)
 
 	/* doesn't look like decimal or hex, eh? */
 	if (*ep != '\0')
-		error(2, 0, "bad TOS value: %s", str);
+		error(2, 0, _("bad TOS value: %s"), str);
 
 	if (tos > TOS_MAX)
-		error(2, 0, "the decimal value of TOS bits must be in range 0-255: %d", tos);
+		error(2, 0, _("the decimal value of TOS bits must be in range 0-255: %d"), tos);
 	return(tos);
 }
 
@@ -1552,10 +1555,10 @@ int parseflow(char *str)
 
 	/* doesn't look like decimal or hex, eh? */
 	if (*ep != '\0')
-		error(2, 0, "bad value for flowinfo: %s", str);
+		error(2, 0, _("bad value for flowinfo: %s"), str);
 
 	if (val & ~IPV6_FLOWINFO_FLOWLABEL)
-		error(2, 0, "flow value is greater than 20 bits: %s", str);
+		error(2, 0, _("flow value is greater than 20 bits: %s"), str);
 	return(val);
 }
 
@@ -1587,5 +1590,5 @@ void ping4_install_filter(socket_st *sock)
 	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, htons(ident), 0, 1);
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
-		error(0, errno, "WARNING: failed to install socket filter");
+		error(0, errno, _("WARNING: failed to install socket filter"));
 }

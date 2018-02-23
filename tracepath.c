@@ -27,8 +27,22 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
-#ifdef USE_IDN
+#if defined(USE_IDN) || defined(ENABLE_NLS)
 # include <locale.h>
+#endif
+
+#ifdef ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# undef bindtextdomain
+# define bindtextdomain(Domain, Directory) /* empty */
+# undef textdomain
+# define textdomain(Domain) /* empty */
+# define _(Text) Text
+#endif
+
+#ifdef USE_IDN
 # ifndef AI_IDN
 #  define AI_IDN 0x0040
 # endif
@@ -223,7 +237,7 @@ static int recverr(struct run_state *const ctl)
 				memcpy(&rethops, CMSG_DATA(cmsg), sizeof(rethops));
 				break;
 			default:
-				printf("cmsg6:%d\n ", cmsg->cmsg_type);
+				printf(_("cmsg6:%d\n "), cmsg->cmsg_type);
 			}
 			break;
 		case SOL_IP:
@@ -235,16 +249,16 @@ static int recverr(struct run_state *const ctl)
 				rethops = *(uint8_t *)CMSG_DATA(cmsg);
 				break;
 			default:
-				printf("cmsg4:%d\n ", cmsg->cmsg_type);
+				printf(_("cmsg4:%d\n "), cmsg->cmsg_type);
 			}
 		}
 	}
 	if (e == NULL) {
-		printf("no info\n");
+		printf(_("no info\n"));
 		return 0;
 	}
 	if (e->ee_origin == SO_EE_ORIGIN_LOCAL)
-		printf("%2d?: %-32s ", ctl->ttl, "[LOCALHOST]");
+		printf("%2d?: %-32s ", ctl->ttl, _("[LOCALHOST]"));
 	else if (e->ee_origin == SO_EE_ORIGIN_ICMP6 ||
 		 e->ee_origin == SO_EE_ORIGIN_ICMP) {
 		char abuf[NI_MAXHOST];
@@ -292,9 +306,9 @@ static int recverr(struct run_state *const ctl)
 		struct timeval res;
 
 		timersub(&tv, rettv, &res);
-		printf("%3ld.%03ldms ", res.tv_sec * 1000 + res.tv_usec / 1000, res.tv_usec % 1000);
+		printf(_("%3ld.%03ldms "), res.tv_sec * 1000 + res.tv_usec / 1000, res.tv_usec % 1000);
 		if (broken_router)
-			printf("(This broken router returned corrupted payload) ");
+			printf(_("(This broken router returned corrupted payload) "));
 	}
 
 	if (rethops <= 64)
@@ -309,12 +323,12 @@ static int recverr(struct run_state *const ctl)
 		printf("\n");
 		break;
 	case EMSGSIZE:
-		printf("pmtu %d\n", e->ee_info);
+		printf(_("pmtu %d\n"), e->ee_info);
 		ctl->mtu = e->ee_info;
 		progress = ctl->mtu;
 		break;
 	case ECONNREFUSED:
-		printf("reached\n");
+		printf(_("reached\n"));
 		ctl->hops_to = sndhops < 0 ? ctl->ttl : sndhops;
 		ctl->hops_from = rethops;
 		return 0;
@@ -330,9 +344,9 @@ static int recverr(struct run_state *const ctl)
 		     e->ee_code == ICMPV6_EXC_HOPLIMIT)) {
 			if (rethops >= 0) {
 				if (sndhops >= 0 && rethops != sndhops)
-					printf("asymm %2d ", rethops);
+					printf(_("asymm %2d "), rethops);
 				else if (sndhops < 0 && rethops != ctl->ttl)
-					printf("asymm %2d ", rethops);
+					printf(_("asymm %2d "), rethops);
 			}
 			printf("\n");
 			break;
@@ -348,7 +362,7 @@ static int recverr(struct run_state *const ctl)
 	default:
 		printf("\n");
 		errno = e->ee_errno;
-		perror("NET ERROR");
+		perror(_("NET ERROR"));
 		return 0;
 	}
 	goto restart;
@@ -393,19 +407,19 @@ static int probe_ttl(struct run_state *const ctl)
 	if (i < MAX_PROBES) {
 		data_wait(ctl);
 		if (recv(ctl->socket_fd, ctl->pktbuf, ctl->mtu, MSG_DONTWAIT) > 0) {
-			printf("%2d?: reply received 8)\n", ctl->ttl);
+			printf(_("%2d?: reply received 8)\n"), ctl->ttl);
 			return 0;
 		}
 		return recverr(ctl);
 	}
 
-	printf("%2d:  send failed\n", ctl->ttl);
+	printf(_("%2d:  send failed\n"), ctl->ttl);
 	return 0;
 }
 
 static void usage(void)
 {
-	fprintf(stderr,
+	fprintf(stderr, _(
 		"\nUsage\n"
 		"  tracepath [options] <destination>\n"
 		"\nOptions:\n"
@@ -418,7 +432,7 @@ static void usage(void)
 		"  -p <port>      use destination <port>\n"
 		"  -V             print version and exit\n"
 		"  <destination>  dns name or ip address\n"
-		"\nFor more details see tracepath(8).\n");
+		"\nFor more details see tracepath(8).\n"));
 	exit(-1);
 }
 
@@ -445,8 +459,12 @@ int main(int argc, char **argv)
 	char *p;
 	char pbuf[NI_MAXSERV];
 
-#ifdef USE_IDN
+#if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
+#ifdef ENABLE_NLS
+	bindtextdomain (PACKAGE_NAME, LOCALEDIR);
+	textdomain (PACKAGE_NAME);
+#endif
 #endif
 
 	/* Support being called using `tracepath4` or `tracepath6` symlinks */
@@ -460,7 +478,7 @@ int main(int argc, char **argv)
 		case '4':
 			if (hints.ai_family == AF_INET6) {
 				fprintf(stderr,
-					"tracepath: Only one -4 or -6 option may be specified\n");
+					_("tracepath: Only one -4 or -6 option may be specified\n"));
 				exit(2);
 			}
 			hints.ai_family = AF_INET;
@@ -468,7 +486,7 @@ int main(int argc, char **argv)
 		case '6':
 			if (hints.ai_family == AF_INET) {
 				fprintf(stderr,
-					"tracepath: Only one -4 or -6 option may be specified\n");
+					_("tracepath: Only one -4 or -6 option may be specified\n"));
 				exit(2);
 			}
 			hints.ai_family = AF_INET6;
@@ -482,7 +500,7 @@ int main(int argc, char **argv)
 		case 'l':
 			if ((ctl.mtu = atoi(optarg)) <= ctl.overhead) {
 				fprintf(stderr,
-					"Error: pktlen must be > %d and <= %d.\n",
+					_("Error: pktlen must be > %d and <= %d.\n"),
 					ctl.overhead, INT_MAX);
 				exit(1);
 			}
@@ -491,7 +509,7 @@ int main(int argc, char **argv)
 			ctl.max_hops = atoi(optarg);
 			if (ctl.max_hops < 0 || ctl.max_hops > MAX_HOPS_LIMIT) {
 				fprintf(stderr,
-					"Error: max hops must be 0 .. %d (inclusive).\n",
+					_("Error: max hops must be 0 .. %d (inclusive).\n"),
 					MAX_HOPS_LIMIT);
 				exit(1);
 			}
@@ -643,23 +661,23 @@ int main(int argc, char **argv)
 		}
 
 		if (res < 0)
-			printf("%2d:  no reply\n", ctl.ttl);
+			printf(_("%2d:  no reply\n"), ctl.ttl);
 	}
 	printf("     Too many hops: pmtu %d\n", ctl.mtu);
 
  done:
 	freeaddrinfo(result);
 
-	printf("     Resume: pmtu %d ", ctl.mtu);
+	printf(_("     Resume: pmtu %d "), ctl.mtu);
 	if (ctl.hops_to >= 0)
-		printf("hops %d ", ctl.hops_to);
+		printf(_("hops %d "), ctl.hops_to);
 	if (ctl.hops_from >= 0)
-		printf("back %d ", ctl.hops_from);
+		printf(_("back %d "), ctl.hops_from);
 	printf("\n");
 	exit(0);
 
  pktlen_error:
-	fprintf(stderr, "Error: pktlen must be > %d and <= %d\n",
+	fprintf(stderr, _("Error: pktlen must be > %d and <= %d\n"),
 		ctl.overhead, INT_MAX);
 	exit(1);
 }

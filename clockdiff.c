@@ -124,6 +124,20 @@ int in_cksum(unsigned short *addr, int len)
 #define NONSTDTIME	3
 #define HOSTDOWN 	0x7fffffff
 
+#ifdef ENABLE_NLS
+# include <locale.h>
+#endif
+
+#if ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# undef bindtextdomain
+# define bindtextdomain(Domain, Directory) /* empty */
+# undef textdomain
+# define textdomain(Domain) /* empty */
+# define _(Text) Text
+#endif
 
 int interactive = 0;
 uint16_t id;
@@ -441,12 +455,12 @@ empty:
 				if (acked < icp->un.echo.sequence)
 					acked = icp->un.echo.sequence;
 				if ((opt[3]&0xF) != IPOPT_TS_PRESPEC) {
-					fprintf(stderr, "Wrong timestamp %d\n", opt[3]&0xF);
+					fprintf(stderr, _("Wrong timestamp %d\n"), opt[3]&0xF);
 					return NONSTDTIME;
 				}
 				if (opt[3]>>4) {
 					if ((opt[3]>>4) != 1 || ip_opt_len != 4+3*8)
-						fprintf(stderr, "Overflow %d hops\n", opt[3]>>4);
+						fprintf(stderr, _("Overflow %d hops\n"), opt[3]>>4);
 				}
 				sendtime = recvtime = histime = histime1 = 0;
 				for (i=0; i < (opt[2]-5)/8; i++) {
@@ -471,7 +485,7 @@ empty:
 				}
 
 				if (!(sendtime&histime&histime1&recvtime)) {
-					fprintf(stderr, "wrong timestamps\n");
+					fprintf(stderr, _("wrong timestamps\n"));
 					return -1;
 				}
 
@@ -554,7 +568,7 @@ good_exit:
 
 void usage(void)
 {
-	fprintf(stderr,
+	fprintf(stderr, _(
 		"\nUsage:\n"
 		"  clockdiff [options] <destination>\n"
 		"\nOptions:\n"
@@ -564,7 +578,7 @@ void usage(void)
 		"  -V            print version and exit\n"
 		"  <destination> dns name or ip address\n"
 		"\nFor more details see clockdiff(8).\n"
-	);
+	));
 	exit(1);
 }
 
@@ -594,10 +608,17 @@ main(int argc, char *argv[])
 	int s_errno = 0;
 	int n_errno = 0;
 
+#ifdef ENABLE_NLS
+	setlocale(LC_ALL, "");
+	bindtextdomain (PACKAGE_NAME, LOCALEDIR);
+	textdomain (PACKAGE_NAME);
+#endif
+
 	if (argc == 2 && !strcmp(argv[1], "-V")) {
 		printf(IPUTILS_VERSION("clockdiff"));
 		return 0;
 	}
+
 	if (argc < 2) {
 		drop_rights();
 		usage();
@@ -686,7 +707,7 @@ main(int argc, char *argv[])
 		}
 
 		if (setsockopt(sock_raw, IPPROTO_IP, IP_OPTIONS, rspace, ip_opt_len) < 0) {
-			perror("ping: IP_OPTIONS (fallback to icmp tstamps)");
+			perror(_("ping: IP_OPTIONS (fallback to icmp tstamps)"));
 			ip_opt_len = 0;
 		}
 	}
@@ -695,19 +716,19 @@ main(int argc, char *argv[])
 		if (errno)
 			perror("measure");
 		else
-			fprintf(stderr, "measure: unknown failure\n");
+			fprintf(stderr, _("measure: unknown failure\n"));
 		exit(1);
 	}
 
 	switch (measure_status) {
 	case HOSTDOWN:
-		fprintf(stderr, "%s is down\n", hisname);
+		fprintf(stderr, _("%s is down\n"), hisname);
 		exit(1);
 	case NONSTDTIME:
-		fprintf(stderr, "%s time transmitted in a non-standard format\n", hisname);
+		fprintf(stderr, _("%s time transmitted in a non-standard format\n"), hisname);
 		exit(1);
 	case UNREACHABLE:
-		fprintf(stderr, "%s is unreachable\n", hisname);
+		fprintf(stderr, _("%s is unreachable\n"), hisname);
 		exit(1);
 	default:
 		break;
@@ -718,7 +739,7 @@ main(int argc, char *argv[])
 		time_t now = time(NULL);
 
 		if (interactive)
-			printf("\nhost=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s", hisname,
+			printf(_("\nhost=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"), hisname,
 			       rtt, rtt_sigma, min_rtt,
 			       measure_delta, measure_delta1,
 			       ctime(&now));

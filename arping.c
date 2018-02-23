@@ -42,8 +42,22 @@
 # include <sys/types.h>
 #endif
 
-#ifdef USE_IDN
+#if defined(USE_IDN) || defined(ENABLE_NLS)
 # include <locale.h>
+#endif
+
+#ifdef ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# undef bindtextdomain
+# define bindtextdomain(Domain, Directory) /* empty */
+# undef textdomain
+# define textdomain(Domain) /* empty */
+# define _(Text) Text
+#endif
+
+#ifdef USE_IDN
 # ifndef AI_IDN
 #  define AI_IDN		0x0040
 # endif
@@ -173,7 +187,7 @@ __attribute__((const)) static inline size_t sll_len(const size_t halen)
 
 static void usage(void)
 {
-	fprintf(stderr,
+	fprintf(stderr, _(
 		"\nUsage:\n"
 		"  arping [options] <destination>\n"
 		"\nOptions:\n"
@@ -188,14 +202,16 @@ static void usage(void)
 		"  -w <timeout>  how long to wait for a reply\n"
 		"  -i <interval> set interval between packets (default: 1 second)\n"
 		"  -I <device>   which ethernet device to use"
+	));
 #ifdef DEFAULT_DEVICE_STR
-				"(" DEFAULT_DEVICE_STR ")"
+	fprintf(stderr, "(" DEFAULT_DEVICE_STR ")");
 #endif
+	fprintf(stderr, _(
 				"\n"
 		"  -s <source>   source ip address\n"
 		"  <destination> dns name or ip address\n"
 		"\nFor more details see arping(8).\n"
-	);
+	));
 	exit(2);
 }
 
@@ -366,14 +382,14 @@ static int send_pack(struct run_state *ctl)
 static int finish(struct run_state *ctl)
 {
 	if (!ctl->quiet) {
-		printf("Sent %d probes (%d broadcast(s))\n", ctl->sent, ctl->brd_sent);
-		printf("Received %d response(s)", ctl->received);
+		printf(_("Sent %d probes (%d broadcast(s))\n"), ctl->sent, ctl->brd_sent);
+		printf(_("Received %d response(s)"), ctl->received);
 		if (ctl->brd_recv || ctl->req_recv) {
 			printf(" (");
 			if (ctl->req_recv)
-				printf("%d request(s)", ctl->req_recv);
+				printf(_("%d request(s)"), ctl->req_recv);
 			if (ctl->brd_recv)
-				printf("%s%d broadcast(s)",
+				printf(_("%s%d broadcast(s)"),
 				       ctl->req_recv ? ", " : "",
 				       ctl->brd_recv);
 			printf(")");
@@ -468,18 +484,18 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 	}
 	if (!ctl->quiet) {
 		int s_printed = 0;
-		printf("%s ", FROM->sll_pkttype == PACKET_HOST ? "Unicast" : "Broadcast");
-		printf("%s from ", ah->ar_op == htons(ARPOP_REPLY) ? "reply" : "request");
+		printf("%s ", FROM->sll_pkttype == PACKET_HOST ? _("Unicast") : _("Broadcast"));
+		printf(_("%s from "), ah->ar_op == htons(ARPOP_REPLY) ? _("reply") : _("request"));
 		printf("%s [", inet_ntoa(src_ip));
 		print_hex(p, ah->ar_hln);
 		printf("] ");
 		if (dst_ip.s_addr != ctl->gsrc.s_addr) {
-			printf("for %s ", inet_ntoa(dst_ip));
+			printf(_("for %s "), inet_ntoa(dst_ip));
 			s_printed = 1;
 		}
 		if (memcmp(p + ah->ar_hln + 4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln)) {
 			if (!s_printed)
-				printf("for ");
+				printf(_("for "));
 			printf("[");
 			print_hex(p + ah->ar_hln + 4, ah->ar_hln);
 			printf("]");
@@ -489,9 +505,9 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 				(ts.tv_nsec - ctl->last.tv_nsec + 500) / 1000;
 			long msecs = (usecs + 500) / 1000;
 			usecs -= msecs * 1000 - 500;
-			printf(" %ld.%03ldms\n", msecs, usecs);
+			printf(_(" %ld.%03ldms\n"), msecs, usecs);
 		} else {
-			printf(" UNSOLICITED?\n");
+			printf(_(" UNSOLICITED?\n"));
 		}
 		fflush(stdout);
 	}
@@ -543,7 +559,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 	if (!(ifflags & IFF_UP)) {
 		if (ctl->device.name != NULL) {
 			if (!ctl->quiet)
-				printf("Interface \"%s\" is down\n", ctl->device.name);
+				printf(_("Interface \"%s\" is down\n"), ctl->device.name);
 			exit(2);
 		}
 		return -1;
@@ -551,7 +567,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 	if (ifflags & (IFF_NOARP | IFF_LOOPBACK)) {
 		if (ctl->device.name != NULL) {
 			if (!ctl->quiet)
-				printf("Interface \"%s\" is not ARPable\n", ctl->device.name);
+				printf(_("Interface \"%s\" is not ARPable\n"), ctl->device.name);
 			exit(ctl->dad ? 0 : 2);
 		}
 		return -1;
@@ -833,7 +849,7 @@ static int find_device_by_ioctl(struct run_state *ctl)
 		} while (ifrsize < INT_MAX / 2);
 
 		if (!ifr0) {
-			fprintf(stderr, "arping: too many interfaces!?\n");
+			fprintf(stderr, _("arping: too many interfaces!?\n"));
 			goto out;
 		}
 
@@ -900,7 +916,7 @@ static void set_device_broadcast(struct run_state *ctl)
 	}
 #endif
 	if (!ctl->quiet)
-		fprintf(stderr, "WARNING: using default broadcast address.\n");
+		fprintf(stderr, _("WARNING: using default broadcast address.\n"));
 	memset(he->sll_addr, -1, he->sll_halen);
 }
 
@@ -1063,8 +1079,12 @@ int main(int argc, char **argv)
 	int ch;
 
 	limit_capabilities(&ctl);
-#ifdef USE_IDN
+#if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
+#ifdef ENABLE_NLS
+	bindtextdomain (PACKAGE_NAME, LOCALEDIR);
+	textdomain (PACKAGE_NAME);
+#endif
 #endif
 	enable_capability_raw(&ctl);
 
@@ -1141,10 +1161,10 @@ int main(int argc, char **argv)
 
 	if (!ctl.device.ifindex) {
 		if (ctl.device.name) {
-			fprintf(stderr, "arping: Device %s not available.\n", ctl.device.name);
+			fprintf(stderr, _("arping: Device %s not available.\n"), ctl.device.name);
 			exit(2);
 		}
-		fprintf(stderr, "arping: Suitable device could not be determined. Please, use option -I.\n");
+		fprintf(stderr, _("arping: Suitable device could not be determined. Please, use option -I.\n"));
 		usage();
 	}
 
@@ -1170,7 +1190,7 @@ int main(int argc, char **argv)
 	}
 
 	if (ctl.source && inet_aton(ctl.source, &ctl.gsrc) != 1) {
-		fprintf(stderr, "arping: invalid source %s\n", ctl.source);
+		fprintf(stderr, _("arping: invalid source %s\n"), ctl.source);
 		exit(2);
 	}
 
@@ -1190,7 +1210,7 @@ int main(int argc, char **argv)
 
 			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, ctl.device.name,
 				       strlen(ctl.device.name) + 1) == -1)
-				perror("WARNING: interface is ignored");
+				perror(_("WARNING: interface is ignored"));
 
 			disable_capability_raw(&ctl);
 		}
@@ -1210,7 +1230,7 @@ int main(int argc, char **argv)
 			saddr.sin_addr = ctl.gdst;
 
 			if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on)) == -1)
-				perror("WARNING: setsockopt(SO_DONTROUTE)");
+				perror(_("WARNING: setsockopt(SO_DONTROUTE)"));
 			if (connect(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1) {
 				perror("connect");
 				exit(2);
@@ -1242,7 +1262,7 @@ int main(int argc, char **argv)
 	}
 	if (((struct sockaddr_ll *)&ctl.me)->sll_halen == 0) {
 		if (!ctl.quiet)
-			printf("Interface \"%s\" is not ARPable (no ll address)\n", ctl.device.name);
+			printf(_("Interface \"%s\" is not ARPable (no ll address)\n"), ctl.device.name);
 		exit(ctl.dad ? 0 : 2);
 	}
 
@@ -1251,12 +1271,12 @@ int main(int argc, char **argv)
 	set_device_broadcast(&ctl);
 
 	if (!ctl.quiet) {
-		printf("ARPING %s ", inet_ntoa(ctl.gdst));
-		printf("from %s %s\n", inet_ntoa(ctl.gsrc), ctl.device.name ? ctl.device.name : "");
+		printf(_("ARPING %s "), inet_ntoa(ctl.gdst));
+		printf(_("from %s %s\n"), inet_ntoa(ctl.gsrc), ctl.device.name ? ctl.device.name : "");
 	}
 
 	if (!ctl.source && !ctl.gsrc.s_addr && !ctl.dad) {
-		fprintf(stderr, "arping: no source address in not-DAD mode\n");
+		fprintf(stderr, _("arping: no source address in not-DAD mode\n"));
 		exit(2);
 	}
 

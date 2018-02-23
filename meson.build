@@ -65,6 +65,17 @@ if opt != ''
 	conf.set_quoted('DEFAULT_DEVICE', opt, description : 'arping default device.')
 endif
 
+opt = get_option('USE_GETTEXT')
+if opt == true
+	prefix = get_option('prefix')
+	localedir = get_option('localedir')
+	add_project_arguments(['-DGETTEXT_PACKAGE="iputils"'], language: 'c')
+
+	conf.set('ENABLE_NLS', 1, description : 'If set enable I18N.')
+	conf.set_quoted('LOCALEDIR', join_paths(prefix, localedir))
+	subdir ('po')
+endif
+
 opt = get_option('USE_SYSFS')
 if opt == true
 	conf.set('USE_SYSFS', 1, description : 'If set use /sys file system.')

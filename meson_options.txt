@@ -55,3 +55,6 @@ option('USE_SYSFS', type : 'boolean', value : true,
 
 option('systemdunitdir', type: 'string', value: '',
 	description: 'Directory for systemd units')
+
+option('USE_GETTEXT', type: 'boolean', value: false,
+	description: 'Enable I18N')

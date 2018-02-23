@@ -40,8 +40,22 @@
 #include <sys/capability.h>
 #endif
 
+#if defined(USE_IDN) || defined(ENABLE_NLS)
+# include <locale.h>
+#endif
+
+#ifdef ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# undef bindtextdomain
+# define bindtextdomain(Domain, Directory) /* empty */
+# undef textdomain
+# define textdomain(Domain) /* empty */
+# define _(Text) Text
+#endif
+
 #ifdef USE_IDN
-#include <locale.h>
 #include <idn2.h>
 
 #ifndef AI_IDN
