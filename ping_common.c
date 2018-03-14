@@ -626,6 +626,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 	int cc;
 	int next;
 	int polling;
+	int recv_error;
 
 	iov.iov_base = (char *)packet;
 
@@ -658,6 +659,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 		 * 2. Avoid use of poll(), when recvmsg() can provide
 		 *    timed waiting (SO_RCVTIMEO). */
 		polling = 0;
+		recv_error = 0;
 		if ((options & (F_ADAPTIVE|F_FLOOD_POLL)) || next<SCHINT(interval)) {
 			int recv_expected = in_flight();
 
@@ -689,6 +691,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 				    !(pset.revents&(POLLIN|POLLERR)))
 					continue;
 				polling = MSG_DONTWAIT;
+				recv_error = pset.revents&POLLERR;
 			}
 		}
 
@@ -711,8 +714,14 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 			polling = MSG_DONTWAIT;
 
 			if (cc < 0) {
-				if (errno == EAGAIN || errno == EINTR)
+				/* If there was a POLLERR and there is no packet
+				 * on the socket, try to read the error queue.
+				 * Otherwise, give up.
+				 */
+				if ((errno == EAGAIN && !recv_error) ||
+				    errno == EINTR)
 					break;
+				recv_error = 0;
 				if (!fset->receive_error_msg(sock)) {
 					if (errno) {
 						perror("ping: recvmsg");
