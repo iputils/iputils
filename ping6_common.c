@@ -763,12 +763,16 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
 				firsthop.sin6_scope_id = iface;
 			enable_capability_raw();
-			if (
 #ifdef IPV6_RECVPKTINFO
-				setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 &&
-				setsockopt(sock->fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 &&
+			if (
+				setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 ||
+				setsockopt(sock->fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1) {
+				perror("setsockopt(IPV6_PKTINFO)");
+				exit(2);
+			}
 #endif
-				setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1 &&
+			if (
+				setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1 ||
 				setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device)+1) == -1) {
 				perror("setsockopt(SO_BINDTODEVICE)");
 				exit(2);
