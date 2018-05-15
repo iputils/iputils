@@ -1087,7 +1087,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 			return 1;			/* 'Twas really not our ECHO */
 		if (gather_statistics((__u8*)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      ttl, 0, tv, pr_addr(from, sizeof *from),
+				      ttl, csfailed, tv, pr_addr(from, sizeof *from),
 				      pr_echo_reply)) {
 			fflush(stdout);
 			return 0;
