@@ -208,6 +208,8 @@ main(int argc, char **argv)
 #ifdef USE_IDN
 	setlocale(LC_ALL, "");
 #endif
+	if (!strcmp(setlocale(LC_ALL, NULL), "C"))
+		hints.ai_flags &= ~ AI_CANONIDN;
 
 	/* Support being called using `ping4` or `ping6` symlinks */
 	if (argv[0][strlen(argv[0])-1] == '4')
