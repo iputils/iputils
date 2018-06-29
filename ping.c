@@ -544,7 +544,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	unsigned char *packet;
 	char *target;
 	char hnamebuf[NI_MAXHOST];
-	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
+	unsigned char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 	__u32 *tmp_rspace;
 
 	if (argc > 1) {
