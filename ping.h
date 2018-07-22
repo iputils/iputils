@@ -28,7 +28,6 @@
 #include <netinet/icmp6.h>
 #include <linux/filter.h>
 #include <resolv.h>
-#include <locale.h>
 
 #ifdef CAPABILITIES
 #include <sys/prctl.h>
@@ -36,6 +35,7 @@
 #endif
 
 #ifdef USE_IDN
+#include <locale.h>
 #include <idn2.h>
 
 #ifndef AI_IDN
