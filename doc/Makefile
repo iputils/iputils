@@ -3,7 +3,7 @@ TARGETS_HTML =  arping.html clockdiff.html ninfod.html pg3.html ping.html rarpd.
 
 IPUTILS_VERSION = s$(shell sed 's/[^0-9]*//g' ../SNAPSHOT.h)
 
-XSLTPROC = /usr/bin/xsltproc
+XSLTPROC = xsltproc
 XSLTPROC_FLAGS = --nonet --xinclude --stringparam man.output-quietly 1 --stringparam funcsynopsis.style ansi --stringparam man.authors.section.enabled 0 --stringparam iputils.version $(IPUTILS_VERSION)
 
 XSL_MAN = custom-man.xsl
