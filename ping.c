@@ -92,13 +92,6 @@ static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *
 static int parsetos(char *str);
 static int parseflow(char *str);
 
-static struct {
-	struct cmsghdr cm;
-	struct in_pktinfo ipi;
-} cmsg = { {sizeof(struct cmsghdr) + sizeof(struct in_pktinfo), SOL_IP, IP_PKTINFO},
-	   {0, {0}, {0}}};
-int cmsg_len;
-
 static struct sockaddr_in source = { .sin_family = AF_INET };
 char *device;
 int pmtudisc = -1;
@@ -645,8 +638,6 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 		strncpy(ifr.ifr_name, device, IFNAMSIZ-1);
 		if (ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0)
 			error(2, 0, "unknown iface: %s", device);
-		cmsg.ipi.ipi_ifindex = ifr.ifr_ifindex;
-		cmsg_len = sizeof(cmsg);
 	}
 
 	if (broadcast_pings || IN_MULTICAST(ntohl(whereto.sin_addr.s_addr))) {
