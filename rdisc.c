@@ -714,7 +714,7 @@ char *pr_name(struct in_addr addr)
 {
 	struct sockaddr_in sin = { .sin_family = AF_INET, .sin_addr = addr };
 	char hnamebuf[NI_MAXHOST] = "";
-	static char buf[80];
+	static char buf[sizeof(hnamebuf) + INET6_ADDRSTRLEN + sizeof(" ()")];
 
 	getnameinfo((struct sockaddr *) &sin, sizeof sin, hnamebuf, sizeof hnamebuf, NULL, 0, 0);
 	snprintf(buf, sizeof buf, "%s (%s)", hnamebuf, inet_ntoa(addr));
