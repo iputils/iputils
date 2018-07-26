@@ -86,7 +86,7 @@ elif opt == 'openssl'
 	crypto_dep = dependency('openssl')
 	conf.set('USE_OPENSSL', 1, description : 'if set use openssl crypto library.')
 elif opt == 'none'
-	crypto_dep = []
+	crypto_dep = disabler()
 	conf.set('PING6_NONCE_MEMORY', 1, description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
 
@@ -209,8 +209,8 @@ if build_rarpd == true
 endif
 
 if build_ninfod == true
-	if crypto_dep == []
-		error('BUILD_NINFOD=true and USE_CRYPTO=none cannot be compiled')
+	if not crypto_dep.found()
+		error('BUILD_NINFOD=true and USE_CRYPTO=none cannot be combined')
 	endif
 	subdir ('ninfod')
 endif
