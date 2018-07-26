@@ -106,7 +106,7 @@ void load_if(void)
 	struct ifreq ibuf[256];
 
 	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		syslog(LOG_ERR, "socket: %m");
+		syslog(LOG_ERR, "socket: %s", strerror(errno));
 		return;
 	}
 
@@ -114,7 +114,7 @@ void load_if(void)
 	ifc.ifc_buf = (char *)ibuf;
 	if (ioctl(fd, SIOCGIFCONF, (char *)&ifc) < 0 ||
 	    ifc.ifc_len < (int)sizeof(struct ifreq)) {
-		syslog(LOG_ERR, "SIOCGIFCONF: %m");
+		syslog(LOG_ERR, "SIOCGIFCONF: %s", strerror(errno));
 		close(fd);
 		return;
 	}
@@ -140,7 +140,7 @@ void load_if(void)
 		if (addr == 0)
 			continue;
 		if (ioctl(fd, SIOCGIFINDEX, ifrp)) {
-			syslog(LOG_ERR, "ioctl(SIOCGIFNAME): %m");
+			syslog(LOG_ERR, "ioctl(SIOCGIFNAME): %s", strerror(errno));
 			continue;
 		}
 		if (ifidx && ifrp->ifr_ifindex != ifidx)
@@ -153,7 +153,7 @@ void load_if(void)
 			int index = ifrp->ifr_ifindex;
 
 			if (ioctl(fd, SIOCGIFHWADDR, ifrp)) {
-				syslog(LOG_ERR, "ioctl(SIOCGIFHWADDR): %m");
+				syslog(LOG_ERR, "ioctl(SIOCGIFHWADDR): %s", strerror(errno));
 				continue;
 			}
 
@@ -174,12 +174,12 @@ void load_if(void)
 				syslog(LOG_INFO, "link %s", ifl->name);
 		}
 		if (ioctl(fd, SIOCGIFNETMASK, ifrp)) {
-			syslog(LOG_ERR, "ioctl(SIOCGIFMASK): %m");
+			syslog(LOG_ERR, "ioctl(SIOCGIFMASK): %s", strerror(errno));
 			continue;
 		}
 		mask = ((struct sockaddr_in*)&ifrp->ifr_netmask)->sin_addr.s_addr;
 		if (ioctl(fd, SIOCGIFDSTADDR, ifrp)) {
-			syslog(LOG_ERR, "ioctl(SIOCGIFDSTADDR): %m");
+			syslog(LOG_ERR, "ioctl(SIOCGIFDSTADDR): %s", strerror(errno));
 			continue;
 		}
 		prefix = ((struct sockaddr_in*)&ifrp->ifr_dstaddr)->sin_addr.s_addr;
@@ -237,7 +237,7 @@ int bootable(uint32_t addr)
 	sprintf(name, "%08X", (uint32_t)ntohl(addr));
 	d = opendir(tftp_dir);
 	if (d == NULL) {
-		syslog(LOG_ERR, "opendir: %m");
+		syslog(LOG_ERR, "opendir: %s", strerror(errno));
 		return 0;
 	}
 	while ((dent = readdir(d)) != NULL) {
@@ -419,7 +419,7 @@ void arp_advise(int ifindex, unsigned char *lladdr, int lllen, uint32_t ipaddr)
 	memcpy(req.arp_dev, ifl->name, IFNAMSIZ);
 
 	if (ioctl(fd, SIOCSARP, &req))
-		syslog(LOG_ERR, "SIOCSARP: %m");
+		syslog(LOG_ERR, "SIOCSARP: %s", strerror(errno));
 	close(fd);
 }
 
@@ -436,7 +436,7 @@ void serve_it(int fd)
 	n = recvfrom(fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*)&sll, &sll_len);
 	if (n<0) {
 		if (errno != EINTR && errno != EAGAIN)
-			syslog(LOG_ERR, "recvfrom: %m");
+			syslog(LOG_ERR, "recvfrom: %s", strerror(errno));
 		return;
 	}
 
@@ -721,7 +721,7 @@ int main(int argc, char **argv)
 		i = poll(pset, psize, -1);
 		if (i <= 0) {
 			if (errno != EINTR && i<0) {
-				syslog(LOG_ERR, "poll returned some crap: %m\n");
+				syslog(LOG_ERR, "poll returned some crap: %s\n", strerror(errno));
 				sleep(10);
 			}
 			continue;

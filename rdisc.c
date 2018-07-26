@@ -1531,7 +1531,7 @@ void
 logperror(char *str)
 {
 	if (logging)
-		syslog(LOG_ERR, "%s: %m", str);
+		syslog(LOG_ERR, "%s: %s", str, strerror(errno));
 	else
 		(void) fprintf(stderr, "%s: %s\n", str, strerror(errno));
 }
