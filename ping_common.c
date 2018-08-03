@@ -856,11 +856,11 @@ restamp:
 			if (triptime >= 100000)
 				printf(" time=%ld ms", (triptime+500)/1000);
 			else if (triptime >= 10000)
-				printf(" time=%ld.%01ld ms", triptime/1000,
-				       ((triptime%1000)+50)/100);
+				printf(" time=%ld.%01ld ms", (triptime+50)/1000,
+				       ((triptime+50)%1000)/100);
 			else if (triptime >= 1000)
-				printf(" time=%ld.%02ld ms", triptime/1000,
-				       ((triptime%1000)+5)/10);
+				printf(" time=%ld.%02ld ms", (triptime+5)/1000,
+				       ((triptime+5)%1000)/10);
 			else
 				printf(" time=%ld.%03ld ms", triptime/1000,
 				       triptime%1000);
