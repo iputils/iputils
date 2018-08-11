@@ -136,10 +136,12 @@ static void create_socket(socket_st *sock, int family, int socktype, int protoco
 	 *
 	 * OpenVZ 2.6.32-042stab113.11 and possibly other older kernels return
 	 * EPROTONOSUPPORT for all IPv6 ping socket creation attempts due to lack
-	 * of support in the kernel. Fallback to raw socket is necessary.
+	 * of support in the kernel [1]. Debian 9.5 based container with kernel 4.10
+	 * returns EPROTONOSUPPORT also for IPv4 [2]. Fallback to raw socket is
+	 * necessary.
 	 *
-	 * https://github.com/iputils/iputils/issues/54
-	 *
+	 * [1] https://github.com/iputils/iputils/issues/54
+	 * [2] https://github.com/iputils/iputils/issues/129
 	 */
 	if (socktype == SOCK_DGRAM)
 		sock->fd = socket(family, socktype, protocol);
@@ -147,7 +149,7 @@ static void create_socket(socket_st *sock, int family, int socktype, int protoco
 	/* Kernel doesn't support ping sockets. */
 	if (sock->fd == -1 && errno == EAFNOSUPPORT && family == AF_INET)
 		do_fallback = 1;
-	if (sock->fd == -1 && errno == EPROTONOSUPPORT && family == AF_INET6)
+	if (sock->fd == -1 && errno == EPROTONOSUPPORT)
 		do_fallback = 1;
 
 	/* User is not allowed to use ping sockets. */
