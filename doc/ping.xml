@@ -475,7 +475,7 @@ loss calculation, although the round trip time of these packets is used
 in calculating the minimum/average/maximum/mdev round-trip time numbers.
 </para>
 <para>
-Median deviation (mdev), essentially an average of how far each ping RTT is from the mean RTT. The higher mdev is, the more variable the RTT is (over time).
+Population standard deviation (mdev), essentially an average of how far each ping RTT is from the mean RTT. The higher mdev is, the more variable the RTT is (over time).
 
 With a high RTT variability, you will have speed issues with bulk transfers (they will take longer than is strictly speaking necessary, as the variability will eventually cause the sender to wait for ACKs) and you will have middling to poor VoIP quality.
 </para>
