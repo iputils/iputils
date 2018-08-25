@@ -212,8 +212,8 @@ extern jmp_buf pr_addr_jmp;
 extern int timing;			/* flag to do timing */
 extern long tmin;			/* minimum round trip time */
 extern long tmax;			/* maximum round trip time */
-extern long long tsum;			/* sum of all times, for doing average */
-extern long long tsum2;
+extern double tsum;			/* sum of all times, for doing average */
+extern double tsum2;
 extern int rtt;
 extern uint16_t acked;
 extern int pipesize;
