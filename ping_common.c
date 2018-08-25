@@ -80,8 +80,8 @@ long tmax;			/* maximum round trip time */
  * "sparcfix" patch is a complete non-sense, apparenly the person
  * prepared it was stoned.
  */
-long long tsum;			/* sum of all times, for doing average */
-long long tsum2;
+double tsum;			/* sum of all times, for doing average */
+double tsum2;
 int  pipesize = -1;
 
 int datalen = DEFDATALEN;
@@ -939,7 +939,7 @@ void finish(void)
 	putchar('\n');
 
 	if (nreceived && timing) {
-		long tmdev;
+		double tmdev;
 
 		tsum /= nreceived + nrepeats;
 		tsum2 /= nreceived + nrepeats;
@@ -947,7 +947,7 @@ void finish(void)
 
 		printf("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms",
 		       (long)tmin/1000, (long)tmin%1000,
-		       (unsigned long)(tsum/1000), (long)(tsum%1000),
+		       (unsigned long)(tsum/1000), (long)tsum%1000,
 		       (long)tmax/1000, (long)tmax%1000,
 		       (long)tmdev/1000, (long)tmdev%1000
 		       );
