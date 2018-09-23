@@ -15,20 +15,21 @@
 </refnamediv>
 <!-- body begins here -->
 <refsynopsisdiv id='synopsis'>
-<cmdsynopsis>
-  <command>tracepath</command>
-    <arg choice='opt'>-4 </arg>
-    <arg choice='opt'>-6 </arg>
-    <arg choice='opt'>-n </arg>
-    <arg choice='opt'>-b </arg>
+  <cmdsynopsis>
+    <command>tracepath</command>
+    <arg choice='opt'>-46bn</arg>
     <arg choice='opt'>-l <replaceable>pktlen</replaceable></arg>
     <arg choice='opt'>-m <replaceable>max_hops</replaceable></arg>
     <arg choice='opt'>-p <replaceable>port</replaceable></arg>
     <arg choice='plain'><replaceable>destination</replaceable></arg>
     <sbr/>
   </cmdsynopsis>
+  <cmdsynopsis>
+    <command>tracepath</command>
+    <arg choice='opt'>-hV</arg>
+    <sbr/>
+  </cmdsynopsis>
 </refsynopsisdiv>
-
 
 <refsect1 id='description'>
   <title>DESCRIPTION</title>
@@ -74,6 +75,12 @@ of UDP ports to maintain trace history.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
+  <term><option>-h</option></term>
+  <listitem>
+<para>Print help page and exit.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
   <term><option>-l</option></term>
   <listitem>
 <para>Sets the initial packet length to <emphasis remap='I'>pktlen</emphasis> instead of
@@ -91,6 +98,12 @@ instead of 30.</para>
   <term><option>-p</option></term>
   <listitem>
 <para>Sets the initial destination port to use.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+<para>Show version and exit.</para>
   </listitem>
   </varlistentry>
 </variablelist>
