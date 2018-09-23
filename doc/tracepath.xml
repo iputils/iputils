@@ -53,13 +53,13 @@ of UDP ports to maintain trace history.</para>
   <varlistentry>
   <term><option>-4</option></term>
   <listitem>
-<para>Use IPv4 only..</para>
+<para>Use IPv4 only.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
   <term><option>-6</option></term>
   <listitem>
-<para>Use IPv6 only..</para>
+<para>Use IPv6 only.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
