@@ -16,11 +16,16 @@
 <refsynopsisdiv id='synopsis'>
   <cmdsynopsis>
     <command>rdisc</command>
-    <arg choice='opt'>-abdfrstvV </arg>
+    <arg choice='opt'>-abdfrstv</arg>
     <arg choice='opt'>-p <replaceable>preference</replaceable></arg>
     <arg choice='opt'>-T <replaceable>max_interval</replaceable></arg>
     <arg choice='opt'><replaceable>send_address</replaceable></arg>
     <arg choice='opt'><replaceable>receive_address</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>rdisc</command>
+    <arg choice='opt'>-hV</arg>
     <sbr/>
   </cmdsynopsis>
 </refsynopsisdiv>
