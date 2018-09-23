@@ -38,6 +38,78 @@ all the references to IP replaced to IPv6. It is needless to copy
 the description from there.</para>
 </refsect1>
 
+<refsect1 id='options'>
+  <title>OPTIONS</title>
+  <variablelist remap='TP'>
+  <varlistentry>
+  <term><option>-d</option></term>
+  <listitem>
+    <para>Debug mode.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-i </option><emphasis remap='I'>interface</emphasis></term>
+  <listitem>
+    <para>Set interface.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-m </option><emphasis remap='I'>max_ttl</emphasis></term>
+  <listitem>
+    <para>Set max TTL (default 30).</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-n</option></term>
+  <listitem>
+    <para>Do not try to resolve service names.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-p </option><emphasis remap='I'>port</emphasis></term>
+  <listitem>
+    <para>Set port.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-q </option><emphasis remap='I'>max_probes</emphasis></term>
+  <listitem>
+    <para>Set maximum of probes (default 3).</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-r</option></term>
+  <listitem>
+    <para>Use SO_DONTROUTE socket option.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-s </option><emphasis remap='I'>source</emphasis></term>
+  <listitem>
+    <para>Set the IP source address of the outbound probe (e.g., on a multi-homed host).</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-w </option><emphasis remap='I'>wait</emphasis></term>
+  <listitem>
+    <para></para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-v</option></term>
+  <listitem>
+    <para>Be verbose.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+    <para>Show version and exit.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+</refsect1>
+
 <refsect1 id='see_also'>
   <title>SEE ALSO</title>
   <para><citerefentry><refentrytitle>traceroute</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
