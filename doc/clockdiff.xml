@@ -16,13 +16,17 @@
 <refsynopsisdiv id='synopsis'>
   <cmdsynopsis>
     <command>clockdiff</command>
-    <arg choice='opt'>-o </arg>
-    <arg choice='opt'>-o1 </arg>
+    <arg choice='opt'>-o</arg>
+    <arg choice='opt'>-o1</arg>
     <arg choice='plain'><replaceable>destination</replaceable></arg>
     <sbr/>
   </cmdsynopsis>
+  <cmdsynopsis>
+    <command>clockdiff</command>
+    <arg choice='opt'>-hV</arg>
+    <sbr/>
+  </cmdsynopsis>
 </refsynopsisdiv>
-
 
 <refsect1 id='description'>
   <title>DESCRIPTION</title>
@@ -34,6 +38,11 @@
 <refsect1 id='options'>
   <title>OPTIONS</title>
   <variablelist remap='TP'>
+  <varlistentry>
+  <term><option>-h</option></term>
+  <listitem><para>Print help page and exit.</para>
+  </listitem>
+  </varlistentry>
     <varlistentry>
     <term><option>-o</option></term>
     <listitem>
@@ -49,6 +58,12 @@ ICMP TIMESTAMP (f.e. Solaris &lt;2.4).</para>
 IP TIMESTAMP with prespecified hop addresses instead of four term one.
 What flavor works better depends on target host. Particularly,
 <option>-o</option> is better for Linux.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+<para>Show version and exit.</para>
   </listitem>
   </varlistentry>
 </variablelist>
