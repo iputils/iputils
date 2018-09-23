@@ -163,11 +163,12 @@ static int interfaces_size;			/* Number of elements in interfaces */
 int debugfile;
 
 const char usage[] =
-"Usage:	rdisc [-b] [-d] [-s] [-v] [-f] [-a] [-V] [send_address] [receive_address]\n"
+"Usage: rdisc [-abdfsv] [send_address] [receive_address]\n"
 #ifdef RDISC_SERVER
-"       rdisc -r [-b] [-d] [-s] [-v] [-f] [-a] [-V] [-p <preference>] [-T <secs>]\n"
-"		 [send_address] [receive_address]\n"
+"       rdisc -r [-abdfsv] [-p <preference>] [-T <secs>]\n"
+"             [send_address] [receive_address]\n"
 #endif
+"       rdisc [-hV]\n"
 ;
 
 
@@ -360,6 +361,7 @@ int main(int argc, char **argv)
 				}
 				goto next;
 #endif
+			case 'h':
 			default:
 				prusage();
 				/* NOTREACHED*/
@@ -370,7 +372,7 @@ next:
 #endif
 		argc--, av++;
 	}
-	if( argc < 1)  {
+	if (argc < 1)  {
 		if (support_multicast()) {
 			sendaddress = ALL_ROUTERS_ADDRESS;
 #ifdef RDISC_SERVER

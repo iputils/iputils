@@ -53,6 +53,7 @@
 #include <grp.h>
 
 #include "tftp.h"
+#include "SNAPSHOT.h"
 
 #define	TIMEOUT		5
 
@@ -80,12 +81,21 @@ struct formats;
 void sendfile(struct formats *pf);
 void recvfile(struct formats *pf);
 
+static void usage(void) __attribute__((noreturn));
+
+static void usage(void)
+{
+	fprintf(stderr, "Usage: tftpd <directory>\n");
+	fprintf(stderr, "       tftpd [-hV]\n");
+	exit(2);
+}
 
 int main(int ac, char **av)
 {
 	register struct tftphdr *tp;
 	register int n = 0;
 	int on = 1;
+	int ch;
 
 	openlog("tftpd", LOG_PID, LOG_DAEMON);
 
@@ -99,7 +109,22 @@ int main(int ac, char **av)
 		}
 	}
 
-	ac--; av++;
+	while ((ch = getopt(ac, av, "hV")) != EOF) {
+		switch(ch) {
+		case 'V':
+			printf("tftpd utility, iputils-%s\n", SNAPSHOT);
+			exit(0);
+		case 'h':
+		case '?':
+		default:
+			usage();
+		}
+	}
+	ac -= optind;
+	av += optind;
+
+	ac--;
+	av++;
 	while (ac-- > 0 && n < MAXARG)
 		dirs[n++] = *av++;
 

@@ -30,6 +30,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
+#include "SNAPSHOT.h"
 
 int do_reload = 1;
 
@@ -77,7 +78,8 @@ struct rarp_map
 
 void usage()
 {
-	fprintf(stderr, "Usage: rarpd [ -dveaA ] [ -b tftpdir ] [ interface]\n");
+	fprintf(stderr, "Usage: rarpd [-adevA] [-b tftpdir] [interface]\n");
+	fprintf(stderr, "       rarpd [-hV]\n");
 	exit(1);
 }
 
@@ -567,9 +569,8 @@ int main(int argc, char **argv)
 	int psize;
 	int opt;
 
-
 	opterr = 0;
-	while ((opt = getopt(argc, argv, "aAb:dvoe")) != EOF) {
+	while ((opt = getopt(argc, argv, "aAb:dehovV")) != EOF) {
 		switch (opt) {
 		case 'a':
 			++all_ifaces;
@@ -599,6 +600,12 @@ int main(int argc, char **argv)
 			tftp_dir = optarg;
 			break;
 
+		case 'V':
+			printf("rarpd utility, iputils-%s\n", SNAPSHOT);
+			exit(0);
+
+		case 'h':
+		case '?':
 		default:
 			usage();
 		}

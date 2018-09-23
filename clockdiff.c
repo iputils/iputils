@@ -52,6 +52,8 @@
 #include <sys/capability.h>
 #endif
 
+#include "SNAPSHOT.h"
+
 void usage(void) __attribute__((noreturn));
 
 #define MAX_HOSTNAMELEN	NI_MAXHOST
@@ -554,7 +556,8 @@ good_exit:
 
 void
 usage() {
-  fprintf(stderr, "Usage: clockdiff [-o] <host>\n");
+  fprintf(stderr, "Usage: clockdiff [-o] [-o1] <host>\n");
+  fprintf(stderr, "       clockdiff [-hV]\n");
   exit(1);
 }
 
@@ -597,17 +600,26 @@ main(int argc, char *argv[])
 		n_errno = errno;
 	drop_rights();
 
-	if (argc == 3) {
+	if (argc == 2) {
+		if (strcmp(argv[1], "-h") == 0) {
+			usage();
+		} else if (strcmp(argv[1], "-V") == 0) {
+			printf("clockdiff utility, iputils-%s\n", SNAPSHOT);
+			exit(0);
+		}
+	} else if (argc == 3) {
 		if (strcmp(argv[1], "-o") == 0) {
 			ip_opt_len = 4 + 4*8;
 			argv++;
 		} else if (strcmp(argv[1], "-o1") == 0) {
 			ip_opt_len = 4 + 3*8;
 			argv++;
-		} else
+		} else {
 			usage();
-	} else if (argc != 2)
+		}
+	} else {
 		usage();
+	}
 
 	if (sock_raw < 0)  {
 		errno = s_errno;

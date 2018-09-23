@@ -16,9 +16,14 @@
 <refsynopsisdiv id='synopsis'>
   <cmdsynopsis>
     <command>arping</command>
-    <arg choice='opt'>-aAvde </arg>
+    <arg choice='opt'>-aAdev</arg>
     <arg choice='opt'>-b <replaceable>bootdir</replaceable></arg>
     <arg choice='opt'><replaceable>interface</replaceable></arg>
+    <sbr/>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>arping</command>
+    <arg choice='opt'>-hV</arg>
     <sbr/>
   </cmdsynopsis>
 </refsynopsisdiv>
@@ -67,9 +72,9 @@ use ARP by some unknown reason.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <term><option>-v</option></term>
+  <term><option>-b </option><emphasis remap='I'>bootdir</emphasis></term>
   <listitem>
-<para>Be verbose.</para>
+<para>TFTP boot directory. Default is <filename>/etc/tftpboot</filename>.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
@@ -87,9 +92,20 @@ database and DNS.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <term><option>-b </option><emphasis remap='I'>bootdir</emphasis></term>
+  <term><option>-h</option></term>
+  <listitem><para>Print help page and exit.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-v</option></term>
   <listitem>
-<para>TFTP boot directory. Default is <filename>/etc/tftpboot</filename></para>
+<para>Be verbose.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+<para>Show version and exit.</para>
   </listitem>
   </varlistentry>
 </variablelist>

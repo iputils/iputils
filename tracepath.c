@@ -27,6 +27,8 @@
 #include <sys/uio.h>
 #include <arpa/inet.h>
 
+#include "SNAPSHOT.h"
+
 #ifdef USE_IDN
 #include <locale.h>
 
@@ -373,7 +375,8 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath [-4] [-6] [-n] [-b] [-l <len>] [-p port] <destination>\n");
+	fprintf(stderr, "Usage: tracepath [-46bn] [-l <len>] [-p port] <destination>\n");
+	fprintf(stderr, "       tracepath [-hV]\n");
 	exit(-1);
 }
 
@@ -407,7 +410,7 @@ int main(int argc, char **argv)
 	else if (argv[0][strlen(argv[0])-1] == '6')
 		hints.ai_family = AF_INET6;
 
-	while ((ch = getopt(argc, argv, "46nbh?l:m:p:")) != EOF) {
+	while ((ch = getopt(argc, argv, "46nbh?l:m:p:V")) != EOF) {
 		switch(ch) {
 		case '4':
 			if (hints.ai_family != AF_UNSPEC) {
@@ -447,6 +450,11 @@ int main(int argc, char **argv)
 		case 'p':
 			base_port = atoi(optarg);
 			break;
+		case 'V':
+			printf("tracepath utility, iputils-%s\n", SNAPSHOT);
+			exit(0);
+		case 'h':
+		case '?':
 		default:
 			usage();
 		}

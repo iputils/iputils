@@ -370,7 +370,7 @@ int main(int argc, char *argv[])
 	on = 1;
 	seq = tos = 0;
 	to = (struct sockaddr_in6 *)&whereto;
-	while ((ch = getopt(argc, argv, "dm:np:q:rs:t:w:vi:g:V")) != EOF) {
+	while ((ch = getopt(argc, argv, "dg:hi:m:np:q:rs:t:w:vV")) != EOF) {
 		switch(ch) {
 		case 'd':
 			options |= SO_DEBUG;
@@ -432,6 +432,8 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf("traceroute6 utility, iputils-%s\n", SNAPSHOT);
 			exit(0);
+		case 'h':
+		case '?':
 		default:
 			usage();
 		}
@@ -940,7 +942,8 @@ tvsub(out, in)
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: traceroute6 [-dnrvV] [-m max_ttl] [-p port#] [-q nqueries]\n\t\
-[-s src_addr] [-t tos] [-w wait] host [data size]\n");
+"Usage: traceroute6 [-dnrv] [-m max_ttl] [-p port#] [-q nqueries]\n"
+"                   [-s src_addr] [-t tos] [-w wait] host [data size]\n"
+"       traceroute6 [-hV]\n");
 	exit(1);
 }
