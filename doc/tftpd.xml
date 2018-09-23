@@ -18,8 +18,30 @@
     <command>tftpd</command>
     <arg choice='plain'><replaceable>directory</replaceable></arg>
     <sbr/>
-</cmdsynopsis>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>tftpd</command>
+    <arg choice='opt'>-hV</arg>
+    <sbr/>
+  </cmdsynopsis>
 </refsynopsisdiv>
+
+<refsect1 id='options'>
+  <title>OPTIONS</title>
+<variablelist remap='TP'>
+  <varlistentry>
+  <term><option>-h</option></term>
+  <listitem><para>Print help page and exit.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+<para>Show version and exit.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+</refsect1>
 
 
 <refsect1 id='description'>
