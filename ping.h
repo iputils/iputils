@@ -61,8 +61,7 @@
 #include <arpa/inet.h>
 #include <linux/types.h>
 #include <linux/errqueue.h>
-
-#include "in6_flowlabel.h"
+#include <linux/in6.h>
 
 #ifndef SCOPE_DELIMITER
 #define SCOPE_DELIMITER '%'
