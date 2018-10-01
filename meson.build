@@ -167,6 +167,18 @@ if build_ping == true
 	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c', git_version_h],
 		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
 		install: true)
+	setcap = find_program('setcap', '/usr/sbin/setcap', '/sbin/setcap', required : false)
+	if cap_dep.found() and setcap.found()
+		perm_type = 'caps'
+	else
+		perm_type = 'setuid'
+	endif
+	meson.add_install_script('build-aux/setcap-setuid.sh',
+		join_paths(get_option('prefix'), get_option('bindir')),
+		'ping',
+		perm_type,
+		setcap.path()
+	)
 endif
 
 if build_tracepath == true
