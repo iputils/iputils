@@ -34,7 +34,7 @@ Queries can be sent by various implementations of <emphasis remap='B'>ping6</emp
   <title>OPTIONS</title>
 <variablelist remap='TP'>
   <varlistentry>
-  <term><option>-a</option></term>
+  <term><option>-d</option></term>
   <listitem>
 <para>Debug mode.  Do not go background.</para>
   </listitem>
