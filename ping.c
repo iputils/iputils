@@ -616,7 +616,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
 				if (!ifa->ifa_addr || ifa->ifa_addr->sa_family != AF_INET)
 					continue;
-				if (!strncmp(ifa->ifa_name, device, sizeof(device) - 1) &&
+				if (!strcmp(ifa->ifa_name, device) &&
 				    !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
 					    &source.sin_addr, sizeof(source.sin_addr)))
 					break;
