@@ -740,6 +740,8 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			 */
 			error(0, errno, "setsockopt(RAW_CHECKSUM) failed - try to continue");
 		}
+#else
+	{
 #endif
 
 		/*
