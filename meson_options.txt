@@ -34,7 +34,7 @@ option('BUILD_TRACEPATH', type : 'boolean', value : true,
 option('BUILD_TRACEROUTE6', type : 'boolean', value : true,
         description : 'Build traceroute6')
 
-option('BUILD_NINFOD', type : 'boolean', value : false,
+option('BUILD_NINFOD', type : 'boolean', value : true,
 	description : 'Build ninfod')
 
 option('BUILD_MANS', type : 'boolean', value : true,

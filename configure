@@ -4,7 +4,7 @@ if [ $# -ne 0 ]; then
 	meson configure builddir
 	echo ''
 	echo 'Configuration can be changed like this:'
-	echo '  meson configure builddir -DBUILD_NINFOD=true'
+	echo '  meson configure builddir -Dprefix=/usr'
 	echo '  More info: http://mesonbuild.com/Configuring-a-build-directory.html'
 	# See also: http://mesonbuild.com/howtox.html
 fi
