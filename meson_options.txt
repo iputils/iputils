@@ -48,3 +48,6 @@ option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 
 option('USE_SYSFS', type : 'boolean', value : true,
 	description : 'Use /sys file system (arping)')
+
+option('systemdunitdir', type: 'string', value: '',
+	description: 'Directory for systemd units')

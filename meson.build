@@ -90,6 +90,12 @@ elif opt == 'none'
 	conf.set('PING6_NONCE_MEMORY', 1, description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
 
+systemd = dependency('systemd', required : false)
+systemdunitdir = get_option('systemdunitdir')
+if systemdunitdir == '' and systemd.found()
+	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+endif
+
 build_arping = get_option('BUILD_ARPING')
 build_clockdiff = get_option('BUILD_CLOCKDIFF')
 build_ping = get_option('BUILD_PING')
@@ -218,7 +224,18 @@ endif
 
 if build_rarpd == true
 	executable('rarpd', ['rarpd.c', git_version_h],
+		install_dir: 'sbin',
 		install: true)
+	if systemd.found()
+		subs = configuration_data()
+		subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
+		unit_file = configure_file(
+			input: 'systemd/rarpd.service.in',
+			output: 'rarpd@.service',
+			configuration: subs
+		)
+		install_data(unit_file, install_dir: systemdunitdir)
+	endif
 endif
 
 if build_ninfod == true
