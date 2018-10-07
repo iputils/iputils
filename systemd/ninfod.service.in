@@ -1,0 +1,26 @@
+[Unit]
+Description=Respond to IPv6 Node Information Queries
+Documentation=ninfod(8)
+Requires=network.target
+After=network.target
+
+[Service]
+ExecStart=@sbindir@/ninfod -d
+
+AmbientCapabilities=CAP_NET_RAW
+DynamicUser=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectControlGroups=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+SystemCallArchitectures=native
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target
