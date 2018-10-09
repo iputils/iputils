@@ -15,7 +15,6 @@
 #include <sys/uio.h>
 #include <ctype.h>
 #include <errno.h>
-#include <error.h>
 #include <string.h>
 #include <netdb.h>
 #include <setjmp.h>
@@ -29,6 +28,12 @@
 #include <netinet/icmp6.h>
 #include <linux/filter.h>
 #include <resolv.h>
+
+#ifdef HAVE_ERROR_H
+#include <error.h>
+#else
+#include <stdarg.h>
+#endif
 
 #ifdef HAVE_LIBCAP
 #include <sys/prctl.h>
@@ -149,6 +154,24 @@ static inline bitmap_t rcvd_test(uint16_t seq)
 	unsigned bit = seq % MAX_DUP_CHK;
 	return A(bit) & B(bit);
 }
+
+#ifndef HAVE_ERROR_H
+static void error(int status, int errnum, const char *format, ...)
+{
+	va_list ap;
+
+	fprintf(stderr, "ping: ");
+	va_start(ap, format);
+	vfprintf(stderr, format, ap);
+	va_end(ap);
+	if (errnum)
+		fprintf(stderr, ": %s\n", strerror(errnum));
+	else
+		fprintf(stderr, "\n");
+	if (status)
+		exit(status);
+}
+#endif
 
 extern int datalen;
 extern char *hostname;

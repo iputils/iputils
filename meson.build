@@ -53,7 +53,7 @@ if opt == true
 	conf.set('HAVE_LIBCAP', 1,
 		description : 'Defined if libcap exists.')
 else
-	cap_dep = []
+	cap_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 endif
 
 opt = get_option('ARPING_DEFAULT_DEVICE')
@@ -72,7 +72,7 @@ if opt == true
 	add_project_arguments('-DUSE_IDN', language : 'c')
 	conf.set('USE_IDN', 1, description : 'If set use Internationalized Domain Name library.')
 else
-	idn_dep = []
+	idn_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 endif
 
 opt = get_option('USE_CRYPTO')
@@ -86,7 +86,7 @@ elif opt == 'openssl'
 	crypto_dep = dependency('openssl')
 	conf.set('USE_OPENSSL', 1, description : 'if set use openssl crypto library.')
 elif opt == 'none'
-	crypto_dep = disabler()
+	crypto_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 	conf.set('PING6_NONCE_MEMORY', 1, description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
 
@@ -115,6 +115,7 @@ if build_ninfod == true
 		conf.set('STDC_HEADERS', 1, description : 'Defined if we have standard c headers.')
 	endif
 	foreach h : [
+		'error.h',
 		'gcrypt.h',
 		'gnutls/openssl.h',
 		'inttypes.h',
