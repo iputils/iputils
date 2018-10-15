@@ -1,0 +1,27 @@
+[Unit]
+Description=Reverse Address Resolution Protocol Requests Server (%I)
+Documentation=man:rarpd(8)
+Requires=network.target
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/rarpd
+ExecStart=@sbindir@/rarpd -d $OPTIONS %i
+
+PrivateTmp=yes
+PrivateDevices=yes
+PrivateUsers=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectControlGroups=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+SystemCallArchitectures=native
+LockPersonality=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -16,8 +16,20 @@ executable('ninfod', [ninfod_sources, git_version_h],
 	install_dir: 'sbin')
 conf_data = configuration_data()
 conf_data.set('prefix', get_option('prefix'))
-configure_file(input : 'ninfod.sh.in',
-	output : 'ninfod.sh',
-	configuration : conf_data,
-	install : true,
-	install_dir : join_paths(get_option('sysconfdir'), 'init.d'))
+
+if systemd.found()
+	subs = configuration_data()
+	subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
+	unit_file = configure_file(
+		input: '../systemd/ninfod.service.in',
+		output: 'ninfod.service',
+		configuration: subs
+	)
+	install_data(unit_file, install_dir: systemdunitdir)
+else
+	configure_file(input : 'ninfod.sh.in',
+		output : 'ninfod.sh',
+		configuration : conf_data,
+		install : true,
+		install_dir : join_paths(get_option('sysconfdir'), 'init.d'))
+endif

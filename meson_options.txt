@@ -34,7 +34,7 @@ option('BUILD_TRACEPATH', type : 'boolean', value : true,
 option('BUILD_TRACEROUTE6', type : 'boolean', value : true,
         description : 'Build traceroute6')
 
-option('BUILD_NINFOD', type : 'boolean', value : false,
+option('BUILD_NINFOD', type : 'boolean', value : true,
 	description : 'Build ninfod')
 
 option('BUILD_MANS', type : 'boolean', value : true,
@@ -48,3 +48,6 @@ option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 
 option('USE_SYSFS', type : 'boolean', value : true,
 	description : 'Use /sys file system (arping)')
+
+option('systemdunitdir', type: 'string', value: '',
+	description: 'Directory for systemd units')
