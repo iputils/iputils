@@ -29,7 +29,13 @@
 #include <linux/filter.h>
 #include <resolv.h>
 
-#ifdef CAPABILITIES
+#ifdef HAVE_ERROR_H
+#include <error.h>
+#else
+#include <stdarg.h>
+#endif
+
+#ifdef HAVE_LIBCAP
 #include <sys/prctl.h>
 #include <sys/capability.h>
 #endif
@@ -55,17 +61,12 @@
 #define getnameinfo_flags 0
 #endif
 
-#ifndef WITHOUT_IFADDRS
 #include <ifaddrs.h>
-#endif
-
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <linux/types.h>
 #include <linux/errqueue.h>
-
-#include "in6_flowlabel.h"
-#include "SNAPSHOT.h"
+#include <linux/in6.h>
 
 #ifndef SCOPE_DELIMITER
 #define SCOPE_DELIMITER '%'
@@ -116,10 +117,10 @@ extern int options;
 #endif
 
 #ifdef USE_BITMAP64
-typedef __u64	bitmap_t;
+typedef uint64_t	bitmap_t;
 # define BITMAP_SHIFT	6
 #else
-typedef __u32	bitmap_t;
+typedef uint32_t	bitmap_t;
 # define BITMAP_SHIFT	5
 #endif
 
@@ -136,23 +137,41 @@ extern struct rcvd_table rcvd_tbl;
 #define	A(bit)	(rcvd_tbl.bitmap[(bit) >> BITMAP_SHIFT])	/* identify word in array */
 #define	B(bit)	(((bitmap_t)1) << ((bit) & ((1 << BITMAP_SHIFT) - 1)))	/* identify bit in word */
 
-static inline void rcvd_set(__u16 seq)
+static inline void rcvd_set(uint16_t seq)
 {
 	unsigned bit = seq % MAX_DUP_CHK;
 	A(bit) |= B(bit);
 }
 
-static inline void rcvd_clear(__u16 seq)
+static inline void rcvd_clear(uint16_t seq)
 {
 	unsigned bit = seq % MAX_DUP_CHK;
 	A(bit) &= ~B(bit);
 }
 
-static inline bitmap_t rcvd_test(__u16 seq)
+static inline bitmap_t rcvd_test(uint16_t seq)
 {
 	unsigned bit = seq % MAX_DUP_CHK;
 	return A(bit) & B(bit);
 }
+
+#ifndef HAVE_ERROR_H
+static void error(int status, int errnum, const char *format, ...)
+{
+	va_list ap;
+
+	fprintf(stderr, "ping: ");
+	va_start(ap, format);
+	vfprintf(stderr, format, ap);
+	va_end(ap);
+	if (errnum)
+		fprintf(stderr, ": %s\n", strerror(errnum));
+	else
+		fprintf(stderr, "\n");
+	if (status)
+		exit(status);
+}
+#endif
 
 extern int datalen;
 extern char *hostname;
@@ -195,7 +214,7 @@ extern long tmax;			/* maximum round trip time */
 extern long long tsum;			/* sum of all times, for doing average */
 extern long long tsum2;
 extern int rtt;
-extern __u16 acked;
+extern uint16_t acked;
 extern int pipesize;
 
 /*
@@ -232,9 +251,6 @@ static inline void set_signal(int signo, void (*handler)(int))
 	memset(&sa, 0, sizeof(sa));
 
 	sa.sa_handler = (void (*)(int))handler;
-#ifdef SA_INTERRUPT
-	sa.sa_flags = SA_INTERRUPT;
-#endif
 	sigaction(signo, &sa, NULL);
 }
 
@@ -249,18 +265,18 @@ static inline int schedule_exit(int next)
 
 static inline int in_flight(void)
 {
-	__u16 diff = (__u16)ntransmitted - acked;
+	uint16_t diff = (uint16_t)ntransmitted - acked;
 	return (diff<=0x7FFF) ? diff : ntransmitted-nreceived-nerrors;
 }
 
-static inline void acknowledge(__u16 seq)
+static inline void acknowledge(uint16_t seq)
 {
-	__u16 diff = (__u16)ntransmitted - seq;
+	uint16_t diff = (uint16_t)ntransmitted - seq;
 	if (diff <= 0x7FFF) {
 		if ((int)diff+1 > pipesize)
 			pipesize = (int)diff+1;
-		if ((__s16)(seq - acked) > 0 ||
-		    (__u16)ntransmitted - acked > 0x7FFF)
+		if ((int16_t)(seq - acked) > 0 ||
+		    (uint16_t)ntransmitted - acked > 0x7FFF)
 			acked = seq;
 	}
 }
@@ -269,27 +285,28 @@ static inline void advance_ntransmitted(void)
 {
 	ntransmitted++;
 	/* Invalidate acked, if 16 bit seq overflows. */
-	if ((__u16)ntransmitted - acked > 0x7FFF)
-		acked = (__u16)ntransmitted + 1;
+	if ((uint16_t)ntransmitted - acked > 0x7FFF)
+		acked = (uint16_t)ntransmitted + 1;
 }
 
+extern void usage(void) __attribute__((noreturn));
 extern void limit_capabilities(void);
 static int enable_capability_raw(void);
 static int disable_capability_raw(void);
 static int enable_capability_admin(void);
 static int disable_capability_admin(void);
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 extern int modify_capability(cap_value_t, cap_flag_value_t);
-static inline int enable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_SET);   };
-static inline int disable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_CLEAR); };
-static inline int enable_capability_admin(void)		{ return modify_capability(CAP_NET_ADMIN, CAP_SET);   };
-static inline int disable_capability_admin(void)	{ return modify_capability(CAP_NET_ADMIN, CAP_CLEAR); };
+static inline int enable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_SET);   }
+static inline int disable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_CLEAR); }
+static inline int enable_capability_admin(void)		{ return modify_capability(CAP_NET_ADMIN, CAP_SET);   }
+static inline int disable_capability_admin(void)	{ return modify_capability(CAP_NET_ADMIN, CAP_CLEAR); }
 #else
 extern int modify_capability(int);
-static inline int enable_capability_raw(void)		{ return modify_capability(1); };
-static inline int disable_capability_raw(void)		{ return modify_capability(0); };
-static inline int enable_capability_admin(void)		{ return modify_capability(1); };
-static inline int disable_capability_admin(void)	{ return modify_capability(0); };
+static inline int enable_capability_raw(void)		{ return modify_capability(1); }
+static inline int disable_capability_raw(void)		{ return modify_capability(0); }
+static inline int enable_capability_admin(void)		{ return modify_capability(1); }
+static inline int disable_capability_admin(void)	{ return modify_capability(0); }
 #endif
 extern void drop_capabilities(void);
 
@@ -321,17 +338,17 @@ extern ping_func_set_st ping4_func_set;
 extern int pinger(ping_func_set_st *fset, socket_st *sock);
 extern void sock_setbufs(socket_st*, int alloc);
 extern void setup(socket_st *);
-extern int contains_pattern_in_payload(__u8 *ptr);
-extern void main_loop(ping_func_set_st *fset, socket_st*, __u8 *buf, int buflen) __attribute__((noreturn));
+extern int contains_pattern_in_payload(uint8_t *ptr);
+extern void main_loop(ping_func_set_st *fset, socket_st*, uint8_t *buf, int buflen) __attribute__((noreturn));
 extern void finish(void) __attribute__((noreturn));
 extern void status(void);
 extern void common_options(int ch);
-extern int gather_statistics(__u8 *ptr, int icmplen,
-			     int cc, __u16 seq, int hops,
+extern int gather_statistics(uint8_t *ptr, int icmplen,
+			     int cc, uint16_t seq, int hops,
 			     int csfailed, struct timeval *tv, char *from,
-			     void (*pr_reply)(__u8 *ptr, int cc));
+			     void (*pr_reply)(uint8_t *ptr, int cc));
 extern void print_timestamp(void);
-void fill(char *patp, void *packet, unsigned packet_size);
+void fill(char *patp, unsigned char *packet, unsigned packet_size);
 
 extern int mark;
 extern unsigned char outpack[MAXPACKET];
@@ -350,8 +367,8 @@ extern ping_func_set_st ping6_func_set;
 
 int niquery_option_handler(const char *opt_arg);
 
-extern __u32 tclass;
-extern __u32 flowlabel;
+extern uint32_t tclass;
+extern uint32_t flowlabel;
 extern struct sockaddr_in6 source6;
 extern struct sockaddr_in6 whereto6;
 extern struct sockaddr_in6 firsthop6;
@@ -362,7 +379,7 @@ extern struct sockaddr_in6 firsthop6;
 
 struct ni_hdr {
 	struct icmp6_hdr		ni_u;
-	__u8				ni_nonce[NI_NONCE_SIZE];
+	uint8_t				ni_nonce[NI_NONCE_SIZE];
 };
 
 #define ni_type		ni_u.icmp6_type

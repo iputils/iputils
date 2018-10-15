@@ -32,10 +32,6 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #if HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
@@ -100,7 +96,6 @@
 #include <arpa/inet.h>
 
 #if defined(HAVE_GCRYPT_H)
-# define USE_GCRYPT
 # include "iputils_md5dig.h"
 #elif defined(HAVE_GNUTLS_OPENSSL_H)
 # include <gnutls/openssl.h>
@@ -122,19 +117,11 @@
 
 #include "ninfod.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
 /* Hmm,,, */
 #ifndef IPV6_JOIN_GROUP
 # define IPV6_JOIN_GROUP	IPV6_ADD_MEMBERSHIP
 # define IPV6_LEAVE_GROUP	IPV6_DROP_MEMBERSHIP
 #endif
-
-/* ---------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_name.c,v 1.15 2003-01-11 14:33:28 yoshfuji Exp $";
 
 /* Variables */
 static struct utsname utsname;
@@ -158,10 +145,7 @@ static int encode_dnsname(const char *name,
 			  int fqdn)
 {
 	size_t namelen;
-	int i;
-
-	if (buflen < 0)
-		return -1;
+	size_t i;
 
 	namelen = strlen(name);
 	if (namelen == 0)
@@ -261,13 +245,12 @@ static int compare_dnsname(const char *s, size_t slen,
 	return retcode;
 }
 
-static int nodeinfo_group(const char *dnsname, int namelen, 
-			  struct in6_addr *nigroup)
+static int nodeinfo_group(const char *dnsname, struct in6_addr *nigrp)
 {
 	MD5_CTX ctxt;
 	unsigned char digest[16];
 
-	if (!dnsname || !nigroup)
+	if (!dnsname || !nigrp)
 		return -1;
 
 	MD5_Init(&ctxt);
@@ -275,16 +258,16 @@ static int nodeinfo_group(const char *dnsname, int namelen,
 	MD5_Final(digest, &ctxt);
 
 #ifdef s6_addr32
-	nigroup->s6_addr32[0] = htonl(0xff020000);
-	nigroup->s6_addr32[1] = 0;
-	nigroup->s6_addr32[2] = htonl(0x00000002);
+	nigrp->s6_addr32[0] = htonl(0xff020000);
+	nigrp->s6_addr32[1] = 0;
+	nigrp->s6_addr32[2] = htonl(0x00000002);
 #else
-	memset(nigroup, 0, sizeof(*nigroup));
-	nigroup->s6_addr[ 0] = 0xff;
-	nigroup->s6_addr[ 1] = 0x02;
-	nigroup->s6_addr[11] = 0x02;
+	memset(nigrp, 0, sizeof(*nigrp));
+	nigrp->s6_addr[ 0] = 0xff;
+	nigrp->s6_addr[ 1] = 0x02;
+	nigrp->s6_addr[11] = 0x02;
 #endif
-	memcpy(&nigroup->s6_addr[12], digest, 4);
+	memcpy(&nigrp->s6_addr[12], digest, 4);
 
 	return 0;
 }
@@ -313,10 +296,10 @@ void init_nodeinfo_nodename(int forced)
 			char niaddrbuf[INET6_ADDRSTRLEN];
 			if (inet_ntop(AF_INET6, &nigroup, niaddrbuf, sizeof(niaddrbuf)) == NULL)
 				strcpy(niaddrbuf, "???");
-#endif
 			DEBUG(LOG_WARNING,
 			      "%s(): failed to leave group %s.\n",
 			      __func__, niaddrbuf);
+#endif
 			memset(&nigroup, 0, sizeof(nigroup));
 		}
 	}
@@ -333,17 +316,17 @@ void init_nodeinfo_nodename(int forced)
 	if (changed || forced) {
 		if (nodenamelen) {
 			memset(&nigroup, 0, sizeof(nigroup));
-			nodeinfo_group(nodename, len, &nigroup.ipv6mr_multiaddr);
+			nodeinfo_group(nodename, &nigroup.ipv6mr_multiaddr);
 			nigroup.ipv6mr_interface = 0;
 			if (setsockopt(sock, IPPROTO_IPV6, IPV6_JOIN_GROUP, &nigroup, sizeof(nigroup)) < 0) {
 #if ENABLE_DEBUG
 				char niaddrbuf[INET6_ADDRSTRLEN];
 				if (inet_ntop(AF_INET6, &nigroup, niaddrbuf, sizeof(niaddrbuf)) == NULL)
 					strcpy(niaddrbuf, "???");
-#endif
 				DEBUG(LOG_WARNING,
 				      "%s(): failed to join group %s.\n",
 				      __func__, niaddrbuf);
+#endif
 				memset(&nigroup, 0, sizeof(nigroup));
 			}
 		} else {
@@ -356,7 +339,7 @@ void init_nodeinfo_nodename(int forced)
 
 /* ---------- */
 /* nodename */
-int pr_nodeinfo_nodename(CHECKANDFILL_ARGS)
+int pr_nodeinfo_nodename(CHECKANDFILL_ARGS_2)
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
@@ -380,7 +363,7 @@ int pr_nodeinfo_nodename(CHECKANDFILL_ARGS)
 		p->reply.ni_flags = 0;
 
 		p->replydatalen = nodenamelen ? sizeof(ttl)+nodenamelen : 0;
-		p->replydata = nodenamelen ? ni_malloc(p->replydatalen) : NULL;
+		p->replydata = nodenamelen ? malloc(p->replydatalen) : NULL;
 		if (p->replydata) {
 			memcpy(p->replydata, &ttl, sizeof(ttl));
 			memcpy(p->replydata + sizeof(ttl), &nodename, nodenamelen);

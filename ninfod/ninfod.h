@@ -32,6 +32,10 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
+#if 1
+# define ENABLE_DEBUG 1
+#endif
+
 /* definitions */
 #define NINFOD			"ninfod"
 #define NINFOD_PIDFILE		"/var/run/ninfod.pid"
@@ -50,6 +54,25 @@
 				unsigned int flags,		\
 				unsigned int *subj_if,		\
 				int reply
+
+#define CHECKANDFILL_ARGS_1	struct packetcontext *p,\
+				char *subject __attribute__((__unused__)), size_t subjlen __attribute__((__unused__)),	\
+				unsigned int flags,		\
+				unsigned int *subj_if __attribute__((__unused__)),		\
+				int reply
+
+#define CHECKANDFILL_ARGS_2	struct packetcontext *p,\
+				char *subject, size_t subjlen,	\
+				unsigned int flags __attribute__((__unused__)),		\
+				unsigned int *subj_if,		\
+				int reply
+
+#define CHECKANDFILL_ARGS_3	struct packetcontext *p,\
+				char *subject __attribute__((__unused__)), size_t subjlen,	\
+				unsigned int flags,		\
+				unsigned int *subj_if,		\
+				int reply
+
 #define INIT_ARGS		\
 				int forced
 
@@ -62,7 +85,7 @@ struct packetcontext {
 	socklen_t addrlen;
 	struct in6_pktinfo pktinfo;
 	char query[MAX_QUERY_SIZE];
-	int querylen;
+	size_t querylen;
 
 	/* reply info */
 	struct icmp6_nodeinfo reply;	/* common */
@@ -83,36 +106,7 @@ int ni_recv(struct packetcontext *p);
 int ni_send(struct packetcontext *p);
 
 /* ninfod_core.c */
-#if ENABLE_DEBUG
-void stderrlog(int priority, char *format, ...);
-# define DEBUG(pri, fmt, args...)	do {									\
-						int saved_errno = errno;					\
-						if (opt_v || pri != LOG_DEBUG) {				\
-							if (daemonized) {					\
-								syslog(pri, fmt, ## args);			\
-							} else {						\
-								stderrlog(pri, fmt, ## args);			\
-							}							\
-						}								\
-						errno = saved_errno;						\
-					} while(0)
-#else
-# define DEBUG(pri, fmt, args...)	do { ; } while(0)
-#endif
-
-#define ni_malloc(size)	({										\
-				size_t _size = (size);							\
-				void *p = malloc(_size);						\
-				DEBUG(LOG_DEBUG, "%s(): malloc(%zu) = %p\n", __func__, _size, p);	\
-				p;									\
-			})
-#define ni_free(p)	({										\
-				void *_p = (p);								\
-				int saved_errno = errno;						\
-				DEBUG(LOG_DEBUG, "%s(): free(%p)\n", __func__, _p);			\
-				free(_p);								\
-				errno = saved_errno;							\
-			})
+extern void DEBUG(int pri, char *fmt, ...);
 
 void init_core(int forced);
 int pr_nodeinfo(struct packetcontext *p);
@@ -124,9 +118,9 @@ void init_nodeinfo_suptypes(INIT_ARGS);
 int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS);
 
 /* ninfod_addrs.c */
-void init_nodeinfo_ipv6addr(INIT_ARGS);
+void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)));
 int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS);
-void init_nodeinfo_ipv4addr(INIT_ARGS);
+void init_nodeinfo_ipv4addr(INIT_ARGS __attribute__((__unused__)));
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS);
 
 /* ninfod_name.c */

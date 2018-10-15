@@ -239,7 +239,7 @@
 #include <netinet/ip6.h>
 #include <netinet/icmp6.h>
 #include <linux/types.h>
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 #include <sys/capability.h>
 #endif
 
@@ -266,8 +266,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "SNAPSHOT.h"
-
 #ifndef SOL_IPV6
 #define SOL_IPV6 IPPROTO_IPV6
 #endif
@@ -290,10 +288,10 @@ unsigned char	packet[512];		/* last inbound (icmp) packet */
 
 int	wait_for_reply(int, struct sockaddr_in6 *, struct in6_addr *, int);
 int	packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
-		  struct in6_addr *to, int seq, struct timeval *);
-void	send_probe(int seq, int ttl);
+		  struct in6_addr *to, uint32_t seq, struct timeval *);
+void	send_probe(uint32_t seq, int ttl);
 double	deltaT (struct timeval *, struct timeval *);
-void	print(unsigned char *buf, int cc, struct sockaddr_in6 *from);
+void	print(struct sockaddr_in6 *from);
 void	tvsub (struct timeval *, struct timeval *);
 void	usage(void);
 
@@ -321,8 +319,8 @@ int nflag;			/* print addresses numerically */
 
 struct pkt_format
 {
-	__u32 ident;
-	__u32 seq;
+	uint32_t ident;
+	uint32_t seq;
 	struct timeval tv;
 };
 
@@ -341,7 +339,8 @@ int main(int argc, char *argv[])
 	struct addrinfo *result;
 	int status;
 	struct sockaddr_in6 from, *to;
-	int ch, i, on, probe, seq, tos, ttl;
+	int ch, i, on, probe, tos, ttl;
+	uint32_t seq;
 	int socket_errno;
 	char *resolved_hostname = NULL;
 
@@ -352,7 +351,7 @@ int main(int argc, char *argv[])
 		perror("traceroute6: setuid");
 		exit(-1);
 	}
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	{
 		cap_t caps = cap_init();
 		if (cap_set_proc(caps)) {
@@ -370,7 +369,7 @@ int main(int argc, char *argv[])
 	on = 1;
 	seq = tos = 0;
 	to = (struct sockaddr_in6 *)&whereto;
-	while ((ch = getopt(argc, argv, "dm:np:q:rs:t:w:vi:g:V")) != EOF) {
+	while ((ch = getopt(argc, argv, "dm:np:q:rs:w:vi:V")) != EOF) {
 		switch(ch) {
 		case 'd':
 			options |= SO_DEBUG;
@@ -415,9 +414,6 @@ int main(int argc, char *argv[])
 		case 'i':
 			device = optarg;
 			break;
-		case 'g':
-			Fprintf(stderr, "Sorry, rthdr is not yet supported\n");
-			break;
 		case 'v':
 			verbose++;
 			break;
@@ -430,7 +426,7 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case 'V':
-			printf("traceroute6 utility, iputils-%s\n", SNAPSHOT);
+			printf(IPUTILS_VERSION("traceroute6"));
 			exit(0);
 		default:
 			usage();
@@ -605,18 +601,18 @@ int main(int argc, char *argv[])
 		for (probe = 0; probe < nprobes; ++probe) {
 			int cc, reset_timer;
 			struct timeval t1, t2;
-			struct timezone tz;
-			struct in6_addr to;
+			struct timezone tzone;
+			struct in6_addr to_addr;
 
-			gettimeofday(&t1, &tz);
+			gettimeofday(&t1, &tzone);
 			send_probe(++seq, ttl);
 			reset_timer = 1;
 
-			while ((cc = wait_for_reply(icmp_sock, &from, &to, reset_timer)) != 0) {
-				gettimeofday(&t2, &tz);
-				if ((i = packet_ok(packet, cc, &from, &to, seq, &t1))) {
+			while ((cc = wait_for_reply(icmp_sock, &from, &to_addr, reset_timer)) != 0) {
+				gettimeofday(&t2, &tzone);
+				if ((i = packet_ok(packet, cc, &from, &to_addr, seq, &t1))) {
 					if (memcmp(&from.sin6_addr, &lastaddr, sizeof(from.sin6_addr))) {
-						print(packet, cc, &from);
+						print(&from);
 						memcpy(&lastaddr,
 						       &from.sin6_addr,
 						       sizeof(lastaddr));
@@ -732,7 +728,7 @@ wait_for_reply(sock, from, to, reset_timer)
 }
 
 
-void send_probe(int seq, int ttl)
+void send_probe(uint32_t seq, int ttl)
 {
 	struct pkt_format *pkt = (struct pkt_format *) sendbuff;
 	int i;
@@ -765,7 +761,7 @@ void send_probe(int seq, int ttl)
 
 double deltaT(struct timeval *t1p, struct timeval *t2p)
 {
-	register double dt;
+	double dt;
 
 	dt = (double)(t2p->tv_sec - t1p->tv_sec) * 1000.0 +
 	     (double)(t2p->tv_usec - t1p->tv_usec) / 1000.0;
@@ -831,7 +827,7 @@ char * pr_type(unsigned char t)
 
 
 int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
-	      struct in6_addr *to, int seq,
+	      struct in6_addr *to, uint32_t seq,
 	      struct timeval *tv)
 {
 	struct icmp6_hdr *icp;
@@ -863,7 +859,7 @@ int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 
 			pkt = (struct pkt_format *) (up + 1);
 
-			if (ntohl(pkt->ident) == ident &&
+			if (ntohl(pkt->ident) == (uint32_t) ident &&
 			    ntohl(pkt->seq) == seq)
 			{
 				*tv = pkt->tv;
@@ -905,7 +901,7 @@ int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 }
 
 
-void print(unsigned char *buf, int cc, struct sockaddr_in6 *from)
+void print(struct sockaddr_in6 *from)
 {
 	char pa[NI_MAXHOST] = "";
 	char hnamebuf[NI_MAXHOST] = "";
@@ -928,7 +924,7 @@ void print(unsigned char *buf, int cc, struct sockaddr_in6 *from)
  */
 void
 tvsub(out, in)
-	register struct timeval *out, *in;
+	struct timeval *out, *in;
 {
 	if ((out->tv_usec -= in->tv_usec) < 0)   {
 		out->tv_sec--;
@@ -940,7 +936,20 @@ tvsub(out, in)
 void usage(void)
 {
 	fprintf(stderr,
-"Usage: traceroute6 [-dnrvV] [-m max_ttl] [-p port#] [-q nqueries]\n\t\
-[-s src_addr] [-t tos] [-w wait] host [data size]\n");
+		"\nUsage:\n"
+		"  traceroute6 [options] <destination>\n"
+		"\nOptions:\n"
+		"  -d            use SO_DEBUG socket option\n"
+		"  -i <device>   bind to <device>\n"
+		"  -m <hops>     use maximum <hops>\n"
+		"  -n            no dns name resolution\n"
+		"  -p <port>     use destination <port>\n"
+		"  -q <nprobes>  number of probes\n"
+		"  -r            use SO_DONTROUTE socket option\n"
+		"  -s <address>  use source <address>\n"
+		"  -v            verbose output\n"
+		"  -w <timeout>  time to wait for response\n"
+		"\nFor more details see traceroute6(8).\n"
+	);
 	exit(1);
 }

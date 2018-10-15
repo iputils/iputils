@@ -32,10 +32,6 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #if HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
@@ -123,14 +119,6 @@
 
 #include "ninfod.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
-/* --------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod.c,v 1.34 2003-01-15 06:41:23 mk Exp $";
-
 /* Variables */
 int sock;
 int daemonized;
@@ -147,7 +135,7 @@ static int ipv6_pktinfo = IPV6_PKTINFO;
 
 /* --------- */
 #if ENABLE_DEBUG
-static const __inline__ char * log_level(int priority) {
+__inline__ static const char * log_level(int priority) {
 	switch(priority) {
 	case LOG_EMERG:		return "EMERG";
 	case LOG_ALERT:		return "ALERT";
@@ -161,68 +149,50 @@ static const __inline__ char * log_level(int priority) {
 	}
 }
 
-void stderrlog(int pri, char *fmt, ...)
+void DEBUG(int pri, char *fmt, ...)
 {
+	int saved_errno = errno;
 	va_list ap;
-	char ebuf[512];
-	char *buf;
-	size_t buflen;
 
-	va_start(ap, fmt);
-
-	for (buf = ebuf, buflen = sizeof(ebuf);
-	     buflen < SIZE_MAX / 2;
-	     free(buf != ebuf ? buf : NULL), buf = NULL, buflen *= 2) {
-		size_t rem;
-		size_t res;
-
-		buf = malloc(buflen);
-		if (!buf)
-			break;	/*XXX*/
-
-		rem = buflen;
-
-		res = snprintf(buf, rem, "[%s] ", log_level(pri));
-		if (res >= rem)
-			continue;
-		rem -= res;
-
-		res = vsnprintf(buf + res, rem, fmt, ap);
-
-		if (res >= rem)
-			continue;
-		break;
+	if (opt_v || pri != LOG_DEBUG) {
+		va_start(ap, fmt);
+		if (daemonized) {
+			vsyslog(pri, fmt, ap);
+		} else {
+			fprintf(stderr, "[%s] ", log_level(pri));
+			vfprintf(stderr, fmt, ap);
+		}
+		va_end(ap);
 	}
-
-	if (buf) {
-		fputs(buf, stderr);
-		free(buf != ebuf ? buf : NULL);
-	}
-
-	va_end(ap);
+	errno = saved_errno;
+}
+#else
+void DEBUG(int pri __attribute__((__unused__)),
+	   char *fmt __attribute__((__unused__)), ...)
+{
 }
 #endif
 
 /* --------- */
-static int __inline__ open_sock(void)
+__inline__ static int open_sock(void)
 {
 	return socket(PF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 }
 
-static int set_recvpktinfo(int sock)
+static int set_recvpktinfo(int socket)
 {
 	int on, ret;
 
 	on = 1;
 
 #if defined(IPV6_RECVPKTINFO)
-	ret = setsockopt(sock,
+	ret = setsockopt(socket,
 			 IPPROTO_IPV6, IPV6_RECVPKTINFO,
 			 &on, sizeof(on));
 	if (!ret)
 		return 0;
 # if defined(IPV6_2292PKTINFO)
-	ret = setsockopt(sock,
+	ret = setsockopt(socket,
 			 IPPROTO_IPV6, IPV6_2292PKTINFO,
 			 &on, sizeof(on));
 	if (!ret) {
@@ -237,7 +207,7 @@ static int set_recvpktinfo(int sock)
 	      strerror(errno));
 # endif
 #else
-	ret = setsockopt(sock,
+	ret = setsockopt(socket,
 			 IPPROTO_IPV6, IPV6_PKTINFO,
 			 &on, sizeof(on));
 	if (!ret)
@@ -250,25 +220,13 @@ static int set_recvpktinfo(int sock)
 	return -1;
 }
 
-static int __inline__ init_sock(int sock)
+__inline__ static int init_sock(int socket)
 {
 	struct icmp6_filter filter;
-#if NEED_IPV6CHECKSUM
-	int i;
-
-	i = offsetof(struct icmp6_nodeinfo, ni_cksum);
-	if (setsockopt(sock,
-		       IPPROTO_IPV6, IPV6_CHECKSUM,
-		       &i, sizeof(i)) < 0) {
-		DEBUG(LOG_ERR, "setsockopt(IPV6_CHECKSUM): %s\n",
-		      strerror(errno));
-		return -1;
-	}
-#endif
 
 	ICMP6_FILTER_SETBLOCKALL(&filter);
 	ICMP6_FILTER_SETPASS(ICMP6_NI_QUERY, &filter);
-	if (setsockopt(sock,
+	if (setsockopt(socket,
 		       IPPROTO_ICMPV6, ICMP6_FILTER,
 		       &filter, sizeof(filter)) < 0) {
 		DEBUG(LOG_ERR, "setsockopt(ICMP6_FILTER): %s\n",
@@ -276,7 +234,7 @@ static int __inline__ init_sock(int sock)
 		return -1;
 	}
 
-	if (set_recvpktinfo(sock) < 0)
+	if (set_recvpktinfo(socket) < 0)
 		return -1;
 
 	return 0;
@@ -285,7 +243,7 @@ static int __inline__ init_sock(int sock)
 /* --------- */
 int ni_recv(struct packetcontext *p)
 {
-	int sock = p->sock;
+	int socket = p->sock;
 	struct iovec iov[1];
 	struct msghdr msgh;
 	char recvcbuf[CMSG_SPACE(sizeof(p->pktinfo))];
@@ -306,7 +264,7 @@ int ni_recv(struct packetcontext *p)
 	msgh.msg_control = recvcbuf;
 	msgh.msg_controllen = sizeof(recvcbuf);
 
-	if ((cc = recvmsg(sock, &msgh, 0)) < 0)
+	if ((cc = recvmsg(socket, &msgh, 0)) < 0)
 		return -1;
 
 	p->querylen = cc;
@@ -330,7 +288,7 @@ int ni_recv(struct packetcontext *p)
 
 int ni_send(struct packetcontext *p)
 {
-	int sock = p->sock;
+	int socket = p->sock;
 	struct iovec iov[2];
 	char cbuf[CMSG_SPACE(sizeof(p->pktinfo))];
 	struct msghdr msgh;
@@ -379,12 +337,12 @@ int ni_send(struct packetcontext *p)
 #endif
 	}
 
-	cc = sendmsg(sock, &msgh, 0);
+	cc = sendmsg(socket, &msgh, 0);
 	if (cc < 0)
 		DEBUG(LOG_DEBUG, "sendmsg(): %s\n", strerror(errno));
 
-	ni_free(p->replydata);
-	ni_free(p);
+	free(p->replydata);
+	free(p);
 
 	return cc;
 }
@@ -392,7 +350,7 @@ int ni_send(struct packetcontext *p)
 /* --------- */
 static void sig_handler(int sig)
 {
-	if (!got_signal)
+	if (!got_signal && sig)
 		DEBUG(LOG_INFO, "singnal(%d) received, quitting.\n", sig);
 	got_signal = 1;
 }
@@ -602,7 +560,7 @@ static void parse_args(int argc, char **argv)
 	char *ep;
 
 	/* parse options */
-	while ((c = getopt(argc, argv, "dhvp:u:")) != -1) {
+	while ((c = getopt(argc, argv, "dhvp:u:V")) != -1) {
 		switch(c) {
 		case 'd':	/* debug */
 			opt_d = 1;
@@ -625,6 +583,9 @@ static void parse_args(int argc, char **argv)
 			} else
 				opt_u = val;
 			break;
+		case 'V':
+			printf(IPUTILS_VERSION("ninfod"));
+			exit(0);
 		case 'h':	/* help */
 		default:
 			opt_h = 1;
@@ -651,8 +612,16 @@ static void print_copying(void) {
 
 static void print_usage(void) {
 	fprintf(stderr, 
-		"Usage: %s [-d] [-p pidfile] [-u user] [-h] [-v]\n\n",
-		appname
+		"Usage:\n"
+		"  ninfod [options]\n"
+		"\nOptions:\n"
+		"  -d            debug mode\n"
+		"  -h            show help\n"
+		"  -p <pidfile>  file to store process-id\n"
+		"  -u <user>     run <user>\n"
+		"  -v            verbose mode\n"
+		"  -V            print version and exit\n"
+		"\nFor more details see ninfod(8).\n"
 	);
 }
 
@@ -707,7 +676,7 @@ int main (int argc, char **argv)
 
 		init_core(0);
 
-		p = ni_malloc(sizeof(*p));
+		p = malloc(sizeof(*p));
 		if (!p) {
 			DEBUG(LOG_WARNING, "%s(): failed to allocate packet context; sleep 1 sec.\n",
 			      __func__);
@@ -742,8 +711,10 @@ int main (int argc, char **argv)
 		init_core(0);
 
 		if (p->querylen < sizeof(struct icmp6_hdr)) {
-			ni_free(p);
+			free(p);
+#if ENABLE_DEBUG
 			DEBUG(LOG_WARNING, "Too short icmp message from %s\n", saddrbuf);
+#endif
 			continue;
 		}
 
@@ -755,10 +726,12 @@ int main (int argc, char **argv)
 		      ntohs(icmph->icmp6_cksum));
 
 		if (icmph->icmp6_type != ICMP6_NI_QUERY) {
+#if ENABLE_DEBUG
 			DEBUG(LOG_WARNING,
 			      "Strange icmp type %d from %s\n", 
 			      icmph->icmp6_type, saddrbuf);
-			ni_free(p);
+#endif
+			free(p);
 			continue;
 		}
 

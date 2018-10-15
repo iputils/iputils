@@ -32,10 +32,6 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #if HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
@@ -117,17 +113,9 @@
 #include "ninfod.h"
 #include "ni_ifaddrs.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
-/* ---------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_addrs.c,v 1.18 2003-07-16 09:49:01 yoshfuji Exp $";
-
 /* ---------- */
 /* ipv6 address */
-void init_nodeinfo_ipv6addr(INIT_ARGS)
+void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)))
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 	return;
@@ -254,7 +242,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 
 		/* pass 2: store addresses */
 		p->replydatalen = (sizeof(uint32_t)+sizeof(struct in6_addr)) * addrs0;
-		p->replydata = p->replydatalen ? ni_malloc(p->replydatalen) : NULL;
+		p->replydata = p->replydatalen ? malloc(p->replydatalen) : NULL;
 
 		if (p->replydatalen && !p->replydata) {
 			p->reply.ni_flags |= NI_NODEADDR_FLAG_TRUNCATE;
@@ -307,15 +295,10 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 }
 
 /* ipv4 address */
-void init_nodeinfo_ipv4addr(INIT_ARGS)
+void init_nodeinfo_ipv4addr(INIT_ARGS __attribute__((__unused__)))
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 	return;
-}
-
-int filter_ipv4addr(const struct in_addr *ifaddr, unsigned int flags)
-{
-	return 0;
 }
 
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
@@ -393,8 +376,6 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 			    ((subj_if && *subj_if) ? (ifa->ifa_ifindex != *subj_if) :
 						     (ifa->ifa_ifindex != p->pktinfo.ipi6_ifindex)))
 				continue;
-			if (filter_ipv4addr((struct in_addr *)ifa->ifa_addr, flags))
-				continue;
 
 			if (addrs0 + 1 >= ((MAX_REPLY_SIZE - sizeof(struct icmp6_nodeinfo)) / (sizeof(uint32_t) + sizeof(struct in_addr)))) {
 				flags |= NI_IPV4ADDR_FLAG_TRUNCATE;
@@ -414,7 +395,7 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 
 		/* pass 2: store addresses */
 		p->replydatalen = (sizeof(uint32_t)+sizeof(struct in_addr)) * addrs0;
-		p->replydata = addrs0 ? ni_malloc(p->replydatalen) : NULL;
+		p->replydata = addrs0 ? malloc(p->replydatalen) : NULL;
 
 		if (p->replydatalen && !p->replydata) {
 			p->reply.ni_flags |= NI_NODEADDR_FLAG_TRUNCATE;
@@ -436,8 +417,6 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 			if (!(flags & NI_NODEADDR_FLAG_ALL) &&
 			    (ifa->ifa_ifindex != ifindex))
 				continue;
-			if (filter_ipv4addr((struct in_addr *)ifa->ifa_addr, flags))
-				continue;	
 
 #if ENABLE_TTL
 			if (ifa->ifa_cacheinfo) {

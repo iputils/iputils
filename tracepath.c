@@ -67,7 +67,7 @@ int hisptr;
 
 struct sockaddr_storage target;
 socklen_t targetlen;
-__u16 base_port;
+uint16_t base_port;
 int max_hops = MAX_HOPS_DEFAULT;
 
 int overhead;
@@ -83,7 +83,7 @@ int mapped;
 
 struct probehdr
 {
-	__u32 ttl;
+	uint32_t ttl;
 	struct timeval tv;
 };
 
@@ -132,7 +132,7 @@ restart:
 	memset(&rcvbuf, -1, sizeof(rcvbuf));
 	iov.iov_base = &rcvbuf;
 	iov.iov_len = sizeof(rcvbuf);
-	msg.msg_name = (__u8*)&addr;
+	msg.msg_name = (uint8_t*)&addr;
 	msg.msg_namelen = sizeof(addr);
 	msg.msg_iov = &iov;
 	msg.msg_iovlen = 1;
@@ -203,7 +203,7 @@ restart:
 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
 				break;
 			case IP_TTL:
-				rethops = *(__u8*)CMSG_DATA(cmsg);
+				rethops = *(uint8_t*)CMSG_DATA(cmsg);
 				break;
 			default:
 				printf("cmsg4:%d\n ", cmsg->cmsg_type);
@@ -373,7 +373,21 @@ static void usage(void) __attribute((noreturn));
 
 static void usage(void)
 {
-	fprintf(stderr, "Usage: tracepath [-4] [-6] [-n] [-b] [-l <len>] [-p port] <destination>\n");
+	fprintf(stderr,
+		"\nUsage\n"
+		"  tracepath [options] <destination>\n"
+		"\nOptions:\n"
+		"  -4             use IPv4\n"
+		"  -6             use IPv6\n"
+		"  -b             print both name and ip\n"
+		"  -l <length>    use packet <length>\n"
+		"  -m <hops>      use maximum <hops>\n"
+		"  -n             no dns name resolution\n"
+		"  -p <port>      use destination <port>\n"
+		"  -V             print version and exit\n"
+		"  <destination>  dns name or ip address\n"
+		"\nFor more details see tracepath(8).\n"
+	);
 	exit(-1);
 }
 
@@ -407,7 +421,7 @@ int main(int argc, char **argv)
 	else if (argv[0][strlen(argv[0])-1] == '6')
 		hints.ai_family = AF_INET6;
 
-	while ((ch = getopt(argc, argv, "46nbh?l:m:p:")) != EOF) {
+	while ((ch = getopt(argc, argv, "46nbh?l:m:p:V")) != EOF) {
 		switch(ch) {
 		case '4':
 			if (hints.ai_family != AF_UNSPEC) {
@@ -447,6 +461,9 @@ int main(int argc, char **argv)
 		case 'p':
 			base_port = atoi(optarg);
 			break;
+		case 'V':
+			printf(IPUTILS_VERSION("tracepath"));
+			return 0;
 		default:
 			usage();
 		}

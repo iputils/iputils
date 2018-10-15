@@ -3,6 +3,10 @@
                    "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- lifted from man+troff by doclifter -->
 <refentry id='ninfod8'>
+<refentryinfo>
+  <title>ninfod</title>
+  <productname>iputils</productname>
+</refentryinfo>
 <refmeta>
   <refentrytitle>NINFOD</refentrytitle>
   <manvolnum>8</manvolnum>
@@ -19,6 +23,7 @@
       <arg choice='opt'>-dhv </arg>
       <arg choice='opt'>-p <replaceable>pidfile</replaceable></arg>
       <arg choice='opt'>-u <replaceable>user</replaceable></arg>
+      <arg choice='opt'>-V </arg>
       <sbr/>
   </cmdsynopsis>
 </refsynopsisdiv>
@@ -63,6 +68,12 @@ Queries can be sent by various implementations of <emphasis remap='B'>ping6</emp
   <listitem>
 <para>File for process-id storage.
 <emphasis remap='I'>user</emphasis> is required to be able to create the file.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+  <para>Print version and exit.</para>
   </listitem>
   </varlistentry>
 </variablelist>

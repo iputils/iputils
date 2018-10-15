@@ -3,6 +3,10 @@
                    "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- lifted from man+troff by doclifter -->
 <refentry id='tracepath8'>
+<refentryinfo>
+  <title>tracepath</title>
+  <productname>iputils</productname>
+</refentryinfo>
 <refmeta>
   <refentrytitle>TRACEPATH</refentrytitle>
   <manvolnum>8</manvolnum>
@@ -24,6 +28,7 @@
     <arg choice='opt'>-l <replaceable>pktlen</replaceable></arg>
     <arg choice='opt'>-m <replaceable>max_hops</replaceable></arg>
     <arg choice='opt'>-p <replaceable>port</replaceable></arg>
+    <arg choice='opt'>-V </arg>
     <arg choice='plain'><replaceable>destination</replaceable></arg>
     <sbr/>
   </cmdsynopsis>
@@ -91,6 +96,12 @@ instead of 30.</para>
   <term><option>-p</option></term>
   <listitem>
 <para>Sets the initial destination port to use.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+  <para>Print version and exit.</para>
   </listitem>
   </varlistentry>
 </variablelist>

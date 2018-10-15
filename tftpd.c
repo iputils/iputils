@@ -83,9 +83,14 @@ void recvfile(struct formats *pf);
 
 int main(int ac, char **av)
 {
-	register struct tftphdr *tp;
-	register int n = 0;
+	struct tftphdr *tp;
+	int n = 0;
 	int on = 1;
+
+	if (ac == 2 && !strcmp(av[1], "-V")) {
+		printf(IPUTILS_VERSION("tftpd"));
+		return 0;
+	}
 
 	openlog("tftpd", LOG_PID, LOG_DAEMON);
 
@@ -94,7 +99,7 @@ int main(int ac, char **av)
 		/* Drop all supplementary groups. No error checking is needed */
 		setgroups(0, NULL);
 		if (setgid(65534) || setuid(65534)) {
-			syslog(LOG_ERR, "set*id failed: %m\n");
+			syslog(LOG_ERR, "set*id failed: %s\n", strerror(errno));
 			exit(1);
 		}
 	}
@@ -104,7 +109,7 @@ int main(int ac, char **av)
 		dirs[n++] = *av++;
 
 	if (ioctl(0, FIONBIO, &on) < 0) {
-		syslog(LOG_ERR, "ioctl(FIONBIO): %m\n");
+		syslog(LOG_ERR, "ioctl(FIONBIO): %s\n", strerror(errno));
 		exit(1);
 	}
 	fromlen = sizeof (from);
@@ -112,7 +117,7 @@ int main(int ac, char **av)
 	    (struct sockaddr *)&from, &fromlen);
 	if (n < 0) {
 		if (errno != EAGAIN)
-			syslog(LOG_ERR, "recvfrom: %m\n");
+			syslog(LOG_ERR, "recvfrom: %s\n", strerror(errno));
 		exit(1);
 	}
 	/*
@@ -160,7 +165,7 @@ int main(int ac, char **av)
 		    }
 		}
 		if (pid < 0) {
-			syslog(LOG_ERR, "fork: %m\n");
+			syslog(LOG_ERR, "fork: %s\n", strerror(errno));
 			exit(1);
 		} else if (pid != 0) {
 			exit(0);
@@ -171,11 +176,11 @@ int main(int ac, char **av)
 	close(1);
 	peer = socket(from.sa.sa_family, SOCK_DGRAM, 0);
 	if (peer < 0) {
-		syslog(LOG_ERR, "socket: %m\n");
+		syslog(LOG_ERR, "socket: %s\n", strerror(errno));
 		exit(1);
 	}
 	if (connect(peer, (struct sockaddr *)&from, sizeof(from)) < 0) {
-		syslog(LOG_ERR, "connect: %m\n");
+		syslog(LOG_ERR, "connect: %s\n", strerror(errno));
 		exit(1);
 	}
 	tp = (struct tftphdr *)buf;
@@ -194,10 +199,7 @@ struct formats {
 } formats[] = {
 	{ "netascii",	validate_access,	sendfile,	recvfile, 1 },
 	{ "octet",	validate_access,	sendfile,	recvfile, 0 },
-#ifdef notdef
-	{ "mail",	validate_user,		sendmail,	recvmail, 1 },
-#endif
-	{ 0 }
+	{ NULL, 0, NULL, NULL, 0 }
 };
 
 /*
@@ -205,9 +207,9 @@ struct formats {
  */
 void tftp(struct tftphdr *tp, int size)
 {
-	register char *cp;
+	char *cp;
 	int first = 1, ecode;
-	register struct formats *pf;
+	struct formats *pf;
 	char *filename, *mode = NULL;
 
 	filename = cp = tp->th_stuff;
@@ -287,7 +289,7 @@ int validate_access(char *filename, int mode)
 	filename = fnamebuf;
 
 	if (stat(filename, &stbuf) < 0) {
-		syslog(LOG_ERR, "stat %s : %m", filename);
+		syslog(LOG_ERR, "stat %s : %s", filename, strerror(errno));
 		return (errno == ENOENT ? ENOTFOUND : EACCESS);
 	}
 	if (mode == RRQ) {
@@ -303,7 +305,7 @@ int validate_access(char *filename, int mode)
 	}
 	fd = open(filename, mode == RRQ ? 0 : 1);
 	if (fd < 0) {
-		syslog(LOG_ERR, "cannot open %s: %m", filename);
+		syslog(LOG_ERR, "cannot open %s: %s", filename, strerror(errno));
 		return (errno + 100);
 	}
 	file = fdopen(fd, (mode == RRQ)? "r":"w");
@@ -317,7 +319,7 @@ int	confirmed;
 int	timeout;
 jmp_buf	timeoutbuf;
 
-void timer(int signo)
+void timer(int signo __attribute__((__unused__)))
 {
 	confirmed = 0;
 	timeout += rexmtval;
@@ -332,7 +334,7 @@ void timer(int signo)
 void sendfile(struct formats *pf)
 {
 	struct tftphdr *dp;
-	register struct tftphdr *ap;    /* ack packet */
+	struct tftphdr *ap;    /* ack packet */
 	volatile int block = 1;
 	int size, n;
 
@@ -353,7 +355,7 @@ void sendfile(struct formats *pf)
 
 send_data:
 		if (send(peer, dp, size + 4, confirmed) != size + 4) {
-			syslog(LOG_ERR, "tftpd: write: %m\n");
+			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
 			goto abort;
 		}
 		confirmed = 0;
@@ -363,7 +365,7 @@ send_data:
 			n = recv(peer, ackbuf, sizeof (ackbuf), 0);
 			alarm(0);
 			if (n < 0) {
-				syslog(LOG_ERR, "tftpd: read: %m\n");
+				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
 				goto abort;
 			}
 			ap->th_opcode = ntohs((unsigned short)ap->th_opcode);
@@ -391,7 +393,7 @@ abort:
 	(void) fclose(file);
 }
 
-void justquit(int signo)
+void justquit(int signo __attribute__((__unused__)))
 {
 	exit(0);
 }
@@ -403,7 +405,7 @@ void justquit(int signo)
 void recvfile(struct formats *pf)
 {
 	struct tftphdr *dp;
-	register struct tftphdr *ap;    /* ack buffer */
+	struct tftphdr *ap;    /* ack buffer */
 	volatile int block = 0, n, size;
 
 	confirmed = 0;
@@ -418,7 +420,7 @@ void recvfile(struct formats *pf)
 		(void) setjmp(timeoutbuf);
 send_ack:
 		if (send(peer, ackbuf, 4, confirmed) != 4) {
-			syslog(LOG_ERR, "tftpd: write: %m\n");
+			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
 			goto abort;
 		}
 		confirmed = 0;
@@ -428,7 +430,7 @@ send_ack:
 			n = recv(peer, dp, PKTSIZE, 0);
 			alarm(0);
 			if (n < 0) {            /* really? */
-				syslog(LOG_ERR, "tftpd: read: %m\n");
+				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
 				goto abort;
 			}
 			dp->th_opcode = ntohs((unsigned short)dp->th_opcode);
@@ -497,9 +499,9 @@ struct errmsg {
  */
 void nak(int error)
 {
-	register struct tftphdr *tp;
+	struct tftphdr *tp;
 	int length;
-	register struct errmsg *pe;
+	struct errmsg *pe;
 
 	tp = (struct tftphdr *)buf;
 	tp->th_opcode = htons((unsigned short)ERROR);
@@ -516,5 +518,5 @@ void nak(int error)
 	tp->th_msg[length] = '\0';
 	length += 5;
 	if (send(peer, buf, length, 0) != length)
-		syslog(LOG_ERR, "nak: %m\n");
+		syslog(LOG_ERR, "nak: %s\n", strerror(errno));
 }

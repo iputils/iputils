@@ -1,19 +1,28 @@
-language: c
+os: linux
 dist: trusty
-before_install:
-  - sudo apt-get update -qq
+sudo: false
+language: python
+python: 3.6
+cache:
+  apt: true
+  ccache: true
+addons:
+  apt:
+    packages:
+      - "python3-pip"
+      - "libcap-dev"
+      - "libidn2-0-dev"
+      - "nettle-dev"
+matrix:
+  include:
+    - env: CC=gcc
+    - env: CC=clang
 install:
-  - sudo apt-get install libcap-dev libidn2-0-dev -qq
-  - sudo apt-get install nettle-dev libidn2-0-dev -qq
-
-compiler:
-  - gcc
-  - clang
-env:
-  matrix:
-    - USE_CAP=yes
-    - USE_CAP=no
-    - USE_IDN=yes
-    - USE_IDN=no
-script: make USE_CAP=${USE_CAP} USE_IDN=${USE_IDN}
-
+  - export NINJA_LATEST=$(curl --silent https://api.github.com/repos/ninja-build/ninja/releases/latest | awk --field-separator='"' '/browser_download_url.*ninja-linux.zip/ {print $4}')
+  - wget "$NINJA_LATEST"
+  - unzip -q ninja-linux.zip -d build
+  - export PATH="$PWD/build:$PATH"
+  - pip3 install meson
+script:
+  - meson builddir
+  - ninja -C builddir

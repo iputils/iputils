@@ -32,10 +32,6 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#if HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #if HAVE_SYS_TYPES_H
 # include <sys/types.h>
 #endif
@@ -105,18 +101,11 @@
 #if HAVE_SYSLOG_H
 # include <syslog.h>
 #endif
+#include <sys/wait.h>
 
 #include "ninfod.h"
 
-#ifndef offsetof
-# define offsetof(aggregate,member)	((size_t)&((aggregate *)0)->member)
-#endif
-
 #define ARRAY_SIZE(a)		(sizeof(a) / sizeof(a[0]))
-
-/* ---------- */
-/* ID */
-static char *RCSID __attribute__ ((unused)) = "$USAGI: ninfod_core.c,v 1.29 2003-07-16 09:49:01 yoshfuji Exp $";
 
 /* Variables */
 int initialized = 0;
@@ -124,9 +113,6 @@ int initialized = 0;
 #if ENABLE_THREADS && HAVE_LIBPTHREAD
 pthread_attr_t pattr;
 #endif
-
-static uint32_t suptypes[(MAX_SUPTYPES+31)>>5];
-static size_t suptypes_len;
 
 /* ---------- */
 struct subjinfo {
@@ -162,7 +148,7 @@ static struct subjinfo subjinfo_null = {
 	.checksubj = pr_nodeinfo_noop,
 };
 
-static __inline__ struct subjinfo *subjinfo_lookup(int code)
+static __inline__ struct subjinfo *subjinfo_lookup(size_t code)
 {
 	if (code >= ARRAY_SIZE(subjinfo_table))
 		return NULL;
@@ -228,7 +214,7 @@ static struct qtypeinfo qtypeinfo_refused = {
 	.flags = QTYPEINFO_F_RATELIMIT,
 };
 
-static __inline__ struct qtypeinfo *qtypeinfo_lookup(int qtype)
+static __inline__ struct qtypeinfo *qtypeinfo_lookup(size_t qtype)
 {
 	if (qtype >= ARRAY_SIZE(qtypeinfo_table))
 		return &qtypeinfo_unknown;
@@ -239,7 +225,7 @@ static __inline__ struct qtypeinfo *qtypeinfo_lookup(int qtype)
 
 /* ---------- */
 /* noop */
-int pr_nodeinfo_noop(CHECKANDFILL_ARGS)
+int pr_nodeinfo_noop(CHECKANDFILL_ARGS_3)
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
@@ -284,7 +270,7 @@ int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS)
 		p->reply.ni_flags = flags&~NI_SUPTYPE_FLAG_COMPRESS;
 		
 		p->replydatalen = suptypes_len<<2;
-		p->replydata = ni_malloc(p->replydatalen);
+		p->replydata = malloc(p->replydatalen);
 		if (p->replydata == NULL) {
 			p->replydatalen = -1;
 			return -1;	/*XXX*/
@@ -330,7 +316,7 @@ void init_nodeinfo_suptypes(INIT_ARGS)
 
 /* ---------- */
 /* unknown qtype response */
-int pr_nodeinfo_unknown(CHECKANDFILL_ARGS)
+int pr_nodeinfo_unknown(CHECKANDFILL_ARGS_1)
 {
 	if (!reply)
 		return -1;	/*???*/
@@ -348,7 +334,7 @@ int pr_nodeinfo_unknown(CHECKANDFILL_ARGS)
 }
 
 /* refused response */
-int pr_nodeinfo_refused(CHECKANDFILL_ARGS)
+int pr_nodeinfo_refused(CHECKANDFILL_ARGS_1)
 {
 	if (!reply)
 		return -1;	/*???*/
@@ -391,7 +377,7 @@ static int ni_policy(struct packetcontext *p)
 /* ---------- */
 void init_core(int forced)
 {
-	int i;
+	size_t i;
 
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
@@ -446,6 +432,7 @@ static void *ni_send_thread(void *data)
 	DEBUG(LOG_DEBUG, "%s(): thread=%ld\n", __func__, pthread_self());
 	ret = ni_send(data);
 	DEBUG(LOG_DEBUG, "%s(): thread=%ld => %d\n", __func__, pthread_self(), ret);
+	ret = ret;
 	return NULL;
 }
 #else
@@ -467,13 +454,13 @@ static int ni_send_fork(struct packetcontext *p)
 			      __func__, getpid(), ret);
 			exit(ret > 0 ? 1 : 0);
 		}
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		exit(0);
 	} else {
 		waitpid(child, NULL, 0);
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 	}
 	return 0;
 }
@@ -532,7 +519,7 @@ int pr_nodeinfo(struct packetcontext *p)
 		if (!IN6_IS_ADDR_MC_LINKLOCAL(&p->pktinfo.ipi6_addr)) {
 			DEBUG(LOG_WARNING,
 			      "Destination is non-link-local multicast address.\n");
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 #if 0
@@ -543,7 +530,7 @@ int pr_nodeinfo(struct packetcontext *p)
 			DEBUG(LOG_WARNING,
 			      "Destination is link-local multicast address other than "
 			      "NI Group address.\n");
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 #endif
@@ -552,13 +539,13 @@ int pr_nodeinfo(struct packetcontext *p)
 	/* Step 1: Check length */
 	if (p->querylen < sizeof(struct icmp6_nodeinfo)) {
 		DEBUG(LOG_WARNING, "Query too short\n");
-		ni_free(p);
+		free(p);
 		return -1;
 	}
 
 #if ENABLE_DEBUG
 	cp = printbuf;
-	for (i = 0; i < sizeof(query->icmp6_ni_nonce); i++) {
+	for (i = 0; (size_t)i < sizeof(query->icmp6_ni_nonce); i++) {
 		cp += sprintf(cp, " %02x", query->icmp6_ni_nonce[i]);
 	}
 	DEBUG(LOG_DEBUG, "%s(): qtype=%d, flags=0x%04x, nonce[] = {%s }\n",
@@ -586,7 +573,7 @@ int pr_nodeinfo(struct packetcontext *p)
 			DEBUG(LOG_WARNING,
 			      "%s(): unknown code %u\n",
 			      __func__, query->ni_code);
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 	}
@@ -610,19 +597,19 @@ int pr_nodeinfo(struct packetcontext *p)
 			      "failed to make reply: %s\n",
 			      strerror(errno));
 		}
-		ni_free(p);
+		free(p);
 		return -1;
 	}
 
 	/* XXX: Step 5: Check the policy */
 	rc = ni_policy(p);
 	if (rc <= 0) {
-		ni_free(p->replydata);
+		free(p->replydata);
 		p->replydata = NULL;
 		p->replydatalen = 0;
 		if (rc < 0) {
 			DEBUG(LOG_WARNING, "Ignored by policy.\n");
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 		DEBUG(LOG_WARNING, "Refused by policy.\n");
@@ -642,7 +629,7 @@ int pr_nodeinfo(struct packetcontext *p)
 				      "failed to make reply: %s\n",
 				      strerror(errno));
 			}
-			ni_free(p);
+			free(p);
 			return -1;
 		}
 	}
@@ -650,8 +637,8 @@ int pr_nodeinfo(struct packetcontext *p)
 	/* Step 7: Rate Limit */
 	if (qtypeinfo->flags&QTYPEINFO_F_RATELIMIT &&
 	    ni_ratelimit()) {
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		return -1;
 	}
 
@@ -680,15 +667,15 @@ int pr_nodeinfo(struct packetcontext *p)
 #if ENABLE_THREADS && HAVE_LIBPTHREAD
 	/* ni_send_thread() frees p */
 	if (pthread_create(&thread, &pattr, ni_send_thread, p)) {
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		return -1;
 	}
 #else
 	/* ni_send_fork() frees p */
 	if (ni_send_fork(p)) {
-		ni_free(p->replydata);
-		ni_free(p);
+		free(p->replydata);
+		free(p);
 		return -1;
 	}
 #endif

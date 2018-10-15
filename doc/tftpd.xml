@@ -3,6 +3,10 @@
                    "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- lifted from man+troff by doclifter -->
 <refentry id='tftpd8'>
+<refentryinfo>
+  <title>tftpd</title>
+  <productname>iputils</productname>
+</refentryinfo>
 <refmeta>
   <refentrytitle>TFTPD</refentrytitle>
   <manvolnum>8</manvolnum>
@@ -16,6 +20,7 @@
 <refsynopsisdiv id='synopsis'>
   <cmdsynopsis>
     <command>tftpd</command>
+    <arg choice='opt'>-V </arg>
     <arg choice='plain'><replaceable>directory</replaceable></arg>
     <sbr/>
 </cmdsynopsis>

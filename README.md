@@ -6,7 +6,7 @@ The iputils package is set of small useful utilities for Linux networking.
 These tools are included in iputils
 - arping
 - clockdiff
-- ipg
+- ninfod
 - ping
 - rarpd
 - rdisc
@@ -19,4 +19,3 @@ If you still use [old version](http://www.skbuff.net/iputils/), please consider 
 This version also fully supports glibc, uClibc and musl-libc.
 
 <!-- vim: set tw=80: -->
-

@@ -59,9 +59,9 @@ struct iflink
 struct ifaddr
 {
 	struct ifaddr 	*next;
-	__u32		prefix;
-	__u32		mask;
-	__u32		local;
+	uint32_t		prefix;
+	uint32_t		mask;
+	uint32_t		local;
 };
 
 struct rarp_map
@@ -72,12 +72,23 @@ struct rarp_map
 	int		arp_type;
 	int		lladdr_len;
 	unsigned char	lladdr[16];
-	__u32		ipaddr;
+	uint32_t		ipaddr;
 } *rarp_db;
 
-void usage()
+void usage(void)
 {
-	fprintf(stderr, "Usage: rarpd [ -dveaA ] [ -b tftpdir ] [ interface]\n");
+	fprintf(stderr,
+		"\nUsage:\n"
+		"  rarpd [options] [interface]\n"
+		"\nOptions:\n"
+		"  -A        listen also arp messages\n"
+		"  -b <dir>  tftpd boot directory\n"
+		"  -d        debug mode\n"
+		"  -e        /etc/ethers markup alone is fine\n"
+		"  -v        verbose mode\n"
+		"  -V        print version and exit\n"
+		"\nFor more details see rarpd(8).\n"
+	);
 	exit(1);
 }
 
@@ -95,7 +106,7 @@ void load_if(void)
 	struct ifreq ibuf[256];
 
 	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-		syslog(LOG_ERR, "socket: %m");
+		syslog(LOG_ERR, "socket: %s", strerror(errno));
 		return;
 	}
 
@@ -103,7 +114,7 @@ void load_if(void)
 	ifc.ifc_buf = (char *)ibuf;
 	if (ioctl(fd, SIOCGIFCONF, (char *)&ifc) < 0 ||
 	    ifc.ifc_len < (int)sizeof(struct ifreq)) {
-		syslog(LOG_ERR, "SIOCGIFCONF: %m");
+		syslog(LOG_ERR, "SIOCGIFCONF: %s", strerror(errno));
 		close(fd);
 		return;
 	}
@@ -119,9 +130,9 @@ void load_if(void)
 
 	ifend = (struct ifreq *)((char *)ibuf + ifc.ifc_len);
 	for (ifrp = ibuf; ifrp < ifend; ifrp++) {
-		__u32 addr;
-		__u32 mask;
-		__u32 prefix;
+		uint32_t addr;
+		uint32_t mask;
+		uint32_t prefix;
 
 		if (ifrp->ifr_addr.sa_family != AF_INET)
 			continue;
@@ -129,7 +140,7 @@ void load_if(void)
 		if (addr == 0)
 			continue;
 		if (ioctl(fd, SIOCGIFINDEX, ifrp)) {
-			syslog(LOG_ERR, "ioctl(SIOCGIFNAME): %m");
+			syslog(LOG_ERR, "ioctl(SIOCGIFNAME): %s", strerror(errno));
 			continue;
 		}
 		if (ifidx && ifrp->ifr_ifindex != ifidx)
@@ -142,7 +153,7 @@ void load_if(void)
 			int index = ifrp->ifr_ifindex;
 
 			if (ioctl(fd, SIOCGIFHWADDR, ifrp)) {
-				syslog(LOG_ERR, "ioctl(SIOCGIFHWADDR): %m");
+				syslog(LOG_ERR, "ioctl(SIOCGIFHWADDR): %s", strerror(errno));
 				continue;
 			}
 
@@ -163,12 +174,12 @@ void load_if(void)
 				syslog(LOG_INFO, "link %s", ifl->name);
 		}
 		if (ioctl(fd, SIOCGIFNETMASK, ifrp)) {
-			syslog(LOG_ERR, "ioctl(SIOCGIFMASK): %m");
+			syslog(LOG_ERR, "ioctl(SIOCGIFMASK): %s", strerror(errno));
 			continue;
 		}
 		mask = ((struct sockaddr_in*)&ifrp->ifr_netmask)->sin_addr.s_addr;
 		if (ioctl(fd, SIOCGIFDSTADDR, ifrp)) {
-			syslog(LOG_ERR, "ioctl(SIOCGIFDSTADDR): %m");
+			syslog(LOG_ERR, "ioctl(SIOCGIFDSTADDR): %s", strerror(errno));
 			continue;
 		}
 		prefix = ((struct sockaddr_in*)&ifrp->ifr_dstaddr)->sin_addr.s_addr;
@@ -191,7 +202,7 @@ void load_if(void)
 
 			if (verbose) {
 				int i;
-				__u32 m = ~0U;
+				uint32_t m = ~0U;
 				for (i=32; i>=0; i--) {
 					if (htonl(m) == mask)
 						break;
@@ -217,16 +228,16 @@ void configure(void)
 	load_db();
 }
 
-int bootable(__u32 addr)
+int bootable(uint32_t addr)
 {
 	struct dirent *dent;
 	DIR *d;
 	char name[9];
 
-	sprintf(name, "%08X", (__u32)ntohl(addr));
+	sprintf(name, "%08X", (uint32_t)ntohl(addr));
 	d = opendir(tftp_dir);
 	if (d == NULL) {
-		syslog(LOG_ERR, "opendir: %m");
+		syslog(LOG_ERR, "opendir: %s", strerror(errno));
 		return 0;
 	}
 	while ((dent = readdir(d)) != NULL) {
@@ -237,7 +248,7 @@ int bootable(__u32 addr)
 	return dent != NULL;
 }
 
-struct ifaddr *select_ipaddr(int ifindex, __u32 *sel_addr, __u32 **alist)
+struct ifaddr *select_ipaddr(int ifindex, uint32_t *sel_addr, uint32_t **alist)
 {
 	struct iflink *ifl;
 	struct ifaddr *ifa;
@@ -257,7 +268,7 @@ retry:
 		return NULL;
 
 	for (i=0; alist[i]; i++) {
-		__u32 addr = *(alist[i]);
+		uint32_t addr = *(alist[i]);
 		for (ifa=ifl->ifa_list; ifa; ifa=ifa->next) {
 			if (!((ifa->prefix^addr)&ifa->mask)) {
 				*sel_addr = addr;
@@ -300,10 +311,8 @@ struct rarp_map *rarp_lookup(int ifindex, int hatype,
 			struct hostent *hp;
 			char ename[256];
 			static struct rarp_map emap = {
-				NULL,
-				0,
-				ARPHRD_ETHER,
-				6,
+				.arp_type = ARPHRD_ETHER,
+				.lladdr_len = 6
 			};
 
 			if (ether_ntohost(ename, lladdr) != 0 ||
@@ -316,7 +325,7 @@ struct rarp_map *rarp_lookup(int ifindex, int hatype,
 				syslog(LOG_ERR, "no IP address");
 				return NULL;
 			}
-			ifa = select_ipaddr(ifindex, &emap.ipaddr, (__u32 **)hp->h_addr_list);
+			ifa = select_ipaddr(ifindex, &emap.ipaddr, (uint32_t **)hp->h_addr_list);
 			if (ifa) {
 				memcpy(emap.lladdr, lladdr, 6);
 				if (only_ethers || bootable(emap.ipaddr))
@@ -361,9 +370,9 @@ int put_mylladdr(unsigned char **ptr_p, int ifindex, int alen)
 	return 0;
 }
 
-int put_myipaddr(unsigned char **ptr_p, int ifindex, __u32 hisipaddr)
+int put_myipaddr(unsigned char **ptr_p, int ifindex, uint32_t hisipaddr)
 {
-	__u32 laddr = 0;
+	uint32_t laddr = 0;
 	struct iflink *ifl;
 	struct ifaddr *ifa;
 
@@ -385,7 +394,7 @@ int put_myipaddr(unsigned char **ptr_p, int ifindex, __u32 hisipaddr)
 	return 0;
 }
 
-void arp_advise(int ifindex, unsigned char *lladdr, int lllen, __u32 ipaddr)
+void arp_advise(int ifindex, unsigned char *lladdr, int lllen, uint32_t ipaddr)
 {
 	int fd;
 	struct arpreq req;
@@ -410,7 +419,7 @@ void arp_advise(int ifindex, unsigned char *lladdr, int lllen, __u32 ipaddr)
 	memcpy(req.arp_dev, ifl->name, IFNAMSIZ);
 
 	if (ioctl(fd, SIOCSARP, &req))
-		syslog(LOG_ERR, "SIOCSARP: %m");
+		syslog(LOG_ERR, "SIOCSARP: %s", strerror(errno));
 	close(fd);
 }
 
@@ -422,12 +431,12 @@ void serve_it(int fd)
 	struct arphdr *a = (struct arphdr*)buf;
 	struct rarp_map *rmap;
 	unsigned char *ptr;
-	int n;
+	ssize_t n;
 
 	n = recvfrom(fd, buf, sizeof(buf), MSG_DONTWAIT, (struct sockaddr*)&sll, &sll_len);
 	if (n<0) {
 		if (errno != EINTR && errno != EAGAIN)
-			syslog(LOG_ERR, "recvfrom: %m");
+			syslog(LOG_ERR, "recvfrom: %s", strerror(errno));
 		return;
 	}
 
@@ -440,8 +449,8 @@ void serve_it(int fd)
 	if (ifidx && sll.sll_ifindex != ifidx)
 		return;
 
-	if (n<sizeof(*a)) {
-		syslog(LOG_ERR, "truncated arp packet; len=%d", n);
+	if ((size_t)n<sizeof(*a)) {
+		syslog(LOG_ERR, "truncated arp packet; len=%zu", n);
 		return;
 	}
 
@@ -452,14 +461,14 @@ void serve_it(int fd)
 	if (verbose) {
 		int i;
 		char tmpbuf[16*3];
-		char *ptr = tmpbuf;
+		char *p = tmpbuf;
 		for (i=0; i<sll.sll_halen; i++) {
 			if (i) {
-				sprintf(ptr, ":%02x", sll.sll_addr[i]);
-				ptr++;
+				sprintf(p, ":%02x", sll.sll_addr[i]);
+				p++;
 			} else
-				sprintf(ptr, "%02x", sll.sll_addr[i]);
-			ptr += 2;
+				sprintf(p, "%02x", sll.sll_addr[i]);
+			p += 2;
 		}
 		syslog(LOG_INFO, "RARP request from %s on if%d", tmpbuf, sll.sll_ifindex);
 	}
@@ -483,6 +492,7 @@ void serve_it(int fd)
 			if (a->ar_hrd == htons(ARPHRD_ETHER) ||
 			    a->ar_hrd == htons(ARPHRD_IEEE802))
 				break;
+			/* fallthrough */
 		default:
 			syslog(LOG_ERR, "rarp htype mismatch");
 			return;
@@ -494,8 +504,8 @@ void serve_it(int fd)
 		return;
 	}
 	/* 4. Check packet length */
-	if (sizeof(*a) + 2*4 + 2*a->ar_hln > n) {
-		syslog(LOG_ERR, "truncated rarp request; len=%d", n);
+	if (sizeof(*a) + 2*4 + 2*a->ar_hln > (size_t) n) {
+		syslog(LOG_ERR, "truncated rarp request; len=%zu", n);
 		return;
 	}
 	/* 5. Silly check: if this guy set different source
@@ -546,17 +556,14 @@ void catch_signal(int sig, void (*handler)(int))
 
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = handler;
-#ifdef SA_INTERRUPT
-	sa.sa_flags = SA_INTERRUPT;
-#endif
 	sigaction(sig, &sa, NULL);
 }
 
-void sig_alarm(int signo)
+void sig_alarm(int signo __attribute__((__unused__)))
 {
 }
 
-void sig_hup(int signo)
+void sig_hup(int signo __attribute__((__unused__)))
 {
 	do_reload = 1;
 }
@@ -569,7 +576,7 @@ int main(int argc, char **argv)
 
 
 	opterr = 0;
-	while ((opt = getopt(argc, argv, "aAb:dvoe")) != EOF) {
+	while ((opt = getopt(argc, argv, "aAb:dvoeV")) != EOF) {
 		switch (opt) {
 		case 'a':
 			++all_ifaces;
@@ -598,7 +605,9 @@ int main(int argc, char **argv)
 		case 'b':
 			tftp_dir = optarg;
 			break;
-
+		case 'V':
+			printf(IPUTILS_VERSION("rarpd"));
+			return 0;
 		default:
 			usage();
 		}
@@ -712,7 +721,7 @@ int main(int argc, char **argv)
 		i = poll(pset, psize, -1);
 		if (i <= 0) {
 			if (errno != EINTR && i<0) {
-				syslog(LOG_ERR, "poll returned some crap: %m\n");
+				syslog(LOG_ERR, "poll returned some crap: %s\n", strerror(errno));
 				sleep(10);
 			}
 			continue;

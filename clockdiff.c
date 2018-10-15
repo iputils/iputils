@@ -48,7 +48,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <linux/types.h>
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 #include <sys/capability.h>
 #endif
 
@@ -200,9 +200,9 @@ empty:
 	oicp->code = 0;
 	oicp->checksum = 0;
 	oicp->un.echo.id = id;
-	((__u32*)(oicp+1))[0] = 0;
-	((__u32*)(oicp+1))[1] = 0;
-	((__u32*)(oicp+1))[2] = 0;
+	((uint32_t*)(oicp+1))[0] = 0;
+	((uint32_t*)(oicp+1))[1] = 0;
+	((uint32_t*)(oicp+1))[2] = 0;
 	FD_ZERO(&ready);
 
 	acked = seqno = seqno0 = 0;
@@ -220,7 +220,7 @@ empty:
 		oicp->checksum = 0;
 
 		(void)gettimeofday (&tv1, (struct timezone *)0);
-		*(__u32*)(oicp+1) = htonl((tv1.tv_sec % (24*60*60)) * 1000
+		*(uint32_t*)(oicp+1) = htonl((tv1.tv_sec % (24*60*60)) * 1000
 					  + tv1.tv_usec / 1000);
 		oicp->checksum = in_cksum((unsigned short *)oicp, sizeof(*oicp) + 12);
 
@@ -259,7 +259,7 @@ empty:
 
 			  recvtime = (tv1.tv_sec % (24*60*60)) * 1000 +
 				     tv1.tv_usec / 1000;
-			  sendtime = ntohl(*(__u32*)(icp+1));
+			  sendtime = ntohl(*(uint32_t*)(icp+1));
 			  diff = recvtime - sendtime;
 		/*
 		 * diff can be less than 0 aroud midnight
@@ -267,9 +267,9 @@ empty:
 			  if (diff < 0)
 			    continue;
 			  rtt = (rtt * 3 + diff)/4;
-			  rtt_sigma = (rtt_sigma *3 + abs(diff-rtt))/4;
+			  rtt_sigma = (rtt_sigma *3 + labs(diff-rtt))/4;
 			  msgcount++;
-			  histime = ntohl(((__u32*)(icp+1))[1]);
+			  histime = ntohl(((uint32_t*)(icp+1))[1]);
 		/*
 		 * a hosts using a time format different from
 		 * ms. since midnight UT (as per RFC792) should
@@ -375,9 +375,9 @@ empty:
 	oicp->code = 0;
 	oicp->checksum = 0;
 	oicp->un.echo.id = id;
-	((__u32*)(oicp+1))[0] = 0;
-	((__u32*)(oicp+1))[1] = 0;
-	((__u32*)(oicp+1))[2] = 0;
+	((uint32_t*)(oicp+1))[0] = 0;
+	((uint32_t*)(oicp+1))[1] = 0;
+	((uint32_t*)(oicp+1))[2] = 0;
 
 	FD_ZERO(&ready);
 
@@ -397,7 +397,7 @@ empty:
 		oicp->checksum = 0;
 
 		gettimeofday (&tv1, NULL);
-		((__u32*)(oicp+1))[0] = htonl((tv1.tv_sec % (24*60*60)) * 1000
+		((uint32_t*)(oicp+1))[0] = htonl((tv1.tv_sec % (24*60*60)) * 1000
 					      + tv1.tv_usec / 1000);
 		oicp->checksum = in_cksum((unsigned short *)oicp, sizeof(*oicp)+12);
 
@@ -436,7 +436,7 @@ empty:
 			    icp->un.echo.sequence >= seqno0 &&
 			    icp->un.echo.sequence <= seqno) {
 				int i;
-				__u8 *opt = packet+20;
+				uint8_t *opt = packet+20;
 
 				if (acked < icp->un.echo.sequence)
 					acked = icp->un.echo.sequence;
@@ -450,8 +450,8 @@ empty:
 				}
 				sendtime = recvtime = histime = histime1 = 0;
 				for (i=0; i < (opt[2]-5)/8; i++) {
-					__u32 *timep = (__u32*)(opt+4+i*8+4);
-					__u32 t = ntohl(*timep);
+					uint32_t *timep = (uint32_t*)(opt+4+i*8+4);
+					uint32_t t = ntohl(*timep);
 
 					if (t & 0x80000000)
 						return NONSTDTIME;
@@ -482,7 +482,7 @@ empty:
 				if (diff < 0)
 					continue;
 				rtt = (rtt * 3 + diff)/4;
-				rtt_sigma = (rtt_sigma *3 + abs(diff-rtt))/4;
+				rtt_sigma = (rtt_sigma *3 + labs(diff-rtt))/4;
 				msgcount++;
 
 				if (interactive) {
@@ -552,14 +552,24 @@ good_exit:
  * be reduced by increasing the number of messages sent in each measurement.
  */
 
-void
-usage() {
-  fprintf(stderr, "Usage: clockdiff [-o] <host>\n");
-  exit(1);
+void usage(void)
+{
+	fprintf(stderr,
+		"\nUsage:\n"
+		"  clockdiff [options] <destination>\n"
+		"\nOptions:\n"
+		"                without -o, use ip timestamp only\n"
+		"  -o            use ip timestamp and icmp echo\n"
+		"  -o1           use three-term ip timestamp and icmp echo\n"
+		"  -V            print version and exit\n"
+		"  <destination> dns name or ip address\n"
+		"\nFor more details see clockdiff(8).\n"
+	);
+	exit(1);
 }
 
 void drop_rights(void) {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t caps = cap_init();
 	if (cap_set_proc(caps)) {
 		perror("clockdiff: cap_set_proc");
@@ -584,6 +594,10 @@ main(int argc, char *argv[])
 	int s_errno = 0;
 	int n_errno = 0;
 
+	if (argc == 2 && !strcmp(argv[1], "-V")) {
+		printf(IPUTILS_VERSION("clockdiff"));
+		return 0;
+	}
 	if (argc < 2) {
 		drop_rights();
 		usage();
@@ -663,12 +677,12 @@ main(int argc, char *argv[])
 			perror("getsockname");
 			exit(1);
 		}
-		((__u32*)(rspace+4))[0*2] = myaddr.sin_addr.s_addr;
-		((__u32*)(rspace+4))[1*2] = server.sin_addr.s_addr;
-		((__u32*)(rspace+4))[2*2] = myaddr.sin_addr.s_addr;
+		((uint32_t*)(rspace+4))[0*2] = myaddr.sin_addr.s_addr;
+		((uint32_t*)(rspace+4))[1*2] = server.sin_addr.s_addr;
+		((uint32_t*)(rspace+4))[2*2] = myaddr.sin_addr.s_addr;
 		if (ip_opt_len == 4+4*8) {
-			((__u32*)(rspace+4))[2*2] = server.sin_addr.s_addr;
-			((__u32*)(rspace+4))[3*2] = myaddr.sin_addr.s_addr;
+			((uint32_t*)(rspace+4))[2*2] = server.sin_addr.s_addr;
+			((uint32_t*)(rspace+4))[3*2] = myaddr.sin_addr.s_addr;
 		}
 
 		if (setsockopt(sock_raw, IPPROTO_IP, IP_OPTIONS, rspace, ip_opt_len) < 0) {

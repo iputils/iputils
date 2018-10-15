@@ -3,6 +3,10 @@
                    "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <!-- lifted from man+troff by doclifter -->
 <refentry id='clockdiff8'>
+<refentryinfo>
+  <title>clockdiff</title>
+  <productname>iputils</productname>
+</refentryinfo>
 <refmeta>
   <refentrytitle>CLOCKDIFF</refentrytitle>
   <manvolnum>8</manvolnum>
@@ -18,6 +22,7 @@
     <command>clockdiff</command>
     <arg choice='opt'>-o </arg>
     <arg choice='opt'>-o1 </arg>
+    <arg choice='opt'>-V </arg>
     <arg choice='plain'><replaceable>destination</replaceable></arg>
     <sbr/>
   </cmdsynopsis>
@@ -49,6 +54,12 @@ ICMP TIMESTAMP (f.e. Solaris &lt;2.4).</para>
 IP TIMESTAMP with prespecified hop addresses instead of four term one.
 What flavor works better depends on target host. Particularly,
 <option>-o</option> is better for Linux.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-V</option></term>
+  <listitem>
+  <para>Print version and exit.</para>
   </listitem>
   </varlistentry>
 </variablelist>

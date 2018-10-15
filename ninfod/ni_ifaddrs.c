@@ -60,8 +60,6 @@
  * SUCH DAMAGE.
  */
 
-#include "config.h"
-
 #include <string.h>
 #include <time.h>
 #include <malloc.h>
@@ -82,13 +80,7 @@
 #include "ni_ifaddrs.h"
 #include <netinet/in.h>
 
-#ifdef _USAGI_LIBINET6
-#include "libc-compat.h"
-#endif
-
 //#define IFA_LOCAL	IFA_LOCAL
-
-static const char *RCSID __attribute__ ((unused)) = "$USAGI: ni_ifaddrs.c,v 1.8 2007-10-11 06:25:21 yoshfuji Exp $ based on USAGI: ifaddrs.c,v 1.18 2002/03/06 01:50:46 yoshfuji Exp";
 
 /* ====================================================================== */
 struct nlmsg_list {
@@ -110,7 +102,7 @@ struct rtmaddr_ifamap {
 #endif
 
 /* ====================================================================== */
-static int nl_sendreq(int sd, int request, int flags, int *seq)
+static int nl_sendreq(int sd, int request, int flags, uint32_t *seq)
 {
 	char reqbuf[NLMSG_ALIGN(sizeof(struct nlmsghdr)) + NLMSG_ALIGN(sizeof(struct rtgenmsg))];
 	struct sockaddr_nl nladdr;
@@ -134,7 +126,7 @@ static int nl_sendreq(int sd, int request, int flags, int *seq)
 	return (sendto(sd, (void *) req_hdr, req_hdr->nlmsg_len, 0, (struct sockaddr *) &nladdr, sizeof(nladdr)));
 }
 
-static int nl_recvmsg(int sd, int request, int seq, void *buf, size_t buflen, int *flags)
+static int nl_recvmsg(int sd, void *buf, size_t buflen, int *flags)
 {
 	struct msghdr msg;
 	struct iovec iov = { buf, buflen };
@@ -160,7 +152,7 @@ static int nl_recvmsg(int sd, int request, int seq, void *buf, size_t buflen, in
 	return read_len;
 }
 
-static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *done)
+static int nl_getmsg(int sd, uint32_t seq, struct nlmsghdr **nlhp, int *done)
 {
 	struct nlmsghdr *nh;
 	size_t bufsize = 65536, lastbufsize = 0;
@@ -176,7 +168,7 @@ static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *
 			break;
 		}
 		buff = newbuff;
-		result = read_size = nl_recvmsg(sd, request, seq, buff, bufsize, &msg_flags);
+		result = read_size = nl_recvmsg(sd, buff, bufsize, &msg_flags);
 		if (read_size < 0 || (msg_flags & MSG_TRUNC)) {
 			lastbufsize = bufsize;
 			bufsize *= 2;
@@ -186,7 +178,7 @@ static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *
 			break;
 		nh = (struct nlmsghdr *) buff;
 		for (nh = (struct nlmsghdr *) buff; NLMSG_OK(nh, read_size); nh = (struct nlmsghdr *) NLMSG_NEXT(nh, read_size)) {
-			if (nh->nlmsg_pid != pid || nh->nlmsg_seq != seq)
+			if ((pid_t) nh->nlmsg_pid != pid || nh->nlmsg_seq != seq)
 				continue;
 			if (nh->nlmsg_type == NLMSG_DONE) {
 				(*done)++;
@@ -215,7 +207,7 @@ static int nl_getmsg(int sd, int request, int seq, struct nlmsghdr **nlhp, int *
 	return result;
 }
 
-static int nl_getlist(int sd, int seq, int request, struct nlmsg_list **nlm_list, struct nlmsg_list **nlm_end)
+static int nl_getlist(int sd, uint32_t seq, int request, struct nlmsg_list **nlm_list, struct nlmsg_list **nlm_end)
 {
 	struct nlmsghdr *nlh = NULL;
 	int status;
@@ -227,7 +219,7 @@ static int nl_getlist(int sd, int seq, int request, struct nlmsg_list **nlm_list
 	if (seq == 0)
 		seq = (int) time(NULL);
 	while (!done) {
-		status = nl_getmsg(sd, request, seq, &nlh, &done);
+		status = nl_getmsg(sd, seq, &nlh, &done);
 		if (status < 0)
 			return status;
 		if (nlh) {
@@ -252,7 +244,7 @@ static int nl_getlist(int sd, int seq, int request, struct nlmsg_list **nlm_list
 			}
 		}
 	}
-	return status >= 0 ? seq : status;
+	return status >= 0 ? (int) seq : status;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -392,7 +384,7 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 #endif
 
 				/* check if the message is what we want */
-				if (nlh->nlmsg_pid != pid || nlh->nlmsg_seq != nlm->seq)
+				if ((pid_t) nlh->nlmsg_pid != pid || nlh->nlmsg_seq != nlm->seq)
 					continue;
 				if (nlh->nlmsg_type == NLMSG_DONE) {
 					break;	/* ok */

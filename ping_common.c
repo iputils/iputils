@@ -43,7 +43,7 @@ int sndbuf;
 int ttl;
 int rtt;
 int rtt_addend;
-__u16 acked;
+uint16_t acked;
 
 unsigned char outpack[MAXPACKET];
 struct rcvd_table rcvd_tbl;
@@ -95,76 +95,100 @@ static int screen_width = INT_MAX;
 
 #define ARRAY_SIZE(a)	(sizeof(a) / sizeof(a[0]))
 
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 static cap_value_t cap_raw = CAP_NET_RAW;
 static cap_value_t cap_admin = CAP_NET_ADMIN;
 #endif
 
+void usage(void)
+{
+	fprintf(stderr,
+		"\nUsage\n"
+		"  ping [options] <destination>\n"
+		"\nOptions:\n"
+		"  <destination>      dns name or ip address\n"
+		"  -a                 use audible ping\n"
+		"  -A                 use adaptive ping\n"
+		"  -B                 sticky source address\n"
+		"  -c <count>         stop after <count> replies\n"
+		"  -D                 print timestamps\n"
+		"  -d                 use SO_DEBUG socket option\n"
+		"  -f                 flood ping\n"
+		"  -h                 print help and exit\n"
+		"  -I <interface>     either interface name or address\n"
+		"  -i <interval>      seconds between sending each packet\n"
+		"  -L                 suppress loopback of multicast packets\n"
+		"  -l <preload>       send <preload> number of packages while waiting replies\n"
+		"  -m <mark>          tag the packets going out\n"
+		"  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want>\n"
+		"  -n                 no dns name resolution\n"
+		"  -O                 report outstanding replies\n"
+		"  -p <pattern>       contents of padding byte\n"
+		"  -q                 quiet output\n"
+		"  -Q <tclass>        use quality of service <tclass> bits\n"
+		"  -s <size>          use <size> as number of data bytes to be sent\n"
+		"  -S <size>          use <size> as SO_SNDBUF socket option value\n"
+		"  -t <ttl>           define time to live\n"
+		"  -U                 print user-to-user latency\n"
+		"  -v                 verbose output\n"
+		"  -V                 print version and exit\n"
+		"  -w <deadline>      reply wait <deadline> in seconds\n"
+		"  -W <timeout>       time to wait for response\n"
+		"\nIPv4 options:\n"
+		"  -4                 use IPv4\n"
+		"  -b                 allow pinging broadcast\n"
+		"  -R                 record route\n"
+		"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|tsprespec>\n"
+		"\nIPv6 options:\n"
+		"  -6                 use IPv6\n"
+		"  -F <flowlabel>     define flow label, default is random\n"
+		"  -N <nodeinfo opt>  use icmp6 node info query, try <help> as argument\n"
+		"\nFor more details see ping(8).\n"
+	);
+	exit(2);
+}
+
 void limit_capabilities(void)
 {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t cap_cur_p;
 	cap_t cap_p;
 	cap_flag_value_t cap_ok;
 
 	cap_cur_p = cap_get_proc();
-	if (!cap_cur_p) {
-		perror("ping: cap_get_proc");
-		exit(-1);
-	}
-
+	if (!cap_cur_p)
+		error(-1, errno, "cap_get_proc");
 	cap_p = cap_init();
-	if (!cap_p) {
-		perror("ping: cap_init");
-		exit(-1);
-	}
-
+	if (!cap_p)
+		error(-1, errno, "cap_init");
 	cap_ok = CAP_CLEAR;
 	cap_get_flag(cap_cur_p, CAP_NET_ADMIN, CAP_PERMITTED, &cap_ok);
-
 	if (cap_ok != CAP_CLEAR)
 		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_admin, CAP_SET);
-
 	cap_ok = CAP_CLEAR;
 	cap_get_flag(cap_cur_p, CAP_NET_RAW, CAP_PERMITTED, &cap_ok);
-
 	if (cap_ok != CAP_CLEAR)
 		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_raw, CAP_SET);
-
-	if (cap_set_proc(cap_p) < 0) {
-		perror("ping: cap_set_proc");
-		exit(-1);
-	}
-
-	if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
-		perror("ping: prctl");
-		exit(-1);
-	}
-
-	if (setuid(getuid()) < 0) {
-		perror("setuid");
-		exit(-1);
-	}
-
-	if (prctl(PR_SET_KEEPCAPS, 0) < 0) {
-		perror("ping: prctl");
-		exit(-1);
-	}
-
+	if (cap_set_proc(cap_p) < 0)
+		error(-1, errno, "cap_set_proc");
+	if (prctl(PR_SET_KEEPCAPS, 1) < 0)
+		error(-1, errno, "prctl");
+	if (setuid(getuid()) < 0)
+		error(-1, errno, "setuid");
+	if (prctl(PR_SET_KEEPCAPS, 0) < 0)
+		error(-1, errno, "prctl");
 	cap_free(cap_p);
 	cap_free(cap_cur_p);
 #endif
 	uid = getuid();
 	euid = geteuid();
-#ifndef CAPABILITIES
-	if (seteuid(uid)) {
-		perror("ping: setuid");
-		exit(-1);
-	}
+#ifndef HAVE_LIBCAP
+	if (seteuid(uid))
+		error(-1, errno, "setuid");
 #endif
 }
 
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 int modify_capability(cap_value_t cap, cap_flag_value_t on)
 {
 	cap_t cap_p = cap_get_proc();
@@ -172,7 +196,7 @@ int modify_capability(cap_value_t cap, cap_flag_value_t on)
 	int rc = -1;
 
 	if (!cap_p) {
-		perror("ping: cap_get_proc");
+		error(0, errno, "cap_get_proc");
 		goto out;
 	}
 
@@ -186,7 +210,7 @@ int modify_capability(cap_value_t cap, cap_flag_value_t on)
 	cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap, on);
 
 	if (cap_set_proc(cap_p) < 0) {
-		perror("ping: cap_set_proc");
+		error(0, errno, "cap_set_proc");
 		goto out;
 	}
 
@@ -203,7 +227,7 @@ out:
 int modify_capability(int on)
 {
 	if (seteuid(on ? euid : getuid())) {
-		perror("seteuid");
+		error(0, errno, "seteuid");
 		return -1;
 	}
 
@@ -213,28 +237,24 @@ int modify_capability(int on)
 
 void drop_capabilities(void)
 {
-#ifdef CAPABILITIES
+#ifdef HAVE_LIBCAP
 	cap_t cap = cap_init();
-	if (cap_set_proc(cap) < 0) {
-		perror("ping: cap_set_proc");
-		exit(-1);
-	}
+	if (cap_set_proc(cap) < 0)
+		error(-1, errno, "cap_set_proc");
 	cap_free(cap);
 #else
-	if (setuid(getuid())) {
-		perror("ping: setuid");
-		exit(-1);
-	}
+	if (setuid(getuid()))
+		error(-1, errno, "setuid");
 #endif
 }
 
 /* Fills all the outpack, excluding ICMP header, but _including_
  * timestamp area with supplied pattern.
  */
-void fill(char *patp, void *packet, unsigned packet_size)
+void fill(char *patp, unsigned char *packet, unsigned packet_size)
 {
-	int ii, jj, kk;
-	int pat[16];
+	int ii, jj;
+	unsigned int pat[16];
 	char *cp;
 	unsigned char *bp = packet+8;
 
@@ -243,11 +263,8 @@ void fill(char *patp, void *packet, unsigned packet_size)
 #endif
 
 	for (cp = patp; *cp; cp++) {
-		if (!isxdigit(*cp)) {
-			fprintf(stderr,
-				"ping: patterns must be specified as hex digits.\n");
-			exit(2);
-		}
+		if (!isxdigit(*cp))
+			error(2, 0, "patterns must be specified as hex digits: %s", cp);
 	}
 	ii = sscanf(patp,
 	    "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
@@ -256,6 +273,7 @@ void fill(char *patp, void *packet, unsigned packet_size)
 	    &pat[13], &pat[14], &pat[15]);
 
 	if (ii > 0) {
+		unsigned kk;
 		for (kk = 0; kk <= packet_size - (8 + ii); kk += ii)
 			for (jj = 0; jj < ii; ++jj)
 				bp[jj + kk] = pat[jj];
@@ -272,14 +290,14 @@ void fill(char *patp, void *packet, unsigned packet_size)
 #endif
 }
 
-static void sigexit(int signo)
+static void sigexit(int signo __attribute__((__unused__)))
 {
 	exiting = 1;
 	if (in_pr_addr)
 		longjmp(pr_addr_jmp, 0);
 }
 
-static void sigstatus(int signo)
+static void sigstatus(int signo __attribute__((__unused__)))
 {
 	status_snapshot = 1;
 }
@@ -295,12 +313,12 @@ int __schedule_exit(int next)
 
 	if (nreceived) {
 		waittime = 2 * tmax;
-		if (waittime < 1000*interval)
+		if (waittime < (unsigned long) (1000*interval))
 			waittime = 1000*interval;
 	} else
 		waittime = lingertime*1000;
 
-	if (next < 0 || next < waittime/1000)
+	if (next < 0 || (unsigned long)next < waittime/1000)
 		next = waittime/1000;
 
 	it.it_interval.tv_sec = 0;
@@ -481,7 +499,7 @@ void sock_setbufs(socket_st *sock, int alloc)
 	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
 	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
-			fprintf(stderr, "WARNING: probably, rcvbuf is not enough to hold preload.\n");
+			error(0, 0, "WARNING: probably, rcvbuf is not enough to hold preload");
 	}
 }
 
@@ -496,15 +514,11 @@ void setup(socket_st *sock)
 	if ((options & F_FLOOD) && !(options & F_INTERVAL))
 		interval = 0;
 
-	if (uid && interval < MINUSERINTERVAL) {
-		fprintf(stderr, "ping: cannot flood; minimal interval allowed for user is %dms\n", MINUSERINTERVAL);
-		exit(2);
-	}
+	if (uid && interval < MINUSERINTERVAL)
+		error(2, 0, "cannot flood; minimal interval allowed for user is %dms", MINUSERINTERVAL);
 
-	if (interval >= INT_MAX/preload) {
-		fprintf(stderr, "ping: illegal preload and/or interval\n");
-		exit(2);
-	}
+	if (interval >= INT_MAX/preload)
+		error(2, 0, "illegal preload and/or interval: %d", interval);
 
 	hold = 1;
 	if (options & F_SO_DEBUG)
@@ -516,22 +530,24 @@ void setup(socket_st *sock)
 	if (!(options&F_LATENCY)) {
 		int on = 1;
 		if (setsockopt(sock->fd, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
-			fprintf(stderr, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP\n");
+			error(0, 0, "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP");
 	}
 #endif
 #ifdef SO_MARK
 	if (options & F_MARK) {
 		int ret;
+		int errno_save;
 
 		enable_capability_admin();
 		ret = setsockopt(sock->fd, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
+		errno_save = errno;
 		disable_capability_admin();
 
 		if (ret == -1) {
 			/* we probably dont wanna exit since old kernels
 			 * dont support mark ..
 			*/
-			fprintf(stderr, "Warning: Failed to set mark %d\n", mark);
+			error(0, errno_save, "Warning: Failed to set mark: %d", mark);
 		}
 	}
 #endif
@@ -601,10 +617,10 @@ void setup(socket_st *sock)
 /*
  * Return 0 if pattern in payload point to be ptr did not match the pattern that was sent  
  */
-int contains_pattern_in_payload(__u8 *ptr)
+int contains_pattern_in_payload(uint8_t *ptr)
 {
 	int i;
-	__u8 *cp, *dp;
+	uint8_t *cp, *dp;
  
 	/* check the data */
 	cp = ((u_char*)ptr) + sizeof(struct timeval);
@@ -616,7 +632,7 @@ int contains_pattern_in_payload(__u8 *ptr)
 	return 1;
 }
 
-void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packlen)
+void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int packlen)
 {
 	char addrbuf[128];
 	char ans_data[4096];
@@ -724,7 +740,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 				recv_error = 0;
 				if (!fset->receive_error_msg(sock)) {
 					if (errno) {
-						perror("ping: recvmsg");
+						error(0, errno, "recvmsg");
 						break;
 					}
 					not_ours = 1;
@@ -769,20 +785,20 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, __u8 *packet, int packle
 	finish();
 }
 
-int gather_statistics(__u8 *icmph, int icmplen,
-		      int cc, __u16 seq, int hops,
+int gather_statistics(uint8_t *icmph, int icmplen,
+		      int cc, uint16_t seq, int hops,
 		      int csfailed, struct timeval *tv, char *from,
-		      void (*pr_reply)(__u8 *icmph, int cc))
+		      void (*pr_reply)(uint8_t *icmph, int cc))
 {
 	int dupflag = 0;
 	long triptime = 0;
-	__u8 *ptr = icmph + icmplen;
+	uint8_t *ptr = icmph + icmplen;
 
 	++nreceived;
 	if (!csfailed)
 		acknowledge(seq);
 
-	if (timing && cc >= 8+sizeof(struct timeval)) {
+	if (timing && cc >= (int) (8+sizeof(struct timeval))) {
 		struct timeval tmp_tv;
 		memcpy(&tmp_tv, ptr, sizeof(tmp_tv));
 
@@ -790,7 +806,7 @@ restamp:
 		tvsub(tv, &tmp_tv);
 		triptime = tv->tv_sec * 1000000 + tv->tv_usec;
 		if (triptime < 0) {
-			fprintf(stderr, "Warning: time of day goes back (%ldus), taking countermeasures.\n", triptime);
+			error(0, 0, "Warning: time of day goes back (%ldus), taking countermeasures", triptime);
 			triptime = 0;
 			if (!(options & F_LATENCY)) {
 				gettimeofday(tv, NULL);
@@ -837,7 +853,7 @@ restamp:
 			write_stdout("\bC", 2);
 	} else {
 		int i;
-		__u8 *cp, *dp;
+		uint8_t *cp, *dp;
 
 		print_timestamp();
 		printf("%d bytes from %s:", cc, from);
@@ -892,7 +908,7 @@ restamp:
 
 static long llsqrt(long long a)
 {
-	long long prev = ~((long long)1 << 63);
+	long long prev = LLONG_MAX;
 	long long x = a;
 
 	if (x > 0) {
