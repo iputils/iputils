@@ -1,0 +1,27 @@
+[Unit]
+Description=Network Router Discovery Daemon
+Documentation=man:rdisc(8)
+Requires=network.target
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/rdisc
+ExecStart=@sbindir@/rdisc -f -t $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
+
+AmbientCapabilities=CAP_NET_RAW
+PrivateTmp=yes
+PrivateUsers=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectControlGroups=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+SystemCallArchitectures=native
+LockPersonality=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

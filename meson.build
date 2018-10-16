@@ -217,7 +217,18 @@ endif
 
 if build_rinfod == true
 	executable('rdisc', ['rdisc.c', git_version_h],
+		install_dir: 'sbin',
 		install: true)
+	if systemd.found()
+		subs = configuration_data()
+		subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
+		unit_file = configure_file(
+			input: 'systemd/rdisc.service.in',
+			output: 'rdisc@.service',
+			configuration: subs
+		)
+		install_data(unit_file, install_dir: systemdunitdir)
+	endif
 endif
 
 if build_arping == true
