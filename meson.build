@@ -69,8 +69,10 @@ endif
 opt = get_option('USE_IDN')
 if opt == true
 	idn_dep = cc.find_library('idn2', required : false)
-	add_project_arguments('-DUSE_IDN', language : 'c')
-	conf.set('USE_IDN', 1, description : 'If set use Internationalized Domain Name library.')
+    if idn_dep.found()
+        add_project_arguments('-DUSE_IDN', language : 'c')
+        conf.set('USE_IDN', 1, description : 'If set use Internationalized Domain Name library.')
+    endif
 else
 	idn_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 endif
