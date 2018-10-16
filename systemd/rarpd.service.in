@@ -8,6 +8,8 @@ After=network.target
 EnvironmentFile=-/etc/sysconfig/rarpd
 ExecStart=@sbindir@/rarpd -d $OPTIONS %i
 
+AmbientCapabilities=CAP_NET_RAW
+DynamicUser=yes
 PrivateTmp=yes
 PrivateDevices=yes
 PrivateUsers=yes
