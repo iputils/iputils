@@ -171,17 +171,18 @@ config_h = configure_file(
 	output : 'config.h',
 	configuration : conf)
 
+setcap = find_program('setcap', '/usr/sbin/setcap', '/sbin/setcap', required : false)
+if cap_dep.found() and setcap.found()
+	perm_type = 'caps'
+else
+	perm_type = 'setuid'
+endif
+
 ############################################################
 if build_ping == true
 	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c', git_version_h],
 		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
 		install: true)
-	setcap = find_program('setcap', '/usr/sbin/setcap', '/sbin/setcap', required : false)
-	if cap_dep.found() and setcap.found()
-		perm_type = 'caps'
-	else
-		perm_type = 'setuid'
-	endif
 	meson.add_install_script('build-aux/setcap-setuid.sh',
 		join_paths(get_option('prefix'), get_option('bindir')),
 		'ping',
@@ -206,17 +207,40 @@ if build_clockdiff == true
 	executable('clockdiff', ['clockdiff.c', git_version_h],
 		dependencies : [cap_dep],
 		install: true)
+	meson.add_install_script('build-aux/setcap-setuid.sh',
+		join_paths(get_option('prefix'), get_option('bindir')),
+		'clockdiff',
+		perm_type,
+		setcap.path()
+	)
 endif
 
 if build_rinfod == true
 	executable('rdisc', ['rdisc.c', git_version_h],
+		install_dir: 'sbin',
 		install: true)
+	if systemd.found()
+		subs = configuration_data()
+		subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
+		unit_file = configure_file(
+			input: 'systemd/rdisc.service.in',
+			output: 'rdisc@.service',
+			configuration: subs
+		)
+		install_data(unit_file, install_dir: systemdunitdir)
+	endif
 endif
 
 if build_arping == true
 	executable('arping', ['arping.c', git_version_h],
 		dependencies : [rt_dep, cap_dep, idn_dep],
 		install: true)
+	meson.add_install_script('build-aux/setcap-setuid.sh',
+		join_paths(get_option('prefix'), get_option('bindir')),
+		'arping',
+		perm_type,
+		setcap.path()
+	)
 endif
 
 if build_tftpd == true

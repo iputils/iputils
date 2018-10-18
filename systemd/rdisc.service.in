@@ -1,17 +1,15 @@
 [Unit]
-Description=Reverse Address Resolution Protocol Requests Server (%I)
-Documentation=man:rarpd(8)
+Description=Network Router Discovery Daemon
+Documentation=man:rdisc(8)
 Requires=network.target
 After=network.target
 
 [Service]
-EnvironmentFile=-/etc/sysconfig/rarpd
-ExecStart=@sbindir@/rarpd -d $OPTIONS %i
+EnvironmentFile=-/etc/sysconfig/rdisc
+ExecStart=@sbindir@/rdisc -f -t $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
 
 AmbientCapabilities=CAP_NET_RAW
-DynamicUser=yes
 PrivateTmp=yes
-PrivateDevices=yes
 PrivateUsers=yes
 ProtectSystem=strict
 ProtectHome=yes
