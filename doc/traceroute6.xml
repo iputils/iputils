@@ -62,7 +62,7 @@ to Linux by Pedro Roque. After this it was kept in sync by Alexey Kuznetsov
 
 <refsect1 id='security'>
   <title>SECURITY</title>
-  <para><emphasis remap='B'>tracepath6</emphasis> requires CAP_NET_RAW capability
+  <para><emphasis remap='B'>traceroute6</emphasis> requires CAP_NET_RAW capability
 to be executed. It is safe to be used as set-uid root.</para>
 </refsect1>
 

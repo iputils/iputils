@@ -201,6 +201,12 @@ if build_traceroute6 == true
 	executable('traceroute6', ['traceroute6.c', git_version_h],
 		dependencies : [cap_dep, idn_dep],
 		install: true)
+	meson.add_install_script('build-aux/setcap-setuid.sh',
+		join_paths(get_option('prefix'), get_option('bindir')),
+		'traceroute6',
+		perm_type,
+		setcap.path()
+	)
 endif
 
 if build_clockdiff == true

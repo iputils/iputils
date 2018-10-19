@@ -14,7 +14,6 @@
 </refmeta>
 <refnamediv>
   <refname>tracepath</refname>
-  <refname>tracepath6</refname>
   <refpurpose>traces path to a network host discovering MTU along this path</refpurpose>
 </refnamediv>
 <!-- body begins here -->
@@ -42,7 +41,7 @@ It uses UDP port <emphasis remap='I'>port</emphasis> or some random port.
 It is similar to <emphasis remap='B'>traceroute</emphasis>, only does not require superuser
 privileges and has no fancy options.</para>
 
-  <para><emphasis remap='B'>tracepath6</emphasis> is good replacement for <emphasis remap='B'>traceroute6</emphasis>
+  <para><emphasis remap='B'>tracepath -6</emphasis> is good replacement for <emphasis remap='B'>traceroute6</emphasis>
 and classic example of application of Linux error queues.
 The situation with IPv4 is worse, because commercial
 IP routers do not return enough information in ICMP error messages.
@@ -82,7 +81,7 @@ of UDP ports to maintain trace history.</para>
   <term><option>-l</option></term>
   <listitem>
 <para>Sets the initial packet length to <emphasis remap='I'>pktlen</emphasis> instead of
-65535 for <command>tracepath</command> or 128000 for <emphasis remap='B'>tracepath6</emphasis>.</para>
+65535 for <command>IPv4</command> or 128000 for <emphasis remap='B'>IPv6</emphasis>.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
@@ -110,7 +109,7 @@ instead of 30.</para>
 <refsect1 id='output'>
   <title>OUTPUT</title>
   <literallayout remap='.nf'>
-root@mops:~ # tracepath6 3ffe:2400:0:109::2
+root@mops:~ # tracepath -6 3ffe:2400:0:109::2
  1?: [LOCALHOST]                              pmtu 1500
  1:  dust.inr.ac.ru                   0.411ms
  2:  dust.inr.ac.ru        asymm  1   0.390ms pmtu 1480
