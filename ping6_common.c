@@ -660,7 +660,8 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 				error(2, errno, "getifaddrs");
 
 			for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
-				if (!ifa->ifa_addr || ifa->ifa_addr->sa_family != AF_INET6)
+				if (!ifa->ifa_name || !ifa->ifa_addr ||
+				    ifa->ifa_addr->sa_family != AF_INET6)
 					continue;
 				if (!strcmp(ifa->ifa_name, device) &&
 				    IN6_ARE_ADDR_EQUAL(&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr,

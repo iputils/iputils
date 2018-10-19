@@ -644,7 +644,8 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			if (ret)
 				error(2, errno, "gatifaddrs failed");
 			for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
-				if (!ifa->ifa_addr || ifa->ifa_addr->sa_family != AF_INET)
+				if (!ifa->ifa_name || !ifa->ifa_addr ||
+				    ifa->ifa_addr->sa_family != AF_INET)
 					continue;
 				if (!strcmp(ifa->ifa_name, device) &&
 				    !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
