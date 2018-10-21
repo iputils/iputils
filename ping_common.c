@@ -950,7 +950,7 @@ void finish(void)
 		printf(", %g%% packet loss",
 		       (float) ((((long long)(ntransmitted - nreceived)) * 100.0) /
 			      ntransmitted));
-		printf(", time %ldms", (1000*tv.tv_sec+tv.tv_usec+500)/1000);
+		printf(", time %ldms", 1000*tv.tv_sec+(tv.tv_usec+500)/1000);
 	}
 	putchar('\n');
 
