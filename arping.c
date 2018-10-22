@@ -79,6 +79,7 @@ int dad, unsolicited, advert;
 int quiet;
 int count = -1;
 int timeout;
+unsigned int interval = 1;
 int unicasting;
 int socketfd;
 int broadcast_only;
@@ -125,6 +126,7 @@ void usage(void)
 		"  -V            print version and exit\n"
 		"  -c <count>    how many packets to send\n"
 		"  -w <timeout>  how long to wait for a reply\n"
+		"  -i <interval> set interval between packets (default: 1 second)\n"
 		"  -I <device>   which ethernet device to use"
 #ifdef DEFAULT_DEVICE_STR
 				"(" DEFAULT_DEVICE_STR ")"
@@ -382,7 +384,7 @@ void catcher(void)
 			 * unsolicited mode */
 			finish();
 	}
-	alarm(1);
+	alarm(interval);
 }
 
 void print_hex(unsigned char *p, int len)
@@ -1004,7 +1006,7 @@ main(int argc, char **argv)
 
 	disable_capability_raw();
 
-	while ((ch = getopt(argc, argv, "h?bfDUAqc:w:s:I:V")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?bfDUAqc:w:i:s:I:V")) != EOF) {
 		switch(ch) {
 		case 'b':
 			broadcast_only=1;
@@ -1028,6 +1030,9 @@ main(int argc, char **argv)
 			break;
 		case 'w':
 			timeout = atoi(optarg);
+			break;
+		case 'i':
+			interval = (unsigned int)atoi(optarg);
 			break;
 		case 'I':
 			device.name = optarg;
