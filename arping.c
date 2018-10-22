@@ -1102,10 +1102,10 @@ main(int argc, char **argv)
 		exit(2);
 	}
 
-	if (!dad && unsolicited && gsrc.s_addr == 0)
+	if (!dad && unsolicited && source == NULL)
 		gsrc = gdst;
 
-	if (!dad || gsrc.s_addr) {
+	if (!dad || source) {
 		struct sockaddr_in saddr;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -1123,7 +1123,7 @@ main(int argc, char **argv)
 		}
 		memset(&saddr, 0, sizeof(saddr));
 		saddr.sin_family = AF_INET;
-		if (gsrc.s_addr) {
+		if (source || gsrc.s_addr) {
 			saddr.sin_addr = gsrc;
 			if (bind(probe_fd, (struct sockaddr*)&saddr, sizeof(saddr)) == -1) {
 				perror("bind");
@@ -1182,7 +1182,7 @@ main(int argc, char **argv)
 		printf("from %s %s\n",  inet_ntoa(gsrc), device.name ? device.name : "");
 	}
 
-	if (!gsrc.s_addr && !dad) {
+	if (!source && !gsrc.s_addr && !dad) {
 		fprintf(stderr, "arping: no source address in not-DAD mode\n");
 		exit(2);
 	}
