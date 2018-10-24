@@ -652,6 +652,12 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 					    &source.sin_addr, sizeof(source.sin_addr)))
 					break;
 			}
+			if (ifa && !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
+			    &dst.sin_addr, sizeof(source.sin_addr))) {
+				enable_capability_raw();
+				setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, "", 0);
+				disable_capability_raw();
+			}
 			freeifaddrs(ifa0);
 			if (!ifa)
 				error(0, 0, "Warning: source address might be selected on device other than: %s", device);
