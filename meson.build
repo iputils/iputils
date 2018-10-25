@@ -160,6 +160,10 @@ if build_ninfod == true
 		conf.set('HAVE_LIBPTHREAD', 1,
 			description : 'Defined if libpthread is found.')
 	endif
+	opt = get_option('NINFOD_MESSAGES')
+	if opt == true
+		conf.set('ENABLE_DEBUG', 1, description : 'Enable ninfod syslog messages.')
+	endif
 endif
 
 git_version_h = vcs_tag(

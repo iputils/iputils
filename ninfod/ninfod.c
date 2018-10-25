@@ -166,11 +166,6 @@ void DEBUG(int pri, char *fmt, ...)
 	}
 	errno = saved_errno;
 }
-#else
-void DEBUG(int pri __attribute__((__unused__)),
-	   char *fmt __attribute__((__unused__)), ...)
-{
-}
 #endif
 
 /* --------- */

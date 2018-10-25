@@ -428,11 +428,16 @@ void init_core(int forced)
 #if ENABLE_THREADS && HAVE_LIBPTHREAD
 static void *ni_send_thread(void *data)
 {
+#if ENABLE_DEBUG
 	int ret;
+
 	DEBUG(LOG_DEBUG, "%s(): thread=%ld\n", __func__, pthread_self());
-	ret = ni_send(data);
+	ret =
+#endif
+	  ni_send(data);
+#if ENABLE_DEBUG
 	DEBUG(LOG_DEBUG, "%s(): thread=%ld => %d\n", __func__, pthread_self(), ret);
-	ret = ret;
+#endif
 	return NULL;
 }
 #else

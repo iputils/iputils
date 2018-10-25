@@ -32,10 +32,6 @@
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#if 1
-# define ENABLE_DEBUG 1
-#endif
-
 /* definitions */
 #define NINFOD			"ninfod"
 #define NINFOD_PIDFILE		"/var/run/ninfod.pid"
