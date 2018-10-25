@@ -99,17 +99,15 @@ static uid_t euid;
 #define MS_TDIFF(tv1,tv2) ( ((tv1).tv_sec-(tv2).tv_sec)*1000 + \
 			   ((tv1).tv_usec-(tv2).tv_usec)/1000 )
 
-#define OFFSET_OF(name,ele)	((size_t)(((name *)0)->ele))
-
-static inline socklen_t sll_len(size_t halen)
+__attribute__((const)) static inline size_t sll_len(const size_t halen)
 {
-	socklen_t len = OFFSET_OF(struct sockaddr_ll, sll_addr) + halen;
-	if (len < sizeof(struct sockaddr_ll))
-		len = sizeof(struct sockaddr_ll);
+	const struct sockaddr_ll unused;
+	const size_t len = sizeof(unused.sll_addr) + halen;
+
+	if (len < sizeof(unused))
+		return sizeof(unused);
 	return len;
 }
-
-#define SLL_LEN(hln)		sll_len(hln)
 
 void usage(void)
 {
@@ -301,7 +299,7 @@ int send_pack(int s, struct in_addr src, struct in_addr dst,
 	p+=4;
 
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	err = sendto(s, buf, p-buf, 0, (struct sockaddr*)HE, SLL_LEN(ah->ar_hln));
+	err = sendto(s, buf, p-buf, 0, (struct sockaddr*)HE, sll_len(ah->ar_hln));
 	if (err == p-buf) {
 		last = now;
 		sent++;
