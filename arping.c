@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <signal.h>
+#include <sys/signalfd.h>
+#include <sys/timerfd.h>
+#include <poll.h>
 #include <net/if.h>
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
@@ -57,6 +60,8 @@
 # define DEFAULT_DEVICE		NULL
 #endif
 
+#define FINAL_PACKS		2
+
 struct device {
 	char *name;
 	int ifindex;
@@ -98,7 +103,6 @@ struct run_state {
 		unicasting:1,
 		unsolicited:1;
 };
-struct run_state *global_ptr;
 
 #define MS_TDIFF(tv1,tv2) ( ((tv1).tv_sec-(tv2).tv_sec)*1000 + \
 			   ((tv1).tv_usec-(tv2).tv_usec)/1000 )
@@ -139,16 +143,6 @@ void usage(void)
 		"\nFor more details see arping(8).\n"
 	);
 	exit(2);
-}
-
-void set_signal(int signo, void (*handler)(void))
-{
-	struct sigaction sa;
-
-	memset(&sa, 0, sizeof(sa));
-	sa.sa_handler = (void (*)(int))handler;
-	sa.sa_flags = SA_RESTART;
-	sigaction(signo, &sa, NULL);
 }
 
 #ifdef HAVE_LIBCAP
@@ -321,10 +315,8 @@ int send_pack(struct run_state *ctl)
 	return err;
 }
 
-void finish(void)
+int finish(struct run_state *ctl)
 {
-	struct run_state *ctl = global_ptr;
-
 	if (!ctl->quiet) {
 		printf("Sent %d probes (%d broadcast(s))\n", ctl->sent, ctl->brd_sent);
 		printf("Received %d response(s)", ctl->received);
@@ -342,61 +334,10 @@ void finish(void)
 		fflush(stdout);
 	}
 	if (ctl->dad)
-		exit(!!ctl->received);
+		return(!!ctl->received);
 	if (ctl->unsolicited)
-		exit(0);
-	exit(!ctl->received);
-}
-
-static void timespec_sub(struct timespec *a, struct timespec *b,
-			 struct timespec *res)
-{
-	res->tv_sec = a->tv_sec - b->tv_sec;
-	res->tv_nsec = a->tv_nsec - b->tv_nsec;
-	if (a->tv_nsec < b->tv_nsec) {
-		res->tv_sec--;
-		res->tv_nsec += 1000000000;
-	}
-}
-
-static int timespec_later(struct timespec *a, struct timespec *b)
-{
-	return (a->tv_sec > b->tv_sec) ||
-		((a->tv_sec == b->tv_sec) && (a->tv_nsec > b->tv_nsec));
-}
-
-void catcher(void)
-{
-	struct run_state *ctl = global_ptr;
-	struct timespec ts, ts_s, ts_o;
-
-	clock_gettime(CLOCK_MONOTONIC, &ts);
-
-	if (ctl->start.tv_sec == 0)
-		ctl->start = ts;
-
-	timespec_sub(&ts, &ctl->start, &ts_s);
-	ts_o.tv_sec = ctl->timeout;
-	ts_o.tv_nsec = 500 * 1000000;
-
-	if (ctl->timeout && timespec_later(&ts_s, &ts_o))
-		finish();
-
-	timespec_sub(&ts, &ctl->last, &ts_s);
-	ts_o.tv_sec = 0;
-
-	if (ctl->last.tv_sec == 0 || timespec_later(&ts_s, &ts_o)) {
-		if (!ctl->timeout && (ctl->sent == ctl->count))
-			finish();
-		send_pack(ctl);
-		if ((ctl->sent == ctl->count) && ctl->unsolicited)
-			/* We usually wait for an extra iteration
-			 * after sending the last request to see if we
-			 * get a reply, but we don't need to in
-			 * unsolicited mode */
-			finish();
-	}
-	alarm(ctl->interval);
+		return 0;
+	return(!ctl->received);
 }
 
 void print_hex(unsigned char *p, int len)
@@ -504,13 +445,13 @@ int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct soc
 	}
 	ctl->received++;
 	if (ctl->timeout && (ctl->received == ctl->count))
-		finish();
+		return FINAL_PACKS;
 	if (FROM->sll_pkttype != PACKET_HOST)
 		ctl->brd_recv++;
 	if (ah->ar_op == htons(ARPOP_REQUEST))
 		ctl->req_recv++;
 	if (ctl->quit_on_reply || (ctl->count == 0 && ctl->received == ctl->sent))
-		finish();
+		return FINAL_PACKS;
 	if(!ctl->broadcast_only) {
 		memcpy(((struct sockaddr_ll *)&ctl->he)->sll_addr, p, ((struct sockaddr_ll *)&ctl->me)->sll_halen);
 		ctl->unicasting = 1;
@@ -964,6 +905,150 @@ static void set_device_broadcast(struct run_state *ctl)
 	memset(he->sll_addr, -1, he->sll_halen);
 }
 
+static int event_loop(struct run_state *ctl)
+{
+	int exit_loop = 0, rc = 0;
+	ssize_t s;
+	enum {
+		POLLFD_SIGNAL = 0,
+		POLLFD_TIMER,
+		POLLFD_SOCKET,
+		POLLFD_COUNT
+	};
+	struct pollfd pfds[POLLFD_COUNT];
+
+	sigset_t mask;
+	int sfd;
+	struct signalfd_siginfo sigval;
+
+	int tfd;
+	struct timespec now = { 0 };
+	struct itimerspec timerfd_vals = {
+		.it_interval.tv_sec = ctl->interval,
+		.it_interval.tv_nsec = 0
+	};
+	uint64_t exp, total_expires = 1;
+
+	unsigned char packet[4096];
+	struct sockaddr_storage from;
+	socklen_t addr_len = sizeof(from);
+
+	/* signalfd */
+	sigemptyset(&mask);
+	sigaddset(&mask, SIGINT);
+	sigaddset(&mask, SIGQUIT);
+	sigaddset(&mask, SIGTERM);
+	if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1) {
+		perror("arping: sigprocmask failed");
+		return 1;
+	}
+	sfd = signalfd(-1, &mask, 0);
+	if (sfd == -1) {
+		perror("arping: signalfd");
+		return 1;
+	}
+	pfds[POLLFD_SIGNAL].fd = sfd;
+	pfds[POLLFD_SIGNAL].events = POLLIN | POLLERR | POLLHUP;
+
+	/* timerfd */
+	tfd = timerfd_create(CLOCK_MONOTONIC, 0);
+	if (tfd == -1) {
+		perror("arping: timerfd_create failed");
+		return 1;
+	}
+	if (clock_gettime(CLOCK_MONOTONIC, &now) == -1) {
+		perror("arping: clock_gettime failed");
+		return 1;
+	}
+	timerfd_vals.it_value.tv_sec = now.tv_sec + ctl->interval;
+	timerfd_vals.it_value.tv_nsec = now.tv_nsec;
+	if (timerfd_settime(tfd, TFD_TIMER_ABSTIME, &timerfd_vals, NULL)) {
+		perror("arping: timerfd_settime failed");
+		return 1;
+	}
+	pfds[POLLFD_TIMER].fd = tfd;
+	pfds[POLLFD_TIMER].events = POLLIN | POLLERR | POLLHUP;
+
+	/* socket */
+	pfds[POLLFD_SOCKET].fd = ctl->socketfd;
+	pfds[POLLFD_SOCKET].events = POLLIN | POLLERR | POLLHUP;
+	send_pack(ctl);
+
+	while (!exit_loop) {
+		int ret;
+		size_t i;
+
+		ret = poll(pfds, POLLFD_COUNT, -1);
+		if (ret <= 0) {
+			if (errno == EAGAIN)
+				continue;
+			if (errno)
+				perror("arping: poll failed");
+			exit_loop = 1;
+			continue;
+		}
+
+		for (i = 0; i < POLLFD_COUNT; i++) {
+			if (pfds[i].revents == 0)
+				continue;
+			switch (i) {
+			case POLLFD_SIGNAL:
+				s = read(sfd, &sigval, sizeof(struct signalfd_siginfo));
+				if (s != sizeof(struct signalfd_siginfo)) {
+					perror("arping: could not read signalfd");
+					continue;
+				}
+				if (sigval.ssi_signo == SIGINT || sigval.ssi_signo == SIGQUIT ||
+				    sigval.ssi_signo == SIGTERM)
+					exit_loop = 1;
+				else
+					printf("arping: unexpected signal: %d\n", sigval.ssi_signo);
+				break;
+			case POLLFD_TIMER:
+				s = read(tfd, &exp, sizeof(uint64_t));
+				if (s != sizeof(uint64_t)) {
+					perror("arping: could not read timerfd");
+					continue;
+				}
+				total_expires += exp;
+				if (0 < ctl->count && (uint64_t)ctl->count < total_expires) {
+					exit_loop = 1;
+					continue;
+				}
+				send_pack(ctl);
+				break;
+			case POLLFD_SOCKET:
+				if ((s =
+				     recvfrom(ctl->socketfd, packet, sizeof(packet), 0,
+					      (struct sockaddr *)&from, &addr_len)) < 0) {
+					perror("arping: recvfrom");
+					if (errno == ENETDOWN)
+						rc = 2;
+					continue;
+				}
+				if (recv_pack
+				    (ctl, packet, s, (struct sockaddr_ll *)&from) == FINAL_PACKS)
+					exit_loop = 1;
+				break;
+			default:
+				abort();
+			}
+		}
+	}
+	close(sfd);
+	close(tfd);
+	freeifaddrs(ctl->ifa0);
+#ifdef USE_SYSFS
+	if (ctl->device.sysfs) {
+		free(ctl->device.sysfs);
+		free(ctl->device.name);
+	}
+#endif
+	rc |= finish(ctl);
+	rc |= !(ctl->brd_sent != ctl->received);
+	return rc;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -976,7 +1061,6 @@ main(int argc, char **argv)
 	int socket_errno;
 	int ch;
 
-	global_ptr = &ctl;
 #ifdef HAVE_LIBCAP
 	limit_capabilities();
 #else
@@ -1183,39 +1267,5 @@ main(int argc, char **argv)
 
 	drop_capabilities();
 
-	set_signal(SIGINT, finish);
-	set_signal(SIGALRM, catcher);
-
-	catcher();
-
-	while(1) {
-		sigset_t sset, osset;
-		unsigned char packet[4096];
-		struct sockaddr_storage from;
-		socklen_t alen = sizeof(from);
-		ssize_t cc;
-
-		sigemptyset(&sset);
-		sigaddset(&sset, SIGALRM);
-		sigaddset(&sset, SIGINT);
-		/* Unblock SIGALRM so that the previously called alarm()
-		 * can prevent recvfrom from blocking forever in case the
-		 * inherited procmask is blocking SIGALRM and no packet
-		 * is received. */
-		sigprocmask(SIG_UNBLOCK, &sset, &osset);
-
-		if ((cc = recvfrom(ctl.socketfd, packet, sizeof(packet), 0,
-				   (struct sockaddr *)&from, &alen)) < 0) {
-			perror("arping: recvfrom");
-			if (errno == ENETDOWN)
-				exit(2);
-			continue;
-		}
-
-		sigprocmask(SIG_BLOCK, &sset, NULL);
-		recv_pack(&ctl, packet, cc, (struct sockaddr_ll *)&from);
-		sigprocmask(SIG_SETMASK, &osset, NULL);
-	}
-	freeifaddrs(ctl.ifa0);
-	return 0;
+	return event_loop(&ctl);
 }
