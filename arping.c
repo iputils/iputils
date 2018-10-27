@@ -69,6 +69,7 @@ struct device {
 struct run_state {
 	struct device device;
 	char *source;
+	struct ifaddrs *ifa0;
 	struct in_addr gsrc;
 	struct in_addr gdst;
 	char *target;
@@ -616,16 +617,16 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 static int find_device_by_ifaddrs(struct run_state *ctl)
 {
 	int rc;
-	struct ifaddrs *ifa0, *ifa;
+	struct ifaddrs *ifa;
 	int n = 0;
 
-	rc = getifaddrs(&ifa0);
+	rc = getifaddrs(&ctl->ifa0);
 	if (rc) {
 		perror("getifaddrs");
 		return -1;
 	}
 
-	for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
+	for (ifa = ctl->ifa0; ifa; ifa = ifa->ifa_next) {
 		if (!ifa->ifa_addr)
 			continue;
 		if (ifa->ifa_addr->sa_family != AF_PACKET)
@@ -651,7 +652,7 @@ static int find_device_by_ifaddrs(struct run_state *ctl)
 		ctl->device.ifindex = if_nametoindex(ctl->device.ifa->ifa_name);
 		if (!ctl->device.ifindex) {
 			perror("arping: if_nametoindex");
-			freeifaddrs(ifa0);
+			freeifaddrs(ctl->ifa0);
 			return -1;
 		}
 		ctl->device.name  = ctl->device.ifa->ifa_name;
@@ -917,6 +918,7 @@ out:
 static int find_device(struct run_state *ctl)
 {
 	int rc;
+
 	rc = find_device_by_ifaddrs(ctl);
 	if (rc >= 0)
 		goto out;
@@ -953,6 +955,7 @@ static void set_device_broadcast(struct run_state *ctl)
 		memcpy(he->sll_addr,
 		       ctl->device.sysfs->value[SYSFS_DEVATTR_BROADCAST].ptr,
 		       he->sll_halen);
+		free(ctl->device.sysfs->value[SYSFS_DEVATTR_BROADCAST].ptr);
 		return;
 	}
 #endif
@@ -1213,6 +1216,6 @@ main(int argc, char **argv)
 		recv_pack(&ctl, packet, cc, (struct sockaddr_ll *)&from);
 		sigprocmask(SIG_SETMASK, &osset, NULL);
 	}
+	freeifaddrs(ctl.ifa0);
+	return 0;
 }
-
-
