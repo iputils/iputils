@@ -262,7 +262,7 @@ empty:
 			  sendtime = ntohl(*(uint32_t*)(icp+1));
 			  diff = recvtime - sendtime;
 		/*
-		 * diff can be less than 0 aroud midnight
+		 * diff can be less than 0 around midnight
 		 */
 			  if (diff < 0)
 			    continue;
@@ -477,7 +477,7 @@ empty:
 
 				diff = recvtime - sendtime;
 				/*
-				 * diff can be less than 0 aroud midnight
+				 * diff can be less than 0 around midnight
 				 */
 				if (diff < 0)
 					continue;

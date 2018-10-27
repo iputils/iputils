@@ -117,7 +117,7 @@ static void create_socket(socket_st *sock, int family, int socktype, int protoco
 	 * to raw socket is necessary.
 	 *
 	 * Kernel returns EACCES for all raw socket creation attempts when the
-	 * proces doesn't have the `CAP_NET_RAW` capability.
+	 * process doesn't have the `CAP_NET_RAW` capability.
 	 *
 	 * 2) EAFNOSUPPORT
 	 *

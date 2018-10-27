@@ -969,7 +969,7 @@ unsigned short in_cksum(unsigned short *addr, int len)
  * Heavily buffered STDIO is used here, so that all the statistics
  * will be written with 1 sys-write call.  This is nice when more
  * than one copy of the program is running on a terminal;  it prevents
- * the statistics output from becomming intermingled.
+ * the statistics output from becoming intermingled.
  */
 void
 finish()

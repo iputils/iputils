@@ -475,7 +475,7 @@ int main(int argc, char **argv)
 	if (argc != 1)
 		usage();
 
-	/* Backward compatiblity */
+	/* Backward compatibility */
 	if (!base_port) {
 		p = strchr(argv[0], '/');
 		if (p) {

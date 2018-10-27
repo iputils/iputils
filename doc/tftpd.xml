@@ -63,9 +63,9 @@ for more details.</para>
   <title>SECURITY</title>
   <para>TFTP protocol does not provide any authentication.
 Due to this capital flaw <command>tftpd</command> is not able to restrict
-access to files and will allow only publically readable
+access to files and will allow only publicly readable
 files to be accessed. Files may be written only if they already
-exist and are publically writable.</para>
+exist and are publicly writable.</para>
 
 <para>Impact is evident, directory exported via TFTP <emphasis remap='B'>must not</emphasis>
 contain sensitive information of any kind, everyone is allowed
