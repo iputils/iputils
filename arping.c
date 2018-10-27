@@ -10,48 +10,46 @@
  * 		YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
 
-#include <stdlib.h>
-#include <time.h>
-#include <signal.h>
-#include <sys/signalfd.h>
-#include <sys/timerfd.h>
-#include <poll.h>
-#include <net/if.h>
-#include <linux/if_packet.h>
-#include <linux/if_ether.h>
-#include <net/if_arp.h>
-#include <sys/ioctl.h>
-#include <sys/param.h>
-#ifdef HAVE_LIBCAP
-#include <sys/prctl.h>
-#include <sys/capability.h>
-#endif
-
-#include <netdb.h>
-#include <unistd.h>
-#include <stdio.h>
+#include <arpa/inet.h>
 #include <ctype.h>
 #include <errno.h>
-#include <string.h>
+#include <ifaddrs.h>
+#include <linux/if_ether.h>
+#include <linux/if_packet.h>
+#include <netdb.h>
+#include <net/if_arp.h>
+#include <net/if.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
+#include <poll.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/param.h>
+#include <sys/signalfd.h>
+#include <sys/timerfd.h>
+#include <time.h>
+#include <unistd.h>
+
+#ifdef HAVE_LIBCAP
+# include <sys/capability.h>
+# include <sys/prctl.h>
+#endif
 
 #ifdef USE_SYSFS
-#include <sys/types.h>
-#include <dirent.h>
+# include <dirent.h>
+# include <sys/types.h>
 #endif
-
-#include <ifaddrs.h>
 
 #ifdef USE_IDN
-#include <locale.h>
-
-#ifndef AI_IDN
-#define AI_IDN 0x0040
-#endif
-#ifndef AI_CANONIDN
-#define AI_CANONIDN 0x0080
-#endif
+# include <locale.h>
+# ifndef AI_IDN
+#  define AI_IDN		0x0040
+# endif
+# ifndef AI_CANONIDN
+#  define AI_CANONIDN		0x0080
+# endif
 #endif
 
 #ifdef DEFAULT_DEVICE
@@ -61,6 +59,54 @@
 #endif
 
 #define FINAL_PACKS		2
+
+#ifdef USE_SYSFS
+enum {
+	SYSFS_DEVATTR_IFINDEX,
+	SYSFS_DEVATTR_FLAGS,
+	SYSFS_DEVATTR_ADDR_LEN,
+	SYSFS_DEVATTR_BROADCAST,
+	SYSFS_DEVATTR_NUM
+};
+
+union sysfs_devattr_value {
+	unsigned long ulong;
+	void *ptr;
+};
+
+struct sysfs_devattr_values {
+	char *ifname;
+	union sysfs_devattr_value value[SYSFS_DEVATTR_NUM];
+};
+
+static int sysfs_devattr_ulong_dec(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
+static int sysfs_devattr_ulong_hex(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
+static int sysfs_devattr_macaddr(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
+
+struct sysfs_devattrs {
+	const char *name;
+	int (*handler)(char *ptr, struct sysfs_devattr_values *v, unsigned int idx);
+	int free;
+} sysfs_devattrs[SYSFS_DEVATTR_NUM] = {
+	[SYSFS_DEVATTR_IFINDEX] = {
+		.name		= "ifindex",
+		.handler	= sysfs_devattr_ulong_dec,
+	},
+	[SYSFS_DEVATTR_ADDR_LEN] = {
+		.name		= "addr_len",
+		.handler	= sysfs_devattr_ulong_dec,
+	},
+	[SYSFS_DEVATTR_FLAGS] = {
+		.name		= "flags",
+		.handler	= sysfs_devattr_ulong_hex,
+	},
+	[SYSFS_DEVATTR_BROADCAST] = {
+		.name		= "broadcast",
+		.handler	= sysfs_devattr_macaddr,
+		.free		= 1,
+	},
+};
+#endif	/* USE_SYSFS */
 
 struct device {
 	char *name;
@@ -91,7 +137,9 @@ struct run_state {
 	int received;
 	int brd_recv;
 	int req_recv;
-#ifndef HAVE_LIBCAP
+#ifdef HAVE_LIBCAP
+	cap_flag_value_t cap_raw;
+#else
 	uid_t euid;
 #endif
 	unsigned int
@@ -104,8 +152,14 @@ struct run_state {
 		unsolicited:1;
 };
 
-#define MS_TDIFF(tv1,tv2) ( ((tv1).tv_sec-(tv2).tv_sec)*1000 + \
-			   ((tv1).tv_usec-(tv2).tv_usec)/1000 )
+#ifdef HAVE_LIBCAP
+static const cap_value_t caps[] = { CAP_NET_RAW };
+#endif
+
+/*
+ * All includes, definitions, struct declarations, and global variables are
+ * above.  After this comment all you can find is functions.
+ */
 
 __attribute__((const)) static inline size_t sll_len(const size_t halen)
 {
@@ -117,7 +171,7 @@ __attribute__((const)) static inline size_t sll_len(const size_t halen)
 	return len;
 }
 
-void usage(void)
+static void usage(void)
 {
 	fprintf(stderr,
 		"\nUsage:\n"
@@ -146,12 +200,7 @@ void usage(void)
 }
 
 #ifdef HAVE_LIBCAP
-static const cap_value_t caps[] = { CAP_NET_RAW, };
-static cap_flag_value_t cap_raw = CAP_CLEAR;
-#endif
-
-#ifdef HAVE_LIBCAP
-void limit_capabilities(void)
+static void limit_capabilities(struct run_state *ctl)
 {
 	cap_t cap_p;
 
@@ -161,9 +210,9 @@ void limit_capabilities(void)
 		exit(-1);
 	}
 
-	cap_get_flag(cap_p, CAP_NET_RAW, CAP_PERMITTED, &cap_raw);
+	cap_get_flag(cap_p, CAP_NET_RAW, CAP_PERMITTED, &ctl->cap_raw);
 
-	if (cap_raw != CAP_CLEAR) {
+	if (ctl->cap_raw != CAP_CLEAR) {
 		if (cap_clear(cap_p) < 0) {
 			perror("arping: cap_clear");
 			exit(-1);
@@ -195,19 +244,12 @@ void limit_capabilities(void)
 
 	cap_free(cap_p);
 }
-#else
-void limit_capabilities(struct run_state *ctl)
-{
-	ctl->euid = geteuid();
-}
-#endif
 
-#ifdef HAVE_LIBCAP
-int modify_capability_raw(struct run_state *ctl __attribute__((__unused__)), int on)
+static int modify_capability_raw(struct run_state *ctl, int on)
 {
 	cap_t cap_p;
 
-	if (cap_raw != CAP_SET)
+	if (ctl->cap_raw != CAP_SET)
 		return on ? -1 : 0;
 
 	cap_p = cap_get_proc();
@@ -226,30 +268,9 @@ int modify_capability_raw(struct run_state *ctl __attribute__((__unused__)), int
 	cap_free(cap_p);
 	return 0;
 }
-#else
-int modify_capability_raw(struct run_state *ctl, int on)
-{
-	if (setuid(on ? ctl->euid : getuid())) {
-		perror("arping: setuid");
-		return -1;
-	}
-	return 0;
-}
-#endif
 
-static inline int enable_capability_raw(struct run_state *ctl)
+static void drop_capabilities(void)
 {
-	return modify_capability_raw(ctl, 1);
-}
-
-static inline int disable_capability_raw(struct run_state *ctl)
-{
-	return modify_capability_raw(ctl, 0);
-}
-
-void drop_capabilities(void)
-{
-#ifdef HAVE_LIBCAP
 	cap_t cap_p = cap_init();
 
 	if (!cap_p) {
@@ -263,21 +284,48 @@ void drop_capabilities(void)
 	}
 
 	cap_free(cap_p);
-#else
+}
+#else	/* HAVE_LIBCAP */
+static void limit_capabilities(struct run_state *ctl)
+{
+	ctl->euid = geteuid();
+}
+
+static int modify_capability_raw(struct run_state *ctl, int on)
+{
+	if (setuid(on ? ctl->euid : getuid())) {
+		perror("arping: setuid");
+		return -1;
+	}
+	return 0;
+}
+
+static void drop_capabilities(void)
+{
 	if (setuid(getuid()) < 0) {
 		perror("arping: setuid");
 		exit(-1);
 	}
-#endif
+}
+#endif	/* HAVE_LIBCAP */
+
+static inline int enable_capability_raw(struct run_state *ctl)
+{
+	return modify_capability_raw(ctl, 1);
 }
 
-int send_pack(struct run_state *ctl)
+static inline int disable_capability_raw(struct run_state *ctl)
+{
+	return modify_capability_raw(ctl, 0);
+}
+
+static int send_pack(struct run_state *ctl)
 {
 	int err;
 	struct timespec now;
 	unsigned char buf[256];
-	struct arphdr *ah = (struct arphdr*)buf;
-	unsigned char *p = (unsigned char *)(ah+1);
+	struct arphdr *ah = (struct arphdr *)buf;
+	unsigned char *p = (unsigned char *)(ah + 1);
 	struct sockaddr_ll *ME = (struct sockaddr_ll *)&(ctl->me);
 	struct sockaddr_ll *HE = (struct sockaddr_ll *)&(ctl->he);
 
@@ -290,23 +338,23 @@ int send_pack(struct run_state *ctl)
 	ah->ar_op  = ctl->advert ? htons(ARPOP_REPLY) : htons(ARPOP_REQUEST);
 
 	memcpy(p, &ME->sll_addr, ah->ar_hln);
-	p+=ME->sll_halen;
+	p += ME->sll_halen;
 
 	memcpy(p, &ctl->gsrc, 4);
-	p+=4;
+	p += 4;
 
 	if (ctl->advert)
 		memcpy(p, &ME->sll_addr, ah->ar_hln);
 	else
 		memcpy(p, &HE->sll_addr, ah->ar_hln);
-	p+=ah->ar_hln;
+	p += ah->ar_hln;
 
 	memcpy(p, &ctl->gdst, 4);
-	p+=4;
+	p += 4;
 
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	err = sendto(ctl->socketfd, buf, p-buf, 0, (struct sockaddr*)HE, sll_len(ah->ar_hln));
-	if (err == p-buf) {
+	err = sendto(ctl->socketfd, buf, p - buf, 0, (struct sockaddr *)HE, sll_len(ah->ar_hln));
+	if (err == p - buf) {
 		ctl->last = now;
 		ctl->sent++;
 		if (!ctl->unicasting)
@@ -315,7 +363,7 @@ int send_pack(struct run_state *ctl)
 	return err;
 }
 
-int finish(struct run_state *ctl)
+static int finish(struct run_state *ctl)
 {
 	if (!ctl->quiet) {
 		printf("Sent %d probes (%d broadcast(s))\n", ctl->sent, ctl->brd_sent);
@@ -334,27 +382,29 @@ int finish(struct run_state *ctl)
 		fflush(stdout);
 	}
 	if (ctl->dad)
-		return(!!ctl->received);
+		return (!!ctl->received);
 	if (ctl->unsolicited)
 		return 0;
-	return(!ctl->received);
+	return (!ctl->received);
 }
 
-void print_hex(unsigned char *p, int len)
+static void print_hex(unsigned char *p, int len)
 {
 	int i;
-	for (i=0; i<len; i++) {
+
+	for (i = 0; i < len; i++) {
 		printf("%02X", p[i]);
-		if (i != len-1)
+		if (i != len - 1)
 			printf(":");
 	}
 }
 
-int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct sockaddr_ll *FROM)
+static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
+		     struct sockaddr_ll *FROM)
 {
 	struct timespec ts;
-	struct arphdr *ah = (struct arphdr*)buf;
-	unsigned char *p = (unsigned char *)(ah+1);
+	struct arphdr *ah = (struct arphdr *)buf;
+	unsigned char *p = (unsigned char *)(ah + 1);
 	struct in_addr src_ip, dst_ip;
 
 	clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -382,41 +432,43 @@ int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct soc
 		return 0;
 	if (ah->ar_hln != ((struct sockaddr_ll *)&ctl->me)->sll_halen)
 		return 0;
-	if (len < (ssize_t) sizeof(*ah) + 2*(4 + ah->ar_hln))
+	if (len < (ssize_t) sizeof(*ah) + 2 * (4 + ah->ar_hln))
 		return 0;
-	memcpy(&src_ip, p+ah->ar_hln, 4);
-	memcpy(&dst_ip, p+ah->ar_hln+4+ah->ar_hln, 4);
+	memcpy(&src_ip, p + ah->ar_hln, 4);
+	memcpy(&dst_ip, p + ah->ar_hln + 4 + ah->ar_hln, 4);
 	if (!ctl->dad) {
 		if (src_ip.s_addr != ctl->gdst.s_addr)
 			return 0;
 		if (ctl->gsrc.s_addr != dst_ip.s_addr)
 			return 0;
-		if (memcmp(p+ah->ar_hln+4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln))
+		if (memcmp(p + ah->ar_hln + 4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln))
 			return 0;
 	} else {
-		/* DAD packet was:
-		   src_ip = 0 (or some src)
-		   src_hw = ME
-		   dst_ip = tested address
-		   dst_hw = <unspec>
-
-		   We fail, if receive request/reply with:
-		   src_ip = tested_address
-		   src_hw != ME
-		   if src_ip in request was not zero, check
-		   also that it matches to dst_ip, otherwise
-		   dst_ip/dst_hw do not matter.
+		/*
+		 * DAD packet was:
+		 * src_ip = 0 (or some src)
+		 * src_hw = ME
+		 * dst_ip = tested address
+		 * dst_hw = <unspec>
+		 *
+		 * We fail, if receive request/reply with:
+		 * src_ip = tested_address
+		 * src_hw != ME
+		 * if src_ip in request was not zero, check
+		 * also that it matches to dst_ip, otherwise
+		 * dst_ip/dst_hw do not matter.
 		 */
 		if (src_ip.s_addr != ctl->gdst.s_addr)
 			return 0;
-		if (memcmp(p, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ((struct sockaddr_ll *)&ctl->me)->sll_halen) == 0)
+		if (memcmp(p, ((struct sockaddr_ll *)&ctl->me)->sll_addr,
+			   ((struct sockaddr_ll *)&ctl->me)->sll_halen) == 0)
 			return 0;
 		if (ctl->gsrc.s_addr && ctl->gsrc.s_addr != dst_ip.s_addr)
 			return 0;
 	}
 	if (!ctl->quiet) {
 		int s_printed = 0;
-		printf("%s ", FROM->sll_pkttype==PACKET_HOST ? "Unicast" : "Broadcast");
+		printf("%s ", FROM->sll_pkttype == PACKET_HOST ? "Unicast" : "Broadcast");
 		printf("%s from ", ah->ar_op == htons(ARPOP_REPLY) ? "reply" : "request");
 		printf("%s [", inet_ntoa(src_ip));
 		print_hex(p, ah->ar_hln);
@@ -429,14 +481,14 @@ int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct soc
 			if (!s_printed)
 				printf("for ");
 			printf("[");
-			print_hex(p+ah->ar_hln+4, ah->ar_hln);
+			print_hex(p + ah->ar_hln + 4, ah->ar_hln);
 			printf("]");
 		}
 		if (ctl->last.tv_sec) {
 			long usecs = (ts.tv_sec - ctl->last.tv_sec) * 1000000 +
 				(ts.tv_nsec - ctl->last.tv_nsec + 500) / 1000;
-			long msecs = (usecs+500)/1000;
-			usecs -= msecs*1000 - 500;
+			long msecs = (usecs + 500) / 1000;
+			usecs -= msecs * 1000 - 500;
 			printf(" %ld.%03ldms\n", msecs, usecs);
 		} else {
 			printf(" UNSOLICITED?\n");
@@ -452,61 +504,13 @@ int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct soc
 		ctl->req_recv++;
 	if (ctl->quit_on_reply || (ctl->count == 0 && ctl->received == ctl->sent))
 		return FINAL_PACKS;
-	if(!ctl->broadcast_only) {
-		memcpy(((struct sockaddr_ll *)&ctl->he)->sll_addr, p, ((struct sockaddr_ll *)&ctl->me)->sll_halen);
+	if (!ctl->broadcast_only) {
+		memcpy(((struct sockaddr_ll *)&ctl->he)->sll_addr, p,
+		       ((struct sockaddr_ll *)&ctl->me)->sll_halen);
 		ctl->unicasting = 1;
 	}
 	return 1;
 }
-
-#ifdef USE_SYSFS
-union sysfs_devattr_value {
-	unsigned long	ulong;
-	void		*ptr;
-};
-
-enum {
-	SYSFS_DEVATTR_IFINDEX,
-	SYSFS_DEVATTR_FLAGS,
-	SYSFS_DEVATTR_ADDR_LEN,
-	SYSFS_DEVATTR_BROADCAST,
-	SYSFS_DEVATTR_NUM
-};
-
-struct sysfs_devattr_values
-{
-	char *ifname;
-	union sysfs_devattr_value	value[SYSFS_DEVATTR_NUM];
-};
-
-static int sysfs_devattr_ulong_dec(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
-static int sysfs_devattr_ulong_hex(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
-static int sysfs_devattr_macaddr(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
-
-struct sysfs_devattrs {
-	const char *name;
-	int (*handler)(char *ptr, struct sysfs_devattr_values *v, unsigned int idx);
-	int free;
-} sysfs_devattrs[SYSFS_DEVATTR_NUM] = {
-	[SYSFS_DEVATTR_IFINDEX] = {
-		.name		= "ifindex",
-		.handler	= sysfs_devattr_ulong_dec,
-	},
-	[SYSFS_DEVATTR_ADDR_LEN] = {
-		.name		= "addr_len",
-		.handler	= sysfs_devattr_ulong_dec,
-	},
-	[SYSFS_DEVATTR_FLAGS] = {
-		.name		= "flags",
-		.handler	= sysfs_devattr_ulong_hex,
-	},
-	[SYSFS_DEVATTR_BROADCAST] = {
-		.name		= "broadcast",
-		.handler	= sysfs_devattr_macaddr,
-		.free		= 1,
-	},
-};
-#endif
 
 /*
  * find_device()
@@ -528,7 +532,7 @@ struct sysfs_devattrs {
  * We have several implementations for this.
  *	by_ifaddrs():	requires getifaddr() in glibc, and rtnetlink in
  *			kernel. default and recommended for recent systems.
- *	by_sysfs():	requires libsysfs , and sysfs in kernel.
+ *	by_sysfs():	requires sysfs in kernel.
  *	by_ioctl():	unable to list devices without ipv4 address; this
  *			means, you need to supply the device name for
  *			DAD purpose.
@@ -596,7 +600,7 @@ static int find_device_by_ifaddrs(struct run_state *ctl)
 			freeifaddrs(ctl->ifa0);
 			return -1;
 		}
-		ctl->device.name  = ctl->device.ifa->ifa_name;
+		ctl->device.name = ctl->device.ifa->ifa_name;
 		return 0;
 	}
 	return 1;
@@ -605,8 +609,9 @@ static int find_device_by_ifaddrs(struct run_state *ctl)
 #ifdef USE_SYSFS
 static void sysfs_devattr_values_init(struct sysfs_devattr_values *v, int do_free)
 {
-	int i;
 	if (do_free) {
+		int i;
+
 		free(v->ifname);
 		for (i = 0; i < SYSFS_DEVATTR_NUM; i++) {
 			if (sysfs_devattrs[i].free)
@@ -629,23 +634,18 @@ static int sysfs_devattr_ulong(char *ptr, struct sysfs_devattr_values *v, unsign
 	errno = 0;
 	*p = strtoul(ptr, &ep, base);
 	if ((*ptr && isspace(*ptr & 0xff)) || errno || (*ep != '\0' && *ep != '\n'))
-		goto out;
-
+		return -1;
 	return 0;
-out:
-	return -1;
 }
 
 static int sysfs_devattr_ulong_dec(char *ptr, struct sysfs_devattr_values *v, unsigned int idx)
 {
-	int rc = sysfs_devattr_ulong(ptr, v, idx, 10);
-	return rc;
+	return sysfs_devattr_ulong(ptr, v, idx, 10);
 }
 
 static int sysfs_devattr_ulong_hex(char *ptr, struct sysfs_devattr_values *v, unsigned int idx)
 {
-	int rc = sysfs_devattr_ulong(ptr, v, idx, 16);
-	return rc;
+	return sysfs_devattr_ulong(ptr, v, idx, 16);
 }
 
 static int sysfs_devattr_macaddr(char *ptr, struct sysfs_devattr_values *v, unsigned int idx)
@@ -673,12 +673,10 @@ out:
 	free(m);
 	return -1;
 }
-#endif
 
-int find_device_by_sysfs(struct run_state *ctl)
+static int find_device_by_sysfs(struct run_state *ctl)
 {
 	int rc = -1;
-#ifdef USE_SYSFS
 	DIR *dir;
 	struct dirent *dirp;
 	struct sysfs_devattr_values sysfs_devattr_values;
@@ -760,9 +758,14 @@ do_next:
 	rc = !ctl->device.ifindex;
 out:
 	closedir(dir);
-#endif
 	return rc;
 }
+#else
+static int find_device_by_sysfs(struct run_state *ctl __attribute__((__unused__)))
+{
+	return -1;
+}
+#endif	/* USE_SYSFS */
 
 static int check_device_by_ioctl(struct run_state *ctl, int s, struct ifreq *ifr)
 {
@@ -827,7 +830,7 @@ static int find_device_by_ioctl(struct run_state *ctl)
 			ifrsize *= 2;
 			free(ifr0);
 			ifr0 = NULL;
-		} while(ifrsize < INT_MAX / 2);
+		} while (ifrsize < INT_MAX / 2);
 
 		if (!ifr0) {
 			fprintf(stderr, "arping: too many interfaces!?\n");
@@ -860,15 +863,11 @@ static int find_device(struct run_state *ctl)
 {
 	int rc;
 
-	rc = find_device_by_ifaddrs(ctl);
-	if (rc >= 0)
-		goto out;
-	rc = find_device_by_sysfs(ctl);
-	if (rc >= 0)
-		goto out;
-	rc = find_device_by_ioctl(ctl);
-out:
-	return rc;
+	if ((rc = find_device_by_ifaddrs(ctl)) >= 0)
+		return rc;
+	if ((rc = find_device_by_sysfs(ctl)) >= 0)
+		return rc;
+	return find_device_by_ioctl(ctl);
 }
 
 /*
@@ -1049,29 +1048,24 @@ static int event_loop(struct run_state *ctl)
 	return rc;
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	struct run_state ctl = {
 		.device = { .name = DEFAULT_DEVICE },
 		.count = -1,
 		.interval = 1,
+#ifdef HAVE_LIBCAP
+		.cap_raw = CAP_CLEAR,
+#endif
 		0
 	};
 	int socket_errno;
 	int ch;
 
-#ifdef HAVE_LIBCAP
-	limit_capabilities();
-#else
 	limit_capabilities(&ctl);
-#endif
-
-
 #ifdef USE_IDN
 	setlocale(LC_ALL, "");
 #endif
-
 	enable_capability_raw(&ctl);
 
 	ctl.socketfd = socket(PF_PACKET, SOCK_DGRAM, 0);
@@ -1080,9 +1074,9 @@ main(int argc, char **argv)
 	disable_capability_raw(&ctl);
 
 	while ((ch = getopt(argc, argv, "h?bfDUAqc:w:i:s:I:V")) != EOF) {
-		switch(ch) {
+		switch (ch) {
 		case 'b':
-			ctl.broadcast_only=1;
+			ctl.broadcast_only = 1;
 			break;
 		case 'D':
 			ctl.dad = 1;
@@ -1171,7 +1165,7 @@ main(int argc, char **argv)
 			exit(2);
 		}
 
-		memcpy(&ctl.gdst, &((struct sockaddr_in *) result->ai_addr)->sin_addr, sizeof ctl.gdst);
+		memcpy(&ctl.gdst, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof ctl.gdst);
 		freeaddrinfo(result);
 	}
 
@@ -1204,7 +1198,7 @@ main(int argc, char **argv)
 		saddr.sin_family = AF_INET;
 		if (ctl.source || ctl.gsrc.s_addr) {
 			saddr.sin_addr = ctl.gsrc;
-			if (bind(probe_fd, (struct sockaddr*)&saddr, sizeof(saddr)) == -1) {
+			if (bind(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1) {
 				perror("bind");
 				exit(2);
 			}
@@ -1215,13 +1209,13 @@ main(int argc, char **argv)
 			saddr.sin_port = htons(1025);
 			saddr.sin_addr = ctl.gdst;
 
-			if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char*)&on, sizeof(on)) == -1)
+			if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on)) == -1)
 				perror("WARNING: setsockopt(SO_DONTROUTE)");
-			if (connect(probe_fd, (struct sockaddr*)&saddr, sizeof(saddr)) == -1) {
+			if (connect(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1) {
 				perror("connect");
 				exit(2);
 			}
-			if (getsockname(probe_fd, (struct sockaddr*)&saddr, &alen) == -1) {
+			if (getsockname(probe_fd, (struct sockaddr *)&saddr, &alen) == -1) {
 				perror("getsockname");
 				exit(2);
 			}
@@ -1233,14 +1227,15 @@ main(int argc, char **argv)
 	((struct sockaddr_ll *)&ctl.me)->sll_family = AF_PACKET;
 	((struct sockaddr_ll *)&ctl.me)->sll_ifindex = ctl.device.ifindex;
 	((struct sockaddr_ll *)&ctl.me)->sll_protocol = htons(ETH_P_ARP);
-	if (bind(ctl.socketfd, (struct sockaddr*)&ctl.me, sizeof(ctl.me)) == -1) {
+	if (bind(ctl.socketfd, (struct sockaddr *)&ctl.me, sizeof(ctl.me)) == -1) {
 		perror("bind");
 		exit(2);
 	}
 
-	if (1) {
+	{
 		socklen_t alen = sizeof(ctl.me);
-		if (getsockname(ctl.socketfd, (struct sockaddr*)&ctl.me, &alen) == -1) {
+
+		if (getsockname(ctl.socketfd, (struct sockaddr *)&ctl.me, &alen) == -1) {
 			perror("getsockname");
 			exit(2);
 		}
@@ -1257,7 +1252,7 @@ main(int argc, char **argv)
 
 	if (!ctl.quiet) {
 		printf("ARPING %s ", inet_ntoa(ctl.gdst));
-		printf("from %s %s\n",  inet_ntoa(ctl.gsrc), ctl.device.name ? ctl.device.name : "");
+		printf("from %s %s\n", inet_ntoa(ctl.gsrc), ctl.device.name ? ctl.device.name : "");
 	}
 
 	if (!ctl.source && !ctl.gsrc.s_addr && !ctl.dad) {
