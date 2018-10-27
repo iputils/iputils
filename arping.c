@@ -934,52 +934,31 @@ out:
  * This fills the device "broadcast address"
  * based on information found by find_device() funcion.
  */
-static int set_device_broadcast_ifaddrs_one(struct run_state *ctl)
+static void set_device_broadcast(struct run_state *ctl)
 {
-	struct sockaddr_ll *sll;
 	struct sockaddr_ll *he = (struct sockaddr_ll *)&(ctl->he);
 
-	if (!ctl->device.ifa)
-		return -1;
-	sll = (struct sockaddr_ll *)ctl->device.ifa->ifa_broadaddr;
-	if (sll->sll_halen != he->sll_halen)
-		return -1;
-	memcpy(he->sll_addr, sll->sll_addr, he->sll_halen);
-	return 0;
-}
+	if (ctl->device.ifa) {
+		struct sockaddr_ll *sll =
+			(struct sockaddr_ll *)ctl->device.ifa->ifa_broadaddr;
 
-int set_device_broadcast_sysfs(struct run_state *ctl)
-{
+		if (sll->sll_halen == he->sll_halen) {
+			memcpy(he->sll_addr, sll->sll_addr, he->sll_halen);
+			return;
+		}
+	}
 #ifdef USE_SYSFS
-	struct sockaddr_ll *he = (struct sockaddr_ll *)&(ctl->he);
-
 	if (ctl->device.sysfs && ctl->device.sysfs->value[SYSFS_DEVATTR_ADDR_LEN].ulong !=
-	    he->sll_halen)
-		return -1;
-	memcpy(he->sll_addr, ctl->device.sysfs->value[SYSFS_DEVATTR_BROADCAST].ptr, he->sll_halen);
-	return 0;
-#else
-	return -1;
+	    he->sll_halen) {
+		memcpy(he->sll_addr,
+		       ctl->device.sysfs->value[SYSFS_DEVATTR_BROADCAST].ptr,
+		       he->sll_halen);
+		return;
+	}
 #endif
-}
-
-static int set_device_broadcast_fallback(struct run_state *ctl)
-{
-	struct sockaddr_ll *he = (struct sockaddr_ll *)&(ctl->he);
-
 	if (!ctl->quiet)
 		fprintf(stderr, "WARNING: using default broadcast address.\n");
 	memset(he->sll_addr, -1, he->sll_halen);
-	return 0;
-}
-
-static void set_device_broadcast(struct run_state *ctl)
-{
-	if (!set_device_broadcast_ifaddrs_one(ctl))
-		return;
-	if (!set_device_broadcast_sysfs(ctl))
-		return;
-	set_device_broadcast_fallback(ctl);
 }
 
 int
