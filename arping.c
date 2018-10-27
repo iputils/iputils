@@ -276,14 +276,15 @@ void drop_capabilities(void)
 #endif
 }
 
-int send_pack(struct run_state *ctl, int s, struct in_addr src, struct in_addr dst,
-	      struct sockaddr_ll *ME, struct sockaddr_ll *HE)
+int send_pack(struct run_state *ctl)
 {
 	int err;
 	struct timespec now;
 	unsigned char buf[256];
 	struct arphdr *ah = (struct arphdr*)buf;
 	unsigned char *p = (unsigned char *)(ah+1);
+	struct sockaddr_ll *ME = (struct sockaddr_ll *)&(ctl->me);
+	struct sockaddr_ll *HE = (struct sockaddr_ll *)&(ctl->he);
 
 	ah->ar_hrd = htons(ME->sll_hatype);
 	if (ah->ar_hrd == htons(ARPHRD_FDDI))
@@ -296,7 +297,7 @@ int send_pack(struct run_state *ctl, int s, struct in_addr src, struct in_addr d
 	memcpy(p, &ME->sll_addr, ah->ar_hln);
 	p+=ME->sll_halen;
 
-	memcpy(p, &src, 4);
+	memcpy(p, &ctl->gsrc, 4);
 	p+=4;
 
 	if (ctl->advert)
@@ -305,11 +306,11 @@ int send_pack(struct run_state *ctl, int s, struct in_addr src, struct in_addr d
 		memcpy(p, &HE->sll_addr, ah->ar_hln);
 	p+=ah->ar_hln;
 
-	memcpy(p, &dst, 4);
+	memcpy(p, &ctl->gdst, 4);
 	p+=4;
 
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	err = sendto(s, buf, p-buf, 0, (struct sockaddr*)HE, sll_len(ah->ar_hln));
+	err = sendto(ctl->socketfd, buf, p-buf, 0, (struct sockaddr*)HE, sll_len(ah->ar_hln));
 	if (err == p-buf) {
 		ctl->last = now;
 		ctl->sent++;
@@ -386,8 +387,7 @@ void catcher(void)
 	if (ctl->last.tv_sec == 0 || timespec_later(&ts_s, &ts_o)) {
 		if (!ctl->timeout && (ctl->sent == ctl->count))
 			finish();
-		send_pack(ctl, ctl->socketfd, ctl->gsrc, ctl->gdst,
-			  (struct sockaddr_ll *)&ctl->me, (struct sockaddr_ll *)&ctl->he);
+		send_pack(ctl);
 		if ((ctl->sent == ctl->count) && ctl->unsolicited)
 			/* We usually wait for an extra iteration
 			 * after sending the last request to see if we
@@ -408,8 +408,7 @@ void print_hex(unsigned char *p, int len)
 	}
 }
 
-int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct sockaddr_ll *FROM,
-	      struct in_addr src, struct in_addr dst)
+int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct sockaddr_ll *FROM)
 {
 	struct timespec ts;
 	struct arphdr *ah = (struct arphdr*)buf;
@@ -446,9 +445,9 @@ int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct soc
 	memcpy(&src_ip, p+ah->ar_hln, 4);
 	memcpy(&dst_ip, p+ah->ar_hln+4+ah->ar_hln, 4);
 	if (!ctl->dad) {
-		if (src_ip.s_addr != dst.s_addr)
+		if (src_ip.s_addr != ctl->gdst.s_addr)
 			return 0;
-		if (src.s_addr != dst_ip.s_addr)
+		if (ctl->gsrc.s_addr != dst_ip.s_addr)
 			return 0;
 		if (memcmp(p+ah->ar_hln+4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln))
 			return 0;
@@ -466,11 +465,11 @@ int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct soc
 		   also that it matches to dst_ip, otherwise
 		   dst_ip/dst_hw do not matter.
 		 */
-		if (src_ip.s_addr != dst.s_addr)
+		if (src_ip.s_addr != ctl->gdst.s_addr)
 			return 0;
 		if (memcmp(p, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ((struct sockaddr_ll *)&ctl->me)->sll_halen) == 0)
 			return 0;
-		if (src.s_addr && src.s_addr != dst_ip.s_addr)
+		if (ctl->gsrc.s_addr && ctl->gsrc.s_addr != dst_ip.s_addr)
 			return 0;
 	}
 	if (!ctl->quiet) {
@@ -480,7 +479,7 @@ int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len, struct soc
 		printf("%s [", inet_ntoa(src_ip));
 		print_hex(p, ah->ar_hln);
 		printf("] ");
-		if (dst_ip.s_addr != src.s_addr) {
+		if (dst_ip.s_addr != ctl->gsrc.s_addr) {
 			printf("for %s ", inet_ntoa(dst_ip));
 			s_printed = 1;
 		}
@@ -593,10 +592,10 @@ struct sysfs_devattrs {
  *			DAD purpose.
  */
 /* Common check for ifa->ifa_flags */
-static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags, int fatal)
+static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags)
 {
 	if (!(ifflags & IFF_UP)) {
-		if (fatal) {
+		if (ctl->device.name != NULL) {
 			if (!ctl->quiet)
 				printf("Interface \"%s\" is down\n", ctl->device.name);
 			exit(2);
@@ -604,7 +603,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 		return -1;
 	}
 	if (ifflags & (IFF_NOARP | IFF_LOOPBACK)) {
-		if (fatal) {
+		if (ctl->device.name != NULL) {
 			if (!ctl->quiet)
 				printf("Interface \"%s\" is not ARPable\n", ctl->device.name);
 			exit(ctl->dad ? 0 : 2);
@@ -634,7 +633,7 @@ static int find_device_by_ifaddrs(struct run_state *ctl)
 		if (ctl->device.name && ifa->ifa_name && strcmp(ifa->ifa_name, ctl->device.name))
 			continue;
 
-		if (check_ifflags(ctl, ifa->ifa_flags, ctl->device.name != NULL) < 0)
+		if (check_ifflags(ctl, ifa->ifa_flags) < 0)
 			continue;
 
 		if (!((struct sockaddr_ll *)ifa->ifa_addr)->sll_halen)
@@ -783,8 +782,7 @@ int find_device_by_sysfs(struct run_state *ctl)
 		if (ret < 0)
 			goto do_next;
 
-		if (check_ifflags(ctl, sysfs_devattr_values.value[SYSFS_DEVATTR_FLAGS].ulong,
-				  ctl->device.name != NULL) < 0)
+		if (check_ifflags(ctl, sysfs_devattr_values.value[SYSFS_DEVATTR_FLAGS].ulong) < 0)
 			goto do_next;
 
 		if (!sysfs_devattr_values.value[SYSFS_DEVATTR_ADDR_LEN].ulong)
@@ -831,7 +829,7 @@ static int check_device_by_ioctl(struct run_state *ctl, int s, struct ifreq *ifr
 		return -1;
 	}
 
-	if (check_ifflags(ctl, ifr->ifr_flags, ctl->device.name != NULL) < 0)
+	if (check_ifflags(ctl, ifr->ifr_flags) < 0)
 		return 1;
 
 	if (ioctl(s, SIOCGIFINDEX, ifr) < 0) {
@@ -936,68 +934,52 @@ out:
  * This fills the device "broadcast address"
  * based on information found by find_device() funcion.
  */
-static int set_device_broadcast_ifaddrs_one(struct run_state *ctl, struct device *dev,
-					    unsigned char *ba, size_t balen,
-					    int fatal)
+static int set_device_broadcast_ifaddrs_one(struct run_state *ctl)
 {
-	struct ifaddrs *ifa;
 	struct sockaddr_ll *sll;
+	struct sockaddr_ll *he = (struct sockaddr_ll *)&(ctl->he);
 
-	if (!dev)
+	if (!ctl->device.ifa)
 		return -1;
-
-	ifa = dev->ifa;
-	if (!ifa)
+	sll = (struct sockaddr_ll *)ctl->device.ifa->ifa_broadaddr;
+	if (sll->sll_halen != he->sll_halen)
 		return -1;
-
-	sll = (struct sockaddr_ll *)ifa->ifa_broadaddr;
-
-	if (sll->sll_halen != balen) {
-		if (fatal) {
-			if (!ctl->quiet)
-				printf("Address length does not match...\n");
-			exit(2);
-		}
-		return -1;
-	}
-	memcpy(ba, sll->sll_addr, sll->sll_halen);
+	memcpy(he->sll_addr, sll->sll_addr, he->sll_halen);
 	return 0;
 }
 
-int set_device_broadcast_sysfs(struct device *dev, unsigned char *ba, size_t balen)
+int set_device_broadcast_sysfs(struct run_state *ctl)
 {
 #ifdef USE_SYSFS
-	struct sysfs_devattr_values *v;
-	if (!dev)
+	struct sockaddr_ll *he = (struct sockaddr_ll *)&(ctl->he);
+
+	if (ctl->device.sysfs && ctl->device.sysfs->value[SYSFS_DEVATTR_ADDR_LEN].ulong !=
+	    he->sll_halen)
 		return -1;
-	v = dev->sysfs;
-	if (!v)
-		return -1;
-	if (v->value[SYSFS_DEVATTR_ADDR_LEN].ulong != balen)
-		return -1;
-	memcpy(ba, v->value[SYSFS_DEVATTR_BROADCAST].ptr, balen);
+	memcpy(he->sll_addr, ctl->device.sysfs->value[SYSFS_DEVATTR_BROADCAST].ptr, he->sll_halen);
 	return 0;
 #else
 	return -1;
 #endif
 }
 
-static int set_device_broadcast_fallback(struct run_state *ctl, unsigned char *ba, size_t balen)
+static int set_device_broadcast_fallback(struct run_state *ctl)
 {
+	struct sockaddr_ll *he = (struct sockaddr_ll *)&(ctl->he);
+
 	if (!ctl->quiet)
 		fprintf(stderr, "WARNING: using default broadcast address.\n");
-	memset(ba, -1, balen);
+	memset(he->sll_addr, -1, he->sll_halen);
 	return 0;
 }
 
-static void set_device_broadcast(struct run_state *ctl, struct device *dev,
-				 unsigned char *ba, size_t balen)
+static void set_device_broadcast(struct run_state *ctl)
 {
-	if (!set_device_broadcast_ifaddrs_one(ctl, dev, ba, balen, 0))
+	if (!set_device_broadcast_ifaddrs_one(ctl))
 		return;
-	if (!set_device_broadcast_sysfs(dev, ba, balen))
+	if (!set_device_broadcast_sysfs(ctl))
 		return;
-	set_device_broadcast_fallback(ctl, ba, balen);
+	set_device_broadcast_fallback(ctl);
 }
 
 int
@@ -1205,8 +1187,7 @@ main(int argc, char **argv)
 
 	ctl.he = ctl.me;
 
-	set_device_broadcast(&ctl, &ctl.device, ((struct sockaddr_ll *)&ctl.he)->sll_addr,
-			     ((struct sockaddr_ll *)&ctl.he)->sll_halen);
+	set_device_broadcast(&ctl);
 
 	if (!ctl.quiet) {
 		printf("ARPING %s ", inet_ntoa(ctl.gdst));
@@ -1250,7 +1231,7 @@ main(int argc, char **argv)
 		}
 
 		sigprocmask(SIG_BLOCK, &sset, NULL);
-		recv_pack(&ctl, packet, cc, (struct sockaddr_ll *)&from, ctl.gsrc, ctl.gdst);
+		recv_pack(&ctl, packet, cc, (struct sockaddr_ll *)&from);
 		sigprocmask(SIG_SETMASK, &osset, NULL);
 	}
 }
