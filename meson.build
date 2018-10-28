@@ -69,10 +69,11 @@ endif
 opt = get_option('USE_IDN')
 if opt == true
 	idn_dep = cc.find_library('idn2', required : false)
-    if idn_dep.found()
-        add_project_arguments('-DUSE_IDN', language : 'c')
-        conf.set('USE_IDN', 1, description : 'If set use Internationalized Domain Name library.')
-    endif
+	if idn_dep.found()
+		add_project_arguments('-DUSE_IDN', language : 'c')
+		conf.set('USE_IDN', 1,
+			description : 'If set use Internationalized Domain Name library.')
+	endif
 else
 	idn_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 endif
@@ -89,7 +90,8 @@ elif opt == 'openssl'
 	conf.set('USE_OPENSSL', 1, description : 'if set use openssl crypto library.')
 elif opt == 'none'
 	crypto_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
-	conf.set('PING6_NONCE_MEMORY', 1, description : 'If set RFC6744 random does not use any CRYPTO lib.')
+	conf.set('PING6_NONCE_MEMORY', 1,
+		description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
 
 systemd = dependency('systemd', required : false)
@@ -135,7 +137,6 @@ if build_ninfod == true
 		'netinet/in.h',
 		'netinet/ip6.h',
 		'openssl/md5.h',
-		'pthread.h',
 		'pwd.h',
 		'string.h',
 		'strings.h',
@@ -154,10 +155,7 @@ if build_ninfod == true
 	endforeach
 	threads = dependency('threads')
 	if threads.found()
-		# FIXME: these are redundant, one should be removed.
 		conf.set('ENABLE_THREADS', 1,
-			description : 'Defined if libpthread is found.')
-		conf.set('HAVE_LIBPTHREAD', 1,
 			description : 'Defined if libpthread is found.')
 	endif
 	opt = get_option('NINFOD_MESSAGES')

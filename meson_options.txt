@@ -4,7 +4,8 @@ option('USE_CAP', type : 'boolean', value : true,
 option('USE_IDN', type : 'boolean', value : true,
 	description : 'IDN support (with libidn2)')
 
-option('USE_CRYPTO', type : 'combo', choices : [ 'none', 'gcrypt', 'nettle', 'openssl' ], value : 'openssl',
+option('USE_CRYPTO', type : 'combo',
+	choices : [ 'none', 'gcrypt', 'nettle', 'openssl' ], value : 'openssl',
 	description: 'Crypto library support for ping6')
 
 option('BUILD_ARPING', type : 'boolean', value : true,

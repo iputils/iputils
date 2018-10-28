@@ -44,7 +44,7 @@
 #  include <stdlib.h>
 # endif
 #endif
-#if ENABLE_THREADS && HAVE_PTHREAD_H
+#if ENABLE_THREADS
 # include <pthread.h>
 #endif
 #if HAVE_STRING_H
@@ -110,7 +110,7 @@
 /* Variables */
 int initialized = 0;
 
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS
 pthread_attr_t pattr;
 #endif
 
@@ -397,7 +397,7 @@ void init_core(int forced)
 
 		srand(seed);
 
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS
 		if (initialized)
 			pthread_attr_destroy(&pattr);
 
@@ -425,7 +425,7 @@ void init_core(int forced)
 	return;
 }
 
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS
 static void *ni_send_thread(void *data)
 {
 #if ENABLE_DEBUG
@@ -511,7 +511,7 @@ int pr_nodeinfo(struct packetcontext *p)
 	int i;
 	char *cp;
 #endif
-#if ENABLE_THREADS && HAVE_PTHREAD_H
+#if ENABLE_THREADS
 	pthread_t thread;
 #endif
 	int rc;
@@ -669,7 +669,7 @@ int pr_nodeinfo(struct packetcontext *p)
 
 	/* Step 10: Send the reply
 	 * XXX: with possible random delay */
-#if ENABLE_THREADS && HAVE_LIBPTHREAD
+#if ENABLE_THREADS
 	/* ni_send_thread() frees p */
 	if (pthread_create(&thread, &pattr, ni_send_thread, p)) {
 		free(p->replydata);

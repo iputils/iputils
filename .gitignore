@@ -1,15 +1,10 @@
 *~
-*.o
-
 *.diff
 *.orig
 *.patch
-*.plist
 *.rej
-
 core
 .gdb_history
 .gdbinit
-
 # Meson build
 /builddir
