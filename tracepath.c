@@ -490,6 +490,7 @@ int main(int argc, char **argv)
 				fprintf(stderr,
 					"Error: max hops must be 0 .. %d (inclusive).\n",
 					MAX_HOPS_LIMIT);
+				exit(1);
 			}
 			break;
 		case 'p':
