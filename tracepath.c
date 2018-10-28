@@ -13,9 +13,10 @@
 #include <errno.h>
 #include <limits.h>
 #include <linux/errqueue.h>
+#include <linux/icmp.h>
+#include <linux/icmpv6.h>
 #include <linux/types.h>
 #include <netdb.h>
-#include <netinet/icmp6.h>
 #include <netinet/in.h>
 #include <resolv.h>
 #include <stdio.h>
@@ -50,10 +51,26 @@
 # define IPV6_PMTUDISC_DO	3
 #endif
 
-#define MAX_HOPS_LIMIT		255
-#define MAX_HOPS_DEFAULT	30
+enum {
+	MAX_PROBES = 10,
 
-#define HOST_COLUMN_SIZE	52
+	MAX_HOPS_DEFAULT = 30,
+	MAX_HOPS_LIMIT = 255,
+
+	HOST_COLUMN_SIZE = 52,
+
+	HIS_ARRAY_SIZE = 64,
+
+	DEFAULT_OVERHEAD_IPV4 = 28,
+	DEFAULT_OVERHEAD_IPV6 = 48,
+
+	DEFAULT_MTU_IPV4 = 65535,
+	DEFAULT_MTU_IPV6 = 128000,
+
+	DEFAULT_BASEPORT = 44444,
+
+	ANCILLARY_DATA_LEN = 512,
+};
 
 struct hhistory {
 	int hops;
@@ -66,7 +83,7 @@ struct probehdr {
 };
 
 struct run_state {
-	struct hhistory his[64];
+	struct hhistory his[HIS_ARRAY_SIZE];
 	int hisptr;
 	struct sockaddr_storage target;
 	socklen_t targetlen;
@@ -117,7 +134,7 @@ static int recverr(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
 {
 	ssize_t recv_size;
 	struct probehdr rcvbuf;
-	char cbuf[512];
+	char cbuf[ANCILLARY_DATA_LEN];
 	struct cmsghdr *cmsg;
 	struct sock_extended_err *e;
 	struct sockaddr_storage addr;
@@ -174,7 +191,7 @@ static int recverr(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
 		break;
 	}
 
-	if (slot >= 0 && slot < 63 && ctl->his[slot].hops) {
+	if (slot >= 0 && slot < (HIS_ARRAY_SIZE - 1) && ctl->his[slot].hops) {
 		sndhops = ctl->his[slot].hops;
 		rettv = &ctl->his[slot].sendtime;
 		ctl->his[slot].hops = 0;
@@ -301,11 +318,11 @@ static int recverr(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
 		return 0;
 	case EHOSTUNREACH:
 		if ((e->ee_origin == SO_EE_ORIGIN_ICMP &&
-		     e->ee_type == 11 &&
-		     e->ee_code == 0) ||
+		     e->ee_type == ICMP_TIME_EXCEEDED &&
+		     e->ee_code == ICMP_EXC_TTL) ||
 		    (e->ee_origin == SO_EE_ORIGIN_ICMP6 &&
-		     e->ee_type == 3 &&
-		     e->ee_code == 0)) {
+		     e->ee_type == ICMPV6_TIME_EXCEED &&
+		     e->ee_code == ICMPV6_EXC_HOPLIMIT)) {
 			if (rethops >= 0) {
 				if (sndhops >= 0 && rethops != sndhops)
 					printf("asymm %2d ", rethops);
@@ -339,7 +356,7 @@ static int probe_ttl(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl
 
 	memset(ctl->pktbuf, 0, ctl->mtu);
  restart:
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < MAX_PROBES; i++) {
 		int res;
 
 		hdr->ttl = ttl;
@@ -366,9 +383,9 @@ static int probe_ttl(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl
 		if (res > 0)
 			goto restart;
 	}
-	ctl->hisptr = (ctl->hisptr + 1) & 63;
+	ctl->hisptr = (ctl->hisptr + 1) & (HIS_ARRAY_SIZE - 1);
 
-	if (i < 10) {
+	if (i < MAX_PROBES) {
 		data_wait(fd);
 		if (recv(fd, ctl->pktbuf, ctl->mtu, MSG_DONTWAIT) > 0) {
 			printf("%2d?: reply received 8)\n", ttl);
@@ -499,7 +516,7 @@ int main(int argc, char **argv)
 			*p = 0;
 			ctl.base_port = atoi(p + 1);
 		} else
-			ctl.base_port = 44444;
+			ctl.base_port = DEFAULT_BASEPORT;
 	}
 	sprintf(pbuf, "%u", ctl.base_port);
 
@@ -528,9 +545,9 @@ int main(int argc, char **argv)
 
 	switch (ai->ai_family) {
 	case AF_INET6:
-		ctl.overhead = 48;
+		ctl.overhead = DEFAULT_OVERHEAD_IPV6;
 		if (!ctl.mtu)
-			ctl.mtu = 128000;
+			ctl.mtu = DEFAULT_MTU_IPV6;
 		if (ctl.mtu <= ctl.overhead)
 			goto pktlen_error;
 
@@ -559,9 +576,9 @@ int main(int argc, char **argv)
 		ctl.mapped = 1;
 		/*FALLTHROUGH*/
 	case AF_INET:
-		ctl.overhead = 28;
+		ctl.overhead = DEFAULT_OVERHEAD_IPV4;
 		if (!ctl.mtu)
-			ctl.mtu = 65535;
+			ctl.mtu = DEFAULT_MTU_IPV4;
 		if (ctl.mtu <= ctl.overhead)
 			goto pktlen_error;
 
