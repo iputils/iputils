@@ -82,7 +82,7 @@ static size_t cmsglen = 0;
 static int pr_icmph(uint8_t type, uint8_t code, uint32_t info);
 
 struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
-char *device;
+extern char *device;
 
 #if defined(USE_GCRYPT) || defined(USE_OPENSSL) || defined(USE_NETTLE)
 #include "iputils_md5dig.h"
