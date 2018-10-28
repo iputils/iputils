@@ -9,48 +9,45 @@
  * Authors:	Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
  */
 
+#include <arpa/inet.h>
+#include <errno.h>
+#include <limits.h>
+#include <linux/errqueue.h>
+#include <linux/types.h>
+#include <netdb.h>
+#include <netinet/icmp6.h>
+#include <netinet/in.h>
+#include <resolv.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/icmp6.h>
-
-#include <linux/types.h>
-#include <linux/errqueue.h>
-#include <errno.h>
 #include <string.h>
-#include <netdb.h>
-#include <limits.h>
-#include <resolv.h>
+#include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/uio.h>
-#include <arpa/inet.h>
+#include <unistd.h>
 
 #ifdef USE_IDN
-#include <locale.h>
-
-#ifndef AI_IDN
-#define AI_IDN 0x0040
-#endif
-#ifndef NI_IDN
-#define NI_IDN 32
-#endif
-
-#define getnameinfo_flags	NI_IDN
+# include <locale.h>
+# ifndef AI_IDN
+#  define AI_IDN 0x0040
+# endif
+# ifndef NI_IDN
+#  define NI_IDN 32
+# endif
+# define getnameinfo_flags	NI_IDN
 #else
-#define getnameinfo_flags	0
+# define getnameinfo_flags	0
 #endif
 
 #ifndef SOL_IPV6
-#define SOL_IPV6 IPPROTO_IPV6
+# define SOL_IPV6 IPPROTO_IPV6
 #endif
 
 #ifndef IP_PMTUDISC_DO
-#define IP_PMTUDISC_DO		3
+# define IP_PMTUDISC_DO		3
 #endif
 #ifndef IPV6_PMTUDISC_DO
-#define IPV6_PMTUDISC_DO	3
+# define IPV6_PMTUDISC_DO	3
 #endif
 
 #define MAX_HOPS_LIMIT		255
@@ -91,18 +88,20 @@ struct run_state {
  * above.  After this comment all you can find is functions.
  */
 
-void data_wait(int fd)
+static void data_wait(int fd)
 {
 	fd_set fds;
-	struct timeval tv;
+	struct timeval tv = {
+		.tv_sec = 1,
+		.tv_usec = 0
+	};
+
 	FD_ZERO(&fds);
 	FD_SET(fd, &fds);
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
-	select(fd+1, &fds, NULL, NULL, &tv);
+	select(fd + 1, &fds, NULL, NULL, &tv);
 }
 
-void print_host(struct run_state *ctl, const char *a, const char *b)
+static void print_host(struct run_state *ctl, const char *a, const char *b)
 {
 	int plen;
 
@@ -114,13 +113,11 @@ void print_host(struct run_state *ctl, const char *a, const char *b)
 	printf("%*s", HOST_COLUMN_SIZE - plen, "");
 }
 
-int recverr(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
+static int recverr(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
 {
-	int res;
+	ssize_t recv_size;
 	struct probehdr rcvbuf;
 	char cbuf[512];
-	struct iovec  iov;
-	struct msghdr msg;
 	struct cmsghdr *cmsg;
 	struct sock_extended_err *e;
 	struct sockaddr_storage addr;
@@ -132,22 +129,28 @@ int recverr(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
 	int progress = -1;
 	int broken_router;
 	char hnamebuf[NI_MAXHOST] = "";
+	struct iovec iov = {
+		.iov_base = &rcvbuf,
+		.iov_len = sizeof(rcvbuf)
+	};
+	struct msghdr msg;
+	const struct msghdr reset = {
+		.msg_name = (uint8_t *)&addr,
+		.msg_namelen = sizeof(addr),
+		.msg_iov = &iov,
+		.msg_iovlen = 1,
+		.msg_control = cbuf,
+		.msg_controllen = sizeof(cbuf),
+		0
+	};
 
-restart:
+ restart:
 	memset(&rcvbuf, -1, sizeof(rcvbuf));
-	iov.iov_base = &rcvbuf;
-	iov.iov_len = sizeof(rcvbuf);
-	msg.msg_name = (uint8_t*)&addr;
-	msg.msg_namelen = sizeof(addr);
-	msg.msg_iov = &iov;
-	msg.msg_iovlen = 1;
-	msg.msg_flags = 0;
-	msg.msg_control = cbuf;
-	msg.msg_controllen = sizeof(cbuf);
+	msg = reset;
 
 	gettimeofday(&tv, NULL);
-	res = recvmsg(fd, &msg, MSG_ERRQUEUE);
-	if (res < 0) {
+	recv_size = recvmsg(fd, &msg, MSG_ERRQUEUE);
+	if (recv_size < 0) {
 		if (errno == EAGAIN)
 			return progress;
 		goto restart;
@@ -159,6 +162,7 @@ restart:
 	sndhops = -1;
 	e = NULL;
 	rettv = NULL;
+	broken_router = 0;
 
 	slot = -ctl->base_port;
 	switch (ai->ai_family) {
@@ -175,8 +179,7 @@ restart:
 		rettv = &ctl->his[slot].sendtime;
 		ctl->his[slot].hops = 0;
 	}
-	broken_router = 0;
-	if (res == sizeof(rcvbuf)) {
+	if (recv_size == sizeof(rcvbuf)) {
 		if (rcvbuf.ttl == 0 || rcvbuf.tv.tv_sec == 0)
 			broken_router = 1;
 		else {
@@ -188,7 +191,7 @@ restart:
 	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
 		switch (cmsg->cmsg_level) {
 		case SOL_IPV6:
-			switch(cmsg->cmsg_type) {
+			switch (cmsg->cmsg_type) {
 			case IPV6_RECVERR:
 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
 				break;
@@ -203,12 +206,12 @@ restart:
 			}
 			break;
 		case SOL_IP:
-			switch(cmsg->cmsg_type) {
+			switch (cmsg->cmsg_type) {
 			case IP_RECVERR:
 				e = (struct sock_extended_err *)CMSG_DATA(cmsg);
 				break;
 			case IP_TTL:
-				rethops = *(uint8_t*)CMSG_DATA(cmsg);
+				rethops = *(uint8_t *)CMSG_DATA(cmsg);
 				break;
 			default:
 				printf("cmsg4:%d\n ", cmsg->cmsg_type);
@@ -227,7 +230,7 @@ restart:
 		struct sockaddr *sa = (struct sockaddr *)(e + 1);
 		socklen_t salen;
 
-		if (sndhops>0)
+		if (sndhops > 0)
 			printf("%2d:  ", sndhops);
 		else
 			printf("%2d?: ", ttl);
@@ -244,8 +247,7 @@ restart:
 		}
 
 		if (ctl->no_resolve || ctl->show_both) {
-			if (getnameinfo(sa, salen,
-					abuf, sizeof(abuf), NULL, 0,
+			if (getnameinfo(sa, salen, abuf, sizeof(abuf), NULL, 0,
 					NI_NUMERICHOST))
 				strcpy(abuf, "???");
 		} else
@@ -253,7 +255,8 @@ restart:
 
 		if (!ctl->no_resolve || ctl->show_both) {
 			fflush(stdout);
-			if (getnameinfo(sa, salen, hnamebuf, sizeof hnamebuf, NULL, 0, getnameinfo_flags))
+			if (getnameinfo(sa, salen, hnamebuf, sizeof hnamebuf, NULL, 0,
+					getnameinfo_flags))
 				strcpy(hnamebuf, "???");
 		} else
 			hnamebuf[0] = 0;
@@ -265,18 +268,19 @@ restart:
 	}
 
 	if (rettv) {
-		int diff = (tv.tv_sec-rettv->tv_sec)*1000000+(tv.tv_usec-rettv->tv_usec);
-		printf("%3d.%03dms ", diff/1000, diff%1000);
+		int diff = (tv.tv_sec - rettv->tv_sec) * 1000000 +
+			   (tv.tv_usec - rettv->tv_usec);
+		printf("%3d.%03dms ", diff / 1000, diff % 1000);
 		if (broken_router)
 			printf("(This broken router returned corrupted payload) ");
 	}
 
-	if (rethops<=64)
-		rethops = 65-rethops;
-	else if (rethops<=128)
-		rethops = 129-rethops;
+	if (rethops <= 64)
+		rethops = 65 - rethops;
+	else if (rethops <= 128)
+		rethops = 129 - rethops;
 	else
-		rethops = 256-rethops;
+		rethops = 256 - rethops;
 
 	switch (e->ee_errno) {
 	case ETIMEDOUT:
@@ -289,7 +293,7 @@ restart:
 		break;
 	case ECONNREFUSED:
 		printf("reached\n");
-		ctl->hops_to = sndhops<0 ? ttl : sndhops;
+		ctl->hops_to = sndhops < 0 ? ttl : sndhops;
 		ctl->hops_from = rethops;
 		return 0;
 	case EPROTO:
@@ -302,10 +306,10 @@ restart:
 		    (e->ee_origin == SO_EE_ORIGIN_ICMP6 &&
 		     e->ee_type == 3 &&
 		     e->ee_code == 0)) {
-			if (rethops>=0) {
-				if (sndhops>=0 && rethops != sndhops)
+			if (rethops >= 0) {
+				if (sndhops >= 0 && rethops != sndhops)
 					printf("asymm %2d ", rethops);
-				else if (sndhops<0 && rethops != ttl)
+				else if (sndhops < 0 && rethops != ttl)
 					printf("asymm %2d ", rethops);
 			}
 			printf("\n");
@@ -328,30 +332,32 @@ restart:
 	goto restart;
 }
 
-int probe_ttl(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
+static int probe_ttl(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
 {
 	int i;
 	struct probehdr *hdr = ctl->pktbuf;
 
 	memset(ctl->pktbuf, 0, ctl->mtu);
-restart:
-	for (i=0; i<10; i++) {
+ restart:
+	for (i = 0; i < 10; i++) {
 		int res;
 
 		hdr->ttl = ttl;
 		switch (ai->ai_family) {
 		case AF_INET6:
-			((struct sockaddr_in6 *)&ctl->target)->sin6_port = htons(ctl->base_port + ctl->hisptr);
+			((struct sockaddr_in6 *)&ctl->target)->sin6_port =
+			    htons(ctl->base_port + ctl->hisptr);
 			break;
 		case AF_INET:
-			((struct sockaddr_in *)&ctl->target)->sin_port = htons(ctl->base_port + ctl->hisptr);
+			((struct sockaddr_in *)&ctl->target)->sin_port =
+			    htons(ctl->base_port + ctl->hisptr);
 			break;
 		}
 		gettimeofday(&hdr->tv, NULL);
 		ctl->his[ctl->hisptr].hops = ttl;
 		ctl->his[ctl->hisptr].sendtime = hdr->tv;
 		if (sendto(fd, ctl->pktbuf, ctl->mtu - ctl->overhead, 0,
-		    (struct sockaddr *)&ctl->target, ctl->targetlen) > 0)
+			   (struct sockaddr *)&ctl->target, ctl->targetlen) > 0)
 			break;
 		res = recverr(ctl, fd, ai, ttl);
 		ctl->his[ctl->hisptr].hops = 0;
@@ -362,7 +368,7 @@ restart:
 	}
 	ctl->hisptr = (ctl->hisptr + 1) & 63;
 
-	if (i<10) {
+	if (i < 10) {
 		data_wait(fd);
 		if (recv(fd, ctl->pktbuf, ctl->mtu, MSG_DONTWAIT) > 0) {
 			printf("%2d?: reply received 8)\n", ttl);
@@ -390,11 +396,9 @@ static void usage(void)
 		"  -p <port>      use destination <port>\n"
 		"  -V             print version and exit\n"
 		"  <destination>  dns name or ip address\n"
-		"\nFor more details see tracepath(8).\n"
-	);
+		"\nFor more details see tracepath(8).\n");
 	exit(-1);
 }
-
 
 int main(int argc, char **argv)
 {
@@ -426,23 +430,25 @@ int main(int argc, char **argv)
 #endif
 
 	/* Support being called using `tracepath4` or `tracepath6` symlinks */
-	if (argv[0][strlen(argv[0])-1] == '4')
+	if (argv[0][strlen(argv[0]) - 1] == '4')
 		hints.ai_family = AF_INET;
-	else if (argv[0][strlen(argv[0])-1] == '6')
+	else if (argv[0][strlen(argv[0]) - 1] == '6')
 		hints.ai_family = AF_INET6;
 
 	while ((ch = getopt(argc, argv, "46nbh?l:m:p:V")) != EOF) {
-		switch(ch) {
+		switch (ch) {
 		case '4':
-			if (hints.ai_family != AF_UNSPEC) {
-				fprintf(stderr, "tracepath: Only one -4 or -6 option may be specified\n");
+			if (hints.ai_family == AF_INET6) {
+				fprintf(stderr,
+					"tracepath: Only one -4 or -6 option may be specified\n");
 				exit(2);
 			}
 			hints.ai_family = AF_INET;
 			break;
 		case '6':
-			if (hints.ai_family != AF_UNSPEC) {
-				fprintf(stderr, "tracepath: Only one -4 or -6 option may be specified\n");
+			if (hints.ai_family == AF_INET) {
+				fprintf(stderr,
+					"tracepath: Only one -4 or -6 option may be specified\n");
 				exit(2);
 			}
 			hints.ai_family = AF_INET6;
@@ -455,7 +461,8 @@ int main(int argc, char **argv)
 			break;
 		case 'l':
 			if ((ctl.mtu = atoi(optarg)) <= ctl.overhead) {
-				fprintf(stderr, "Error: pktlen must be > %d and <= %d.\n",
+				fprintf(stderr,
+					"Error: pktlen must be > %d and <= %d.\n",
 					ctl.overhead, INT_MAX);
 				exit(1);
 			}
@@ -490,7 +497,7 @@ int main(int argc, char **argv)
 		p = strchr(argv[0], '/');
 		if (p) {
 			*p = 0;
-			ctl.base_port = atoi(p+1);
+			ctl.base_port = atoi(p + 1);
 		} else
 			ctl.base_port = 44444;
 	}
@@ -498,14 +505,14 @@ int main(int argc, char **argv)
 
 	status = getaddrinfo(argv[0], pbuf, &hints, &result);
 	if (status) {
-		fprintf(stderr, "tracepath: %s: %s\n", argv[0], gai_strerror(status));
+		fprintf(stderr, "tracepath: %s: %s\n", argv[0],
+			gai_strerror(status));
 		exit(1);
 	}
 
 	fd = -1;
 	for (ai = result; ai; ai = ai->ai_next) {
-		if (ai->ai_family != AF_INET6 &&
-		    ai->ai_family != AF_INET)
+		if (ai->ai_family != AF_INET6 && ai->ai_family != AF_INET)
 			continue;
 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 		if (fd < 0)
@@ -529,8 +536,8 @@ int main(int argc, char **argv)
 
 		on = IPV6_PMTUDISC_DO;
 		if (setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
-		    (on = IPV6_PMTUDISC_DO,
-		     setsockopt(fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)))) {
+		    (on = IPV6_PMTUDISC_DO, setsockopt(fd, SOL_IPV6,
+		     IPV6_MTU_DISCOVER, &on, sizeof(on)))) {
 			perror("IPV6_MTU_DISCOVER");
 			exit(1);
 		}
@@ -539,12 +546,9 @@ int main(int argc, char **argv)
 			perror("IPV6_RECVERR");
 			exit(1);
 		}
-		if (
+		if (setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on))
 #ifdef IPV6_RECVHOPLIMIT
-		    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on)) &&
-		    setsockopt(fd, SOL_IPV6, IPV6_2292HOPLIMIT, &on, sizeof(on))
-#else
-		    setsockopt(fd, SOL_IPV6, IPV6_HOPLIMIT, &on, sizeof(on))
+		    && setsockopt(fd, SOL_IPV6, IPV6_2292HOPLIMIT, &on, sizeof(on))
 #endif
 		    ) {
 			perror("IPV6_HOPLIMIT");
@@ -604,8 +608,8 @@ int main(int argc, char **argv)
 			}
 		}
 
-restart:
-		for (i=0; i<3; i++) {
+ restart:
+		for (i = 0; i < 3; i++) {
 			int old_mtu;
 
 			old_mtu = ctl.mtu;
@@ -623,7 +627,7 @@ restart:
 	}
 	printf("     Too many hops: pmtu %d\n", ctl.mtu);
 
-done:
+ done:
 	freeaddrinfo(result);
 
 	printf("     Resume: pmtu %d ", ctl.mtu);
@@ -634,7 +638,7 @@ done:
 	printf("\n");
 	exit(0);
 
-pktlen_error:
+ pktlen_error:
 	fprintf(stderr, "Error: pktlen must be > %d and <= %d\n",
 		ctl.overhead, INT_MAX);
 	exit(1);
