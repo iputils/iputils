@@ -45,7 +45,11 @@ endif
 
 m_dep = cc.find_library('m')
 resolv_dep = cc.find_library('resolv')
-rt_dep = cc.find_library('rt')
+if cc.has_function('clock_gettime')
+	rt_dep = cc.find_library('disabler-appears-to-disable-executable-build', required : false)
+else
+	rt_dep = cc.find_library('rt')
+endif
 
 opt = get_option('USE_CAP')
 if opt == true
