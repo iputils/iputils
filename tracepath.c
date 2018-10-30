@@ -285,9 +285,10 @@ static int recverr(struct run_state *ctl, int fd, struct addrinfo *ai, int ttl)
 	}
 
 	if (rettv) {
-		int diff = (tv.tv_sec - rettv->tv_sec) * 1000000 +
-			   (tv.tv_usec - rettv->tv_usec);
-		printf("%3d.%03dms ", diff / 1000, diff % 1000);
+		struct timeval res;
+
+		timersub(&tv, rettv, &res);
+		printf("%3ld.%03ldms ", res.tv_sec * 1000 + res.tv_usec / 1000, res.tv_usec % 1000);
 		if (broken_router)
 			printf("(This broken router returned corrupted payload) ");
 	}
