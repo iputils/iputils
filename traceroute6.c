@@ -277,28 +277,29 @@
 # define FD_ZERO(p)      memset((char *)(p), 0, sizeof(*(p)))
 #endif
 
-unsigned char	packet[512];		/* last inbound (icmp) packet */
-
-int icmp_sock;			/* receive (icmp) socket file descriptor */
-int sndsock;			/* send (udp) socket file descriptor */
-struct timezone tz;		/* leftover */
-
-struct sockaddr_in6 whereto;	/* Who to try to reach */
-
-struct sockaddr_in6 saddr;
-struct sockaddr_in6 firsthop;
-char *source = NULL;
-char *device = NULL;
-char *hostname;
-
-int nprobes = 3;
-int max_ttl = 30;
-pid_t ident;
-unsigned short port = 32768+666;	/* start udp dest port # for probe packets */
-int options;			/* socket options */
-int verbose;
-int waittime = 5;		/* time to wait for response (in seconds) */
-int nflag;			/* print addresses numerically */
+struct run_state {
+	unsigned char packet[512];	/* last inbound (icmp) packet */
+	int icmp_sock;			/* receive (icmp) socket file descriptor */
+	int sndsock;			/* send (udp) socket file descriptor */
+	char *sendbuff;
+	int datalen;
+	struct timezone tz;		/* leftover */
+	struct sockaddr_in6 whereto;	/* Who to try to reach */
+	struct sockaddr_in6 saddr;
+	struct sockaddr_in6 firsthop;
+	char *source;
+	char *device;
+	char *hostname;
+	int nprobes;
+	int max_ttl;
+	pid_t ident;
+	unsigned short port;		/* start udp dest port # for probe packets */
+	int options;			/* socket options */
+	int waittime;			/* time to wait for response (in seconds) */
+	unsigned int
+		nflag:1,		/* print addresses numerically */
+		verbose:1;
+};
 
 struct pkt_format {
 	uint32_t ident;
@@ -306,11 +307,13 @@ struct pkt_format {
 	struct timeval tv;
 };
 
-char *sendbuff;
-int datalen = sizeof(struct pkt_format);
+/*
+ * All includes, definitions, struct declarations, and global variables are
+ * above.  After this comment all you can find is functions.
+ */
 
-static ssize_t wait_for_reply(int sock, struct sockaddr_in6 *from, struct in6_addr *to,
-			      const uint8_t reset_timer)
+static int wait_for_reply(struct run_state *ctl, struct sockaddr_in6 *from,
+			  struct in6_addr *to, const uint8_t reset_timer)
 {
 	fd_set fds;
 	static struct timeval wait;
@@ -318,7 +321,7 @@ static ssize_t wait_for_reply(int sock, struct sockaddr_in6 *from, struct in6_ad
 	char cbuf[512];
 
 	FD_ZERO(&fds);
-	FD_SET(sock, &fds);
+	FD_SET(ctl->icmp_sock, &fds);
 	if (reset_timer) {
 		/*
 		 * traceroute could hang if someone else has a ping
@@ -332,14 +335,14 @@ static ssize_t wait_for_reply(int sock, struct sockaddr_in6 *from, struct in6_ad
 		 * Linux where the remaining timeout is written to the
 		 * struct timeval area.
 		 */
-		wait.tv_sec = waittime;
+		wait.tv_sec = ctl->waittime;
 		wait.tv_usec = 0;
 	}
 
-	if (select(sock + 1, &fds, NULL, NULL, &wait) > 0) {
+	if (select(ctl->icmp_sock + 1, &fds, NULL, NULL, &wait) > 0) {
 		struct iovec iov = {
-			.iov_base = packet,
-			.iov_len = sizeof(packet)
+			.iov_base = ctl->packet,
+			.iov_len = sizeof(ctl->packet)
 		};
 		struct msghdr msg = {
 			.msg_name = (void *)from,
@@ -351,7 +354,7 @@ static ssize_t wait_for_reply(int sock, struct sockaddr_in6 *from, struct in6_ad
 			0
 		};
 
-		cc = recvmsg(icmp_sock, &msg, 0);
+		cc = recvmsg(ctl->icmp_sock, &msg, 0);
 		if (cc >= 0) {
 			struct cmsghdr *cmsg;
 			struct in6_pktinfo *ipi;
@@ -375,30 +378,30 @@ static ssize_t wait_for_reply(int sock, struct sockaddr_in6 *from, struct in6_ad
 	return (cc);
 }
 
-static void send_probe(uint32_t seq, int ttl)
+static void send_probe(struct run_state *ctl, uint32_t seq, int ttl)
 {
-	struct pkt_format *pkt = (struct pkt_format *)sendbuff;
+	struct pkt_format *pkt = (struct pkt_format *)ctl->sendbuff;
 	int i;
 
-	pkt->ident = htonl(ident);
+	pkt->ident = htonl(ctl->ident);
 	pkt->seq = htonl(seq);
-	gettimeofday(&pkt->tv, &tz);
+	gettimeofday(&pkt->tv, &ctl->tz);
 
-	i = setsockopt(sndsock, SOL_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof(ttl));
+	i = setsockopt(ctl->sndsock, SOL_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof(ttl));
 	if (i < 0) {
 		perror("setsockopt");
 		exit(1);
 	}
 
 	do {
-		i = sendto(sndsock, sendbuff, datalen, 0,
-			   (struct sockaddr *)&whereto, sizeof(whereto));
+		i = sendto(ctl->sndsock, ctl->sendbuff, ctl->datalen, 0,
+			   (struct sockaddr *)&ctl->whereto, sizeof(ctl->whereto));
 	} while (i < 0 && errno == ECONNREFUSED);
 
-	if (i < 0 || i != datalen) {
+	if (i < 0 || i != ctl->datalen) {
 		if (i < 0)
 			perror("sendto");
-		printf("traceroute: wrote %s %d chars, ret=%d\n", hostname, datalen, i);
+		printf("traceroute: wrote %s %d chars, ret=%d\n", ctl->hostname, ctl->datalen, i);
 		fflush(stdout);
 	}
 }
@@ -469,13 +472,11 @@ static char const *pr_type(const uint8_t t)
 	abort();
 }
 
-static int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
+static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 		     struct in6_addr *to, uint32_t seq, struct timeval *tv)
 {
-	struct icmp6_hdr *icp;
+	struct icmp6_hdr *icp = (struct icmp6_hdr *)ctl->packet;
 	uint8_t type, code;
-
-	icp = (struct icmp6_hdr *)buf;
 
 	type = icp->icmp6_type;
 	code = icp->icmp6_code;
@@ -499,7 +500,7 @@ static int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 
 			pkt = (struct pkt_format *)(up + 1);
 
-			if (ntohl(pkt->ident) == (uint32_t) ident && ntohl(pkt->seq) == seq) {
+			if (ntohl(pkt->ident) == (uint32_t) ctl->ident && ntohl(pkt->seq) == seq) {
 				*tv = pkt->tv;
 				return (type == ICMP6_TIME_EXCEEDED ? -1 : code + 1);
 			}
@@ -507,7 +508,7 @@ static int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 
 	}
 
-	if (verbose) {
+	if (ctl->verbose) {
 		unsigned char *p;
 		char pa1[NI_MAXHOST];
 		char pa2[NI_MAXHOST];
@@ -537,12 +538,12 @@ static int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
 	return (0);
 }
 
-static void print(struct sockaddr_in6 *from)
+static void print(struct run_state *ctl, struct sockaddr_in6 *from)
 {
 	char pa[NI_MAXHOST] = "";
 	char hnamebuf[NI_MAXHOST] = "";
 
-	if (nflag)
+	if (ctl->nflag)
 		printf(" %s", inet_ntop(AF_INET6, &from->sin6_addr, pa, sizeof(pa)));
 	else {
 		inet_ntop(AF_INET6, &from->sin6_addr, pa, sizeof(pa));
@@ -575,6 +576,13 @@ static __attribute__((noreturn)) void usage(void)
 
 int main(int argc, char **argv)
 {
+	struct run_state ctl = {
+		.nprobes = 3,
+		.max_ttl = 30,
+		.port = 32768 + 666,
+		.waittime = 5,
+		0
+	};
 	char pa[NI_MAXHOST];
 	extern char *optarg;
 	extern int optind;
@@ -585,13 +593,15 @@ int main(int argc, char **argv)
 	};
 	struct addrinfo *result;
 	int status;
-	struct sockaddr_in6 from, *to;
+	struct sockaddr_in6 from;
+	struct sockaddr_in6 *to = (struct sockaddr_in6 *)&ctl.whereto;
 	int ch, i, probe, ttl, on = 1;
 	uint32_t seq = 0;
 	int socket_errno;
 	char *resolved_hostname = NULL;
 
-	icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
+	ctl.datalen = sizeof(struct pkt_format);
+	ctl.icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 	socket_errno = errno;
 
 	if (setuid(getuid())) {
@@ -613,56 +623,54 @@ int main(int argc, char **argv)
 #ifdef USE_IDN
 	setlocale(LC_ALL, "");
 #endif
-
-	to = (struct sockaddr_in6 *)&whereto;
 	while ((ch = getopt(argc, argv, "dm:np:q:rs:w:vi:V")) != EOF) {
 		switch (ch) {
 		case 'd':
-			options |= SO_DEBUG;
+			ctl.options |= SO_DEBUG;
 			break;
 		case 'm':
-			max_ttl = atoi(optarg);
-			if (max_ttl <= 1) {
+			ctl.max_ttl = atoi(optarg);
+			if (ctl.max_ttl <= 1) {
 				fprintf(stderr, "traceroute: max ttl must be >1.\n");
 				exit(1);
 			}
 			break;
 		case 'n':
-			nflag++;
+			ctl.nflag = 1;
 			break;
 		case 'p':
-			port = atoi(optarg);
-			if (port < 1) {
+			ctl.port = atoi(optarg);
+			if (ctl.port < 1) {
 				fprintf(stderr, "traceroute: port must be >0.\n");
 				exit(1);
 			}
 			break;
 		case 'q':
-			nprobes = atoi(optarg);
-			if (nprobes < 1) {
+			ctl.nprobes = atoi(optarg);
+			if (ctl.nprobes < 1) {
 				fprintf(stderr, "traceroute: nprobes must be >0.\n");
 				exit(1);
 			}
 			break;
 		case 'r':
-			options |= SO_DONTROUTE;
+			ctl.options |= SO_DONTROUTE;
 			break;
 		case 's':
 			/*
 			 * set the ip source address of the outbound probe
 			 * (e.g., on a multi-homed host).
 			 */
-			source = optarg;
+			ctl.source = optarg;
 			break;
 		case 'i':
-			device = optarg;
+			ctl.device = optarg;
 			break;
 		case 'v':
-			verbose++;
+			ctl.verbose = 1;
 			break;
 		case 'w':
-			waittime = atoi(optarg);
-			if (waittime <= 1) {
+			ctl.waittime = atoi(optarg);
+			if (ctl.waittime <= 1) {
 				fprintf(stderr, "traceroute: wait must be >1 sec.\n");
 				exit(1);
 			}
@@ -682,12 +690,12 @@ int main(int argc, char **argv)
 
 	setlinebuf(stdout);
 
-	memset((char *)&whereto, 0, sizeof(whereto));
+	memset((char *)&ctl.whereto, 0, sizeof(ctl.whereto));
 
 	to->sin6_family = AF_INET6;
 
 	if (inet_pton(AF_INET6, *argv, &to->sin6_addr) > 0) {
-		hostname = *argv;
+		ctl.hostname = *argv;
 	} else {
 		status = getaddrinfo(*argv, NULL, &hints6, &result);
 		if (status) {
@@ -701,23 +709,23 @@ int main(int argc, char **argv)
 			fprintf(stderr, "traceroute: cannot allocate memory\n");
 			exit(1);
 		}
-		hostname = resolved_hostname;
+		ctl.hostname = resolved_hostname;
 		freeaddrinfo(result);
 	}
 
-	to->sin6_port = htons(port);
+	to->sin6_port = htons(ctl.port);
 
-	firsthop = *to;
+	ctl.firsthop = *to;
 	if (*++argv) {
-		datalen = atoi(*argv);
+		ctl.datalen = atoi(*argv);
 		/*
 		 * Message for rpm maintainers: have _shame_.  If you want
 		 * to fix something send the patch to me for sanity
 		 * checking.  "datalen" patch is a shit.
 		 */
-		if (datalen == 0)
-			datalen = sizeof(struct pkt_format);
-		else if (datalen < (int)sizeof(struct pkt_format) || datalen >= MAXPACKET) {
+		if (ctl.datalen == 0)
+			ctl.datalen = sizeof(struct pkt_format);
+		else if (ctl.datalen < (int)sizeof(struct pkt_format) || ctl.datalen >= MAXPACKET) {
 			fprintf(stderr,
 				"traceroute: packet size must be %d <= s < %d.\n",
 				(int)sizeof(struct pkt_format), MAXPACKET);
@@ -725,34 +733,34 @@ int main(int argc, char **argv)
 		}
 	}
 
-	ident = getpid();
+	ctl.ident = getpid();
 
-	sendbuff = malloc(datalen);
-	if (sendbuff == NULL) {
+	ctl.sendbuff = malloc(ctl.datalen);
+	if (ctl.sendbuff == NULL) {
 		fprintf(stderr, "malloc failed\n");
 		exit(1);
 	}
 
-	if (icmp_sock < 0) {
+	if (ctl.icmp_sock < 0) {
 		errno = socket_errno;
 		perror("traceroute6: icmp socket");
 		exit(1);
 	}
 #ifdef IPV6_RECVPKTINFO
-	setsockopt(icmp_sock, SOL_IPV6, IPV6_RECVPKTINFO, &on, sizeof(on));
-	setsockopt(icmp_sock, SOL_IPV6, IPV6_2292PKTINFO, &on, sizeof(on));
+	setsockopt(ctl.icmp_sock, SOL_IPV6, IPV6_RECVPKTINFO, &on, sizeof(on));
+	setsockopt(ctl.icmp_sock, SOL_IPV6, IPV6_2292PKTINFO, &on, sizeof(on));
 #else
-	setsockopt(icmp_sock, SOL_IPV6, IPV6_PKTINFO, &on, sizeof(on));
+	setsockopt(ctl.icmp_sock, SOL_IPV6, IPV6_PKTINFO, &on, sizeof(on));
 #endif
 
-	if (options & SO_DEBUG)
-		setsockopt(icmp_sock, SOL_SOCKET, SO_DEBUG, (char *)&on, sizeof(on));
-	if (options & SO_DONTROUTE)
-		setsockopt(icmp_sock, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on));
+	if (ctl.options & SO_DEBUG)
+		setsockopt(ctl.icmp_sock, SOL_SOCKET, SO_DEBUG, (char *)&on, sizeof(on));
+	if (ctl.options & SO_DONTROUTE)
+		setsockopt(ctl.icmp_sock, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on));
 
 #ifdef __linux__
 	on = 2;
-	if (setsockopt(icmp_sock, SOL_RAW, IPV6_CHECKSUM, &on, sizeof(on)) < 0) {
+	if (setsockopt(ctl.icmp_sock, SOL_RAW, IPV6_CHECKSUM, &on, sizeof(on)) < 0) {
 		/*
 		 * checksum should be enabled by default and setting this
 		 * option might fail anyway.
@@ -761,23 +769,24 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	if ((sndsock = socket(AF_INET6, SOCK_DGRAM, 0)) < 0) {
+	if ((ctl.sndsock = socket(AF_INET6, SOCK_DGRAM, 0)) < 0) {
 		perror("traceroute: UDP socket");
 		exit(5);
 	}
 #ifdef SO_SNDBUF
-	if (setsockopt(sndsock, SOL_SOCKET, SO_SNDBUF, (char *)&datalen, sizeof(datalen)) < 0) {
+	if (setsockopt(ctl.sndsock, SOL_SOCKET, SO_SNDBUF, (char *)&ctl.datalen,
+		       sizeof(ctl.datalen)) < 0) {
 		perror("traceroute: SO_SNDBUF");
 		exit(6);
 	}
 #endif				/* SO_SNDBUF */
 
-	if (options & SO_DEBUG)
-		setsockopt(sndsock, SOL_SOCKET, SO_DEBUG, (char *)&on, sizeof(on));
-	if (options & SO_DONTROUTE)
-		setsockopt(sndsock, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on));
+	if (ctl.options & SO_DEBUG)
+		setsockopt(ctl.sndsock, SOL_SOCKET, SO_DEBUG, (char *)&on, sizeof(on));
+	if (ctl.options & SO_DONTROUTE)
+		setsockopt(ctl.sndsock, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on));
 
-	if (source == NULL) {
+	if (ctl.source == NULL) {
 		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
@@ -785,56 +794,57 @@ int main(int argc, char **argv)
 			perror("socket");
 			exit(1);
 		}
-		if (device) {
+		if (ctl.device) {
 			if (setsockopt
-			    (probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device,
-			     strlen(device) + 1) == -1)
+			    (probe_fd, SOL_SOCKET, SO_BINDTODEVICE, ctl.device,
+			     strlen(ctl.device) + 1) == -1)
 				perror("WARNING: interface is ignored");
 		}
-		firsthop.sin6_port = htons(1025);
-		if (connect(probe_fd, (struct sockaddr *)&firsthop, sizeof(firsthop)) == -1) {
+		ctl.firsthop.sin6_port = htons(1025);
+		if (connect(probe_fd, (struct sockaddr *)&ctl.firsthop,
+			    sizeof(ctl.firsthop)) == -1) {
 			perror("connect");
 			exit(1);
 		}
-		alen = sizeof(saddr);
-		if (getsockname(probe_fd, (struct sockaddr *)&saddr, &alen) == -1) {
+		alen = sizeof(ctl.saddr);
+		if (getsockname(probe_fd, (struct sockaddr *)&ctl.saddr, &alen) == -1) {
 			perror("getsockname");
 			exit(1);
 		}
-		saddr.sin6_port = 0;
+		ctl.saddr.sin6_port = 0;
 		close(probe_fd);
 	} else {
-		memset((char *)&saddr, 0, sizeof(saddr));
-		saddr.sin6_family = AF_INET6;
-		if (inet_pton(AF_INET6, source, &saddr.sin6_addr) <= 0) {
-			printf("traceroute: unknown addr %s\n", source);
+		memset((char *)&ctl.saddr, 0, sizeof(ctl.saddr));
+		ctl.saddr.sin6_family = AF_INET6;
+		if (inet_pton(AF_INET6, ctl.source, &ctl.saddr.sin6_addr) <= 0) {
+			printf("traceroute: unknown addr %s\n", ctl.source);
 			exit(1);
 		}
 	}
 
-	if (bind(sndsock, (struct sockaddr *)&saddr, sizeof(saddr)) < 0) {
+	if (bind(ctl.sndsock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0) {
 		perror("traceroute: bind sending socket");
 		exit(1);
 	}
-	if (bind(icmp_sock, (struct sockaddr *)&saddr, sizeof(saddr)) < 0) {
+	if (bind(ctl.icmp_sock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0) {
 		perror("traceroute: bind icmp6 socket");
 		exit(1);
 	}
 
-	fprintf(stderr, "traceroute to %s (%s)", hostname,
+	fprintf(stderr, "traceroute to %s (%s)", ctl.hostname,
 		inet_ntop(AF_INET6, &to->sin6_addr, pa, sizeof(pa)));
 
-	fprintf(stderr, " from %s", inet_ntop(AF_INET6, &saddr.sin6_addr, pa, sizeof(pa)));
-	fprintf(stderr, ", %d hops max, %d byte packets\n", max_ttl, datalen);
+	fprintf(stderr, " from %s", inet_ntop(AF_INET6, &ctl.saddr.sin6_addr, pa, sizeof(pa)));
+	fprintf(stderr, ", %d hops max, %d byte packets\n", ctl.max_ttl, ctl.datalen);
 	fflush(stderr);
 
-	for (ttl = 1; ttl <= max_ttl; ++ttl) {
+	for (ttl = 1; ttl <= ctl.max_ttl; ++ttl) {
 		struct in6_addr lastaddr = { {{0,}} };
 		uint8_t got_there = 0;
 		int unreachable = 0;
 
 		printf("%2d ", ttl);
-		for (probe = 0; probe < nprobes; ++probe) {
+		for (probe = 0; probe < ctl.nprobes; ++probe) {
 			ssize_t cc;
 			uint8_t reset_timer = 1;
 			struct timeval t1, t2;
@@ -842,14 +852,13 @@ int main(int argc, char **argv)
 			struct in6_addr to_addr;
 
 			gettimeofday(&t1, &tzone);
-			send_probe(++seq, ttl);
-
-			while ((cc = wait_for_reply(icmp_sock, &from, &to_addr, reset_timer)) != 0) {
+			send_probe(&ctl, ++seq, ttl);
+			while ((cc = wait_for_reply(&ctl, &from, &to_addr, reset_timer)) != 0) {
 				gettimeofday(&t2, &tzone);
-				if ((i = packet_ok(packet, cc, &from, &to_addr, seq, &t1))) {
-					if (memcmp
-					    (&from.sin6_addr, &lastaddr, sizeof(from.sin6_addr))) {
-						print(&from);
+				if ((i = packet_ok(&ctl, cc, &from, &to_addr, seq, &t1))) {
+					if (memcmp(&from.sin6_addr, &lastaddr,
+						   sizeof(from.sin6_addr))) {
+						print(&ctl, &from);
 						memcpy(&lastaddr,
 						       &from.sin6_addr, sizeof(lastaddr));
 					}
@@ -882,7 +891,7 @@ int main(int argc, char **argv)
 			fflush(stdout);
 		}
 		putchar('\n');
-		if (got_there || (unreachable > 0 && unreachable >= nprobes - 1))
+		if (got_there || (unreachable > 0 && unreachable >= ctl.nprobes - 1))
 			break;
 	}
 	free(resolved_hostname);
