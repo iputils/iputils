@@ -286,15 +286,6 @@
 
 unsigned char	packet[512];		/* last inbound (icmp) packet */
 
-int	wait_for_reply(int, struct sockaddr_in6 *, struct in6_addr *, int);
-int	packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
-		  struct in6_addr *to, uint32_t seq, struct timeval *);
-void	send_probe(uint32_t seq, int ttl);
-double	deltaT (struct timeval *, struct timeval *);
-void	print(struct sockaddr_in6 *from);
-void	tvsub (struct timeval *, struct timeval *);
-void	usage(void);
-
 int icmp_sock;			/* receive (icmp) socket file descriptor */
 int sndsock;			/* send (udp) socket file descriptor */
 struct timezone tz;		/* leftover */
@@ -316,7 +307,6 @@ int verbose;
 int waittime = 5;		/* time to wait for response (in seconds) */
 int nflag;			/* print addresses numerically */
 
-
 struct pkt_format
 {
 	uint32_t ident;
@@ -327,9 +317,277 @@ struct pkt_format
 char *sendbuff;
 int datalen = sizeof(struct pkt_format);
 
+static int wait_for_reply(int sock, struct sockaddr_in6 *from,
+			  struct in6_addr *to, int reset_timer)
+{
+	fd_set fds;
+	static struct timeval wait;
+	int cc = 0;
+	char cbuf[512];
 
+	FD_ZERO(&fds);
+	FD_SET(sock, &fds);
+	if (reset_timer) {
+		/*
+		 * traceroute could hang if someone else has a ping
+		 * running and our ICMP reply gets dropped but we don't
+		 * realize it because we keep waking up to handle those
+		 * other ICMP packets that keep coming in.  To fix this,
+		 * "reset_timer" will only be true if the last packet that
+		 * came in was for us or if this is the first time we're
+		 * waiting for a reply since sending out a probe.  Note
+		 * that this takes advantage of the select() feature on
+		 * Linux where the remaining timeout is written to the
+		 * struct timeval area.
+		 */
+		wait.tv_sec = waittime;
+		wait.tv_usec = 0;
+	}
 
-int main(int argc, char *argv[])
+	if (select(sock+1, &fds, (fd_set *)0, (fd_set *)0, &wait) > 0) {
+		struct iovec iov;
+		struct msghdr msg;
+		iov.iov_base = packet;
+		iov.iov_len = sizeof(packet);
+		msg.msg_name = (void *)from;
+		msg.msg_namelen = sizeof(*from);
+		msg.msg_iov = &iov;
+		msg.msg_iovlen = 1;
+		msg.msg_flags = 0;
+		msg.msg_control = cbuf;
+		msg.msg_controllen = sizeof(cbuf);
+
+		cc = recvmsg(icmp_sock, &msg, 0);
+		if (cc >= 0) {
+			struct cmsghdr *cmsg;
+			struct in6_pktinfo *ipi;
+
+			for (cmsg = CMSG_FIRSTHDR(&msg);
+			     cmsg;
+			     cmsg = CMSG_NXTHDR(&msg, cmsg)) {
+				if (cmsg->cmsg_level != SOL_IPV6)
+					continue;
+				switch (cmsg->cmsg_type) {
+				case IPV6_PKTINFO:
+#ifdef IPV6_2292PKTINFO
+				case IPV6_2292PKTINFO:
+#endif
+					ipi = (struct in6_pktinfo *)CMSG_DATA(cmsg);
+					memcpy(to, ipi, sizeof(*to));
+				}
+			}
+		}
+	}
+
+	return(cc);
+}
+
+static void send_probe(uint32_t seq, int ttl)
+{
+	struct pkt_format *pkt = (struct pkt_format *) sendbuff;
+	int i;
+
+	pkt->ident = htonl(ident);
+	pkt->seq = htonl(seq);
+	gettimeofday(&pkt->tv, &tz);
+
+	i = setsockopt(sndsock, SOL_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof(ttl));
+	if (i < 0)
+	{
+		perror("setsockopt");
+		exit(1);
+	}
+
+	do {
+		i = sendto(sndsock, sendbuff, datalen, 0,
+			   (struct sockaddr *)&whereto, sizeof(whereto));
+	} while (i<0 && errno == ECONNREFUSED);
+
+	if (i < 0 || i != datalen)  {
+		if (i<0)
+			perror("sendto");
+		Printf("traceroute: wrote %s %d chars, ret=%d\n", hostname,
+			datalen, i);
+		(void) fflush(stdout);
+	}
+}
+
+static double deltaT(struct timeval *t1p, struct timeval *t2p)
+{
+	double dt;
+
+	dt = (double)(t2p->tv_sec - t1p->tv_sec) * 1000.0 +
+	     (double)(t2p->tv_usec - t1p->tv_usec) / 1000.0;
+	return (dt);
+}
+
+/*
+ * Convert an ICMP "type" field to a printable string.
+ */
+static char *pr_type(unsigned char t)
+{
+	switch(t) {
+	/* Unknown */
+	case 0:
+		return "Error";
+	case 1:
+		/* ICMP6_DST_UNREACH: */
+		return "Destination Unreachable";
+	case 2:
+		/* ICMP6_PACKET_TOO_BIG: */
+		return "Packet Too Big";
+	case 3:
+		/* ICMP6_TIME_EXCEEDED */
+		return "Time Exceeded in Transit";
+	case 4:
+		/* ICMP6_PARAM_PROB */
+		return "Parameter Problem";
+	case 128:
+		/* ICMP6_ECHO_REQUEST */
+		return "Echo Request";
+	case 129:
+		/* ICMP6_ECHO_REPLY */
+		return "Echo Reply";
+	case 130:
+		/* ICMP6_MEMBERSHIP_QUERY */
+		return "Membership Query";
+	case 131:
+		/* ICMP6_MEMBERSHIP_REPORT */
+		return "Membership Report";
+	case 132:
+		/* ICMP6_MEMBERSHIP_REDUCTION */
+		return "Membership Reduction";
+	case 133:
+		/* ND_ROUTER_SOLICIT */
+		return "Router Solicitation";
+	case 134:
+		/* ND_ROUTER_ADVERT */
+		return "Router Advertisement";
+	case 135:
+		/* ND_NEIGHBOR_SOLICIT */
+		return "Neighbor Solicitation";
+	case 136:
+		/* ND_NEIGHBOR_ADVERT */
+		return "Neighbor Advertisement";
+	case 137:
+		/* ND_REDIRECT */
+		return "Redirect";
+	}
+
+	return("OUT-OF-RANGE");
+}
+
+static int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
+		     struct in6_addr *to, uint32_t seq, struct timeval *tv)
+{
+	struct icmp6_hdr *icp;
+	unsigned char type, code;
+
+	icp = (struct icmp6_hdr *) buf;
+
+	type = icp->icmp6_type;
+	code = icp->icmp6_code;
+
+	if ((type == ICMP6_TIME_EXCEEDED && code == ICMP6_TIME_EXCEED_TRANSIT) ||
+	    type == ICMP6_DST_UNREACH)
+	{
+		struct ip6_hdr *hip;
+		struct udphdr *up;
+		int nexthdr;
+
+		hip = (struct ip6_hdr *) (icp + 1);
+		up = (struct udphdr *)(hip+1);
+		nexthdr = hip->ip6_nxt;
+
+		if (nexthdr == 44) {
+			nexthdr = *(unsigned char*)up;
+			up++;
+		}
+		if (nexthdr == IPPROTO_UDP)
+		{
+			struct pkt_format *pkt;
+
+			pkt = (struct pkt_format *) (up + 1);
+
+			if (ntohl(pkt->ident) == (uint32_t) ident &&
+			    ntohl(pkt->seq) == seq)
+			{
+				*tv = pkt->tv;
+				return (type == ICMP6_TIME_EXCEEDED ? -1 : code+1);
+			}
+		}
+
+	}
+
+	if (verbose) {
+		unsigned char *p;
+		char pa1[NI_MAXHOST];
+		char pa2[NI_MAXHOST];
+		int i;
+
+		p = (unsigned char *) (icp + 1);
+
+		Printf("\n%d bytes from %s to %s", cc,
+		       inet_ntop(AF_INET6, &from->sin6_addr, pa1, sizeof(pa1)),
+		       inet_ntop(AF_INET6, to, pa2, sizeof(pa2)));
+
+		Printf(": icmp type %d (%s) code %d\n", type, pr_type(type),
+		       icp->icmp6_code);
+
+		cc -= sizeof(struct icmp6_hdr);
+		for (i = 0; i < cc ; i++) {
+			if (i % 16 == 0)
+				Printf("%04x:", i);
+			if (i % 4 == 0)
+				Printf(" ");
+			Printf("%02x", 0xff & (unsigned)p[i]);
+			if (i % 16 == 15 && i + 1 < cc)
+				Printf("\n");
+		}
+		Printf("\n");
+	}
+
+	return(0);
+}
+
+static void print(struct sockaddr_in6 *from)
+{
+	char pa[NI_MAXHOST] = "";
+	char hnamebuf[NI_MAXHOST] = "";
+
+	if (nflag)
+		Printf(" %s", inet_ntop(AF_INET6, &from->sin6_addr,
+					pa, sizeof(pa)));
+	else {
+		inet_ntop(AF_INET6, &from->sin6_addr, pa, sizeof(pa));
+		getnameinfo((struct sockaddr *) from, sizeof *from, hnamebuf, sizeof hnamebuf, NULL, 0, getnameinfo_flags);
+
+		Printf(" %s (%s)", hnamebuf[0] ? hnamebuf : pa, pa);
+	}
+}
+
+static void usage(void) __attribute__((noreturn))
+{
+	fprintf(stderr,
+		"\nUsage:\n"
+		"  traceroute6 [options] <destination>\n"
+		"\nOptions:\n"
+		"  -d            use SO_DEBUG socket option\n"
+		"  -i <device>   bind to <device>\n"
+		"  -m <hops>     use maximum <hops>\n"
+		"  -n            no dns name resolution\n"
+		"  -p <port>     use destination <port>\n"
+		"  -q <nprobes>  number of probes\n"
+		"  -r            use SO_DONTROUTE socket option\n"
+		"  -s <address>  use source <address>\n"
+		"  -v            verbose output\n"
+		"  -w <timeout>  time to wait for response\n"
+		"\nFor more details see traceroute6(8).\n"
+	);
+	exit(1);
+}
+
+int main(int argc, char **argv)
 {
 	char pa[NI_MAXHOST];
 	extern char *optarg;
@@ -656,300 +914,4 @@ int main(int argc, char *argv[])
 	}
 
 	return 0;
-}
-
-int
-wait_for_reply(sock, from, to, reset_timer)
-	int sock;
-	struct sockaddr_in6 *from;
-	struct in6_addr *to;
-	int reset_timer;
-{
-	fd_set fds;
-	static struct timeval wait;
-	int cc = 0;
-	char cbuf[512];
-
-	FD_ZERO(&fds);
-	FD_SET(sock, &fds);
-	if (reset_timer) {
-		/*
-		 * traceroute could hang if someone else has a ping
-		 * running and our ICMP reply gets dropped but we don't
-		 * realize it because we keep waking up to handle those
-		 * other ICMP packets that keep coming in.  To fix this,
-		 * "reset_timer" will only be true if the last packet that
-		 * came in was for us or if this is the first time we're
-		 * waiting for a reply since sending out a probe.  Note
-		 * that this takes advantage of the select() feature on
-		 * Linux where the remaining timeout is written to the
-		 * struct timeval area.
-		 */
-		wait.tv_sec = waittime;
-		wait.tv_usec = 0;
-	}
-
-	if (select(sock+1, &fds, (fd_set *)0, (fd_set *)0, &wait) > 0) {
-		struct iovec iov;
-		struct msghdr msg;
-		iov.iov_base = packet;
-		iov.iov_len = sizeof(packet);
-		msg.msg_name = (void *)from;
-		msg.msg_namelen = sizeof(*from);
-		msg.msg_iov = &iov;
-		msg.msg_iovlen = 1;
-		msg.msg_flags = 0;
-		msg.msg_control = cbuf;
-		msg.msg_controllen = sizeof(cbuf);
-
-		cc = recvmsg(icmp_sock, &msg, 0);
-		if (cc >= 0) {
-			struct cmsghdr *cmsg;
-			struct in6_pktinfo *ipi;
-
-			for (cmsg = CMSG_FIRSTHDR(&msg);
-			     cmsg;
-			     cmsg = CMSG_NXTHDR(&msg, cmsg)) {
-				if (cmsg->cmsg_level != SOL_IPV6)
-					continue;
-				switch (cmsg->cmsg_type) {
-				case IPV6_PKTINFO:
-#ifdef IPV6_2292PKTINFO
-				case IPV6_2292PKTINFO:
-#endif
-					ipi = (struct in6_pktinfo *)CMSG_DATA(cmsg);
-					memcpy(to, ipi, sizeof(*to));
-				}
-			}
-		}
-	}
-
-	return(cc);
-}
-
-
-void send_probe(uint32_t seq, int ttl)
-{
-	struct pkt_format *pkt = (struct pkt_format *) sendbuff;
-	int i;
-
-	pkt->ident = htonl(ident);
-	pkt->seq = htonl(seq);
-	gettimeofday(&pkt->tv, &tz);
-
-	i = setsockopt(sndsock, SOL_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof(ttl));
-	if (i < 0)
-	{
-		perror("setsockopt");
-		exit(1);
-	}
-
-	do {
-		i = sendto(sndsock, sendbuff, datalen, 0,
-			   (struct sockaddr *)&whereto, sizeof(whereto));
-	} while (i<0 && errno == ECONNREFUSED);
-
-	if (i < 0 || i != datalen)  {
-		if (i<0)
-			perror("sendto");
-		Printf("traceroute: wrote %s %d chars, ret=%d\n", hostname,
-			datalen, i);
-		(void) fflush(stdout);
-	}
-}
-
-
-double deltaT(struct timeval *t1p, struct timeval *t2p)
-{
-	double dt;
-
-	dt = (double)(t2p->tv_sec - t1p->tv_sec) * 1000.0 +
-	     (double)(t2p->tv_usec - t1p->tv_usec) / 1000.0;
-	return (dt);
-}
-
-
-/*
- * Convert an ICMP "type" field to a printable string.
- */
-char * pr_type(unsigned char t)
-{
-	switch(t) {
-	/* Unknown */
-	case 0:
-		return "Error";
-	case 1:
-		/* ICMP6_DST_UNREACH: */
-		return "Destination Unreachable";
-	case 2:
-		/* ICMP6_PACKET_TOO_BIG: */
-		return "Packet Too Big";
-	case 3:
-		/* ICMP6_TIME_EXCEEDED */
-		return "Time Exceeded in Transit";
-	case 4:
-		/* ICMP6_PARAM_PROB */
-		return "Parameter Problem";
-	case 128:
-		/* ICMP6_ECHO_REQUEST */
-		return "Echo Request";
-	case 129:
-		/* ICMP6_ECHO_REPLY */
-		return "Echo Reply";
-	case 130:
-		/* ICMP6_MEMBERSHIP_QUERY */
-		return "Membership Query";
-	case 131:
-		/* ICMP6_MEMBERSHIP_REPORT */
-		return "Membership Report";
-	case 132:
-		/* ICMP6_MEMBERSHIP_REDUCTION */
-		return "Membership Reduction";
-	case 133:
-		/* ND_ROUTER_SOLICIT */
-		return "Router Solicitation";
-	case 134:
-		/* ND_ROUTER_ADVERT */
-		return "Router Advertisement";
-	case 135:
-		/* ND_NEIGHBOR_SOLICIT */
-		return "Neighbor Solicitation";
-	case 136:
-		/* ND_NEIGHBOR_ADVERT */
-		return "Neighbor Advertisement";
-	case 137:
-		/* ND_REDIRECT */
-		return "Redirect";
-	}
-
-	return("OUT-OF-RANGE");
-}
-
-
-int packet_ok(unsigned char *buf, int cc, struct sockaddr_in6 *from,
-	      struct in6_addr *to, uint32_t seq,
-	      struct timeval *tv)
-{
-	struct icmp6_hdr *icp;
-	unsigned char type, code;
-
-	icp = (struct icmp6_hdr *) buf;
-
-	type = icp->icmp6_type;
-	code = icp->icmp6_code;
-
-	if ((type == ICMP6_TIME_EXCEEDED && code == ICMP6_TIME_EXCEED_TRANSIT) ||
-	    type == ICMP6_DST_UNREACH)
-	{
-		struct ip6_hdr *hip;
-		struct udphdr *up;
-		int nexthdr;
-
-		hip = (struct ip6_hdr *) (icp + 1);
-		up = (struct udphdr *)(hip+1);
-		nexthdr = hip->ip6_nxt;
-
-		if (nexthdr == 44) {
-			nexthdr = *(unsigned char*)up;
-			up++;
-		}
-		if (nexthdr == IPPROTO_UDP)
-		{
-			struct pkt_format *pkt;
-
-			pkt = (struct pkt_format *) (up + 1);
-
-			if (ntohl(pkt->ident) == (uint32_t) ident &&
-			    ntohl(pkt->seq) == seq)
-			{
-				*tv = pkt->tv;
-				return (type == ICMP6_TIME_EXCEEDED ? -1 : code+1);
-			}
-		}
-
-	}
-
-	if (verbose) {
-		unsigned char *p;
-		char pa1[NI_MAXHOST];
-		char pa2[NI_MAXHOST];
-		int i;
-
-		p = (unsigned char *) (icp + 1);
-
-		Printf("\n%d bytes from %s to %s", cc,
-		       inet_ntop(AF_INET6, &from->sin6_addr, pa1, sizeof(pa1)),
-		       inet_ntop(AF_INET6, to, pa2, sizeof(pa2)));
-
-		Printf(": icmp type %d (%s) code %d\n", type, pr_type(type),
-		       icp->icmp6_code);
-
-		cc -= sizeof(struct icmp6_hdr);
-		for (i = 0; i < cc ; i++) {
-			if (i % 16 == 0)
-				Printf("%04x:", i);
-			if (i % 4 == 0)
-				Printf(" ");
-			Printf("%02x", 0xff & (unsigned)p[i]);
-			if (i % 16 == 15 && i + 1 < cc)
-				Printf("\n");
-		}
-		Printf("\n");
-	}
-
-	return(0);
-}
-
-
-void print(struct sockaddr_in6 *from)
-{
-	char pa[NI_MAXHOST] = "";
-	char hnamebuf[NI_MAXHOST] = "";
-
-	if (nflag)
-		Printf(" %s", inet_ntop(AF_INET6, &from->sin6_addr,
-					pa, sizeof(pa)));
-	else {
-		inet_ntop(AF_INET6, &from->sin6_addr, pa, sizeof(pa));
-		getnameinfo((struct sockaddr *) from, sizeof *from, hnamebuf, sizeof hnamebuf, NULL, 0, getnameinfo_flags);
-
-		Printf(" %s (%s)", hnamebuf[0] ? hnamebuf : pa, pa);
-	}
-}
-
-
-/*
- * Subtract 2 timeval structs:  out = out - in.
- * Out is assumed to be >= in.
- */
-void
-tvsub(out, in)
-	struct timeval *out, *in;
-{
-	if ((out->tv_usec -= in->tv_usec) < 0)   {
-		out->tv_sec--;
-		out->tv_usec += 1000000;
-	}
-	out->tv_sec -= in->tv_sec;
-}
-
-void usage(void)
-{
-	fprintf(stderr,
-		"\nUsage:\n"
-		"  traceroute6 [options] <destination>\n"
-		"\nOptions:\n"
-		"  -d            use SO_DEBUG socket option\n"
-		"  -i <device>   bind to <device>\n"
-		"  -m <hops>     use maximum <hops>\n"
-		"  -n            no dns name resolution\n"
-		"  -p <port>     use destination <port>\n"
-		"  -q <nprobes>  number of probes\n"
-		"  -r            use SO_DONTROUTE socket option\n"
-		"  -s <address>  use source <address>\n"
-		"  -v            verbose output\n"
-		"  -w <timeout>  time to wait for response\n"
-		"\nFor more details see traceroute6(8).\n"
-	);
-	exit(1);
 }
