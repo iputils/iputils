@@ -527,18 +527,6 @@ int pr_nodeinfo(struct packetcontext *p)
 			free(p);
 			return -1;
 		}
-#if 0
-		/* Do not discard NI Queries to multicast address
-		 * other than its own NI Group Address(es) by default.
-		 */
-		if (!check_nigroup(&p->pktinfo.ipi6_addr)) {
-			DEBUG(LOG_WARNING,
-			      "Destination is link-local multicast address other than "
-			      "NI Group address.\n");
-			free(p);
-			return -1;
-		}
-#endif
 	}
 
 	/* Step 1: Check length */
