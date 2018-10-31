@@ -240,6 +240,7 @@
 #include <sys/param.h>
 #include <sys/socket.h>
 #include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 
 #if __linux__
@@ -283,7 +284,6 @@ struct run_state {
 	int sndsock;			/* send (udp) socket file descriptor */
 	char *sendbuff;
 	int datalen;
-	struct timezone tz;		/* leftover */
 	struct sockaddr_in6 whereto;	/* Who to try to reach */
 	struct sockaddr_in6 saddr;
 	struct sockaddr_in6 firsthop;
@@ -304,7 +304,7 @@ struct run_state {
 struct pkt_format {
 	uint32_t ident;
 	uint32_t seq;
-	struct timeval tv;
+	struct timespec ts;
 };
 
 /*
@@ -385,7 +385,7 @@ static void send_probe(struct run_state *ctl, uint32_t seq, int ttl)
 
 	pkt->ident = htonl(ctl->ident);
 	pkt->seq = htonl(seq);
-	gettimeofday(&pkt->tv, &ctl->tz);
+	clock_gettime(CLOCK_MONOTONIC_RAW, &pkt->ts);
 
 	i = setsockopt(ctl->sndsock, SOL_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof(ttl));
 	if (i < 0) {
@@ -406,12 +406,19 @@ static void send_probe(struct run_state *ctl, uint32_t seq, int ttl)
 	}
 }
 
-static double deltaT(struct timeval *t1p, struct timeval *t2p)
+static double deltaT(struct timespec *a, struct timespec *b)
 {
+	struct timespec c;
 	double dt;
 
-	dt = (double)(t2p->tv_sec - t1p->tv_sec) * 1000.0 +
-	    (double)(t2p->tv_usec - t1p->tv_usec) / 1000.0;
+	if ((b->tv_nsec - a->tv_nsec) < 0) {
+		c.tv_sec = b->tv_sec - a->tv_sec - 1UL;
+		c.tv_nsec = b->tv_nsec - a->tv_nsec + 1000000000UL;
+	} else {
+		c.tv_sec = b->tv_sec - a->tv_sec;
+		c.tv_nsec = b->tv_nsec - a->tv_nsec;
+	}
+	dt = (double)(c.tv_sec * 1000.0L) + (double)(c.tv_nsec / 1000000.0L);
 	return (dt);
 }
 
@@ -473,7 +480,7 @@ static char const *pr_type(const uint8_t t)
 }
 
 static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
-		     struct in6_addr *to, uint32_t seq, struct timeval *tv)
+		     struct in6_addr *to, uint32_t seq, struct timespec *ts)
 {
 	struct icmp6_hdr *icp = (struct icmp6_hdr *)ctl->packet;
 	uint8_t type, code;
@@ -501,7 +508,7 @@ static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 			pkt = (struct pkt_format *)(up + 1);
 
 			if (ntohl(pkt->ident) == (uint32_t) ctl->ident && ntohl(pkt->seq) == seq) {
-				*tv = pkt->tv;
+				*ts = pkt->ts;
 				return (type == ICMP6_TIME_EXCEEDED ? -1 : code + 1);
 			}
 		}
@@ -847,14 +854,13 @@ int main(int argc, char **argv)
 		for (probe = 0; probe < ctl.nprobes; ++probe) {
 			ssize_t cc;
 			uint8_t reset_timer = 1;
-			struct timeval t1, t2;
-			struct timezone tzone;
+			struct timespec t1, t2;
 			struct in6_addr to_addr;
 
-			gettimeofday(&t1, &tzone);
+			clock_gettime(CLOCK_MONOTONIC_RAW, &t1);
 			send_probe(&ctl, ++seq, ttl);
 			while ((cc = wait_for_reply(&ctl, &from, &to_addr, reset_timer)) != 0) {
-				gettimeofday(&t2, &tzone);
+				clock_gettime(CLOCK_MONOTONIC_RAW, &t2);
 				if ((i = packet_ok(&ctl, cc, &from, &to_addr, seq, &t1))) {
 					if (memcmp(&from.sin6_addr, &lastaddr,
 						   sizeof(from.sin6_addr))) {
@@ -862,7 +868,7 @@ int main(int argc, char **argv)
 						memcpy(&lastaddr,
 						       &from.sin6_addr, sizeof(lastaddr));
 					}
-					printf("  %g ms", deltaT(&t1, &t2));
+					printf("  %.4f ms", deltaT(&t1, &t2));
 					switch (i - 1) {
 					case ICMP6_DST_UNREACH_NOPORT:
 						got_there = 1;
