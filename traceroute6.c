@@ -267,7 +267,47 @@
 # define SOL_IPV6 IPPROTO_IPV6
 #endif
 
-#define	MAXPACKET	65535
+enum {
+	DEFAULT_PROBES = 3,
+	DEFAULT_HOPS = 30,
+	DEFAULT_PORT = 32768 + 666,
+	DEFAULT_WAIT = 5,
+	PACKET_SIZE = 512,
+	MAXPACKET = 65535,
+
+	/*
+	 * The following are copy from linux/icmpv6.h that cannot be
+	 * included because icmp6_filter prototype is redefined in
+	 * netinet/icmp6.h header.
+	 */
+	ICMPV6_DEST_UNREACH = 1,
+	ICMPV6_PKT_TOOBIG = 2,
+	ICMPV6_TIME_EXCEED = 3,
+	ICMPV6_PARAMPROB = 4,
+	ICMPV6_ECHO_REQUEST = 128,
+	ICMPV6_ECHO_REPLY = 129,
+	ICMPV6_MGM_QUERY = 130,
+	ICMPV6_MGM_REPORT = 131,
+	ICMPV6_MGM_REDUCTION = 132,
+	ICMPV6_NI_QUERY = 139,
+	ICMPV6_NI_REPLY = 140,
+	ICMPV6_MLD2_REPORT = 143,
+	ICMPV6_DHAAD_REQUEST = 144,
+	ICMPV6_DHAAD_REPLY = 145,
+	ICMPV6_MOBILE_PREFIX_SOL = 146,
+	ICMPV6_MOBILE_PREFIX_ADV = 147,
+
+	/*
+	 * ICMP codes for neighbour discovery messages.  These are from
+	 * linux kernel source include/net/ndisc.h file.  The user api
+	 * includes does not have these values.
+	 */
+	NDISC_ROUTER_SOLICITATION = 133,
+	NDISC_ROUTER_ADVERTISEMENT = 134,
+	NDISC_NEIGHBOUR_SOLICITATION = 135,
+	NDISC_NEIGHBOUR_ADVERTISEMENT = 136,
+	NDISC_REDIRECT = 137,
+};
 
 #ifndef FD_SET
 # define NFDBITS         (8 * sizeof(fd_set))
@@ -279,7 +319,7 @@
 #endif
 
 struct run_state {
-	unsigned char packet[512];	/* last inbound (icmp) packet */
+	unsigned char packet[PACKET_SIZE];	/* last inbound (icmp) packet */
 	int icmp_sock;			/* receive (icmp) socket file descriptor */
 	int sndsock;			/* send (udp) socket file descriptor */
 	char *sendbuff;
@@ -318,7 +358,7 @@ static int wait_for_reply(struct run_state *ctl, struct sockaddr_in6 *from,
 	fd_set fds;
 	static struct timeval wait;
 	ssize_t cc = 0;
-	char cbuf[512];
+	char cbuf[PACKET_SIZE];
 
 	FD_ZERO(&fds);
 	FD_SET(ctl->icmp_sock, &fds);
@@ -431,48 +471,48 @@ static char const *pr_type(const uint8_t t)
 		/* Unknown */
 	case 0:
 		return "Error";
-	case 1:
-		/* ICMP6_DST_UNREACH: */
+	case ICMPV6_DEST_UNREACH:
 		return "Destination Unreachable";
-	case 2:
-		/* ICMP6_PACKET_TOO_BIG: */
+	case ICMPV6_PKT_TOOBIG:
 		return "Packet Too Big";
-	case 3:
-		/* ICMP6_TIME_EXCEEDED */
+	case ICMPV6_TIME_EXCEED:
 		return "Time Exceeded in Transit";
-	case 4:
-		/* ICMP6_PARAM_PROB */
+	case ICMPV6_PARAMPROB:
 		return "Parameter Problem";
-	case 128:
-		/* ICMP6_ECHO_REQUEST */
+	case ICMPV6_ECHO_REQUEST:
 		return "Echo Request";
-	case 129:
-		/* ICMP6_ECHO_REPLY */
+	case ICMPV6_ECHO_REPLY:
 		return "Echo Reply";
-	case 130:
-		/* ICMP6_MEMBERSHIP_QUERY */
+	case ICMPV6_MGM_QUERY:
 		return "Membership Query";
-	case 131:
-		/* ICMP6_MEMBERSHIP_REPORT */
+	case ICMPV6_MGM_REPORT:
 		return "Membership Report";
-	case 132:
-		/* ICMP6_MEMBERSHIP_REDUCTION */
+	case ICMPV6_MGM_REDUCTION:
 		return "Membership Reduction";
-	case 133:
-		/* ND_ROUTER_SOLICIT */
+	case NDISC_ROUTER_SOLICITATION:
 		return "Router Solicitation";
-	case 134:
-		/* ND_ROUTER_ADVERT */
+	case NDISC_ROUTER_ADVERTISEMENT:
 		return "Router Advertisement";
-	case 135:
-		/* ND_NEIGHBOR_SOLICIT */
+	case NDISC_NEIGHBOUR_SOLICITATION:
 		return "Neighbor Solicitation";
-	case 136:
-		/* ND_NEIGHBOR_ADVERT */
+	case NDISC_NEIGHBOUR_ADVERTISEMENT:
 		return "Neighbor Advertisement";
-	case 137:
-		/* ND_REDIRECT */
+	case NDISC_REDIRECT:
 		return "Redirect";
+	case ICMPV6_NI_QUERY:
+		return "Neighbor Query";
+	case ICMPV6_NI_REPLY:
+		return "Neighbor Reply";
+	case ICMPV6_MLD2_REPORT:
+		return "Multicast Listener Report packet";
+	case ICMPV6_DHAAD_REQUEST:
+		return "Home Agent Address Discovery Request Message";
+	case ICMPV6_DHAAD_REPLY:
+		return "Home Agent Address Discovery Reply message";
+	case ICMPV6_MOBILE_PREFIX_SOL:
+		return "Mobile Prefix Solicitation Message";
+	case ICMPV6_MOBILE_PREFIX_ADV:
+		return "Mobile Prefix Solicitation Advertisement";
 	default:
 		return "OUT-OF-RANGE";
 	}
@@ -584,10 +624,10 @@ static __attribute__((noreturn)) void usage(void)
 int main(int argc, char **argv)
 {
 	struct run_state ctl = {
-		.nprobes = 3,
-		.max_ttl = 30,
-		.port = 32768 + 666,
-		.waittime = 5,
+		.nprobes = DEFAULT_PROBES,
+		.max_ttl = DEFAULT_HOPS,
+		.port = DEFAULT_PORT,
+		.waittime = DEFAULT_WAIT,
 		0
 	};
 	char pa[NI_MAXHOST];
