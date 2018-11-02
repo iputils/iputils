@@ -621,6 +621,20 @@ static __attribute__((noreturn)) void usage(void)
 	exit(1);
 }
 
+static uint16_t get_ip_unprivileged_port_start(const uint16_t fallback)
+{
+	FILE *f;
+	uint16_t nr = fallback;
+
+	f = fopen("/proc/sys/net/ipv4/ip_unprivileged_port_start", "r");
+	if (f) {
+		if (fscanf(f, "%" SCNu16, &nr) != 1)
+			nr = fallback;
+		fclose(f);
+	}
+	return nr;
+}
+
 int main(int argc, char **argv)
 {
 	struct run_state ctl = {
@@ -847,7 +861,7 @@ int main(int argc, char **argv)
 			     strlen(ctl.device) + 1) == -1)
 				perror("WARNING: interface is ignored");
 		}
-		ctl.firsthop.sin6_port = htons(1025);
+		ctl.firsthop.sin6_port = htons(get_ip_unprivileged_port_start(1025));
 		if (connect(probe_fd, (struct sockaddr *)&ctl.firsthop,
 			    sizeof(ctl.firsthop)) == -1) {
 			perror("connect");
