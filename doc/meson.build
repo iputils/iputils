@@ -47,7 +47,16 @@ xsltproc_args = [
 	'--stringparam', 'iputils.version', meson.project_version(),
 ]
 
-if xsltproc.found() and build_mans == true
+if xsltproc.found()
+	testrun = run_command([xsltproc, '--nonet',
+		'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl'])
+	xsltproc_works = testrun.returncode() == 0
+else
+	warning('No docbook stylesheet found for generating man pages')
+	xsltproc_works = false
+endif
+
+if build_mans and xsltproc_works
 	foreach man : manpages
 		custom_target(man + '.8',
 			output : man + '.8',
@@ -65,7 +74,7 @@ if xsltproc.found() and build_mans == true
 	endforeach
 endif
 
-if xsltproc.found() and build_html_mans == true
+if build_html_mans and xsltproc_works
 	foreach man : manpages
 		custom_target(man + '.html',
 			output : man + '.html',
