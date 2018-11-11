@@ -211,9 +211,8 @@ static double ping_strtod(const char *str, const char *err_msg)
 	}
 	return num;
  err:
-	if (errno == ERANGE)
-		error(2, errno, "%s: %s", err_msg, str);
-	error(2, 0, "%s: %s", err_msg, str);
+	error(2, errno, "%s: %s", err_msg, str);
+	abort();	/* cannot be reached, above error() will exit */
 	return 0.0;
 }
 
