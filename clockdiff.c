@@ -78,58 +78,63 @@
 
 #define MAX_HOSTNAMELEN	NI_MAXHOST
 
+enum {
+	RANGE = 1,		/* best expected round-trip time, ms */
+	MSGS = 50,
+	TRIALS = 10,
+
+	GOOD = 0,
+	UNREACHABLE = 2,
+	NONSTDTIME = 3,
+	HOSTDOWN = 0x7fffffff,
+
+	BIASP = 43199999,
+	BIASN = -43200000,
+	MODULO =  86400000,
+	PROCESSING_TIME	= 0,	/* ms. to reduce error in measurement */
+
+	PACKET_IN = 1024
+};
+
+struct run_state {
+	int interactive;
+	uint16_t id;
+	int sock_raw;
+	struct sockaddr_in server;
+	int ip_opt_len;
+	int measure_delta;
+	int measure_delta1;
+	unsigned short seqno;
+	unsigned short seqno0;
+	unsigned short acked;
+	long rtt;
+	long min_rtt;
+	long rtt_sigma;
+	char *myname;
+	char *hisname;
+};
+
 /*
- * Checksum routine for Internet Protocol family headers.
+ * All includes, definitions, struct declarations, and global variables are above.  After
+ * this comment all you can find is functions.
+ */
+
+/*
+ * addcarry() - checksum routine for Internet Protocol family headers.
  *
  * This routine is very heavily used in the network code and should be modified for each
  * CPU to be as fast as possible.
  *
  * This implementation is TAHOE version.
  */
-
-#undef  ADDCARRY
-#define ADDCARRY(sum) { \
-	if (sum & 0xffff0000) {	\
-		sum &= 0xffff; \
-		sum++; \
-	} \
+static inline int addcarry(int sum)
+{
+	if (sum & 0xffff0000) {
+		sum &= 0xffff;
+		sum++;
+	}
+	return sum;
 }
-
-#define RANGE		1		/* best expected round-trip time, ms */
-#define MSGS 		50
-#define TRIALS		10
-
-#define GOOD		0
-#define UNREACHABLE	2
-#define NONSTDTIME	3
-#define HOSTDOWN 	0x7fffffff
-
-#define BIASP	 	43199999
-#define BIASN		-43200000
-#define MODULO	 	86400000
-#define PROCESSING_TIME	0 	/* ms. to reduce error in measurement */
-
-#define PACKET_IN	1024
-
-int interactive = 0;
-uint16_t id;
-int sock_raw;
-struct sockaddr_in server;
-int ip_opt_len = 0;
-
-int measure_delta;
-int measure_delta1;
-static unsigned short seqno, seqno0, acked;
-long rtt = 1000;
-long min_rtt;
-long rtt_sigma = 0;
-
-char *myname, *hisname;
-
-/*
- * All includes, definitions, struct declarations, and global variables are above.  After
- * this comment all you can find is functions.
- */
 
 static int in_cksum(unsigned short *addr, int len)
 {
@@ -150,7 +155,7 @@ static int in_cksum(unsigned short *addr, int len)
 				addr++;
 			} else
 				sum += *addr++;
-			ADDCARRY(sum);
+			sum = addcarry(sum);
 		}
 		if (len == -1)
 			/* odd number of bytes */
@@ -163,7 +168,7 @@ static int in_cksum(unsigned short *addr, int len)
 		 */
 		u.c[1] = 0;
 		sum += u.s;
-		ADDCARRY(sum);
+		sum = addcarry(sum);
 	}
 	return (~sum & 0xffff);
 }
@@ -171,7 +176,7 @@ static int in_cksum(unsigned short *addr, int len)
 /*
  * Measures the differences between machines' clocks using ICMP timestamp messages.
  */
-static int measure(struct sockaddr_in *addr)
+static int measure(struct run_state *ctl)
 {
 	socklen_t length;
 	int msgcount;
@@ -187,19 +192,19 @@ static int measure(struct sockaddr_in *addr)
 	struct iphdr *ip = (struct iphdr *)packet;
 
 	min1 = min2 = 0x7fffffff;
-	min_rtt = 0x7fffffff;
-	measure_delta = HOSTDOWN;
-	measure_delta1 = HOSTDOWN;
+	ctl->min_rtt = 0x7fffffff;
+	ctl->measure_delta = HOSTDOWN;
+	ctl->measure_delta1 = HOSTDOWN;
 
 	/* empties the icmp input queue */
 	FD_ZERO(&ready);
 
  empty:
 	tout.tv_sec = tout.tv_usec = 0;
-	FD_SET(sock_raw, &ready);
+	FD_SET(ctl->sock_raw, &ready);
 	if (select(FD_SETSIZE, &ready, NULL, NULL, &tout)) {
 		length = sizeof(struct sockaddr_in);
-		cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
+		cc = recvfrom(ctl->sock_raw, (char *)packet, PACKET_IN, 0,
 			      NULL, &length);
 		if (cc < 0)
 			return -1;
@@ -218,13 +223,13 @@ static int measure(struct sockaddr_in *addr)
 	oicp->type = ICMP_TIMESTAMP;
 	oicp->code = 0;
 	oicp->checksum = 0;
-	oicp->un.echo.id = id;
+	oicp->un.echo.id = ctl->id;
 	((uint32_t *) (oicp + 1))[0] = 0;
 	((uint32_t *) (oicp + 1))[1] = 0;
 	((uint32_t *) (oicp + 1))[2] = 0;
 	FD_ZERO(&ready);
 
-	acked = seqno = seqno0 = 0;
+	ctl->acked = ctl->seqno = ctl->seqno0 = 0;
 
 	for (msgcount = 0; msgcount < MSGS;) {
 
@@ -232,10 +237,10 @@ static int measure(struct sockaddr_in *addr)
 		 * If no answer is received for TRIALS consecutive times, the machine is
 		 * assumed to be down
 		 */
-		if (seqno - acked > TRIALS)
+		if (ctl->seqno - ctl->acked > TRIALS)
 			return HOSTDOWN;
 
-		oicp->un.echo.sequence = ++seqno;
+		oicp->un.echo.sequence = ++ctl->seqno;
 		oicp->checksum = 0;
 
 		gettimeofday(&tv1, NULL);
@@ -243,17 +248,17 @@ static int measure(struct sockaddr_in *addr)
 		    htonl((tv1.tv_sec % (24 * 60 * 60)) * 1000 + tv1.tv_usec / 1000);
 		oicp->checksum = in_cksum((unsigned short *)oicp, sizeof(*oicp) + 12);
 
-		count = sendto(sock_raw, (char *)opacket, sizeof(*oicp) + 12, 0,
-			       (struct sockaddr *)addr, sizeof(struct sockaddr_in));
+		count = sendto(ctl->sock_raw, (char *)opacket, sizeof(*oicp) + 12, 0,
+			       (struct sockaddr *)&ctl->server, sizeof(struct sockaddr_in));
 
 		if (count < 0)
 			return UNREACHABLE;
 
 		for (;;) {
 			FD_ZERO(&ready);
-			FD_SET(sock_raw, &ready);
+			FD_SET(ctl->sock_raw, &ready);
 			{
-				long tmo = rtt + rtt_sigma;
+				long tmo = ctl->rtt + ctl->rtt_sigma;
 
 				tout.tv_sec = tmo / 1000;
 				tout.tv_usec = (tmo - (tmo / 1000) * 1000) * 1000;
@@ -264,25 +269,26 @@ static int measure(struct sockaddr_in *addr)
 				break;
 
 			gettimeofday(&tv1, NULL);
-			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
+			cc = recvfrom(ctl->sock_raw, (char *)packet, PACKET_IN, 0,
 				      NULL, &length);
 
 			if (cc < 0)
 				return (-1);
 
 			icp = (struct icmphdr *)(packet + (ip->ihl << 2));
-			if (icp->type == ICMP_TIMESTAMPREPLY && icp->un.echo.id == id
-			    && icp->un.echo.sequence >= seqno0 && icp->un.echo.sequence <= seqno) {
-				if (acked < icp->un.echo.sequence)
-					acked = icp->un.echo.sequence;
+			if (icp->type == ICMP_TIMESTAMPREPLY && icp->un.echo.id == ctl->id
+			    && icp->un.echo.sequence >= ctl->seqno0
+			    && icp->un.echo.sequence <= ctl->seqno) {
+				if (ctl->acked < icp->un.echo.sequence)
+					ctl->acked = icp->un.echo.sequence;
 				recvtime = (tv1.tv_sec % (24 * 60 * 60)) * 1000 + tv1.tv_usec / 1000;
 				sendtime = ntohl(*(uint32_t *) (icp + 1));
 				diff = recvtime - sendtime;
 				/* diff can be less than 0 around midnight */
 				if (diff < 0)
 					continue;
-				rtt = (rtt * 3 + diff) / 4;
-				rtt_sigma = (rtt_sigma * 3 + labs(diff - rtt)) / 4;
+				ctl->rtt = (ctl->rtt * 3 + diff) / 4;
+				ctl->rtt_sigma = (ctl->rtt_sigma * 3 + labs(diff - ctl->rtt)) / 4;
 				msgcount++;
 				histime = ntohl(((uint32_t *) (icp + 1))[1]);
 				/*
@@ -293,7 +299,7 @@ static int measure(struct sockaddr_in *addr)
 				if ((histime & 0x80000000) != 0)
 					return NONSTDTIME;
 
-				if (interactive) {
+				if (ctl->interactive) {
 					printf(".");
 					fflush(stdout);
 				}
@@ -320,9 +326,9 @@ static int measure(struct sockaddr_in *addr)
 					min1 = delta1;
 				if (delta2 < min2)
 					min2 = delta2;
-				if (delta1 + delta2 < min_rtt) {
-					min_rtt = delta1 + delta2;
-					measure_delta1 = (delta1 - delta2) / 2 + PROCESSING_TIME;
+				if (delta1 + delta2 < ctl->min_rtt) {
+					ctl->min_rtt = delta1 + delta2;
+					ctl->measure_delta1 = (delta1 - delta2) / 2 + PROCESSING_TIME;
 				}
 				if (diff < RANGE) {
 					min1 = delta1;
@@ -333,11 +339,11 @@ static int measure(struct sockaddr_in *addr)
 		}
 	}
  good_exit:
-	measure_delta = (min1 - min2) / 2 + PROCESSING_TIME;
+	ctl->measure_delta = (min1 - min2) / 2 + PROCESSING_TIME;
 	return GOOD;
 }
 
-static int measure_opt(struct sockaddr_in *addr)
+static int measure_opt(struct run_state *ctl)
 {
 	socklen_t length;
 	int msgcount;
@@ -353,18 +359,18 @@ static int measure_opt(struct sockaddr_in *addr)
 	struct iphdr *ip = (struct iphdr *)packet;
 
 	min1 = min2 = 0x7fffffff;
-	min_rtt = 0x7fffffff;
-	measure_delta = HOSTDOWN;
-	measure_delta1 = HOSTDOWN;
+	ctl->min_rtt = 0x7fffffff;
+	ctl->measure_delta = HOSTDOWN;
+	ctl->measure_delta1 = HOSTDOWN;
 
 	/* empties the icmp input queue */
 	FD_ZERO(&ready);
  empty:
 	tout.tv_sec = tout.tv_usec = 0;
-	FD_SET(sock_raw, &ready);
+	FD_SET(ctl->sock_raw, &ready);
 	if (select(FD_SETSIZE, &ready, NULL, NULL, &tout)) {
 		length = sizeof(struct sockaddr_in);
-		cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
+		cc = recvfrom(ctl->sock_raw, (char *)packet, PACKET_IN, 0,
 			      NULL, &length);
 		if (cc < 0)
 			return -1;
@@ -383,14 +389,14 @@ static int measure_opt(struct sockaddr_in *addr)
 	oicp->type = ICMP_ECHO;
 	oicp->code = 0;
 	oicp->checksum = 0;
-	oicp->un.echo.id = id;
+	oicp->un.echo.id = ctl->id;
 	((uint32_t *) (oicp + 1))[0] = 0;
 	((uint32_t *) (oicp + 1))[1] = 0;
 	((uint32_t *) (oicp + 1))[2] = 0;
 
 	FD_ZERO(&ready);
 
-	acked = seqno = seqno0 = 0;
+	ctl->acked = ctl->seqno = ctl->seqno0 = 0;
 
 	for (msgcount = 0; msgcount < MSGS;) {
 
@@ -398,11 +404,11 @@ static int measure_opt(struct sockaddr_in *addr)
 		 * If no answer is received for TRIALS consecutive times, the machine is
 		 * assumed to be down
 		 */
-		if (seqno - acked > TRIALS) {
+		if (ctl->seqno - ctl->acked > TRIALS) {
 			errno = EHOSTDOWN;
 			return HOSTDOWN;
 		}
-		oicp->un.echo.sequence = ++seqno;
+		oicp->un.echo.sequence = ++ctl->seqno;
 		oicp->checksum = 0;
 
 		gettimeofday(&tv1, NULL);
@@ -410,8 +416,8 @@ static int measure_opt(struct sockaddr_in *addr)
 						     + tv1.tv_usec / 1000);
 		oicp->checksum = in_cksum((unsigned short *)oicp, sizeof(*oicp) + 12);
 
-		count = sendto(sock_raw, (char *)opacket, sizeof(*oicp) + 12, 0,
-			       (struct sockaddr *)addr, sizeof(struct sockaddr_in));
+		count = sendto(ctl->sock_raw, (char *)opacket, sizeof(*oicp) + 12, 0,
+			       (struct sockaddr *)&ctl->server, sizeof(struct sockaddr_in));
 
 		if (count < 0) {
 			errno = EHOSTUNREACH;
@@ -420,9 +426,9 @@ static int measure_opt(struct sockaddr_in *addr)
 
 		for (;;) {
 			FD_ZERO(&ready);
-			FD_SET(sock_raw, &ready);
+			FD_SET(ctl->sock_raw, &ready);
 			{
-				long tmo = rtt + rtt_sigma;
+				long tmo = ctl->rtt + ctl->rtt_sigma;
 
 				tout.tv_sec = tmo / 1000;
 				tout.tv_usec = (tmo - (tmo / 1000) * 1000) * 1000;
@@ -431,9 +437,8 @@ static int measure_opt(struct sockaddr_in *addr)
 			if ((count = select(FD_SETSIZE, &ready, NULL,
 					    NULL, &tout)) <= 0)
 				break;
-
 			gettimeofday(&tv1, NULL);
-			cc = recvfrom(sock_raw, (char *)packet, PACKET_IN, 0,
+			cc = recvfrom(ctl->sock_raw, (char *)packet, PACKET_IN, 0,
 				      NULL, &length);
 
 			if (cc < 0)
@@ -442,19 +447,20 @@ static int measure_opt(struct sockaddr_in *addr)
 			icp = (struct icmphdr *)(packet + (ip->ihl << 2));
 			if (icp->type == ICMP_ECHOREPLY &&
 			    packet[20] == IPOPT_TIMESTAMP &&
-			    icp->un.echo.id == id &&
-			    icp->un.echo.sequence >= seqno0 && icp->un.echo.sequence <= seqno) {
+			    icp->un.echo.id == ctl->id &&
+			    icp->un.echo.sequence >= ctl->seqno0 &&
+			    icp->un.echo.sequence <= ctl->seqno) {
 				int i;
 				uint8_t *opt = packet + 20;
 
-				if (acked < icp->un.echo.sequence)
-					acked = icp->un.echo.sequence;
+				if (ctl->acked < icp->un.echo.sequence)
+					ctl->acked = icp->un.echo.sequence;
 				if ((opt[3] & 0xF) != IPOPT_TS_PRESPEC) {
 					fprintf(stderr, "Wrong timestamp %d\n", opt[3] & 0xF);
 					return NONSTDTIME;
 				}
 				if (opt[3] >> 4) {
-					if ((opt[3] >> 4) != 1 || ip_opt_len != 4 + 3 * 8)
+					if ((opt[3] >> 4) != 1 || ctl->ip_opt_len != 4 + 3 * 8)
 						fprintf(stderr, "Overflow %d hops\n", opt[3] >> 4);
 				}
 				sendtime = recvtime = histime = histime1 = 0;
@@ -470,7 +476,7 @@ static int measure_opt(struct sockaddr_in *addr)
 					if (i == 1)
 						histime = histime1 = t;
 					if (i == 2) {
-						if (ip_opt_len == 4 + 4 * 8)
+						if (ctl->ip_opt_len == 4 + 4 * 8)
 							histime1 = t;
 						else
 							recvtime = t;
@@ -488,11 +494,11 @@ static int measure_opt(struct sockaddr_in *addr)
 				/* diff can be less than 0 around midnight */
 				if (diff < 0)
 					continue;
-				rtt = (rtt * 3 + diff) / 4;
-				rtt_sigma = (rtt_sigma * 3 + labs(diff - rtt)) / 4;
+				ctl->rtt = (ctl->rtt * 3 + diff) / 4;
+				ctl->rtt_sigma = (ctl->rtt_sigma * 3 + labs(diff - ctl->rtt)) / 4;
 				msgcount++;
 
-				if (interactive) {
+				if (ctl->interactive) {
 					printf(".");
 					fflush(stdout);
 				}
@@ -519,9 +525,9 @@ static int measure_opt(struct sockaddr_in *addr)
 					min1 = delta1;
 				if (delta2 < min2)
 					min2 = delta2;
-				if (delta1 + delta2 < min_rtt) {
-					min_rtt = delta1 + delta2;
-					measure_delta1 = (delta1 - delta2) / 2 + PROCESSING_TIME;
+				if (delta1 + delta2 < ctl->min_rtt) {
+					ctl->min_rtt = delta1 + delta2;
+					ctl->measure_delta1 = (delta1 - delta2) / 2 + PROCESSING_TIME;
 				}
 				if (diff < RANGE) {
 					min1 = delta1;
@@ -533,7 +539,7 @@ static int measure_opt(struct sockaddr_in *addr)
 	}
 
  good_exit:
-	measure_delta = (min1 - min2) / 2 + PROCESSING_TIME;
+	ctl->measure_delta = (min1 - min2) / 2 + PROCESSING_TIME;
 	return GOOD;
 }
 
@@ -571,6 +577,10 @@ static void drop_rights(void)
 
 int main(int argc, char **argv)
 {
+	struct run_state ctl = {
+		.rtt = 1000,
+		0
+	};
 	int measure_status;
 
 	struct addrinfo hints = {
@@ -593,7 +603,7 @@ int main(int argc, char **argv)
 		usage();
 	}
 
-	sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+	ctl.sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	s_errno = errno;
 
 	errno = 0;
@@ -603,17 +613,17 @@ int main(int argc, char **argv)
 
 	if (argc == 3) {
 		if (strcmp(argv[1], "-o") == 0) {
-			ip_opt_len = 4 + 4 * 8;
+			ctl.ip_opt_len = 4 + 4 * 8;
 			argv++;
 		} else if (strcmp(argv[1], "-o1") == 0) {
-			ip_opt_len = 4 + 3 * 8;
+			ctl.ip_opt_len = 4 + 3 * 8;
 			argv++;
 		} else
 			usage();
 	} else if (argc != 2)
 		usage();
 
-	if (sock_raw < 0) {
+	if (ctl.sock_raw < 0) {
 		errno = s_errno;
 		perror("clockdiff: socket");
 		exit(1);
@@ -626,9 +636,9 @@ int main(int argc, char **argv)
 	}
 
 	if (isatty(fileno(stdin)) && isatty(fileno(stdout)))
-		interactive = 1;
+		ctl.interactive = 1;
 
-	id = getpid();
+	ctl.id = getpid();
 
 	gethostname(hostname, sizeof(hostname));
 	status = getaddrinfo(hostname, NULL, &hints, &result);
@@ -636,7 +646,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "clockdiff: %s: %s\n", hostname, gai_strerror(status));
 		exit(2);
 	}
-	myname = strdup(result->ai_canonname);
+	ctl.myname = strdup(result->ai_canonname);
 	freeaddrinfo(result);
 
 	status = getaddrinfo(argv[1], NULL, &hints, &result);
@@ -644,47 +654,47 @@ int main(int argc, char **argv)
 		fprintf(stderr, "clockdiff: %s: %s\n", argv[1], gai_strerror(status));
 		exit(1);
 	}
-	hisname = strdup(result->ai_canonname);
+	ctl.hisname = strdup(result->ai_canonname);
 
-	memcpy(&server, result->ai_addr, sizeof server);
+	memcpy(&ctl.server, result->ai_addr, sizeof ctl.server);
 	freeaddrinfo(result);
 
-	if (connect(sock_raw, (struct sockaddr *)&server, sizeof(server)) == -1) {
+	if (connect(ctl.sock_raw, (struct sockaddr *)&ctl.server, sizeof(ctl.server)) == -1) {
 		perror("connect");
 		exit(1);
 	}
-	if (ip_opt_len) {
+	if (ctl.ip_opt_len) {
 		struct sockaddr_in myaddr;
 		socklen_t addrlen = sizeof(myaddr);
-		unsigned char rspace[ip_opt_len];
+		unsigned char rspace[ctl.ip_opt_len];
 
 		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_TIMESTAMP;
-		rspace[1] = ip_opt_len;
+		rspace[1] = ctl.ip_opt_len;
 		rspace[2] = 5;
 		rspace[3] = IPOPT_TS_PRESPEC;
-		if (getsockname(sock_raw, (struct sockaddr *)&myaddr, &addrlen) == -1) {
+		if (getsockname(ctl.sock_raw, (struct sockaddr *)&myaddr, &addrlen) == -1) {
 			perror("getsockname");
 			exit(1);
 		}
 		((uint32_t *) (rspace + 4))[0 * 2] = myaddr.sin_addr.s_addr;
-		((uint32_t *) (rspace + 4))[1 * 2] = server.sin_addr.s_addr;
+		((uint32_t *) (rspace + 4))[1 * 2] = ctl.server.sin_addr.s_addr;
 		((uint32_t *) (rspace + 4))[2 * 2] = myaddr.sin_addr.s_addr;
-		if (ip_opt_len == 4 + 4 * 8) {
-			((uint32_t *) (rspace + 4))[2 * 2] = server.sin_addr.s_addr;
+		if (ctl.ip_opt_len == 4 + 4 * 8) {
+			((uint32_t *) (rspace + 4))[2 * 2] = ctl.server.sin_addr.s_addr;
 			((uint32_t *) (rspace + 4))[3 * 2] = myaddr.sin_addr.s_addr;
 		}
 
-		if (setsockopt(sock_raw, IPPROTO_IP, IP_OPTIONS, rspace, ip_opt_len) < 0) {
+		if (setsockopt(ctl.sock_raw, IPPROTO_IP, IP_OPTIONS, rspace, ctl.ip_opt_len) < 0) {
 			perror("ping: IP_OPTIONS (fallback to icmp tstamps)");
-			ip_opt_len = 0;
+			ctl.ip_opt_len = 0;
 		}
 	}
 
-	if (ip_opt_len)
-		measure_status = measure_opt(&server);
+	if (ctl.ip_opt_len)
+		measure_status = measure_opt(&ctl);
 	else
-		measure_status = measure(&server);
+		measure_status = measure(&ctl);
 	if (measure_status < 0) {
 		if (errno)
 			perror("measure");
@@ -695,13 +705,13 @@ int main(int argc, char **argv)
 
 	switch (measure_status) {
 	case HOSTDOWN:
-		fprintf(stderr, "%s is down\n", hisname);
+		fprintf(stderr, "%s is down\n", ctl.hisname);
 		exit(1);
 	case NONSTDTIME:
-		fprintf(stderr, "%s time transmitted in a non-standard format\n", hisname);
+		fprintf(stderr, "%s time transmitted in a non-standard format\n", ctl.hisname);
 		exit(1);
 	case UNREACHABLE:
-		fprintf(stderr, "%s is unreachable\n", hisname);
+		fprintf(stderr, "%s is unreachable\n", ctl.hisname);
 		exit(1);
 	default:
 		break;
@@ -710,12 +720,12 @@ int main(int argc, char **argv)
 	{
 		time_t now = time(NULL);
 
-		if (interactive)
+		if (ctl.interactive)
 			printf("\nhost=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s",
-				hisname, rtt, rtt_sigma, min_rtt, measure_delta,
-				measure_delta1, ctime(&now));
+				ctl.hisname, ctl.rtt, ctl.rtt_sigma, ctl.min_rtt,
+				ctl.measure_delta, ctl.measure_delta1, ctime(&now));
 		else
-			printf("%ld %d %d\n", now, measure_delta, measure_delta1);
+			printf("%ld %d %d\n", now, ctl.measure_delta, ctl.measure_delta1);
 	}
 	exit(0);
 }
