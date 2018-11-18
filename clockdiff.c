@@ -86,6 +86,8 @@ enum {
 	GOOD = 0,
 	UNREACHABLE = 2,
 	NONSTDTIME = 3,
+	BREAK = 4,
+	CONTINUE = 5,
 	HOSTDOWN = 0x7fffffff,
 
 	BIASP = 43199999,
@@ -112,6 +114,21 @@ struct run_state {
 	long rtt_sigma;
 	char *myname;
 	char *hisname;
+};
+
+struct measure_vars {
+	fd_set ready;
+	struct timeval tv1;
+	struct timeval tout;
+	int count;
+	int cc;
+	unsigned char packet[PACKET_IN];
+	socklen_t length;
+	struct icmphdr *icp;
+	struct iphdr *ip;
+	int msgcount;
+	long min1;
+	long min2;
 };
 
 /*
@@ -173,39 +190,171 @@ static int in_cksum(unsigned short *addr, int len)
 	return (~sum & 0xffff);
 }
 
+static int measure_inner_loop(struct run_state *ctl, struct measure_vars *mv)
+{
+	long delta1;
+	long delta2;
+	long diff;
+	long histime;
+	long histime1;
+	long recvtime;
+	long sendtime;
+
+	FD_ZERO(&mv->ready);
+	FD_SET(ctl->sock_raw, &mv->ready);
+	{
+		long tmo = ctl->rtt + ctl->rtt_sigma;
+
+		mv->tout.tv_sec = tmo / 1000;
+		mv->tout.tv_usec = (tmo - (tmo / 1000) * 1000) * 1000;
+	}
+
+	if ((mv->count = select(FD_SETSIZE, &mv->ready, NULL, NULL, &mv->tout)) <= 0)
+		return BREAK;
+
+	gettimeofday(&mv->tv1, NULL);
+	mv->cc = recvfrom(ctl->sock_raw, (char *)mv->packet, PACKET_IN, 0, NULL, &mv->length);
+
+	if (mv->cc < 0)
+		return (-1);
+
+	mv->icp = (struct icmphdr *)(mv->packet + (mv->ip->ihl << 2));
+
+	if (((ctl->ip_opt_len && mv->icp->type == ICMP_ECHOREPLY
+	      && mv->packet[20] == IPOPT_TIMESTAMP)
+	     || mv->icp->type == ICMP_TIMESTAMPREPLY)
+	    && mv->icp->un.echo.id == ctl->id && mv->icp->un.echo.sequence >= ctl->seqno0
+	    && mv->icp->un.echo.sequence <= ctl->seqno) {
+		int i;
+		uint8_t *opt = mv->packet + 20;
+
+		if (ctl->acked < mv->icp->un.echo.sequence)
+			ctl->acked = mv->icp->un.echo.sequence;
+		if (ctl->ip_opt_len) {
+			if ((opt[3] & 0xF) != IPOPT_TS_PRESPEC) {
+				fprintf(stderr, "Wrong timestamp %d\n", opt[3] & 0xF);
+				return NONSTDTIME;
+			}
+			if (opt[3] >> 4) {
+				if ((opt[3] >> 4) != 1 || ctl->ip_opt_len != 4 + 3 * 8)
+					fprintf(stderr, "Overflow %d hops\n", opt[3] >> 4);
+			}
+			sendtime = recvtime = histime = histime1 = 0;
+			for (i = 0; i < (opt[2] - 5) / 8; i++) {
+				uint32_t *timep = (uint32_t *) (opt + 4 + i * 8 + 4);
+				uint32_t t = ntohl(*timep);
+
+				if (t & 0x80000000)
+					return NONSTDTIME;
+
+				if (i == 0)
+					sendtime = t;
+				if (i == 1)
+					histime = histime1 = t;
+				if (i == 2) {
+					if (ctl->ip_opt_len == 4 + 4 * 8)
+						histime1 = t;
+					else
+						recvtime = t;
+				}
+				if (i == 3)
+					recvtime = t;
+			}
+
+			if (!(sendtime & histime & histime1 & recvtime)) {
+				fprintf(stderr, "wrong timestamps\n");
+				return -1;
+			}
+		} else {
+			recvtime = (mv->tv1.tv_sec % (24 * 60 * 60)) * 1000 +
+					mv->tv1.tv_usec / 1000;
+			sendtime = ntohl(*(uint32_t *) (mv->icp + 1));
+		}
+		diff = recvtime - sendtime;
+		/* diff can be less than 0 around midnight */
+		if (diff < 0)
+			return CONTINUE;
+		ctl->rtt = (ctl->rtt * 3 + diff) / 4;
+		ctl->rtt_sigma = (ctl->rtt_sigma * 3 + labs(diff - ctl->rtt)) / 4;
+		mv->msgcount++;
+		if (!ctl->ip_opt_len) {
+			histime = ntohl(((uint32_t *) (mv->icp + 1))[1]);
+			/*
+			 * a hosts using a time format different from ms.  since midnight
+			 * UT (as per RFC792) should set the high order bit of the 32-bit
+			 * time value it transmits.
+			 */
+			if ((histime & 0x80000000) != 0)
+				return NONSTDTIME;
+		}
+		if (ctl->interactive) {
+			printf(".");
+			fflush(stdout);
+		}
+
+		delta1 = histime - sendtime;
+		/*
+		 * Handles wrap-around to avoid that around midnight small time
+		 * differences appear enormous.  However, the two machine's clocks must
+		 * be within 12 hours from each other.
+		 */
+		if (delta1 < BIASN)
+			delta1 += MODULO;
+		else if (delta1 > BIASP)
+			delta1 -= MODULO;
+
+		if (ctl->ip_opt_len)
+			delta2 = recvtime - histime1;
+		else
+			delta2 = recvtime - histime;
+		if (delta2 < BIASN)
+			delta2 += MODULO;
+		else if (delta2 > BIASP)
+			delta2 -= MODULO;
+
+		if (delta1 < mv->min1)
+			mv->min1 = delta1;
+		if (delta2 < mv->min2)
+			mv->min2 = delta2;
+		if (delta1 + delta2 < ctl->min_rtt) {
+			ctl->min_rtt = delta1 + delta2;
+			ctl->measure_delta1 = (delta1 - delta2) / 2 + PROCESSING_TIME;
+		}
+		if (diff < RANGE) {
+			mv->min1 = delta1;
+			mv->min2 = delta2;
+			return BREAK;
+		}
+	}
+	return CONTINUE;
+}
+
 /*
  * Measures the differences between machines' clocks using ICMP timestamp messages.
  */
 static int measure(struct run_state *ctl)
 {
-	socklen_t length;
-	int msgcount;
-	int cc, count;
-	fd_set ready;
-	long sendtime, recvtime, histime = 0, histime1 = 0;
-	long min1, min2, diff;
-	long delta1, delta2;
-	struct timeval tv1, tout;
-	unsigned char packet[PACKET_IN], opacket[64];
-	struct icmphdr *icp;
+	struct measure_vars mv = {
+		.min1 = 0x7fffffff,
+		.min2 = 0x7fffffff
+	};
+	unsigned char opacket[64];
 	struct icmphdr *oicp = (struct icmphdr *)opacket;
-	struct iphdr *ip = (struct iphdr *)packet;
 
-	min1 = min2 = 0x7fffffff;
+	mv.ip = (struct iphdr *)mv.packet;
 	ctl->min_rtt = 0x7fffffff;
 	ctl->measure_delta = HOSTDOWN;
 	ctl->measure_delta1 = HOSTDOWN;
 
 	/* empties the icmp input queue */
-	FD_ZERO(&ready);
+	FD_ZERO(&mv.ready);
  empty:
-	tout.tv_sec = tout.tv_usec = 0;
-	FD_SET(ctl->sock_raw, &ready);
-	if (select(FD_SETSIZE, &ready, NULL, NULL, &tout)) {
-		length = sizeof(struct sockaddr_in);
-		cc = recvfrom(ctl->sock_raw, (char *)packet, PACKET_IN, 0,
-			      NULL, &length);
-		if (cc < 0)
+	FD_SET(ctl->sock_raw, &mv.ready);
+	if (select(FD_SETSIZE, &mv.ready, NULL, NULL, &mv.tout)) {
+		mv.length = sizeof(struct sockaddr_in);
+		mv.cc = recvfrom(ctl->sock_raw, (char *)mv.packet, PACKET_IN, 0,
+			      NULL, &mv.length);
+		if (mv.cc < 0)
 			return -1;
 		goto empty;
 	}
@@ -218,7 +367,7 @@ static int measure(struct run_state *ctl)
 	 * compute the delta between the two clocks.
 	 */
 
-	length = sizeof(struct sockaddr_in);
+	mv.length = sizeof(struct sockaddr_in);
 	if (ctl->ip_opt_len)
 		oicp->type = ICMP_ECHO;
 	else
@@ -229,11 +378,12 @@ static int measure(struct run_state *ctl)
 	((uint32_t *) (oicp + 1))[0] = 0;
 	((uint32_t *) (oicp + 1))[1] = 0;
 	((uint32_t *) (oicp + 1))[2] = 0;
-	FD_ZERO(&ready);
+	FD_ZERO(&mv.ready);
 
 	ctl->acked = ctl->seqno = ctl->seqno0 = 0;
 
-	for (msgcount = 0; msgcount < MSGS;) {
+	for (mv.msgcount = 0; mv.msgcount < MSGS;) {
+		char escape = 0;
 
 		/*
 		 * If no answer is received for TRIALS consecutive times, the machine is
@@ -247,153 +397,34 @@ static int measure(struct run_state *ctl)
 		oicp->un.echo.sequence = ++ctl->seqno;
 		oicp->checksum = 0;
 
-		gettimeofday(&tv1, NULL);
+		gettimeofday(&mv.tv1, NULL);
 		*(uint32_t *) (oicp + 1) =
-		    htonl((tv1.tv_sec % (24 * 60 * 60)) * 1000 + tv1.tv_usec / 1000);
+		    htonl((mv.tv1.tv_sec % (24 * 60 * 60)) * 1000 + mv.tv1.tv_usec / 1000);
 		oicp->checksum = in_cksum((unsigned short *)oicp, sizeof(*oicp) + 12);
 
-		count = sendto(ctl->sock_raw, (char *)opacket, sizeof(*oicp) + 12, 0,
+		mv.count = sendto(ctl->sock_raw, (char *)opacket, sizeof(*oicp) + 12, 0,
 			       (struct sockaddr *)&ctl->server, sizeof(struct sockaddr_in));
 
-		if (count < 0) {
+		if (mv.count < 0) {
 			errno = EHOSTUNREACH;
 			return UNREACHABLE;
 		}
 
-		for (;;) {
-			FD_ZERO(&ready);
-			FD_SET(ctl->sock_raw, &ready);
-			{
-				long tmo = ctl->rtt + ctl->rtt_sigma;
+		while (!escape) {
+			int ret = measure_inner_loop(ctl, &mv);
 
-				tout.tv_sec = tmo / 1000;
-				tout.tv_usec = (tmo - (tmo / 1000) * 1000) * 1000;
-			}
-
-			if ((count = select(FD_SETSIZE, &ready, NULL,
-					    NULL, &tout)) <= 0)
-				break;
-
-			gettimeofday(&tv1, NULL);
-			cc = recvfrom(ctl->sock_raw, (char *)packet, PACKET_IN, 0,
-				      NULL, &length);
-
-			if (cc < 0)
-				return (-1);
-
-			icp = (struct icmphdr *)(packet + (ip->ihl << 2));
-
-			if (((ctl->ip_opt_len && icp->type == ICMP_ECHOREPLY
-			      && packet[20] == IPOPT_TIMESTAMP)
-			     || (icp->type == ICMP_TIMESTAMPREPLY))
-			    && icp->un.echo.id == ctl->id
-			    && icp->un.echo.sequence >= ctl->seqno0
-			    && icp->un.echo.sequence <= ctl->seqno) {
-				int i;
-				uint8_t *opt = packet + 20;
-
-				if (ctl->acked < icp->un.echo.sequence)
-					ctl->acked = icp->un.echo.sequence;
-				if (ctl->ip_opt_len) {
-					if ((opt[3] & 0xF) != IPOPT_TS_PRESPEC) {
-						fprintf(stderr, "Wrong timestamp %d\n", opt[3] & 0xF);
-						return NONSTDTIME;
-					}
-					if (opt[3] >> 4) {
-						if ((opt[3] >> 4) != 1 || ctl->ip_opt_len != 4 + 3 * 8)
-							fprintf(stderr, "Overflow %d hops\n", opt[3] >> 4);
-					}
-					sendtime = recvtime = histime = histime1 = 0;
-					for (i = 0; i < (opt[2] - 5) / 8; i++) {
-						uint32_t *timep = (uint32_t *) (opt + 4 + i * 8 + 4);
-						uint32_t t = ntohl(*timep);
-
-						if (t & 0x80000000)
-							return NONSTDTIME;
-
-						if (i == 0)
-							sendtime = t;
-						if (i == 1)
-							histime = histime1 = t;
-						if (i == 2) {
-							if (ctl->ip_opt_len == 4 + 4 * 8)
-								histime1 = t;
-							else
-								recvtime = t;
-						}
-						if (i == 3)
-							recvtime = t;
-					}
-
-					if (!(sendtime & histime & histime1 & recvtime)) {
-						fprintf(stderr, "wrong timestamps\n");
-						return -1;
-					}
-				} else {
-					recvtime = (tv1.tv_sec % (24 * 60 * 60)) * 1000 + tv1.tv_usec / 1000;
-					sendtime = ntohl(*(uint32_t *) (icp + 1));
-				}
-				diff = recvtime - sendtime;
-				/* diff can be less than 0 around midnight */
-				if (diff < 0)
+			switch (ret) {
+				case BREAK:
+					escape = 1;
+					break;
+				case CONTINUE:
 					continue;
-				ctl->rtt = (ctl->rtt * 3 + diff) / 4;
-				ctl->rtt_sigma = (ctl->rtt_sigma * 3 + labs(diff - ctl->rtt)) / 4;
-				msgcount++;
-				if (!ctl->ip_opt_len) {
-					histime = ntohl(((uint32_t *) (icp + 1))[1]);
-					/*
-					 * a hosts using a time format different from ms.  since
-					 * midnight UT (as per RFC792) should set the high order
-					 * bit of the 32-bit time value it transmits.
-					 */
-					if ((histime & 0x80000000) != 0)
-						return NONSTDTIME;
-				}
-				if (ctl->interactive) {
-					printf(".");
-					fflush(stdout);
-				}
-
-				delta1 = histime - sendtime;
-				/*
-				 * Handles wrap-around to avoid that around midnight
-				 * small time differences appear enormous.  However, the
-				 * two machine's clocks must be within 12 hours from each
-				 * other.
-				 */
-				if (delta1 < BIASN)
-					delta1 += MODULO;
-				else if (delta1 > BIASP)
-					delta1 -= MODULO;
-
-				if (ctl->ip_opt_len)
-					delta2 = recvtime - histime1;
-				else
-					delta2 = recvtime - histime;
-				if (delta2 < BIASN)
-					delta2 += MODULO;
-				else if (delta2 > BIASP)
-					delta2 -= MODULO;
-
-				if (delta1 < min1)
-					min1 = delta1;
-				if (delta2 < min2)
-					min2 = delta2;
-				if (delta1 + delta2 < ctl->min_rtt) {
-					ctl->min_rtt = delta1 + delta2;
-					ctl->measure_delta1 = (delta1 - delta2) / 2 + PROCESSING_TIME;
-				}
-				if (diff < RANGE) {
-					min1 = delta1;
-					min2 = delta2;
-					goto good_exit;
-				}
+				default:
+					return ret;
 			}
 		}
 	}
- good_exit:
-	ctl->measure_delta = (min1 - min2) / 2 + PROCESSING_TIME;
+	ctl->measure_delta = (mv.min1 - mv.min2) / 2 + PROCESSING_TIME;
 	return GOOD;
 }
 
