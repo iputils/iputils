@@ -1,7 +1,7 @@
 project('iputils', 'c',
 	default_options : [
 		'c_std=c99',
-		'warning_level=2',
+		'warning_level=3',
 	],
 	version : 's20180629') # keep in sync with: git describe | awk -F- '{print $1}'
 
