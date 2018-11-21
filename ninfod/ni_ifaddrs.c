@@ -65,6 +65,7 @@
 #include <malloc.h>
 #include <errno.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include <sys/socket.h>
 #include <asm/types.h>
@@ -157,7 +158,8 @@ static int nl_getmsg(int sd, uint32_t seq, struct nlmsghdr **nlhp, int *done)
 	struct nlmsghdr *nh;
 	size_t bufsize = 65536, lastbufsize = 0;
 	void *buff = NULL;
-	int result = 0, read_size;
+	int result = 0;
+	size_t read_size;
 	int msg_flags;
 	pid_t pid = getpid();
 	for (;;) {
@@ -168,8 +170,9 @@ static int nl_getmsg(int sd, uint32_t seq, struct nlmsghdr **nlhp, int *done)
 			break;
 		}
 		buff = newbuff;
-		result = read_size = nl_recvmsg(sd, buff, bufsize, &msg_flags);
-		if (read_size < 0 || (msg_flags & MSG_TRUNC)) {
+		result = nl_recvmsg(sd, buff, bufsize, &msg_flags);
+		read_size = abs(result);
+		if (result < 0 || (msg_flags & MSG_TRUNC)) {
 			lastbufsize = bufsize;
 			bufsize *= 2;
 			continue;
@@ -342,14 +345,15 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 	for (build = 0; build <= 1; build++) {
 		struct ni_ifaddrs *ifl = NULL, *ifa = NULL;
 		struct nlmsghdr *nlh, *nlh0;
-		void *data = NULL, *xdata = NULL;
+		uint8_t *data = NULL, *xdata = NULL;
 #ifndef IFA_LOCAL
 		struct rtmaddr_ifamap ifamap;
 #endif
 
 		if (build) {
-			ifa = data = calloc(1, NLMSG_ALIGN(sizeof(struct ni_ifaddrs[icnt]))
-					    + dlen + xlen);
+			data = calloc(1, NLMSG_ALIGN(sizeof(struct ni_ifaddrs[icnt]))
+				      + dlen + xlen);
+			ifa = (struct ni_ifaddrs *) data;
 			if (ifap != NULL)
 				*ifap = ifa;
 			else {
@@ -366,7 +370,7 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 		}
 
 		for (nlm = nlmsg_list; nlm; nlm = nlm->nlm_next) {
-			int nlmlen = nlm->size;
+			size_t nlmlen = nlm->size;
 			if (!(nlh0 = nlm->nlh))
 				continue;
 			for (nlh = nlh0; NLMSG_OK(nlh, nlmlen); nlh = NLMSG_NEXT(nlh, nlmlen)) {
@@ -461,7 +465,8 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 								xlen += NLMSG_ALIGN(rtapayload);
 							else {
 								memcpy(xdata, rtadata, rtapayload);
-								ifa->ifa_cacheinfo = xdata;
+								ifa->ifa_cacheinfo =
+									(struct ifa_cacheinfo *) xdata;
 								xdata += NLMSG_ALIGN(rtapayload);
 							}
 							break;
