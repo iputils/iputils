@@ -195,8 +195,8 @@ static int measure_inner_loop(struct run_state *ctl, struct measure_vars *mv)
 	long delta1;
 	long delta2;
 	long diff;
-	long histime;
-	long histime1;
+	long histime = 0;
+	long histime1 = 0;
 	long recvtime;
 	long sendtime;
 
