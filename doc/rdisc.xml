@@ -60,7 +60,7 @@ message with the preference being maximally negative.</para>
 
   <para>Server side of router discovery protocol is supported by Cisco IOS
 and by any more or less complete UNIX routing daemon, f.e <emphasis remap='B'>gated</emphasis>.
-Or, <command>rdisc</command> can act as responder, if compiled with -DRDISC_SERVER.</para>
+Or, <command>rdisc</command> can act as responder, if compiled with ENABLE_RDISC_SERVER.</para>
 </refsect1>
 
 <refsect1 id='options'>
@@ -102,7 +102,7 @@ If <option>-f</option> is not specified in the first form then
   <varlistentry>
   <term><option>-r</option></term>
   <listitem>
-<para>Responder mode, available only if compiled with -DRDISC_SERVER.</para>
+<para>Responder mode, available only if compiled with ENABLE_RDISC_SERVER.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
