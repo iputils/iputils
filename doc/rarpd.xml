@@ -19,7 +19,7 @@
 <!-- body begins here -->
 <refsynopsisdiv id='synopsis'>
   <cmdsynopsis>
-    <command>arping</command>
+    <command>rarpd</command>
     <arg choice='opt'>-aAvde </arg>
     <arg choice='opt'>-b <replaceable>bootdir</replaceable></arg>
     <arg choice='opt'>-V </arg>
