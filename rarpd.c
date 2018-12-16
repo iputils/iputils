@@ -82,6 +82,7 @@ void usage(void)
 		"  rarpd [options] [interface]\n"
 		"\nOptions:\n"
 		"  -A        listen also arp messages\n"
+		"  -a        listen on all the interfaces\n"
 		"  -b <dir>  tftpd boot directory\n"
 		"  -d        debug mode\n"
 		"  -e        /etc/ethers markup alone is fine\n"
