@@ -1,8 +1,5 @@
-<?xml version="1.0"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<!-- lifted from man+troff by doclifter -->
-<refentry id='clockdiff8'>
+<refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
+xml:id="man.clockdiff">
 <refentryinfo>
   <title>clockdiff</title>
   <productname>iputils</productname>
@@ -69,16 +66,16 @@ What flavor works better depends on target host. Particularly,
   <title>WARNINGS</title>
 <variablelist remap='TP'>
   <varlistentry>
-  <listitem><para>&bull; Some nodes (Cisco) use non-standard timestamps, which is allowed by RFC, but makes timestamps mostly useless.</para>
+  <listitem><para>• Some nodes (Cisco) use non-standard timestamps, which is allowed by RFC, but makes timestamps mostly useless.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <listitem><para>&bull; Some nodes generate messed timestamps (Solaris&gt;2.4), when run <emphasis remap='B'>xntpd</emphasis>. Seems, its IP stack uses a corrupted clock source, which is synchronized to time-of-day clock periodically and jumps
+  <listitem><para>• Some nodes generate messed timestamps (Solaris&gt;2.4), when run <emphasis remap='B'>xntpd</emphasis>. Seems, its IP stack uses a corrupted clock source, which is synchronized to time-of-day clock periodically and jumps
 randomly making timestamps mostly useless. Good news is that you can use NTP in this case, which is even better.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <listitem><para>&bull; <command>clockdiff</command> shows difference in time modulo 24 days.</para>
+  <listitem><para>• <command>clockdiff</command> shows difference in time modulo 24 days.</para>
   </listitem>
   </varlistentry>
 </variablelist>

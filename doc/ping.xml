@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<!-- lifted from man+troff by doclifter -->
-<refentry id='ping8'>
+<refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
+xml:id="man.ping">
+
 <refentryinfo>
   <title>ping</title>
   <productname>iputils</productname>
@@ -48,9 +46,9 @@
   <title>DESCRIPTION</title>
   <para><command>ping</command> uses the ICMP protocol's mandatory ECHO_REQUEST
 datagram to elicit an ICMP ECHO_RESPONSE from a host or gateway.
-ECHO_REQUEST datagrams (&ldquo;pings&rdquo;) have an IP and ICMP
+ECHO_REQUEST datagrams (“pings“) have an IP and ICMP
 header, followed by a struct timeval and then an arbitrary
-number of &ldquo;pad&rdquo; bytes used to fill out the packet.</para>
+number of “pad“ bytes used to fill out the packet.</para>
 
   <para><command>ping</command> works with both IPv4 and IPv6. Using only one of them
 explicitly can be enforced by specifying <option>-4</option> or <option>-6</option>.</para>
@@ -127,7 +125,7 @@ each line.</para>
   <varlistentry>
   <term><option>-f</option></term>
   <listitem>
-<para>Flood ping. For every ECHO_REQUEST sent a period &ldquo;.&rdquo; is printed,
+<para>Flood ping. For every ECHO_REQUEST sent a period “.“ is printed,
 while for ever ECHO_REPLY received a backspace is printed.
 This provides a rapid display of how many packets are being dropped.
 If interval is not given, it sets interval to zero and
@@ -338,7 +336,7 @@ log output to a diagnostic file and search for missing answers.</para>
   <varlistentry>
   <term><option>-p </option><emphasis remap='I'>pattern</emphasis></term>
   <listitem>
-<para>You may specify up to 16 &ldquo;pad&rdquo; bytes to fill out the packet you send.
+<para>You may specify up to 16 “pad“ bytes to fill out the packet you send.
 This is useful for diagnosing data-dependent problems in a network.
 For example, <option>-p ff</option> will cause the sent packet
 to be filled with all ones.</para>
@@ -473,7 +471,7 @@ in absence of any responses, otherwise <command>ping</command> waits for two RTT
 <para>When using <command>ping</command> for fault isolation, it should first be run
 on the local host, to verify that the local network interface is up
 and running. Then, hosts and gateways further and further away should be
-&ldquo;pinged&rdquo;. Round-trip times and packet loss statistics are computed.
+“pinged“. Round-trip times and packet loss statistics are computed.
 If duplicate packets are received, they are not included in the packet
 loss calculation, although the round trip time of these packets is used
 in calculating the minimum/average/maximum/mdev round-trip time numbers.
@@ -545,7 +543,7 @@ on the data contained in the data portion.
 Unfortunately, data-dependent problems have been known to sneak into
 networks and remain undetected for long periods of time.
 In many cases the particular pattern that will have problems is something
-that doesn't have sufficient &ldquo;transitions&rdquo;, such as all ones or all
+that doesn't have sufficient “transitions“, such as all ones or all
 zeros, or a pattern right at the edge, such as almost all zeros.
 It isn't necessarily enough to specify a data pattern of all zeros (for
 example) on the command line because the pattern that is of interest is
@@ -573,7 +571,7 @@ packets should be set to 60, but many systems use smaller values
 
 <para>The maximum possible value of this field is 255, and most Unix systems set
 the TTL field of ICMP ECHO_REQUEST packets to 255.
-This is why you will find you can &ldquo;ping&rdquo; some hosts, but not reach them
+This is why you will find you can “ping“ some hosts, but not reach them
 with
 <citerefentry><refentrytitle>telnet</refentrytitle><manvolnum>1</manvolnum></citerefentry>
 or
@@ -585,14 +583,14 @@ with the TTL field in its response:</para>
 <variablelist remap='TP'>
   <varlistentry>
   <listitem>
-<para>&bull; Not change it; this is what Berkeley Unix systems did before the
+<para>• Not change it; this is what Berkeley Unix systems did before the
 4.3BSD Tahoe release. In this case the TTL value in the received packet
 will be 255 minus the number of routers in the round-trip path.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
   <listitem>
-<para>&bull; Set it to 255; this is what current Berkeley Unix systems do.
+<para>• Set it to 255; this is what current Berkeley Unix systems do.
 In this case the TTL value in the received packet will be 255 minus the
 number of routers in the path <emphasis remap='B'>from</emphasis>
 the remote system <emphasis remap='B'>to</emphasis> the <command>ping</command>ing host.</para>
@@ -600,7 +598,7 @@ the remote system <emphasis remap='B'>to</emphasis> the <command>ping</command>i
   </varlistentry>
   <varlistentry>
   <listitem>
-<para>&bull; Set it to some other value. Some machines use the same value for
+<para>• Set it to some other value. Some machines use the same value for
 ICMP packets that they use for TCP packets, for example either 30 or 60.
 Others may use completely wild values.</para>
   </listitem>
@@ -612,19 +610,19 @@ Others may use completely wild values.</para>
 <variablelist remap='TP'>
   <varlistentry>
   <listitem>
-<para>&bull; Many Hosts and Gateways ignore the RECORD_ROUTE option.</para>
+<para>• Many Hosts and Gateways ignore the RECORD_ROUTE option.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
   <listitem>
-<para>&bull; The maximum IP header length is too small for options like
+<para>• The maximum IP header length is too small for options like
 RECORD_ROUTE to be completely useful.
 There's not much that can be done about this, however.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
   <listitem>
-<para>&bull; Flood pinging is not recommended in general, and flood pinging the
+<para>• Flood pinging is not recommended in general, and flood pinging the
 broadcast address should only be done under very controlled conditions.</para>
   </listitem>
   </varlistentry>

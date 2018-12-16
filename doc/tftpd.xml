@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<!-- lifted from man+troff by doclifter -->
-<refentry id='tftpd8'>
+<refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
+xml:id="man.tftpd">
+
 <refentryinfo>
   <title>tftpd</title>
   <productname>iputils</productname>

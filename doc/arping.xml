@@ -1,8 +1,5 @@
-<?xml version="1.0"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-                   "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<!-- lifted from man+troff by doclifter -->
-<refentry id='arping8'>
+<refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
+xml:id="man.arping">
 <refentryinfo>
   <title>arping</title>
   <productname>iputils</productname>
@@ -92,16 +89,16 @@ packets. With <emphasis remap='I'>deadline</emphasis> option, instead wait for
   <listitem><para>IP source address to use in ARP packets. If this option is absent, source address is:</para>
     <variablelist remap='TP'>
       <varlistentry>
-      <listitem><para>&bull; In DAD mode (with option <option>-D</option>) set to 0.0.0.0.</para>
+      <listitem><para>• In DAD mode (with option <option>-D</option>) set to 0.0.0.0.</para>
       </listitem>
       </varlistentry>
       <varlistentry>
-      <listitem><para>&bull; In Unsolicited ARP mode (with options <option>-U</option> or <option>-A</option>)
+      <listitem><para>• In Unsolicited ARP mode (with options <option>-U</option> or <option>-A</option>)
 set to <emphasis remap='I'>destination</emphasis>.</para>
       </listitem>
       </varlistentry>
       <varlistentry>
-      <listitem><para>&bull; Otherwise, it is calculated from routing tables.</para>
+      <listitem><para>• Otherwise, it is calculated from routing tables.</para>
       </listitem>
       </varlistentry>
     </variablelist>
