@@ -1,173 +1,233 @@
 <refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
 xml:id="man.tracepath">
 
-<refentryinfo>
-  <title>tracepath</title>
-  <productname>iputils</productname>
-</refentryinfo>
-<refmeta>
-  <refentrytitle>TRACEPATH</refentrytitle>
-  <manvolnum>8</manvolnum>
-  <refmiscinfo class='manual'>iputils</refmiscinfo>
-</refmeta>
-<refnamediv>
-  <refname>tracepath</refname>
-  <refpurpose>traces path to a network host discovering MTU along this path</refpurpose>
-</refnamediv>
-<!-- body begins here -->
-<refsynopsisdiv id='synopsis'>
-<cmdsynopsis>
-  <command>tracepath</command>
-    <arg choice='opt'>-4 </arg>
-    <arg choice='opt'>-6 </arg>
-    <arg choice='opt'>-n </arg>
-    <arg choice='opt'>-b </arg>
-    <arg choice='opt'>-l <replaceable>pktlen</replaceable></arg>
-    <arg choice='opt'>-m <replaceable>max_hops</replaceable></arg>
-    <arg choice='opt'>-p <replaceable>port</replaceable></arg>
-    <arg choice='opt'>-V </arg>
-    <arg choice='plain'><replaceable>destination</replaceable></arg>
-    <sbr/>
-  </cmdsynopsis>
-</refsynopsisdiv>
+  <refentryinfo>
+    <title>tracepath</title>
+    <productname>iputils</productname>
+  </refentryinfo>
 
+  <refmeta>
+    <refentrytitle><application>tracepath</application></refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo class='manual'>iputils</refmiscinfo>
+  </refmeta>
 
-<refsect1 id='description'>
-  <title>DESCRIPTION</title>
-  <para>It traces path to <emphasis remap='I'>destination</emphasis> discovering MTU along this path.
-It uses UDP port <emphasis remap='I'>port</emphasis> or some random port.
-It is similar to <emphasis remap='B'>traceroute</emphasis>, only does not require superuser
-privileges and has no fancy options.</para>
+  <refnamediv>
+    <refname><application>tracepath</application></refname>
+    <refpurpose>traces path to a network host discovering MTU along
+    this path</refpurpose>
+  </refnamediv>
 
-  <para><emphasis remap='B'>tracepath -6</emphasis> is good replacement for <emphasis remap='B'>traceroute6</emphasis>
-and classic example of application of Linux error queues.
-The situation with IPv4 is worse, because commercial
-IP routers do not return enough information in ICMP error messages.
-Probably, it will change, when they will be updated.
-For now it uses Van Jacobson's trick, sweeping a range
-of UDP ports to maintain trace history.</para>
-</refsect1>
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command>tracepath</command>
+      <arg choice="opt" rep="norepeat">
+        <option>-4</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-6</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-n</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-b</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-l
+        <replaceable>pktlen</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-m
+        <replaceable>max_hops</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-p
+        <replaceable>port</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-V</option>
+      </arg>
+      <arg choice="req" rep="norepeat">destination</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
 
-<refsect1 id='options'>
-  <title>OPTIONS</title>
-<variablelist remap='TP'>
-  <varlistentry>
-  <term><option>-4</option></term>
-  <listitem>
-<para>Use IPv4 only..</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-6</option></term>
-  <listitem>
-<para>Use IPv6 only..</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-n</option></term>
-  <listitem>
-<para>Print primarily IP addresses numerically.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-b</option></term>
-  <listitem>
-<para>Print both of host names and IP addresses.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-l</option></term>
-  <listitem>
-<para>Sets the initial packet length to <emphasis remap='I'>pktlen</emphasis> instead of
-65535 for <command>IPv4</command> or 128000 for <emphasis remap='B'>IPv6</emphasis>.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-m</option></term>
-  <listitem>
-<para>Set maximum hops (or maximum TTLs) to <emphasis remap='I'>max_hops</emphasis>
-instead of 30.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-p</option></term>
-  <listitem>
-<para>Sets the initial destination port to use.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-V</option></term>
-  <listitem>
-  <para>Print version and exit.</para>
-  </listitem>
-  </varlistentry>
-</variablelist>
-</refsect1>
+  <refsection>
+    <info>
+      <title>DESCRIPTION</title>
+    </info>
+    <para>It traces path to
+    <emphasis remap='I'>destination</emphasis> discovering MTU along
+    this path. It uses UDP port
+    <emphasis remap='I'>port</emphasis> or some random port. It is
+    similar to
+    <emphasis remap='B'>traceroute</emphasis>, only does not
+    require superuser privileges and has no fancy options.</para>
+    <para>
+    <emphasis remap='B'>tracepath -6</emphasis> is good replacement
+    for
+    <emphasis remap='B'>traceroute6</emphasis> and classic example
+    of application of Linux error queues. The situation with IPv4
+    is worse, because commercial IP routers do not return enough
+    information in ICMP error messages. Probably, it will change,
+    when they will be updated. For now it uses Van Jacobson's
+    trick, sweeping a range of UDP ports to maintain trace
+    history.</para>
+  </refsection>
 
-<refsect1 id='output'>
-  <title>OUTPUT</title>
-  <literallayout remap='.nf'>
+  <refsection>
+    <info>
+      <title>OPTIONS</title>
+    </info>
+    <variablelist remap='TP'>
+      <varlistentry>
+        <term>
+          <option>-4</option>
+        </term>
+        <listitem>
+          <para>Use IPv4 only..</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-6</option>
+        </term>
+        <listitem>
+          <para>Use IPv6 only..</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-n</option>
+        </term>
+        <listitem>
+          <para>Print primarily IP addresses numerically.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-b</option>
+        </term>
+        <listitem>
+          <para>Print both of host names and IP addresses.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-l</option>
+        </term>
+        <listitem>
+          <para>Sets the initial packet length to
+          <emphasis remap='I'>pktlen</emphasis> instead of 65535 for
+          <emphasis remap='B'>IPv4</emphasis> or 128000 for
+          <emphasis remap='B'>IPv6</emphasis>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-m</option>
+        </term>
+        <listitem>
+          <para>Set maximum hops (or maximum TTLs) to
+          <emphasis remap='I'>max_hops</emphasis> instead of
+          30.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-p</option>
+        </term>
+        <listitem>
+          <para>Sets the initial destination port to use.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-V</option>
+        </term>
+        <listitem>
+          <para>Print version and exit.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
+
+  <refsect1 id='output'>
+    <title>OUTPUT</title>
+    <literallayout remap='.nf'>
 root@mops:~ # tracepath -6 3ffe:2400:0:109::2
  1?: [LOCALHOST]                              pmtu 1500
  1:  dust.inr.ac.ru                   0.411ms
  2:  dust.inr.ac.ru        asymm  1   0.390ms pmtu 1480
  2:  3ffe:2400:0:109::2               463.514ms reached
      Resume: pmtu 1480 hops 2 back 2
-</literallayout> <!-- .fi -->
+    </literallayout>
+    <para>The first column shows TTL of the probe, followed by
+    colon. Usually value of TTL is obtained from reply from
+    network, but sometimes reply does not contain necessary
+    information and we have to guess it. In this case the number is
+    followed by ?.</para>
+    <para>The second column shows the network hop, which replied to
+    the probe. It is either address of router or word [LOCALHOST],
+    if the probe was not sent to the network.</para>
+    <para>The rest of line shows miscellaneous information about
+    path to the correspinding network hop. As rule it contains
+    value of RTT. Additionally, it can show Path MTU, when it
+    changes. If the path is asymmetric or the probe finishes before
+    it reach prescribed hop, difference between number of hops in
+    forward and backward direction is shown following keyword
+    async. This information is not reliable. F.e. the third line
+    shows asymmetry of 1, it is because the first probe with TTL of
+    2 was rejected at the first hop due to Path MTU
+    Discovery.</para>
+    <para>The last line summarizes information about all the path
+    to the destination, it shows detected Path MTU, amount of hops
+    to the destination and our guess about amount of hops from the
+    destination to us, which can be different when the path is
+    asymmetric.</para>
+  </refsect1>
 
-<para>The first column shows TTL of the probe, followed by colon.
-Usually value of TTL is obtained from reply from network,
-but sometimes reply does not contain necessary information and
-we have to guess it. In this case the number is followed by ?.</para>
+  <refsect1 id='see_also'>
+    <title>SEE ALSO</title>
+    <para>
+    <citerefentry>
+      <refentrytitle>traceroute</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>traceroute6</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>ping</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>.</para>
+  </refsect1>
 
-<para>The second column shows the network hop, which replied to the probe.
-It is either address of router or word [LOCALHOST], if
-the probe was not sent to the network.</para>
+  <refsect1 id='author'>
+    <title>AUTHOR</title>
+    <para>
+    <command>tracepath</command> was written by Alexey Kuznetsov
+    &lt;kuznet@ms2.inr.ac.ru&gt;.</para>
+  </refsect1>
 
-<para>The rest of line shows miscellaneous information about path to
-the correspinding network hop. As rule it contains value of RTT.
-Additionally, it can show Path MTU, when it changes.
-If the path is asymmetric
-or the probe finishes before it reach prescribed hop, difference
-between number of hops in forward and backward direction is shown
-following keyword async. This information is not reliable.
-F.e. the third line shows asymmetry of 1, it is because the first probe
-with TTL of 2 was rejected at the first hop due to Path MTU Discovery.</para>
+  <refsect1 id='security'>
+    <title>SECURITY</title>
+    <para>No security issues.</para>
+    <para>This lapidary deserves to be elaborated.
+    <command>tracepath</command> is not a privileged program, unlike
+    <command>traceroute</command>,
+    <command>ping</command> and other beasts of this
+    kind.
+    <command>tracepath</command> may be executed by everyone who has
+    some access to network, enough to send UDP datagrams to
+    investigated destination using given port.</para>
+  </refsect1>
 
-<para>The last line summarizes information about all the path to the destination,
-it shows detected Path MTU, amount of hops to the destination and our
-guess about amount of hops from the destination to us, which can be
-different when the path is asymmetric.</para>
-</refsect1>
-
-<refsect1 id='see_also'>
-  <title>SEE ALSO</title>
-  <para><citerefentry><refentrytitle>traceroute</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>traceroute6</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>ping</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
-</refsect1>
-
-<refsect1 id='author'>
-  <title>AUTHOR</title>
-  <para><command>tracepath</command> was written by
-Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;.</para>
-</refsect1>
-
-<refsect1 id='security'>
-  <title>SECURITY</title>
-  <para>No security issues.</para>
-
-  <para>This lapidary deserves to be elaborated.
-<command>tracepath</command> is not a privileged program, unlike
-<emphasis remap='B'>traceroute</emphasis>, <emphasis remap='B'>ping</emphasis> and other beasts of this kind.
-<command>tracepath</command> may be executed by everyone who has some access
-to network, enough to send UDP datagrams to investigated destination
-using given port.</para>
-</refsect1>
-
-<refsect1 id='availability'>
-  <title>AVAILABILITY</title>
-  <para><command>tracepath</command> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
-</refsect1>
+  <refsect1 id='availability'>
+    <title>AVAILABILITY</title>
+    <para>
+    <command>tracepath</command> is part of
+    <emphasis remap='I'>iputils</emphasis> package.</para>
+  </refsect1>
 </refentry>
-

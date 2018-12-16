@@ -1,133 +1,185 @@
 <refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
 xml:id="man.rarpd">
 
-<refentryinfo>
-  <title>rarpd</title>
-  <productname>iputils</productname>
-</refentryinfo>
-<refmeta>
-  <refentrytitle>RARPD</refentrytitle>
-  <manvolnum>8</manvolnum>
-  <refmiscinfo class='manual'>iputils</refmiscinfo>
-</refmeta>
-<refnamediv>
-  <refname>rarpd</refname>
-  <refpurpose>answer RARP REQUESTs</refpurpose>
-</refnamediv>
-<!-- body begins here -->
-<refsynopsisdiv id='synopsis'>
-  <cmdsynopsis>
-    <command>rarpd</command>
-    <arg choice='opt'>-aAvde </arg>
-    <arg choice='opt'>-b <replaceable>bootdir</replaceable></arg>
-    <arg choice='opt'>-V </arg>
-    <arg choice='opt'><replaceable>interface</replaceable></arg>
-    <sbr/>
-  </cmdsynopsis>
-</refsynopsisdiv>
+  <refentryinfo>
+    <title>rarpd</title>
+    <productname>iputils</productname>
+  </refentryinfo>
 
+  <refmeta>
+    <refentrytitle>
+      <application>rarpd</application>
+    </refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo class='manual'>iputils</refmiscinfo>
+  </refmeta>
 
-<refsect1 id='description'>
-  <title>DESCRIPTION</title>
-  <para>Listens RARP requests from clients. Provided MAC address of client
-is found in <filename>/etc/ethers</filename> database and
-obtained host name is resolvable to an IP address appropriate
-for attached network, <emphasis remap='B'>rarpd</emphasis> answers to client with RARPD
-reply carrying an IP address.</para>
+  <refnamediv>
+    <refname>rarpd</refname>
+    <refpurpose>answer RARP REQUESTs</refpurpose>
+  </refnamediv>
 
-  <para>To allow multiple boot servers on the network <emphasis remap='B'>rarpd</emphasis>
-optionally checks for presence Sun-like bootable image in TFTP directory.
-It should have form <emphasis remap='B'>Hexadecimal_IP.ARCH</emphasis>, f.e. to load
-sparc 193.233.7.98 <emphasis remap='I'>C1E90762.SUN4M</emphasis> is linked to
-an image appropriate for SUM4M in directory <filename>/etc/tftpboot</filename>.</para>
-</refsect1>
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command>rarpd</command>
+      <arg choice="opt" rep="norepeat">
+        <option>-AadevV</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-b
+        <replaceable>bootdir</replaceable></option>
+      </arg>
+      <arg choice="req" rep="norepeat">interface</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
 
-<refsect1 id='warning'>
-  <title>WARNING</title>
-  <para>This facility is deeply obsoleted by
-BOOTP
-and later
-DHCP protocols.
-However, some clients really still need this to boot.</para>
-</refsect1>
+  <refsection xml:id="description">
+    <info>
+      <title>DESCRIPTION</title>
+    </info>
+    <para>Listens RARP requests from clients. Provided MAC address
+    of client is found in
+    <filename>/etc/ethers</filename> database and obtained host name
+    is resolvable to an IP address appropriate for attached
+    network,
+    <command>rarpd</command> answers to client with RARPD reply
+    carrying an IP address.</para>
+    <para>To allow multiple boot servers on the network
+    <command>rarpd</command> optionally checks for presence Sun-like
+    bootable image in TFTP directory. It should have form
+    <emphasis remap="B">Hexadecimal_IP.ARCH</emphasis>, f.e. to
+    load sparc 193.233.7.98
+    <emphasis remap="I">C1E90762.SUN4M</emphasis> is linked to an
+    image appropriate for SUM4M in directory
+    <filename>/etc/tftpboot</filename>.</para>
+  </refsection>
 
-<refsect1 id='options'>
-  <title>OPTIONS</title>
-<variablelist remap='TP'>
-  <varlistentry>
-  <term><option>-a</option></term>
-  <listitem>
-<para>Listen on all the interfaces. Currently it is an internal
-option, its function is overridden with <emphasis remap='I'>interface</emphasis>
-argument. It should not be used.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-A</option></term>
-  <listitem>
-<para>Listen not only RARP but also ARP messages, some rare clients
-use ARP by some unknown reason.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-v</option></term>
-  <listitem>
-<para>Be verbose.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-d</option></term>
-  <listitem>
-<para>Debug mode. Do not go to background.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-e</option></term>
-  <listitem>
-<para>Do not check for presence of a boot image, reply if MAC address
-resolves to a valid IP address using <filename>/etc/ethers</filename>
-database and DNS.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-b </option><emphasis remap='I'>bootdir</emphasis></term>
-  <listitem>
-<para>TFTP boot directory. Default is <filename>/etc/tftpboot</filename></para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-V</option></term>
-  <listitem>
-  <para>Print version and exit.</para>
-  </listitem>
-  </varlistentry>
-</variablelist>
-</refsect1>
+  <refsection xml:id="warning">
+    <info>
+      <title>WARNING</title>
+    </info>
+    <para>This facility is deeply obsoleted by BOOTP and later DHCP
+    protocols. However, some clients really still need this to
+    boot.</para>
+  </refsection>
 
-<refsect1 id='see_also'>
-  <title>SEE ALSO</title>
-  <para><citerefentry><refentrytitle>arping</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>tftpd</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
-</refsect1>
+  <refsection xml:id="options">
+    <info>
+      <title>OPTIONS</title>
+    </info>
+    <variablelist remap="TP">
+      <varlistentry>
+        <term>
+          <option>-a</option>
+        </term>
+        <listitem>
+          <para>Listen on all the interfaces. Currently it is an
+          internal option, its function is overridden with
+          <emphasis remap="I">interface</emphasis> argument. It
+          should not be used.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-A</option>
+        </term>
+        <listitem>
+          <para>Listen not only RARP but also ARP messages, some
+          rare clients use ARP by some unknown reason.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-v</option>
+        </term>
+        <listitem>
+          <para>Be verbose.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-d</option>
+        </term>
+        <listitem>
+          <para>Debug mode. Do not go to background.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-e</option>
+        </term>
+        <listitem>
+          <para>Do not check for presence of a boot image, reply if
+          MAC address resolves to a valid IP address using
+          <filename>/etc/ethers</filename> database and DNS.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-b</option>
+          <emphasis remap="I">bootdir</emphasis>
+        </term>
+        <listitem>
+          <para>TFTP boot directory. Default is
+          <filename>/etc/tftpboot</filename></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-V</option>
+        </term>
+        <listitem>
+          <para>Print version and exit.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
 
-<refsect1 id='author'>
-  <title>AUTHOR</title>
-  <para><emphasis remap='B'>rarpd</emphasis> was written by Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;.</para>
-</refsect1>
+  <refsection xml:id="see_also">
+    <info>
+      <title>SEE ALSO</title>
+    </info>
+    <para>
+    <citerefentry>
+      <refentrytitle>arping</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>tftpd</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>.</para>
+  </refsection>
 
-<refsect1 id='security'>
-  <title>SECURITY</title>
-  <para><emphasis remap='B'>rarpd</emphasis> requires CAP_NET_RAW capability
-to listen and send RARP and ARP packets. It also needs CAP_NET_ADMIN
-to give to kernel hint for ARP resolution; this is not strictly required,
-but some (most of, to be more exact) clients are so badly broken that
-are not able to answer ARP before they are finally booted. This is
-not wonderful taking into account that clients using RARPD in 2002
-are all unsupported relic creatures of 90's and even earlier.</para>
-</refsect1>
+  <refsection xml:id="author">
+    <info>
+      <title>AUTHOR</title>
+    </info>
+    <para>
+    <command>rarpd</command> was written by Alexey Kuznetsov
+    &lt;kuznet@ms2.inr.ac.ru&gt;.</para>
+  </refsection>
 
-<refsect1 id='availability'>
-  <title>AVAILABILITY</title>
-  <para><emphasis remap='B'>rarpd</emphasis> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
-</refsect1>
+  <refsection xml:id="security">
+    <info>
+      <title>SECURITY</title>
+    </info>
+    <para>
+    <command>rarpd</command> requires CAP_NET_RAW capability to
+    listen and send RARP and ARP packets. It also needs
+    CAP_NET_ADMIN to give to kernel hint for ARP resolution; this
+    is not strictly required, but some (most of, to be more exact)
+    clients are so badly broken that are not able to answer ARP
+    before they are finally booted. This is not wonderful taking
+    into account that clients using RARPD in 2002 are all
+    unsupported relic creatures of 90's and even earlier.</para>
+  </refsection>
+
+  <refsection xml:id="availability">
+    <info>
+      <title>AVAILABILITY</title>
+    </info>
+    <para>
+    <emphasis remap="B">rarpd</emphasis> is part of
+    <emphasis remap="I">iputils</emphasis> package.</para>
+  </refsection>
 </refentry>

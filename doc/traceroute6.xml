@@ -1,71 +1,111 @@
 <refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
-xml:id="man.traceroute">
+xml:id="man.traceroute6">
 
-<refentryinfo>
-  <title>traceroute</title>
-  <productname>iputils</productname>
-</refentryinfo>
-<refmeta>
-  <refentrytitle>TRACEROUTE6</refentrytitle>
-  <manvolnum>8</manvolnum>
-<refmiscinfo class='manual'>iputils</refmiscinfo>
-</refmeta>
-<refnamediv>
-  <refname>traceroute6</refname>
-  <refpurpose>traces path to a network host</refpurpose>
-</refnamediv>
-<!-- body begins here -->
-<refsynopsisdiv id='synopsis'>
-  <cmdsynopsis>
-    <command>traceroute6</command>
-    <arg choice='opt'>-dnrvV </arg>
-    <arg choice='opt'>-i <replaceable>interface</replaceable></arg>
-    <arg choice='opt'>-m <replaceable>max_ttl</replaceable></arg>
-    <arg choice='opt'>-p <replaceable>port</replaceable></arg>
-    <arg choice='opt'>-q <replaceable>max_probes</replaceable></arg>
-    <arg choice='opt'>-s <replaceable>source</replaceable></arg>
-    <arg choice='opt'><arg choice='plain'>-w <replaceable>wait</replaceable></arg><arg choice='plain'><replaceable>time</replaceable></arg></arg>
-    <arg choice='plain'><replaceable>destination</replaceable></arg>
-    <arg choice='opt'><replaceable>size</replaceable></arg>
-    <sbr/>
-  </cmdsynopsis>
-</refsynopsisdiv>
+  <refentryinfo>
+    <title>traceroute6</title>
+    <productname>iputils</productname>
+  </refentryinfo>
 
+  <refmeta>
+    <refentrytitle>
+      <application>traceroute6</application>
+    </refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo class='manual'>iputils</refmiscinfo>
+  </refmeta>
 
-<refsect1 id='description'>
-  <title>DESCRIPTION</title>
-  <para>Description can be found in
-<citerefentry><refentrytitle>traceroute</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-all the references to IP replaced to IPv6. It is needless to copy
-the description from there.</para>
-</refsect1>
+  <refnamediv>
+    <refname>traceroute6</refname>
+    <refpurpose>traces path to a network host</refpurpose>
+  </refnamediv>
 
-<refsect1 id='see_also'>
-  <title>SEE ALSO</title>
-  <para><citerefentry><refentrytitle>traceroute</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>tracepath</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>ping</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
-</refsect1>
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
+      <command>traceroute6</command>
+      <arg choice="opt" rep="norepeat">
+        <option>-dnrvV</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-i
+        <replaceable>interface</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-m
+        <replaceable>max_ttl</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-p
+        <replaceable>port</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-q
+        <replaceable>max_probes</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-s
+        <replaceable>source</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-w
+        <replaceable>wait time</replaceable></option>
+      </arg>
+      <arg choice="req" rep="norepeat">destination</arg>
+      <arg choice="opt" rep="norepeat">size</arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
 
-<refsect1 id='history'>
-  <title>HISTORY</title>
-  <para>This program has long history. Author of <emphasis remap='B'>traceroute</emphasis>
-is Van Jacobson and it first appeared in 1988. This clone is
-based on a port of <emphasis remap='B'>traceroute</emphasis> to IPv6 published
-in NRL IPv6 distribution in 1996. In turn, it was ported
-to Linux by Pedro Roque. After this it was kept in sync by Alexey Kuznetsov
-&lt;kuznet@ms2.inr.ac.ru&gt;. And eventually entered
-<emphasis remap='B'>iputils</emphasis> package.</para>
-</refsect1>
+  <refsection>
+    <info>
+      <title>DESCRIPTION</title>
+    </info>
+    <para>Description can be found in
+    <citerefentry>
+      <refentrytitle>traceroute</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>, all the references to IP replaced to IPv6.
+    It is needless to copy the description from there.</para>
+  </refsection>
 
-<refsect1 id='security'>
-  <title>SECURITY</title>
-  <para><emphasis remap='B'>traceroute6</emphasis> requires CAP_NET_RAW capability
-to be executed. It is safe to be used as set-uid root.</para>
-</refsect1>
+  <refsect1 id='see_also'>
+    <title>SEE ALSO</title>
+    <para>
+    <citerefentry>
+      <refentrytitle>traceroute</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>tracepath</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>ping</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>.</para>
+  </refsect1>
 
-<refsect1 id='availability'>
-  <title>AVAILABILITY</title>
-  <para><command>traceroute6</command> is part of <emphasis remap='I'>iputils</emphasis> package.</para>
-</refsect1>
+  <refsect1 id='history'>
+    <title>HISTORY</title>
+    <para>This program has long history. Author of
+    <command>traceroute</command> is Van Jacobson and it first
+    appeared in 1988. This clone is based on a port of
+    <command>traceroute</command> to IPv6 published in NRL IPv6
+    distribution in 1996. In turn, it was ported to Linux by Pedro
+    Roque. After this it was kept in sync by Alexey Kuznetsov
+    &lt;kuznet@ms2.inr.ac.ru&gt;. And eventually entered
+    <emphasis remap="B">iputils</emphasis> package.</para>
+  </refsect1>
+
+  <refsect1 id='security'>
+    <title>SECURITY</title>
+    <para>
+    <command>traceroute6</command> requires CAP_NET_RAW capability
+    to be executed. It is safe to be used as set-uid root.</para>
+  </refsect1>
+
+  <refsect1 id='availability'>
+    <title>AVAILABILITY</title>
+    <para>
+    <command>traceroute6</command> is part of
+    <emphasis remap='I'>iputils</emphasis> package.</para>
+  </refsect1>
 </refentry>

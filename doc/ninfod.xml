@@ -1,93 +1,141 @@
 <refentry xmlns:db="http://docbook.org/ns/docbook" version="5.0"
 xml:id="man.ninfod">
-<refentryinfo>
-  <title>ninfod</title>
-  <productname>iputils</productname>
-</refentryinfo>
-<refmeta>
-  <refentrytitle>NINFOD</refentrytitle>
-  <manvolnum>8</manvolnum>
-  <refmiscinfo class='manual'>iputils</refmiscinfo>
-</refmeta>
-<refnamediv>
-  <refname>ninfod</refname>
-  <refpurpose>Respond to IPv6 Node Information Queries</refpurpose>
-</refnamediv>
-<!-- body begins here -->
-<refsynopsisdiv id='synopsis'>
-  <cmdsynopsis>
+
+  <refentryinfo>
+    <title>ninfod</title>
+    <productname>iputils</productname>
+  </refentryinfo>
+
+  <refmeta>
+    <refentrytitle>
+      <application>ninfod</application>
+    </refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo class='manual'>iputils</refmiscinfo>
+  </refmeta>
+
+  <refnamediv>
+    <refname>ninfod</refname>
+    <refpurpose>Respond to IPv6 Node Information
+    Queries</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+    <cmdsynopsis sepchar=" ">
       <command>ninfod</command>
-      <arg choice='opt'>-dhv </arg>
-      <arg choice='opt'>-p <replaceable>pidfile</replaceable></arg>
-      <arg choice='opt'>-u <replaceable>user</replaceable></arg>
-      <arg choice='opt'>-V </arg>
-      <sbr/>
-  </cmdsynopsis>
-</refsynopsisdiv>
+      <arg choice="opt" rep="norepeat">
+        <option>-dhv</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-p
+        <replaceable>pidfile</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-u
+        <replaceable>user</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-v</option>
+      </arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
 
+  <refsection>
+    <info>
+      <title>DESCRIPTION</title>
+    </info>
+    <para>Responds to IPv6 Node Information Queries (RFC4620) from
+    clients. Queries can be sent by various implementations of
+    <command>ping</command> command.</para>
+  </refsection>
 
-<refsect1 id='description'>
-  <title>DESCRIPTION</title>
-  <para>Responds to IPv6 Node Information Queries (RFC4620) from clients.
-Queries can be sent by various implementations of <emphasis remap='B'>ping6</emphasis> command.</para>
-</refsect1>
+  <refsection>
+    <info>
+      <title>OPTIONS</title>
+    </info>
+    <variablelist remap="TP">
+      <varlistentry>
+        <term>
+          <option>-d</option>
+        </term>
+        <listitem>
+          <para>Debug mode. Do not go background.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-h</option>
+        </term>
+        <listitem>
+          <para>Show help.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-v</option>
+        </term>
+        <listitem>
+          <para>Verbose mode.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-u</option>
+          <emphasis remap="I">user</emphasis>
+        </term>
+        <listitem>
+          <para>Run as another user.
+          <emphasis remap="I">user</emphasis> can either be username
+          or user ID.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-p</option>
+          <emphasis remap="I">pidfile</emphasis>
+        </term>
+        <listitem>
+          <para>File for process-id storage.
+          <emphasis remap="I">user</emphasis> is required to be able
+          to create the file.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-V</option>
+        </term>
+        <listitem>
+          <para>Print version and exit.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsection>
 
-<refsect1 id='options'>
-  <title>OPTIONS</title>
-<variablelist remap='TP'>
-  <varlistentry>
-  <term><option>-d</option></term>
-  <listitem>
-<para>Debug mode.  Do not go background.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-h</option></term>
-  <listitem>
-<para>Show help.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-v</option></term>
-  <listitem>
-<para>Verbose mode.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-u </option><emphasis remap='I'>user</emphasis></term>
-  <listitem>
-<para>Run as another user.
-<emphasis remap='I'>user</emphasis> can either be username or user ID.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-p </option><emphasis remap='I'>pidfile</emphasis></term>
-  <listitem>
-<para>File for process-id storage.
-<emphasis remap='I'>user</emphasis> is required to be able to create the file.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-V</option></term>
-  <listitem>
-  <para>Print version and exit.</para>
-  </listitem>
-  </varlistentry>
-</variablelist>
-</refsect1>
+  <refsection xml:id="see_also">
+    <info>
+      <title>SEE ALSO</title>
+    </info>
+    <para>
+    <citerefentry>
+      <refentrytitle>ping</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>.</para>
+  </refsection>
 
-<refsect1 id='see_also'>
-  <title>SEE ALSO</title>
-  <para><citerefentry><refentrytitle>ping</refentrytitle><manvolnum>8</manvolnum></citerefentry>.</para>
-</refsect1>
+  <refsection xml:id="author">
+    <info>
+      <title>AUTHOR</title>
+    </info>
+    <para>
+    <command>ninfod</command> was written by USAGI/WIDE
+    Project.</para>
+  </refsection>
 
-<refsect1 id='author'>
-  <title>AUTHOR</title>
-  <para><command>ninfod</command> was written by USAGI/WIDE Project.</para>
-</refsect1>
-
-<refsect1 id='copying'><title>COPYING</title>
-  <literallayout remap='.nf'>
+  <refsection xml:id="copying">
+    <info>
+      <title>COPYING</title>
+    </info>
+    <literallayout>
 Copyright (C) 2012 YOSHIFUJI Hideaki.
 Copyright (C) 2002 USAGI/WIDE Project.
 All rights reserved.
@@ -104,7 +152,7 @@ are met:
    may be used to endorse or promote products derived from this software
    without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS “AS IS“ AND
+THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS “AS IS” AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
@@ -115,7 +163,6 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
-  </literallayout> <!-- .fi -->
-</refsect1>
+    </literallayout>
+  </refsection>
 </refentry>
-
