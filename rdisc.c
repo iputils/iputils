@@ -63,6 +63,8 @@
 #include <string.h>
 #include <syslog.h>
 
+#include "iputils_common.h"
+
 struct interface
 {
 	struct in_addr 	address;	/* Used to identify the interface */
@@ -261,15 +263,10 @@ void do_fork(void)
 	if (trace)
 		return;
 	if ((open_max = sysconf(_SC_OPEN_MAX)) == -1) {
-		if (errno == 0) {
-			(void) fprintf(stderr, "OPEN_MAX is not supported\n");
-		} 
-		else {
-			(void) fprintf(stderr, "sysconf() error\n");
-		}
-		exit(1);
+		if (errno == 0)
+			error(1, 0, "sysconf(_SC_OPEN_MAX) is not supported");
+		error(1, errno, "sysconf(_SC_OPEN_MAX)");
 	}
-
 
 	if ((pid=fork()) != 0)
 		exit(0);
@@ -349,11 +346,9 @@ int main(int argc, char **argv)
 				argc--, av++;
 				if (argc != 0) {
 					val = strtol(av[0], (char **)NULL, 0);
-					if (val < 4 || val > 1800) {
-						(void) fprintf(stderr,
-							       "Bad Max Advertizement Interval\n");
-						exit(1);
-					}
+					if (val < 4 || val > 1800)
+						error(1, 0, "Bad Max Advertizement Interval: %d",
+							     val);
 					max_adv_int = val;
 					min_adv_int =( max_adv_int * 3 / 4);
 					lifetime = (3*max_adv_int);
@@ -411,7 +406,7 @@ next:
 		argc--;
 	}
 	if (argc != 0) {
-		(void) fprintf(stderr, "Extra parameters\n");
+		error(0, 0, "Extra parameters");
 		prusage();
 		/* NOTREACHED */
 	}

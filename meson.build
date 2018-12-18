@@ -249,6 +249,7 @@ endif
 if build_rinfod == true
 	executable('rdisc', ['rdisc.c', git_version_h],
 		install_dir: 'sbin',
+		link_with : [libcommon],
 		install: true)
 	if systemd.found()
 		subs = configuration_data()
