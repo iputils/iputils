@@ -429,10 +429,8 @@ static void send_probe(struct run_state *ctl, uint32_t seq, int ttl)
 	clock_gettime(CLOCK_MONOTONIC_RAW, &pkt->ts);
 
 	i = setsockopt(ctl->sndsock, SOL_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof(ttl));
-	if (i < 0) {
-		perror("setsockopt");
-		exit(1);
-	}
+	if (i < 0)
+		error(1, errno, "setsockopt");
 
 	do {
 		i = sendto(ctl->sndsock, ctl->sendbuff, ctl->datalen, 0,
@@ -441,7 +439,7 @@ static void send_probe(struct run_state *ctl, uint32_t seq, int ttl)
 
 	if (i < 0 || i != ctl->datalen) {
 		if (i < 0)
-			perror("sendto");
+			error(0, errno, "sendto");
 		printf(_("traceroute: wrote %s %d chars, ret=%d\n"), ctl->hostname, ctl->datalen, i);
 		fflush(stdout);
 	}
@@ -659,25 +657,21 @@ int main(int argc, char **argv)
 	struct sockaddr_in6 *to = (struct sockaddr_in6 *)&ctl.whereto;
 	int ch, i, probe, ttl, on = 1;
 	uint32_t seq = 0;
-	int socket_errno;
 	char *resolved_hostname = NULL;
 
 	ctl.datalen = sizeof(struct pkt_format);
 	ctl.icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
-	socket_errno = errno;
+	if (ctl.icmp_sock < 0)
+		error(1, errno, "icmp socket");
 
-	if (setuid(getuid())) {
-		perror("traceroute6: setuid");
-		exit(-1);
-	}
+	if (setuid(getuid()))
+		error(-1, errno, "setuid");
 #ifdef HAVE_LIBCAP
 	{
 		cap_t caps = cap_init();
 
-		if (cap_set_proc(caps)) {
-			perror("traceroute6: cap_set_proc");
-			exit(-1);
-		}
+		if (cap_set_proc(caps))
+			error(-1, errno, "cap_set_proc");
 		cap_free(caps);
 	}
 #endif
@@ -696,27 +690,21 @@ int main(int argc, char **argv)
 			break;
 		case 'm':
 			ctl.max_ttl = atoi(optarg);
-			if (ctl.max_ttl <= 1) {
-				fprintf(stderr, _("traceroute: max ttl must be >1.\n"));
-				exit(1);
-			}
+			if (ctl.max_ttl <= 1)
+				error(1, 0, _("max ttl must be >1"));
 			break;
 		case 'n':
 			ctl.nflag = 1;
 			break;
 		case 'p':
 			ctl.port = atoi(optarg);
-			if (ctl.port < 1) {
-				fprintf(stderr, _("traceroute: port must be >0.\n"));
-				exit(1);
-			}
+			if (ctl.port < 1)
+				error(1, 0, _("port must be >0"));
 			break;
 		case 'q':
 			ctl.nprobes = atoi(optarg);
-			if (ctl.nprobes < 1) {
-				fprintf(stderr, _("traceroute: nprobes must be >0.\n"));
-				exit(1);
-			}
+			if (ctl.nprobes < 1)
+				error(1, 0, _("nprobes must be >0"));
 			break;
 		case 'r':
 			ctl.options |= SO_DONTROUTE;
@@ -736,10 +724,8 @@ int main(int argc, char **argv)
 			break;
 		case 'w':
 			ctl.waittime = atoi(optarg);
-			if (ctl.waittime <= 1) {
-				fprintf(stderr, _("traceroute: wait must be >1 sec.\n"));
-				exit(1);
-			}
+			if (ctl.waittime <= 1)
+				error(1, 0, _("wait must be >1 sec"));
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("traceroute6"));
@@ -764,17 +750,12 @@ int main(int argc, char **argv)
 		ctl.hostname = *argv;
 	} else {
 		status = getaddrinfo(*argv, NULL, &hints6, &result);
-		if (status) {
-			fprintf(stderr, _("traceroute: %s: %s\n"), *argv, gai_strerror(status));
-			exit(1);
-		}
-
+		if (status)
+			error(1, 0, "%s: %s", *argv, gai_strerror(status));
 		memcpy(to, result->ai_addr, sizeof *to);
 		resolved_hostname = strdup(result->ai_canonname);
-		if (resolved_hostname == NULL) {
-			fprintf(stderr, "traceroute: cannot allocate memory\n");
-			exit(1);
-		}
+		if (resolved_hostname == NULL)
+			error(1, errno, "cannot allocate memory");
 		ctl.hostname = resolved_hostname;
 		freeaddrinfo(result);
 	}
@@ -791,27 +772,17 @@ int main(int argc, char **argv)
 		 */
 		if (ctl.datalen == 0)
 			ctl.datalen = sizeof(struct pkt_format);
-		else if (ctl.datalen < (int)sizeof(struct pkt_format) || ctl.datalen >= MAXPACKET) {
-			fprintf(stderr,
-				_("traceroute: packet size must be %d <= s < %d.\n"),
-				(int)sizeof(struct pkt_format), MAXPACKET);
-			exit(1);
-		}
+		else if (ctl.datalen < (int)sizeof(struct pkt_format) || ctl.datalen >= MAXPACKET)
+			error(1, 0, "packet size must be %zu <= s < %d",
+				    sizeof(struct pkt_format), MAXPACKET);
 	}
 
 	ctl.ident = getpid();
 
 	ctl.sendbuff = malloc(ctl.datalen);
-	if (ctl.sendbuff == NULL) {
-		fprintf(stderr, _("malloc failed\n"));
-		exit(1);
-	}
+	if (ctl.sendbuff == NULL)
+		error(1, errno, "cannot allocate memory");
 
-	if (ctl.icmp_sock < 0) {
-		errno = socket_errno;
-		perror("traceroute6: icmp socket");
-		exit(1);
-	}
 #ifdef IPV6_RECVPKTINFO
 	setsockopt(ctl.icmp_sock, SOL_IPV6, IPV6_RECVPKTINFO, &on, sizeof(on));
 	setsockopt(ctl.icmp_sock, SOL_IPV6, IPV6_2292PKTINFO, &on, sizeof(on));
@@ -835,16 +806,12 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	if ((ctl.sndsock = socket(AF_INET6, SOCK_DGRAM, 0)) < 0) {
-		perror("traceroute: UDP socket");
-		exit(5);
-	}
+	if ((ctl.sndsock = socket(AF_INET6, SOCK_DGRAM, 0)) < 0)
+		error(5, errno, "UDP socket");
 #ifdef SO_SNDBUF
 	if (setsockopt(ctl.sndsock, SOL_SOCKET, SO_SNDBUF, (char *)&ctl.datalen,
-		       sizeof(ctl.datalen)) < 0) {
-		perror("traceroute: SO_SNDBUF");
-		exit(6);
-	}
+		       sizeof(ctl.datalen)) < 0)
+		error(6, errno, "SO_SNDBUF");
 #endif				/* SO_SNDBUF */
 
 	if (ctl.options & SO_DEBUG)
@@ -856,46 +823,34 @@ int main(int argc, char **argv)
 		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
-		if (probe_fd < 0) {
-			perror("socket");
-			exit(1);
-		}
+		if (probe_fd < 0)
+			error(1, errno, "socket");
 		if (ctl.device) {
 			if (setsockopt
 			    (probe_fd, SOL_SOCKET, SO_BINDTODEVICE, ctl.device,
 			     strlen(ctl.device) + 1) == -1)
-				perror(_("WARNING: interface is ignored"));
+				error(0, errno, _("WARNING: interface is ignored"));
 		}
 		ctl.firsthop.sin6_port = htons(get_ip_unprivileged_port_start(1025));
 		if (connect(probe_fd, (struct sockaddr *)&ctl.firsthop,
-			    sizeof(ctl.firsthop)) == -1) {
-			perror("connect");
-			exit(1);
-		}
+			    sizeof(ctl.firsthop)) == -1)
+			error(1, errno, "connect");
 		alen = sizeof(ctl.saddr);
-		if (getsockname(probe_fd, (struct sockaddr *)&ctl.saddr, &alen) == -1) {
-			perror("getsockname");
-			exit(1);
-		}
+		if (getsockname(probe_fd, (struct sockaddr *)&ctl.saddr, &alen) == -1)
+			error(1, errno, "getsockname");
 		ctl.saddr.sin6_port = 0;
 		close(probe_fd);
 	} else {
 		memset((char *)&ctl.saddr, 0, sizeof(ctl.saddr));
 		ctl.saddr.sin6_family = AF_INET6;
-		if (inet_pton(AF_INET6, ctl.source, &ctl.saddr.sin6_addr) <= 0) {
-			printf(_("traceroute: unknown addr %s\n"), ctl.source);
-			exit(1);
-		}
+		if (inet_pton(AF_INET6, ctl.source, &ctl.saddr.sin6_addr) <= 0)
+			error(1, 0, _("unknown addr %s"), ctl.source);
 	}
 
-	if (bind(ctl.sndsock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0) {
-		perror("traceroute: bind sending socket");
-		exit(1);
-	}
-	if (bind(ctl.icmp_sock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0) {
-		perror("traceroute: bind icmp6 socket");
-		exit(1);
-	}
+	if (bind(ctl.sndsock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0)
+		error(1, errno, "bind sending socket");
+	if (bind(ctl.icmp_sock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0)
+		error(1, errno, "bind icmp6 socket");
 
 	fprintf(stderr, _("traceroute to %s (%s)"), ctl.hostname,
 		inet_ntop(AF_INET6, &to->sin6_addr, pa, sizeof(pa)));
