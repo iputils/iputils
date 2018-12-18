@@ -196,9 +196,16 @@ else
 endif
 
 ############################################################
+common_sources = files('iputils_common.h', 'iputils_common.c')
+libcommon = static_library(
+	'common',
+	[common_sources, git_version_h],
+	install : false)
+
 if build_ping == true
 	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c', git_version_h],
 		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
+		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
 		join_paths(get_option('prefix'), get_option('bindir')),
