@@ -231,8 +231,10 @@ main(int argc, char **argv)
 
 #if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
+#if defined(USE_IDN)
 	if (!strcmp(setlocale(LC_ALL, NULL), "C"))
 		hints.ai_flags &= ~ AI_CANONIDN;
+#endif
 #ifdef ENABLE_NLS
 	bindtextdomain (PACKAGE_NAME, LOCALEDIR);
 	textdomain (PACKAGE_NAME);
