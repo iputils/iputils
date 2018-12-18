@@ -264,6 +264,7 @@ endif
 if build_arping == true
 	executable('arping', ['arping.c', git_version_h],
 		dependencies : [rt_dep, cap_dep, idn_dep],
+		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
 		join_paths(get_option('prefix'), get_option('bindir')),
