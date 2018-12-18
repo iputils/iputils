@@ -450,16 +450,12 @@ static void drop_rights(void)
 #ifdef HAVE_LIBCAP
 	cap_t caps = cap_init();
 
-	if (cap_set_proc(caps)) {
-		perror("clockdiff: cap_set_proc");
-		exit(-1);
-	}
+	if (cap_set_proc(caps))
+		error(-1, errno, "cap_set_proc");
 	cap_free(caps);
 #endif
-	if (setuid(getuid())) {
-		perror("clockdiff: setuid");
-		exit(-1);
-	}
+	if (setuid(getuid()))
+		error(-1, errno, "setuid");
 }
 
 int main(int argc, char **argv)
@@ -478,8 +474,6 @@ int main(int argc, char **argv)
 	struct addrinfo *result;
 	int status;
 	char hostname[MAX_HOSTNAMELEN];
-	int s_errno = 0;
-	int n_errno = 0;
 
 	if (argc == 2 && !strcmp(argv[1], "-V")) {
 		printf(IPUTILS_VERSION("clockdiff"));
@@ -491,11 +485,10 @@ int main(int argc, char **argv)
 	}
 
 	ctl.sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-	s_errno = errno;
-
-	errno = 0;
+	if (ctl.sock_raw < 0)
+		error(1, errno, "socket");
 	if (nice(-16) == -1)
-		n_errno = errno;
+		error(1, errno, "nice");
 	drop_rights();
 
 	if (argc == 3) {
@@ -510,18 +503,6 @@ int main(int argc, char **argv)
 	} else if (argc != 2)
 		usage();
 
-	if (ctl.sock_raw < 0) {
-		errno = s_errno;
-		perror("clockdiff: socket");
-		exit(1);
-	}
-
-	if (n_errno < 0) {
-		errno = n_errno;
-		perror("clockdiff: nice");
-		exit(1);
-	}
-
 	if (isatty(fileno(stdin)) && isatty(fileno(stdout)))
 		ctl.interactive = 1;
 
@@ -529,27 +510,21 @@ int main(int argc, char **argv)
 
 	gethostname(hostname, sizeof(hostname));
 	status = getaddrinfo(hostname, NULL, &hints, &result);
-	if (status) {
-		fprintf(stderr, "clockdiff: %s: %s\n", hostname, gai_strerror(status));
-		exit(2);
-	}
+	if (status)
+		error(2, 0, "%s: %s", hostname, gai_strerror(status));
 	ctl.myname = strdup(result->ai_canonname);
 	freeaddrinfo(result);
 
 	status = getaddrinfo(argv[1], NULL, &hints, &result);
-	if (status) {
-		fprintf(stderr, "clockdiff: %s: %s\n", argv[1], gai_strerror(status));
-		exit(1);
-	}
+	if (status)
+		error(1, 0, "%s: %s", argv[1], gai_strerror(status));
 	ctl.hisname = strdup(result->ai_canonname);
 
 	memcpy(&ctl.server, result->ai_addr, sizeof ctl.server);
 	freeaddrinfo(result);
 
-	if (connect(ctl.sock_raw, (struct sockaddr *)&ctl.server, sizeof(ctl.server)) == -1) {
-		perror("connect");
-		exit(1);
-	}
+	if (connect(ctl.sock_raw, (struct sockaddr *)&ctl.server, sizeof(ctl.server)) == -1)
+		error(1, errno, "connect");
 	if (ctl.ip_opt_len) {
 		struct sockaddr_in myaddr;
 		socklen_t addrlen = sizeof(myaddr);
@@ -560,10 +535,8 @@ int main(int argc, char **argv)
 		rspace[1] = ctl.ip_opt_len;
 		rspace[2] = 5;
 		rspace[3] = IPOPT_TS_PRESPEC;
-		if (getsockname(ctl.sock_raw, (struct sockaddr *)&myaddr, &addrlen) == -1) {
-			perror("getsockname");
-			exit(1);
-		}
+		if (getsockname(ctl.sock_raw, (struct sockaddr *)&myaddr, &addrlen) == -1)
+			error(1, errno, "getsockname");
 		((uint32_t *) (rspace + 4))[0 * 2] = myaddr.sin_addr.s_addr;
 		((uint32_t *) (rspace + 4))[1 * 2] = ctl.server.sin_addr.s_addr;
 		((uint32_t *) (rspace + 4))[2 * 2] = myaddr.sin_addr.s_addr;
@@ -573,7 +546,7 @@ int main(int argc, char **argv)
 		}
 
 		if (setsockopt(ctl.sock_raw, IPPROTO_IP, IP_OPTIONS, rspace, ctl.ip_opt_len) < 0) {
-			perror(_("ping: IP_OPTIONS (fallback to icmp tstamps)"));
+			error(0, errno, "IP_OPTIONS (fallback to icmp tstamps)");
 			ctl.ip_opt_len = 0;
 		}
 	}
@@ -581,22 +554,20 @@ int main(int argc, char **argv)
 	measure_status = measure(&ctl);
 	if (measure_status < 0) {
 		if (errno)
-			perror("measure");
-		else
-			fprintf(stderr, _("measure: unknown failure\n"));
-		exit(1);
+			error(1, errno, "measure");
+		error(1, 0, _("measure: unknown failure"));
 	}
 
 	switch (measure_status) {
 	case HOSTDOWN:
-		fprintf(stderr, _("%s is down\n"), ctl.hisname);
-		exit(1);
+		error(1, 0, _("%s is down"), ctl.hisname);
+		break;
 	case NONSTDTIME:
-		fprintf(stderr, _("%s time transmitted in a non-standard format\n"), ctl.hisname);
-		exit(1);
+		error(1, 0, _("%s time transmitted in a non-standard format"), ctl.hisname);
+		break;
 	case UNREACHABLE:
-		fprintf(stderr, _("%s is unreachable\n"), ctl.hisname);
-		exit(1);
+		error(1, 0, _("%s is unreachable"), ctl.hisname);
+		break;
 	default:
 		break;
 	}
