@@ -76,20 +76,7 @@
 # include <sys/capability.h>
 #endif
 
-#ifdef ENABLE_NLS
-# include <locale.h>
-#endif
-
-#if ENABLE_NLS
-# include <libintl.h>
-# define _(Text) gettext (Text)
-#else
-# undef bindtextdomain
-# define bindtextdomain(Domain, Directory) /* empty */
-# undef textdomain
-# define textdomain(Domain) /* empty */
-# define _(Text) Text
-#endif
+#include "iputils_common.h"
 
 #define MAX_HOSTNAMELEN	NI_MAXHOST
 

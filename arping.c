@@ -42,20 +42,7 @@
 # include <sys/types.h>
 #endif
 
-#if defined(USE_IDN) || defined(ENABLE_NLS)
-# include <locale.h>
-#endif
-
-#ifdef ENABLE_NLS
-# include <libintl.h>
-# define _(Text) gettext (Text)
-#else
-# undef bindtextdomain
-# define bindtextdomain(Domain, Directory) /* empty */
-# undef textdomain
-# define textdomain(Domain) /* empty */
-# define _(Text) Text
-#endif
+#include "iputils_common.h"
 
 #ifdef USE_IDN
 # ifndef AI_IDN
