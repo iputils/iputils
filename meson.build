@@ -283,6 +283,7 @@ endif
 if build_rarpd == true
 	executable('rarpd', ['rarpd.c', git_version_h],
 		install_dir: 'sbin',
+		link_with : [libcommon],
 		install: true)
 	if systemd.found()
 		subs = configuration_data()

@@ -30,6 +30,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
+#include "iputils_common.h"
 
 int do_reload = 1;
 
@@ -627,7 +628,7 @@ int main(int argc, char **argv)
 		memset(&ifr, 0, sizeof(ifr));
 		strncpy(ifr.ifr_name, ifname, IFNAMSIZ);
 		if (ioctl(pset[0].fd, SIOCGIFINDEX, &ifr)) {
-			perror("ioctl(SIOCGIFINDEX)");
+			error(0, errno, "ioctl(SIOCGIFINDEX)");
 			usage();
 		}
 		ifidx = ifr.ifr_ifindex;
@@ -669,10 +670,8 @@ int main(int argc, char **argv)
 		pset[0] = pset[1];
 		psize--;
 	}
-	if (psize == 0) {
-		fprintf(stderr, "failed to bind any socket. Aborting.\n");
-		exit(1);
-	}
+	if (psize == 0)
+		error(1, errno, "failed to bind any socket");
 
 	if (!debug) {
 		int fd;
@@ -680,15 +679,11 @@ int main(int argc, char **argv)
 
 		if (pid > 0)
 			exit(0);
-		else if (pid == -1) {
-			perror("rarpd: fork");
-			exit(1);
-		}
+		else if (pid == -1)
+			error(1, errno, "fork");
 
-		if (chdir("/") < 0) {
-			perror("rarpd: chdir");
-			exit(1);
-		}
+		if (chdir("/") < 0)
+			error(1, errno, "chdir");
 
 		fd = open("/dev/null", O_RDWR);
 		if (fd >= 0) {
