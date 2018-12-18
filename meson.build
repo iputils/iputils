@@ -218,6 +218,7 @@ endif
 if build_tracepath == true
 	executable('tracepath', ['tracepath.c', git_version_h],
 		dependencies : idn_dep,
+		link_with : [libcommon],
 		install: true)
 endif
 
