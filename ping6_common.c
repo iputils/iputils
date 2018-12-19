@@ -491,6 +491,7 @@ static int niquery_option_subject_name_handler(int index __attribute__((__unused
 					       const char *name __attribute__((__unused__)))
 {
 	error(3, ENOSYS, _("niquery_option_subject_name_handler() crypto disabled"));
+	abort();
 }
 #endif
 
