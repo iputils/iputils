@@ -476,7 +476,7 @@ hard_local_error:
 		if (options & F_FLOOD)
 			write_stdout("E", 1);
 		else
-			perror("ping: sendmsg");
+			error(0, errno, "sendmsg");
 	}
 	tokens = 0;
 	return SCHINT(interval);

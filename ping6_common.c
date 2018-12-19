@@ -629,8 +629,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			if (
 				setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 ||
 				setsockopt(sock->fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1) {
-				perror("setsockopt(IPV6_PKTINFO)");
-				exit(2);
+				error(2, errno, "setsockopt(IPV6_PKTINFO)");
 			}
 #endif
 			if (
