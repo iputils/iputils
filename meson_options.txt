@@ -17,7 +17,7 @@ option('BUILD_CLOCKDIFF', type : 'boolean', value : true,
 option('BUILD_PING', type : 'boolean', value : true,
         description : 'Build ping')
 
-option('BUILD_RARPD', type : 'boolean', value : true,
+option('BUILD_RARPD', type : 'boolean', value : false,
         description : 'Build rarpd')
 
 option('BUILD_RDISC', type : 'boolean', value : true,
@@ -32,7 +32,7 @@ option('BUILD_TFTPD', type : 'boolean', value : true,
 option('BUILD_TRACEPATH', type : 'boolean', value : true,
         description : 'Build tracepath')
 
-option('BUILD_TRACEROUTE6', type : 'boolean', value : true,
+option('BUILD_TRACEROUTE6', type : 'boolean', value : false,
         description : 'Build traceroute6')
 
 option('BUILD_NINFOD', type : 'boolean', value : true,
@@ -56,5 +56,5 @@ option('USE_SYSFS', type : 'boolean', value : true,
 option('systemdunitdir', type: 'string', value: '',
 	description: 'Directory for systemd units')
 
-option('USE_GETTEXT', type: 'boolean', value: false,
+option('USE_GETTEXT', type: 'boolean', value: true,
 	description: 'Enable I18N')
