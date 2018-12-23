@@ -55,38 +55,375 @@
 #include "iputils_common.h"
 #include "tftp.h"
 
-#define	TIMEOUT		5
+enum {
+	MAXARG = 1,
+	TIMEOUT = 5
+};
 
-int	peer;
-int	rexmtval = TIMEOUT;
-int	maxtimeout = 5*TIMEOUT;
-char	buf[PKTSIZE];
-char	ackbuf[PKTSIZE];
-union {
-	struct	sockaddr     sa;
-	struct	sockaddr_in  sin;
-	struct	sockaddr_in6 sin6;
-} from;
-socklen_t	fromlen;
+struct errmsg {
+	int e_code;
+	char const *e_msg;
+} errmsgs[] = {
+	{EUNDEF, "Undefined error code"},
+	{ENOTFOUND, "File not found"},
+	{EACCESS, "Access violation"},
+	{ENOSPACE, "Disk full or allocation exceeded"},
+	{EBADOP, "Illegal TFTP operation"},
+	{EBADID, "Unknown transfer ID"},
+	{EEXISTS, "File already exists"},
+	{ENOUSER, "No such user"},
+	{-1, 0}
+};
 
-#define MAXARG	1
-char	*dirs[MAXARG+1];
+struct run_state;
 
-void tftp(struct tftphdr *tp, int size) __attribute__((noreturn));
-void nak(int error);
-int validate_access(char *filename, int mode);
+struct formats {
+	char *f_mode;
+	int (*f_validate)(struct run_state *ctl, char *filename, int mode);
+	void (*f_send)(struct run_state *ctl, struct formats *);
+	void (*f_recv)(struct run_state *ctl, struct formats *);
+	int f_convert;
+};
 
-struct formats;
+struct run_state {
+	int peer;
+	int rexmtval;
+	int maxtimeout;
+	char buf[PKTSIZE];
+	char ackbuf[PKTSIZE];
+	union {
+		struct sockaddr sa;
+		struct sockaddr_in sin;
+		struct sockaddr_in6 sin6;
+	} from;
+	struct formats formats[3];
+	socklen_t fromlen;
+	int confirmed;
+	int timeout;
+	jmp_buf timeoutbuf;
+	char *dirs[MAXARG + 1];
+	FILE *file;
+};
+struct run_state *global_ctl;
 
-void sendfile(struct formats *pf);
-void recvfile(struct formats *pf);
+/*
+ * All includes, definitions, struct declarations, and global variables are
+ * above.  After this comment all you can find is functions.
+ */
 
+/*
+ * Send a nak packet (error message).
+ * Error code passed in is one of the
+ * standard TFTP codes, or a UNIX errno
+ * offset by 100.
+ */
+void nak(struct run_state *ctl, int error)
+{
+	struct tftphdr *tp;
+	int length;
+	struct errmsg *pe;
+
+	tp = (struct tftphdr *)ctl->buf;
+	tp->th_opcode = htons((unsigned short)ERROR);
+	tp->th_code = htons((unsigned short)error);
+	for (pe = errmsgs; pe->e_code >= 0; pe++)
+		if (pe->e_code == error)
+			break;
+	if (pe->e_code < 0) {
+		pe->e_msg = strerror(error - 100);
+		tp->th_code = EUNDEF;   /* set 'undef' errorcode */
+	}
+	strcpy(tp->th_msg, pe->e_msg);
+	length = strlen(pe->e_msg);
+	tp->th_msg[length] = '\0';
+	length += 5;
+	if (send(ctl->peer, ctl->buf, length, 0) != length)
+		syslog(LOG_ERR, "nak: %s\n", strerror(errno));
+}
+
+/*
+ * Handle initial connection protocol.
+ */
+void tftp(struct run_state *ctl, struct tftphdr *tp, int size)
+{
+	char *cp;
+	int first = 1, ecode;
+	struct formats *pf;
+	char *filename, *mode = NULL;
+
+	filename = cp = tp->th_stuff;
+again:
+	while (cp < ctl->buf + size) {
+		if (*cp == '\0')
+			break;
+		cp++;
+	}
+	if (*cp != '\0') {
+		nak(ctl, EBADOP);
+		exit(1);
+	}
+	if (first) {
+		mode = ++cp;
+		first = 0;
+		goto again;
+	}
+	for (cp = mode; *cp; cp++)
+		if (isupper(*cp))
+			*cp = tolower(*cp);
+	for (pf = ctl->formats; pf->f_mode; pf++)
+		if (strcmp(pf->f_mode, mode) == 0)
+			break;
+	if (pf->f_mode == 0) {
+		nak(ctl, EBADOP);
+		exit(1);
+	}
+	ecode = (*pf->f_validate)(ctl, filename, tp->th_opcode);
+	if (ecode) {
+		nak(ctl, ecode);
+		exit(1);
+	}
+	if (tp->th_opcode == WRQ)
+		(*pf->f_recv)(ctl, pf);
+	else
+		(*pf->f_send)(ctl, pf);
+	exit(0);
+}
+
+/*
+ * Validate file access.  Since we
+ * have no uid or gid, for now require
+ * file to exist and be publicly
+ * readable/writable.
+ * If we were invoked with arguments
+ * from inetd then the file must also be
+ * in one of the given directory prefixes.
+ * Note also, full path name must be
+ * given as we have no login directory.
+ */
+int validate_access(struct run_state *ctl, char *filename, int mode)
+{
+	struct stat stbuf;
+	int    fd;
+	char  *cp;
+	char   fnamebuf[1024+512];
+
+	for (cp = filename; *cp; cp++) {
+		if(*cp == '.' && (cp == filename || strncmp(cp-1, "/../", 4) == 0)) {
+			syslog(LOG_ERR, "bad path %s", filename);
+			return(EACCESS);
+		}
+	}
+
+	if (*filename == '/')
+		filename++;
+
+	if (!*ctl->dirs) {
+		syslog(LOG_ERR, "no dirs");
+		return EACCESS;
+	}
+	snprintf(fnamebuf, sizeof(fnamebuf)-1, "%s/%s", *ctl->dirs, filename);
+	filename = fnamebuf;
+
+	if (stat(filename, &stbuf) < 0) {
+		syslog(LOG_ERR, "stat %s : %s", filename, strerror(errno));
+		return (errno == ENOENT ? ENOTFOUND : EACCESS);
+	}
+	if (mode == RRQ) {
+		if ((stbuf.st_mode&(S_IREAD >> 6)) == 0) {
+			syslog(LOG_ERR, "not readable %s", filename);
+			return (EACCESS);
+		}
+	} else {
+		if ((stbuf.st_mode&(S_IWRITE >> 6)) == 0) {
+			syslog(LOG_ERR, "not writable %s", filename);
+			return (EACCESS);
+		}
+	}
+	fd = open(filename, mode == RRQ ? 0 : 1);
+	if (fd < 0) {
+		syslog(LOG_ERR, "cannot open %s: %s", filename, strerror(errno));
+		return (errno + 100);
+	}
+	ctl->file = fdopen(fd, (mode == RRQ)? "r":"w");
+	if (ctl->file == NULL) {
+		return errno+100;
+	}
+	return (0);
+}
+
+void timer(int signo __attribute__((__unused__)))
+{
+	global_ctl->confirmed = 0;
+	global_ctl->timeout += global_ctl->rexmtval;
+	if (global_ctl->timeout >= global_ctl->maxtimeout)
+		exit(1);
+	longjmp(global_ctl->timeoutbuf, 1);
+}
+
+/*
+ * Send the requested file.
+ */
+void sendfile(struct run_state *ctl, struct formats *pf)
+{
+	struct tftphdr *dp;
+	struct tftphdr *ap;    /* ack packet */
+	volatile int block = 1;
+	int size, n;
+
+	ctl->confirmed = 0;
+	signal(SIGALRM, timer);
+	dp = r_init();
+	ap = (struct tftphdr *)ctl->ackbuf;
+	do {
+		size = readit(ctl->file, &dp, pf->f_convert);
+		if (size < 0) {
+			nak(ctl, errno + 100);
+			goto abort;
+		}
+		dp->th_opcode = htons((unsigned short)DATA);
+		dp->th_block = htons((unsigned short)block);
+		ctl->timeout = 0;
+		(void) setjmp(ctl->timeoutbuf);
+
+send_data:
+		if (send(ctl->peer, dp, size + 4, ctl->confirmed) != size + 4) {
+			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
+			goto abort;
+		}
+		ctl->confirmed = 0;
+		read_ahead(ctl->file, pf->f_convert);
+		for ( ; ; ) {
+			alarm(ctl->rexmtval);        /* read the ack */
+			n = recv(ctl->peer, ctl->ackbuf, sizeof (ctl->ackbuf), 0);
+			alarm(0);
+			if (n < 0) {
+				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
+				goto abort;
+			}
+			ap->th_opcode = ntohs((unsigned short)ap->th_opcode);
+			ap->th_block = ntohs((unsigned short)ap->th_block);
+
+			if (ap->th_opcode == ERROR)
+				goto abort;
+
+			if (ap->th_opcode == ACK) {
+				if (ap->th_block == block) {
+					ctl->confirmed = MSG_CONFIRM;
+					break;
+				}
+				/* Re-synchronize with the other side */
+				synchnet(ctl->peer);
+				if (ap->th_block == (block -1)) {
+					goto send_data;
+				}
+			}
+
+		}
+		block++;
+	} while (size == SEGSIZE);
+abort:
+	(void) fclose(ctl->file);
+}
+
+void justquit(int signo __attribute__((__unused__)))
+{
+	exit(0);
+}
+
+/*
+ * Receive a file.
+ */
+void recvfile(struct run_state *ctl, struct formats *pf)
+{
+	struct tftphdr *dp;
+	struct tftphdr *ap;    /* ack buffer */
+	volatile int block = 0, n, size;
+
+	ctl->confirmed = 0;
+	signal(SIGALRM, timer);
+	dp = w_init();
+	ap = (struct tftphdr *)ctl->ackbuf;
+	do {
+		ctl->timeout = 0;
+		ap->th_opcode = htons((unsigned short)ACK);
+		ap->th_block = htons((unsigned short)block);
+		block++;
+		(void) setjmp(ctl->timeoutbuf);
+send_ack:
+		if (send(ctl->peer, ctl->ackbuf, 4, ctl->confirmed) != 4) {
+			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
+			goto abort;
+		}
+		ctl->confirmed = 0;
+		write_behind(ctl->file, pf->f_convert);
+		for ( ; ; ) {
+			alarm(ctl->rexmtval);
+			n = recv(ctl->peer, dp, PKTSIZE, 0);
+			alarm(0);
+			if (n < 0) {            /* really? */
+				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
+				goto abort;
+			}
+			dp->th_opcode = ntohs((unsigned short)dp->th_opcode);
+			dp->th_block = ntohs((unsigned short)dp->th_block);
+			if (dp->th_opcode == ERROR)
+				goto abort;
+			if (dp->th_opcode == DATA) {
+				if (dp->th_block == block) {
+					ctl->confirmed = MSG_CONFIRM;
+					break;   /* normal */
+				}
+				/* Re-synchronize with the other side */
+				(void) synchnet(ctl->peer);
+				if (dp->th_block == (block-1))
+					goto send_ack;          /* rexmit */
+			}
+		}
+		/*  size = write(file, dp->th_data, n - 4); */
+		size = writeit(ctl->file, &dp, n - 4, pf->f_convert);
+		if (size != (n-4)) {                    /* ahem */
+			if (size < 0) nak(ctl, errno + 100);
+			else nak(ctl, ENOSPACE);
+			goto abort;
+		}
+	} while (size == SEGSIZE);
+	write_behind(ctl->file, pf->f_convert);
+	if (close_stream(ctl->file))
+		syslog(LOG_ERR, "tftpd: write error: %s\n",  strerror(errno));
+	(void) fclose(ctl->file);            /* close data file */
+
+	ap->th_opcode = htons((unsigned short)ACK);    /* send the "final" ack */
+	ap->th_block = htons((unsigned short)(block));
+	(void) send(ctl->peer, ctl->ackbuf, 4, ctl->confirmed);
+
+	signal(SIGALRM, justquit);      /* just quit on timeout */
+	alarm(ctl->rexmtval);
+	n = recv(ctl->peer, ctl->buf, sizeof (ctl->buf), 0); /* normally times out and quits */
+	alarm(0);
+	if (n >= 4 &&                   /* if read some data */
+	    dp->th_opcode == DATA &&    /* and got a data block */
+	    block == dp->th_block) {	/* then my last ack was lost */
+		(void) send(ctl->peer, ctl->ackbuf, 4, 0);     /* resend final ack */
+	}
+abort:
+	return;
+}
 
 int main(int ac, char **av)
 {
 	struct tftphdr *tp;
+
+	struct run_state ctl = {
+		.rexmtval = TIMEOUT,
+		.maxtimeout = 5 * TIMEOUT,
+		.formats = {
+			{"netascii", validate_access, sendfile, recvfile, 1},
+			{"octet", validate_access, sendfile, recvfile, 0}
+		}
+	};
 	int n = 0;
 	int on = 1;
+	global_ctl = &ctl;
 
 	if (ac == 2 && !strcmp(av[1], "-V")) {
 		printf(IPUTILS_VERSION("tftpd"));
@@ -107,15 +444,15 @@ int main(int ac, char **av)
 
 	ac--; av++;
 	while (ac-- > 0 && n < MAXARG)
-		dirs[n++] = *av++;
+		ctl.dirs[n++] = *av++;
 
 	if (ioctl(0, FIONBIO, &on) < 0) {
 		syslog(LOG_ERR, "ioctl(FIONBIO): %s\n", strerror(errno));
 		exit(1);
 	}
-	fromlen = sizeof (from);
-	n = recvfrom(0, buf, sizeof (buf), 0,
-	    (struct sockaddr *)&from, &fromlen);
+	ctl.fromlen = sizeof (ctl.from);
+	n = recvfrom(0, ctl.buf, sizeof (ctl.buf), 0,
+	    (struct sockaddr *)&ctl.from, &ctl.fromlen);
 	if (n < 0) {
 		if (errno != EAGAIN)
 			syslog(LOG_ERR, "recvfrom: %s\n", strerror(errno));
@@ -154,12 +491,12 @@ int main(int ac, char **av)
 				 * than one tftpd being started up to service
 				 * a single request from a single client.
 				 */
-				j = sizeof from;
-				i = recvfrom(0, buf, sizeof (buf), 0,
-				    (struct sockaddr *)&from, &j);
+				j = sizeof ctl.from;
+				i = recvfrom(0, ctl.buf, sizeof (ctl.buf), 0,
+				    (struct sockaddr *)&ctl.from, &j);
 				if (i > 0) {
 					n = i;
-					fromlen = j;
+					ctl.fromlen = j;
 				}
 		    } else {
 				break;
@@ -175,350 +512,18 @@ int main(int ac, char **av)
 	alarm(0);
 	close(0);
 	close(1);
-	peer = socket(from.sa.sa_family, SOCK_DGRAM, 0);
-	if (peer < 0) {
+	ctl.peer = socket(ctl.from.sa.sa_family, SOCK_DGRAM, 0);
+	if (ctl.peer < 0) {
 		syslog(LOG_ERR, "socket: %s\n", strerror(errno));
 		exit(1);
 	}
-	if (connect(peer, (struct sockaddr *)&from, sizeof(from)) < 0) {
+	if (connect(ctl.peer, (struct sockaddr *)&ctl.from, sizeof(ctl.from)) < 0) {
 		syslog(LOG_ERR, "connect: %s\n", strerror(errno));
 		exit(1);
 	}
-	tp = (struct tftphdr *)buf;
+	tp = (struct tftphdr *)ctl.buf;
 	tp->th_opcode = ntohs(tp->th_opcode);
 	if (tp->th_opcode == RRQ || tp->th_opcode == WRQ)
-		tftp(tp, n);
+		tftp(&ctl, tp, n);
 	exit(1);
-}
-
-struct formats {
-	char	*f_mode;
-	int	(*f_validate)(char *filename, int mode);
-	void	(*f_send)(struct formats*);
-	void	(*f_recv)(struct formats*);
-	int	f_convert;
-} formats[] = {
-	{ "netascii",	validate_access,	sendfile,	recvfile, 1 },
-	{ "octet",	validate_access,	sendfile,	recvfile, 0 },
-	{ NULL, 0, NULL, NULL, 0 }
-};
-
-/*
- * Handle initial connection protocol.
- */
-void tftp(struct tftphdr *tp, int size)
-{
-	char *cp;
-	int first = 1, ecode;
-	struct formats *pf;
-	char *filename, *mode = NULL;
-
-	filename = cp = tp->th_stuff;
-again:
-	while (cp < buf + size) {
-		if (*cp == '\0')
-			break;
-		cp++;
-	}
-	if (*cp != '\0') {
-		nak(EBADOP);
-		exit(1);
-	}
-	if (first) {
-		mode = ++cp;
-		first = 0;
-		goto again;
-	}
-	for (cp = mode; *cp; cp++)
-		if (isupper(*cp))
-			*cp = tolower(*cp);
-	for (pf = formats; pf->f_mode; pf++)
-		if (strcmp(pf->f_mode, mode) == 0)
-			break;
-	if (pf->f_mode == 0) {
-		nak(EBADOP);
-		exit(1);
-	}
-	ecode = (*pf->f_validate)(filename, tp->th_opcode);
-	if (ecode) {
-		nak(ecode);
-		exit(1);
-	}
-	if (tp->th_opcode == WRQ)
-		(*pf->f_recv)(pf);
-	else
-		(*pf->f_send)(pf);
-	exit(0);
-}
-
-
-FILE *file;
-
-/*
- * Validate file access.  Since we
- * have no uid or gid, for now require
- * file to exist and be publicly
- * readable/writable.
- * If we were invoked with arguments
- * from inetd then the file must also be
- * in one of the given directory prefixes.
- * Note also, full path name must be
- * given as we have no login directory.
- */
-int validate_access(char *filename, int mode)
-{
-	struct stat stbuf;
-	int    fd;
-	char  *cp;
-	char   fnamebuf[1024+512];
-
-	for (cp = filename; *cp; cp++) {
-		if(*cp == '.' && (cp == filename || strncmp(cp-1, "/../", 4) == 0)) {
-			syslog(LOG_ERR, "bad path %s", filename);
-			return(EACCESS);
-		}
-	}
-
-	if (*filename == '/')
-		filename++;
-
-	if (!*dirs) {
-		syslog(LOG_ERR, "no dirs");
-		return EACCESS;
-	}
-	snprintf(fnamebuf, sizeof(fnamebuf)-1, "%s/%s", *dirs, filename);
-	filename = fnamebuf;
-
-	if (stat(filename, &stbuf) < 0) {
-		syslog(LOG_ERR, "stat %s : %s", filename, strerror(errno));
-		return (errno == ENOENT ? ENOTFOUND : EACCESS);
-	}
-	if (mode == RRQ) {
-		if ((stbuf.st_mode&(S_IREAD >> 6)) == 0) {
-			syslog(LOG_ERR, "not readable %s", filename);
-			return (EACCESS);
-		}
-	} else {
-		if ((stbuf.st_mode&(S_IWRITE >> 6)) == 0) {
-			syslog(LOG_ERR, "not writable %s", filename);
-			return (EACCESS);
-		}
-	}
-	fd = open(filename, mode == RRQ ? 0 : 1);
-	if (fd < 0) {
-		syslog(LOG_ERR, "cannot open %s: %s", filename, strerror(errno));
-		return (errno + 100);
-	}
-	file = fdopen(fd, (mode == RRQ)? "r":"w");
-	if (file == NULL) {
-		return errno+100;
-	}
-	return (0);
-}
-
-int	confirmed;
-int	timeout;
-jmp_buf	timeoutbuf;
-
-void timer(int signo __attribute__((__unused__)))
-{
-	confirmed = 0;
-	timeout += rexmtval;
-	if (timeout >= maxtimeout)
-		exit(1);
-	longjmp(timeoutbuf, 1);
-}
-
-/*
- * Send the requested file.
- */
-void sendfile(struct formats *pf)
-{
-	struct tftphdr *dp;
-	struct tftphdr *ap;    /* ack packet */
-	volatile int block = 1;
-	int size, n;
-
-	confirmed = 0;
-	signal(SIGALRM, timer);
-	dp = r_init();
-	ap = (struct tftphdr *)ackbuf;
-	do {
-		size = readit(file, &dp, pf->f_convert);
-		if (size < 0) {
-			nak(errno + 100);
-			goto abort;
-		}
-		dp->th_opcode = htons((unsigned short)DATA);
-		dp->th_block = htons((unsigned short)block);
-		timeout = 0;
-		(void) setjmp(timeoutbuf);
-
-send_data:
-		if (send(peer, dp, size + 4, confirmed) != size + 4) {
-			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
-			goto abort;
-		}
-		confirmed = 0;
-		read_ahead(file, pf->f_convert);
-		for ( ; ; ) {
-			alarm(rexmtval);        /* read the ack */
-			n = recv(peer, ackbuf, sizeof (ackbuf), 0);
-			alarm(0);
-			if (n < 0) {
-				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
-				goto abort;
-			}
-			ap->th_opcode = ntohs((unsigned short)ap->th_opcode);
-			ap->th_block = ntohs((unsigned short)ap->th_block);
-
-			if (ap->th_opcode == ERROR)
-				goto abort;
-
-			if (ap->th_opcode == ACK) {
-				if (ap->th_block == block) {
-					confirmed = MSG_CONFIRM;
-					break;
-				}
-				/* Re-synchronize with the other side */
-				synchnet(peer);
-				if (ap->th_block == (block -1)) {
-					goto send_data;
-				}
-			}
-
-		}
-		block++;
-	} while (size == SEGSIZE);
-abort:
-	(void) fclose(file);
-}
-
-void justquit(int signo __attribute__((__unused__)))
-{
-	exit(0);
-}
-
-
-/*
- * Receive a file.
- */
-void recvfile(struct formats *pf)
-{
-	struct tftphdr *dp;
-	struct tftphdr *ap;    /* ack buffer */
-	volatile int block = 0, n, size;
-
-	confirmed = 0;
-	signal(SIGALRM, timer);
-	dp = w_init();
-	ap = (struct tftphdr *)ackbuf;
-	do {
-		timeout = 0;
-		ap->th_opcode = htons((unsigned short)ACK);
-		ap->th_block = htons((unsigned short)block);
-		block++;
-		(void) setjmp(timeoutbuf);
-send_ack:
-		if (send(peer, ackbuf, 4, confirmed) != 4) {
-			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
-			goto abort;
-		}
-		confirmed = 0;
-		write_behind(file, pf->f_convert);
-		for ( ; ; ) {
-			alarm(rexmtval);
-			n = recv(peer, dp, PKTSIZE, 0);
-			alarm(0);
-			if (n < 0) {            /* really? */
-				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
-				goto abort;
-			}
-			dp->th_opcode = ntohs((unsigned short)dp->th_opcode);
-			dp->th_block = ntohs((unsigned short)dp->th_block);
-			if (dp->th_opcode == ERROR)
-				goto abort;
-			if (dp->th_opcode == DATA) {
-				if (dp->th_block == block) {
-					confirmed = MSG_CONFIRM;
-					break;   /* normal */
-				}
-				/* Re-synchronize with the other side */
-				(void) synchnet(peer);
-				if (dp->th_block == (block-1))
-					goto send_ack;          /* rexmit */
-			}
-		}
-		/*  size = write(file, dp->th_data, n - 4); */
-		size = writeit(file, &dp, n - 4, pf->f_convert);
-		if (size != (n-4)) {                    /* ahem */
-			if (size < 0) nak(errno + 100);
-			else nak(ENOSPACE);
-			goto abort;
-		}
-	} while (size == SEGSIZE);
-	write_behind(file, pf->f_convert);
-	if (close_stream(file))
-		syslog(LOG_ERR, "tftpd: write error: %s\n",  strerror(errno));
-
-	ap->th_opcode = htons((unsigned short)ACK);    /* send the "final" ack */
-	ap->th_block = htons((unsigned short)(block));
-	(void) send(peer, ackbuf, 4, confirmed);
-
-	signal(SIGALRM, justquit);      /* just quit on timeout */
-	alarm(rexmtval);
-	n = recv(peer, buf, sizeof (buf), 0); /* normally times out and quits */
-	alarm(0);
-	if (n >= 4 &&                   /* if read some data */
-	    dp->th_opcode == DATA &&    /* and got a data block */
-	    block == dp->th_block) {	/* then my last ack was lost */
-		(void) send(peer, ackbuf, 4, 0);     /* resend final ack */
-	}
-abort:
-	return;
-}
-
-struct errmsg {
-	int	e_code;
-	char	*e_msg;
-} errmsgs[] = {
-	{ EUNDEF,	"Undefined error code" },
-	{ ENOTFOUND,	"File not found" },
-	{ EACCESS,	"Access violation" },
-	{ ENOSPACE,	"Disk full or allocation exceeded" },
-	{ EBADOP,	"Illegal TFTP operation" },
-	{ EBADID,	"Unknown transfer ID" },
-	{ EEXISTS,	"File already exists" },
-	{ ENOUSER,	"No such user" },
-	{ -1,		0 }
-};
-
-/*
- * Send a nak packet (error message).
- * Error code passed in is one of the
- * standard TFTP codes, or a UNIX errno
- * offset by 100.
- */
-void nak(int error)
-{
-	struct tftphdr *tp;
-	int length;
-	struct errmsg *pe;
-
-	tp = (struct tftphdr *)buf;
-	tp->th_opcode = htons((unsigned short)ERROR);
-	tp->th_code = htons((unsigned short)error);
-	for (pe = errmsgs; pe->e_code >= 0; pe++)
-		if (pe->e_code == error)
-			break;
-	if (pe->e_code < 0) {
-		pe->e_msg = strerror(error - 100);
-		tp->th_code = EUNDEF;   /* set 'undef' errorcode */
-	}
-	strcpy(tp->th_msg, pe->e_msg);
-	length = strlen(pe->e_msg);
-	tp->th_msg[length] = '\0';
-	length += 5;
-	if (send(peer, buf, length, 0) != length)
-		syslog(LOG_ERR, "nak: %s\n", strerror(errno));
 }
