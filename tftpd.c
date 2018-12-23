@@ -409,26 +409,11 @@ abort:
 	return;
 }
 
-int main(int ac, char **av)
+int tftpd_inetd(struct run_state *ctl)
 {
 	struct tftphdr *tp;
-
-	struct run_state ctl = {
-		.rexmtval = TIMEOUT,
-		.maxtimeout = 5 * TIMEOUT,
-		.formats = {
-			{"netascii", validate_access, sendfile, recvfile, 1},
-			{"octet", validate_access, sendfile, recvfile, 0}
-		}
-	};
-	int n = 0;
 	int on = 1;
-	global_ctl = &ctl;
-
-	if (ac == 2 && !strcmp(av[1], "-V")) {
-		printf(IPUTILS_VERSION("tftpd"));
-		return 0;
-	}
+	ssize_t n;
 
 	openlog("tftpd", LOG_PID, LOG_DAEMON);
 
@@ -442,17 +427,13 @@ int main(int ac, char **av)
 		}
 	}
 
-	ac--; av++;
-	while (ac-- > 0 && n < MAXARG)
-		ctl.dirs[n++] = *av++;
-
 	if (ioctl(0, FIONBIO, &on) < 0) {
 		syslog(LOG_ERR, "ioctl(FIONBIO): %s\n", strerror(errno));
 		exit(1);
 	}
-	ctl.fromlen = sizeof (ctl.from);
-	n = recvfrom(0, ctl.buf, sizeof (ctl.buf), 0,
-	    (struct sockaddr *)&ctl.from, &ctl.fromlen);
+	ctl->fromlen = sizeof (ctl->from);
+	n = recvfrom(0, ctl->buf, sizeof (ctl->buf), 0,
+	    (struct sockaddr *)&ctl->from, &ctl->fromlen);
 	if (n < 0) {
 		if (errno != EAGAIN)
 			syslog(LOG_ERR, "recvfrom: %s\n", strerror(errno));
@@ -491,12 +472,12 @@ int main(int ac, char **av)
 				 * than one tftpd being started up to service
 				 * a single request from a single client.
 				 */
-				j = sizeof ctl.from;
-				i = recvfrom(0, ctl.buf, sizeof (ctl.buf), 0,
-				    (struct sockaddr *)&ctl.from, &j);
+				j = sizeof ctl->from;
+				i = recvfrom(0, ctl->buf, sizeof (ctl->buf), 0,
+				    (struct sockaddr *)&ctl->from, &j);
 				if (i > 0) {
 					n = i;
-					ctl.fromlen = j;
+					ctl->fromlen = j;
 				}
 		    } else {
 				break;
@@ -512,18 +493,43 @@ int main(int ac, char **av)
 	alarm(0);
 	close(0);
 	close(1);
-	ctl.peer = socket(ctl.from.sa.sa_family, SOCK_DGRAM, 0);
-	if (ctl.peer < 0) {
+	ctl->peer = socket(ctl->from.sa.sa_family, SOCK_DGRAM, 0);
+	if (ctl->peer < 0) {
 		syslog(LOG_ERR, "socket: %s\n", strerror(errno));
 		exit(1);
 	}
-	if (connect(ctl.peer, (struct sockaddr *)&ctl.from, sizeof(ctl.from)) < 0) {
+	if (connect(ctl->peer, (struct sockaddr *)&ctl->from, sizeof(ctl->from)) < 0) {
 		syslog(LOG_ERR, "connect: %s\n", strerror(errno));
 		exit(1);
 	}
-	tp = (struct tftphdr *)ctl.buf;
+	tp = (struct tftphdr *)ctl->buf;
 	tp->th_opcode = ntohs(tp->th_opcode);
 	if (tp->th_opcode == RRQ || tp->th_opcode == WRQ)
-		tftp(&ctl, tp, n);
-	exit(1);
+		tftp(ctl, tp, n);
+	return 1;
+}
+
+int main(int ac, char **av)
+{
+	struct run_state ctl = {
+		.rexmtval = TIMEOUT,
+		.maxtimeout = 5 * TIMEOUT,
+		.formats = {
+			{"netascii", validate_access, sendfile, recvfile, 1},
+			{"octet", validate_access, sendfile, recvfile, 0}
+		}
+	};
+	int n = 0;
+
+	global_ctl = &ctl;
+
+	if (ac == 2 && !strcmp(av[1], "-V")) {
+		printf(IPUTILS_VERSION("tftpd"));
+		return 0;
+	}
+
+	ac--; av++;
+	while (ac-- > 0 && n < MAXARG)
+		ctl.dirs[n++] = *av++;
+	return tftpd_inetd(&ctl);
 }
