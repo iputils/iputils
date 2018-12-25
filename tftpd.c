@@ -452,34 +452,31 @@ int tftpd_inetd(struct run_state *ctl)
 
 		for (i = 1; i < 20; i++) {
 			pid = fork();
-			if (pid < 0) {
-				sleep(i);
-				/*
-				 * flush out to most recently sent request.
-				 *
-				 * This may drop some request, but those will be resent
-				 * by the clients when they timeout.  The positive effect
-				 * of this flush is to (try to) prevent more than one
-				 * tftpd being started up to service a single request
-				 * from a single client.
-				 */
-				j = sizeof ctl->from;
-				i = recvfrom(0, ctl->buf, sizeof(ctl->buf), 0,
-					     (struct sockaddr *)&ctl->from, &j);
-				if (i > 0) {
-					n = i;
-					ctl->fromlen = j;
-				}
-			} else {
+			if (0 <= pid)
 				break;
+			sleep(i);
+			/*
+			 * flush out to most recently sent request.
+			 *
+			 * This may drop some request, but those will be resent by the
+			 * clients when they timeout.  The positive effect of this flush
+			 * is to (try to) prevent more than one tftpd being started up to
+			 * service a single request from a single client.
+			 */
+			j = sizeof ctl->from;
+			i = recvfrom(0, ctl->buf, sizeof(ctl->buf), 0,
+				     (struct sockaddr *)&ctl->from, &j);
+			if (i > 0) {
+				n = i;
+				ctl->fromlen = j;
 			}
 		}
 		if (pid < 0) {
 			syslog(LOG_ERR, "fork: %s\n", strerror(errno));
 			exit(1);
-		} else if (pid != 0) {
-			exit(0);
 		}
+		if (pid != 0)
+			exit(0);
 	}
 	alarm(0);
 	close(0);
