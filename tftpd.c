@@ -26,31 +26,30 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
 /*
  * Trivial file transfer protocol server.
  *
  * This version includes many modifications by Jim Guyton <guyton@rand-unix>
  */
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <signal.h>
-#include <fcntl.h>
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-
-#include <setjmp.h>
-#include <syslog.h>
-#include <stdio.h>
-#include <errno.h>
 #include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <grp.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <syslog.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "iputils_common.h"
 #include "tftp.h"
@@ -107,15 +106,13 @@ struct run_state {
 struct run_state *global_ctl;
 
 /*
- * All includes, definitions, struct declarations, and global variables are
- * above.  After this comment all you can find is functions.
+ * All includes, definitions, struct declarations, and global variables are above.  After
+ * this comment all you can find is functions.
  */
 
 /*
- * Send a nak packet (error message).
- * Error code passed in is one of the
- * standard TFTP codes, or a UNIX errno
- * offset by 100.
+ * Send a nak packet (error message).  Error code passed in is one of the standard TFTP
+ * codes, or a UNIX errno offset by 100.
  */
 void nak(struct run_state *ctl, int error)
 {
@@ -131,7 +128,7 @@ void nak(struct run_state *ctl, int error)
 			break;
 	if (pe->e_code < 0) {
 		pe->e_msg = strerror(error - 100);
-		tp->th_code = EUNDEF;   /* set 'undef' errorcode */
+		tp->th_code = EUNDEF;	/* set 'undef' errorcode */
 	}
 	strcpy(tp->th_msg, pe->e_msg);
 	length = strlen(pe->e_msg);
@@ -152,7 +149,7 @@ void tftp(struct run_state *ctl, struct tftphdr *tp, int size)
 	char *filename, *mode = NULL;
 
 	filename = cp = tp->th_stuff;
-again:
+ again:
 	while (cp < ctl->buf + size) {
 		if (*cp == '\0')
 			break;
@@ -177,40 +174,37 @@ again:
 		nak(ctl, EBADOP);
 		exit(1);
 	}
-	ecode = (*pf->f_validate)(ctl, filename, tp->th_opcode);
+	ecode = (*pf->f_validate) (ctl, filename, tp->th_opcode);
 	if (ecode) {
 		nak(ctl, ecode);
 		exit(1);
 	}
 	if (tp->th_opcode == WRQ)
-		(*pf->f_recv)(ctl, pf);
+		(*pf->f_recv) (ctl, pf);
 	else
-		(*pf->f_send)(ctl, pf);
+		(*pf->f_send) (ctl, pf);
 	exit(0);
 }
 
 /*
- * Validate file access.  Since we
- * have no uid or gid, for now require
- * file to exist and be publicly
- * readable/writable.
- * If we were invoked with arguments
- * from inetd then the file must also be
- * in one of the given directory prefixes.
- * Note also, full path name must be
- * given as we have no login directory.
+ * Validate file access.  Since we have no uid or gid, for now require file to exist and
+ * be publicly readable/writable.
+
+ * If we were invoked with arguments from inetd then the file must also be in one of the
+ * given directory prefixes.  Note also, full path name must be given as we have no login
+ * directory.
  */
 int validate_access(struct run_state *ctl, char *filename, int mode)
 {
 	struct stat stbuf;
-	int    fd;
-	char  *cp;
-	char   fnamebuf[1024+512];
+	int fd;
+	char *cp;
+	char fnamebuf[1024 + 512];
 
 	for (cp = filename; *cp; cp++) {
-		if(*cp == '.' && (cp == filename || strncmp(cp-1, "/../", 4) == 0)) {
+		if (*cp == '.' && (cp == filename || strncmp(cp - 1, "/../", 4) == 0)) {
 			syslog(LOG_ERR, "bad path %s", filename);
-			return(EACCESS);
+			return EACCESS;
 		}
 	}
 
@@ -221,7 +215,7 @@ int validate_access(struct run_state *ctl, char *filename, int mode)
 		syslog(LOG_ERR, "no dirs");
 		return EACCESS;
 	}
-	snprintf(fnamebuf, sizeof(fnamebuf)-1, "%s/%s", *ctl->dirs, filename);
+	snprintf(fnamebuf, sizeof(fnamebuf) - 1, "%s/%s", *ctl->dirs, filename);
 	filename = fnamebuf;
 
 	if (stat(filename, &stbuf) < 0) {
@@ -229,14 +223,14 @@ int validate_access(struct run_state *ctl, char *filename, int mode)
 		return (errno == ENOENT ? ENOTFOUND : EACCESS);
 	}
 	if (mode == RRQ) {
-		if ((stbuf.st_mode&(S_IREAD >> 6)) == 0) {
+		if ((stbuf.st_mode & (S_IREAD >> 6)) == 0) {
 			syslog(LOG_ERR, "not readable %s", filename);
-			return (EACCESS);
+			return EACCESS;
 		}
 	} else {
-		if ((stbuf.st_mode&(S_IWRITE >> 6)) == 0) {
+		if ((stbuf.st_mode & (S_IWRITE >> 6)) == 0) {
 			syslog(LOG_ERR, "not writable %s", filename);
-			return (EACCESS);
+			return EACCESS;
 		}
 	}
 	fd = open(filename, mode == RRQ ? 0 : 1);
@@ -244,11 +238,11 @@ int validate_access(struct run_state *ctl, char *filename, int mode)
 		syslog(LOG_ERR, "cannot open %s: %s", filename, strerror(errno));
 		return (errno + 100);
 	}
-	ctl->file = fdopen(fd, (mode == RRQ)? "r":"w");
+	ctl->file = fdopen(fd, (mode == RRQ) ? "r" : "w");
 	if (ctl->file == NULL) {
-		return errno+100;
+		return (errno + 100);
 	}
-	return (0);
+	return 0;
 }
 
 void timer(int signo __attribute__((__unused__)))
@@ -266,7 +260,7 @@ void timer(int signo __attribute__((__unused__)))
 void sendfile(struct run_state *ctl, struct formats *pf)
 {
 	struct tftphdr *dp;
-	struct tftphdr *ap;    /* ack packet */
+	struct tftphdr *ap;	/* ack packet */
 	volatile int block = 1;
 	int size, n;
 
@@ -283,18 +277,18 @@ void sendfile(struct run_state *ctl, struct formats *pf)
 		dp->th_opcode = htons((unsigned short)DATA);
 		dp->th_block = htons((unsigned short)block);
 		ctl->timeout = 0;
-		(void) setjmp(ctl->timeoutbuf);
+		setjmp(ctl->timeoutbuf);
 
-send_data:
+ send_data:
 		if (send(ctl->peer, dp, size + 4, ctl->confirmed) != size + 4) {
 			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
 			goto abort;
 		}
 		ctl->confirmed = 0;
 		read_ahead(ctl->file, pf->f_convert);
-		for ( ; ; ) {
-			alarm(ctl->rexmtval);        /* read the ack */
-			n = recv(ctl->peer, ctl->ackbuf, sizeof (ctl->ackbuf), 0);
+		for (;;) {
+			alarm(ctl->rexmtval);	/* read the ack */
+			n = recv(ctl->peer, ctl->ackbuf, sizeof(ctl->ackbuf), 0);
 			alarm(0);
 			if (n < 0) {
 				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
@@ -313,7 +307,7 @@ send_data:
 				}
 				/* Re-synchronize with the other side */
 				synchnet(ctl->peer);
-				if (ap->th_block == (block -1)) {
+				if (ap->th_block == (block - 1)) {
 					goto send_data;
 				}
 			}
@@ -321,8 +315,8 @@ send_data:
 		}
 		block++;
 	} while (size == SEGSIZE);
-abort:
-	(void) fclose(ctl->file);
+ abort:
+	fclose(ctl->file);
 }
 
 void justquit(int signo __attribute__((__unused__)))
@@ -336,7 +330,7 @@ void justquit(int signo __attribute__((__unused__)))
 void recvfile(struct run_state *ctl, struct formats *pf)
 {
 	struct tftphdr *dp;
-	struct tftphdr *ap;    /* ack buffer */
+	struct tftphdr *ap;	/* ack buffer */
 	volatile int block = 0, n, size;
 
 	ctl->confirmed = 0;
@@ -348,19 +342,19 @@ void recvfile(struct run_state *ctl, struct formats *pf)
 		ap->th_opcode = htons((unsigned short)ACK);
 		ap->th_block = htons((unsigned short)block);
 		block++;
-		(void) setjmp(ctl->timeoutbuf);
-send_ack:
+		setjmp(ctl->timeoutbuf);
+ send_ack:
 		if (send(ctl->peer, ctl->ackbuf, 4, ctl->confirmed) != 4) {
 			syslog(LOG_ERR, "tftpd: write: %s\n", strerror(errno));
 			goto abort;
 		}
 		ctl->confirmed = 0;
 		write_behind(ctl->file, pf->f_convert);
-		for ( ; ; ) {
+		for (;;) {
 			alarm(ctl->rexmtval);
 			n = recv(ctl->peer, dp, PKTSIZE, 0);
 			alarm(0);
-			if (n < 0) {            /* really? */
+			if (n < 0) {	/* really? */
 				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
 				goto abort;
 			}
@@ -371,41 +365,43 @@ send_ack:
 			if (dp->th_opcode == DATA) {
 				if (dp->th_block == block) {
 					ctl->confirmed = MSG_CONFIRM;
-					break;   /* normal */
+					break;	/* normal */
 				}
 				/* Re-synchronize with the other side */
-				(void) synchnet(ctl->peer);
-				if (dp->th_block == (block-1))
-					goto send_ack;          /* rexmit */
+				synchnet(ctl->peer);
+				if (dp->th_block == (block - 1))
+					goto send_ack;	/* rexmit */
 			}
 		}
-		/*  size = write(file, dp->th_data, n - 4); */
+		/* size = write(file, dp->th_data, n - 4); */
 		size = writeit(ctl->file, &dp, n - 4, pf->f_convert);
-		if (size != (n-4)) {                    /* ahem */
-			if (size < 0) nak(ctl, errno + 100);
-			else nak(ctl, ENOSPACE);
+		if (size != (n - 4)) {	/* ahem */
+			if (size < 0)
+				nak(ctl, errno + 100);
+			else
+				nak(ctl, ENOSPACE);
 			goto abort;
 		}
 	} while (size == SEGSIZE);
 	write_behind(ctl->file, pf->f_convert);
 	if (close_stream(ctl->file))
 		syslog(LOG_ERR, "tftpd: write error: %s\n",  strerror(errno));
-	(void) fclose(ctl->file);            /* close data file */
+	fclose(ctl->file);		/* close data file */
 
-	ap->th_opcode = htons((unsigned short)ACK);    /* send the "final" ack */
+	ap->th_opcode = htons((unsigned short)ACK);	/* send the "final" ack */
 	ap->th_block = htons((unsigned short)(block));
-	(void) send(ctl->peer, ctl->ackbuf, 4, ctl->confirmed);
+	send(ctl->peer, ctl->ackbuf, 4, ctl->confirmed);
 
-	signal(SIGALRM, justquit);      /* just quit on timeout */
+	signal(SIGALRM, justquit);	/* just quit on timeout */
 	alarm(ctl->rexmtval);
-	n = recv(ctl->peer, ctl->buf, sizeof (ctl->buf), 0); /* normally times out and quits */
+	n = recv(ctl->peer, ctl->buf, sizeof(ctl->buf), 0);	/* normally times out and quits */
 	alarm(0);
-	if (n >= 4 &&                   /* if read some data */
-	    dp->th_opcode == DATA &&    /* and got a data block */
+	if (n >= 4 &&			/* if read some data */
+	    dp->th_opcode == DATA &&	/* and got a data block */
 	    block == dp->th_block) {	/* then my last ack was lost */
-		(void) send(ctl->peer, ctl->ackbuf, 4, 0);     /* resend final ack */
+		send(ctl->peer, ctl->ackbuf, 4, 0);	/* resend final ack */
 	}
-abort:
+ abort:
 	return;
 }
 
@@ -431,27 +427,24 @@ int tftpd_inetd(struct run_state *ctl)
 		syslog(LOG_ERR, "ioctl(FIONBIO): %s\n", strerror(errno));
 		exit(1);
 	}
-	ctl->fromlen = sizeof (ctl->from);
-	n = recvfrom(0, ctl->buf, sizeof (ctl->buf), 0,
-	    (struct sockaddr *)&ctl->from, &ctl->fromlen);
+	ctl->fromlen = sizeof(ctl->from);
+	n = recvfrom(0, ctl->buf, sizeof(ctl->buf), 0,
+		     (struct sockaddr *)&ctl->from, &ctl->fromlen);
 	if (n < 0) {
 		if (errno != EAGAIN)
 			syslog(LOG_ERR, "recvfrom: %s\n", strerror(errno));
 		exit(1);
 	}
 	/*
-	 * Now that we have read the message out of the UDP
-	 * socket, we fork and exit.  Thus, inetd will go back
-	 * to listening to the tftp port, and the next request
+	 * Now that we have read the message out of the UDP socket, we fork and exit.
+	 * Thus, inetd will go back to listening to the tftp port, and the next request
 	 * to come in will start up a new instance of tftpd.
 	 *
-	 * We do this so that inetd can run tftpd in "wait" mode.
-	 * The problem with tftpd running in "nowait" mode is that
-	 * inetd may get one or more successful "selects" on the
-	 * tftp port before we do our receive, so more than one
-	 * instance of tftpd may be started up.  Worse, if tftpd
-	 * break before doing the above "recvfrom", inetd would
-	 * spawn endless instances, clogging the system.
+	 * We do this so that inetd can run tftpd in "wait" mode.  The problem with tftpd
+	 * running in "nowait" mode is that inetd may get one or more successful
+	 * "selects" on the tftp port before we do our receive, so more than one instance
+	 * of tftpd may be started up.  Worse, if tftpd break before doing the above
+	 * "recvfrom", inetd would spawn endless instances, clogging the system.
 	 */
 	{
 		int pid;
@@ -459,29 +452,28 @@ int tftpd_inetd(struct run_state *ctl)
 		socklen_t j;
 
 		for (i = 1; i < 20; i++) {
-		    pid = fork();
-		    if (pid < 0) {
+			pid = fork();
+			if (pid < 0) {
 				sleep(i);
 				/*
 				 * flush out to most recently sent request.
 				 *
-				 * This may drop some request, but those
-				 * will be resent by the clients when
-				 * they timeout.  The positive effect of
-				 * this flush is to (try to) prevent more
-				 * than one tftpd being started up to service
-				 * a single request from a single client.
+				 * This may drop some request, but those will be resent
+				 * by the clients when they timeout.  The positive effect
+				 * of this flush is to (try to) prevent more than one
+				 * tftpd being started up to service a single request
+				 * from a single client.
 				 */
 				j = sizeof ctl->from;
-				i = recvfrom(0, ctl->buf, sizeof (ctl->buf), 0,
-				    (struct sockaddr *)&ctl->from, &j);
+				i = recvfrom(0, ctl->buf, sizeof(ctl->buf), 0,
+					     (struct sockaddr *)&ctl->from, &j);
 				if (i > 0) {
 					n = i;
 					ctl->fromlen = j;
 				}
-		    } else {
+			} else {
 				break;
-		    }
+			}
 		}
 		if (pid < 0) {
 			syslog(LOG_ERR, "fork: %s\n", strerror(errno));
@@ -528,7 +520,8 @@ int main(int ac, char **av)
 		return 0;
 	}
 
-	ac--; av++;
+	ac--;
+	av++;
 	while (ac-- > 0 && n < MAXARG)
 		ctl.dirs[n++] = *av++;
 	return tftpd_inetd(&ctl);

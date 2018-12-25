@@ -27,11 +27,11 @@
  * SUCH DAMAGE.
  */
 
-#define	PKTSIZE	SEGSIZE+4
+#define	PKTSIZE	(SEGSIZE + 4)
 
 #include <arpa/tftp.h>
 
-extern int readit(FILE * file, struct tftphdr **dpp, int convert);
+extern int readit(FILE *file, struct tftphdr **dpp, int convert);
 extern void read_ahead(FILE *file, int convert);
 extern int writeit(FILE *file, struct tftphdr **dpp, int ct, int convert);
 extern int write_behind(FILE *file, int convert);
