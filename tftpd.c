@@ -117,7 +117,7 @@ struct run_state *global_ctl;
 void nak(struct run_state *ctl, int error)
 {
 	struct tftphdr *tp;
-	int length;
+	ssize_t length;
 	struct errmsg *pe;
 
 	tp = (struct tftphdr *)ctl->buf;
@@ -130,10 +130,9 @@ void nak(struct run_state *ctl, int error)
 		pe->e_msg = strerror(error - 100);
 		tp->th_code = EUNDEF;	/* set 'undef' errorcode */
 	}
-	strcpy(tp->th_msg, pe->e_msg);
-	length = strlen(pe->e_msg);
-	tp->th_msg[length] = '\0';
-	length += 5;
+	length = strlen(pe->e_msg) + 1;	/* plus terminating null */
+	memcpy(tp->th_msg, pe->e_msg, length);
+	length += sizeof(tp->th_opcode) + sizeof(tp->th_code);
 	if (send(ctl->peer, ctl->buf, length, 0) != length)
 		syslog(LOG_ERR, "nak: %s\n", strerror(errno));
 }
