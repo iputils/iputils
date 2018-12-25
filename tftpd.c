@@ -114,21 +114,21 @@ struct run_state *global_ctl;
  * Send a nak packet (error message).  Error code passed in is one of the standard TFTP
  * codes, or a UNIX errno offset by 100.
  */
-void nak(struct run_state *ctl, int error)
+void nak(struct run_state *ctl, uint16_t error)
 {
 	struct tftphdr *tp;
 	ssize_t length;
 	struct errmsg *pe;
 
 	tp = (struct tftphdr *)ctl->buf;
-	tp->th_opcode = htons((unsigned short)ERROR);
-	tp->th_code = htons((unsigned short)error);
+	tp->th_opcode = htons((uint16_t)ERROR);
+	tp->th_code = htons(error);
 	for (pe = errmsgs; pe->e_code >= 0; pe++)
 		if (pe->e_code == error)
 			break;
 	if (pe->e_code < 0) {
 		pe->e_msg = strerror(error - 100);
-		tp->th_code = EUNDEF;	/* set 'undef' errorcode */
+		tp->th_code = htons((uint16_t)EUNDEF);	/* set 'undef' errorcode */
 	}
 	length = strlen(pe->e_msg) + 1;	/* plus terminating null */
 	memcpy(tp->th_msg, pe->e_msg, length);
@@ -260,8 +260,8 @@ void sendfile(struct run_state *ctl, struct formats *pf)
 {
 	struct tftphdr *dp;
 	struct tftphdr *ap;	/* ack packet */
-	volatile int block = 1;
-	int size, n;
+	volatile uint16_t block = 1;
+	ssize_t size, n;
 
 	ctl->confirmed = 0;
 	signal(SIGALRM, timer);
@@ -273,8 +273,8 @@ void sendfile(struct run_state *ctl, struct formats *pf)
 			nak(ctl, errno + 100);
 			goto abort;
 		}
-		dp->th_opcode = htons((unsigned short)DATA);
-		dp->th_block = htons((unsigned short)block);
+		dp->th_opcode = htons((uint16_t)DATA);
+		dp->th_block = htons(block);
 		ctl->timeout = 0;
 		setjmp(ctl->timeoutbuf);
 
@@ -293,8 +293,8 @@ void sendfile(struct run_state *ctl, struct formats *pf)
 				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
 				goto abort;
 			}
-			ap->th_opcode = ntohs((unsigned short)ap->th_opcode);
-			ap->th_block = ntohs((unsigned short)ap->th_block);
+			ap->th_opcode = ntohs((uint16_t)ap->th_opcode);
+			ap->th_block = ntohs((uint16_t)ap->th_block);
 
 			if (ap->th_opcode == ERROR)
 				goto abort;
@@ -330,7 +330,8 @@ void recvfile(struct run_state *ctl, struct formats *pf)
 {
 	struct tftphdr *dp;
 	struct tftphdr *ap;	/* ack buffer */
-	volatile int block = 0, n, size;
+	volatile uint16_t block = 0;
+	ssize_t n, size;
 
 	ctl->confirmed = 0;
 	signal(SIGALRM, timer);
@@ -338,8 +339,8 @@ void recvfile(struct run_state *ctl, struct formats *pf)
 	ap = (struct tftphdr *)ctl->ackbuf;
 	do {
 		ctl->timeout = 0;
-		ap->th_opcode = htons((unsigned short)ACK);
-		ap->th_block = htons((unsigned short)block);
+		ap->th_opcode = htons((uint16_t)ACK);
+		ap->th_block = htons(block);
 		block++;
 		setjmp(ctl->timeoutbuf);
  send_ack:
@@ -357,8 +358,8 @@ void recvfile(struct run_state *ctl, struct formats *pf)
 				syslog(LOG_ERR, "tftpd: read: %s\n", strerror(errno));
 				goto abort;
 			}
-			dp->th_opcode = ntohs((unsigned short)dp->th_opcode);
-			dp->th_block = ntohs((unsigned short)dp->th_block);
+			dp->th_opcode = ntohs((uint16_t)dp->th_opcode);
+			dp->th_block = ntohs((uint16_t)dp->th_block);
 			if (dp->th_opcode == ERROR)
 				goto abort;
 			if (dp->th_opcode == DATA) {
@@ -387,8 +388,8 @@ void recvfile(struct run_state *ctl, struct formats *pf)
 		syslog(LOG_ERR, "tftpd: write error: %s\n",  strerror(errno));
 	fclose(ctl->file);		/* close data file */
 
-	ap->th_opcode = htons((unsigned short)ACK);	/* send the "final" ack */
-	ap->th_block = htons((unsigned short)(block));
+	ap->th_opcode = htons((uint16_t)ACK);	/* send the "final" ack */
+	ap->th_block = htons(block);
 	send(ctl->peer, ctl->ackbuf, 4, ctl->confirmed);
 
 	signal(SIGALRM, justquit);	/* just quit on timeout */
