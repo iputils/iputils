@@ -36,6 +36,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <grp.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -498,6 +499,17 @@ int tftpd_inetd(struct run_state *ctl)
 	return 1;
 }
 
+static void __attribute__((__noreturn__)) usage(void)
+{
+	printf("\nUsage:\n");
+	printf(" %s [options] directory\n", program_invocation_short_name);
+	printf("\nOptions:\n");
+	printf(" -h, --help           display this help\n");
+	printf(" -V, --version        display version\n");
+	printf("\nFor more details see tftpd(8).\n");
+	exit(EXIT_SUCCESS);
+}
+
 int main(int ac, char **av)
 {
 	struct run_state ctl = {
@@ -508,15 +520,28 @@ int main(int ac, char **av)
 			{"octet", validate_access, sendfile, recvfile, 0}
 		}
 	};
-	int n = 0;
+	int c, n = 0;
+	static const struct option longopts[] = {
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	global_ctl = &ctl;
 
-	if (ac == 2 && !strcmp(av[1], "-V")) {
-		printf(IPUTILS_VERSION("tftpd"));
-		return 0;
-	}
-
+	while ((c = getopt_long(ac, av, "Vh", longopts, NULL)) != -1)
+		switch (c) {
+		case 'V':
+			printf(IPUTILS_VERSION("tftpd"));
+			return EXIT_SUCCESS;
+		case 'h':
+			usage();
+		default:
+			fprintf(stderr,
+				"Try '%s --help' for more information.\n",
+				program_invocation_short_name);
+			exit(1);
+		}
 	ac--;
 	av++;
 	while (ac-- > 0 && n < MAXARG)
