@@ -52,6 +52,7 @@
 #include <stdlib.h>
 #include <grp.h>
 
+#include "iputils_common.h"
 #include "tftp.h"
 
 #define	TIMEOUT		5
@@ -457,7 +458,8 @@ send_ack:
 		}
 	} while (size == SEGSIZE);
 	write_behind(file, pf->f_convert);
-	(void) fclose(file);            /* close data file */
+	if (close_stream(file))
+		syslog(LOG_ERR, "tftpd: write error: %s\n",  strerror(errno));
 
 	ap->th_opcode = htons((unsigned short)ACK);    /* send the "final" ack */
 	ap->th_block = htons((unsigned short)(block));

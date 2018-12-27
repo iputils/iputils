@@ -290,6 +290,7 @@ endif
 
 if build_tftpd == true
 	executable('tftpd', ['tftpd.c', 'tftpsubs.c', git_version_h],
+		link_with : [libcommon],
 		install: true)
 endif
 
