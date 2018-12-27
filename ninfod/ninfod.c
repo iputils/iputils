@@ -442,7 +442,11 @@ static void do_daemonize(void)
 
 	if (fp) {
 		fprintf(fp, "%d\n", getpid());
-		fclose(fp);
+		if (close_stream(fp)) {
+			unlink(opt_p);
+			DEBUG(LOG_ERR, "%s: write failed: %s\n", opt_p, strerror(errno));
+			exit(1);
+		}
 	}
 }
 

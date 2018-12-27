@@ -22,6 +22,7 @@
 extern void error(int status, int errnum, const char *format, ...);
 #endif
 
+extern int close_stream(FILE *stream);
 extern void close_stdout(void);
 
 #endif /* IPUTILS_COMMON_H */

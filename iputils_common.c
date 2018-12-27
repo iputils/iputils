@@ -26,7 +26,7 @@ void error(int status, int errnum, const char *format, ...)
 }
 #endif
 
-static int close_stream(FILE *stream)
+int close_stream(FILE *stream)
 {
 #ifdef HAVE___FPENDING
 	const int some_pending = (__fpending(stream) != 0);
