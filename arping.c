@@ -1042,6 +1042,7 @@ int main(int argc, char **argv)
 	};
 	int ch;
 
+	atexit(close_stdout);
 	limit_capabilities(&ctl);
 #if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");

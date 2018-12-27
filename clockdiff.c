@@ -475,6 +475,7 @@ int main(int argc, char **argv)
 	int status;
 	char hostname[MAX_HOSTNAMELEN];
 
+	atexit(close_stdout);
 	if (argc == 2 && !strcmp(argv[1], "-V")) {
 		printf(IPUTILS_VERSION("clockdiff"));
 		return 0;

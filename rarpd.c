@@ -576,7 +576,7 @@ int main(int argc, char **argv)
 	int psize;
 	int opt;
 
-
+	atexit(close_stdout);
 	opterr = 0;
 	while ((opt = getopt(argc, argv, "aAb:dvoeV")) != EOF) {
 		switch (opt) {

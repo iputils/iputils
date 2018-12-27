@@ -117,6 +117,7 @@
 # include <sys/capability.h>
 #endif
 
+#include "iputils_common.h"
 #include "ninfod.h"
 
 /* Variables */
@@ -625,6 +626,7 @@ int main (int argc, char **argv)
 {
 	int sock_errno = 0;
 
+	atexit(close_stdout);
 	appname = argv[0];
 	set_logfile();
 

@@ -445,6 +445,7 @@ int main(int argc, char **argv)
 	char *p;
 	char pbuf[NI_MAXSERV];
 
+	atexit(close_stdout);
 #if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
 #ifdef ENABLE_NLS

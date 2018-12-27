@@ -11,6 +11,7 @@ ninfod_sources = files('''
 '''.split())
 executable('ninfod', [ninfod_sources, git_version_h],
 	dependencies : [cap_dep, crypto_dep, rt_dep, threads],
+	link_with : [libcommon],
 	include_directories : inc,
 	install: true,
 	install_dir: 'sbin')

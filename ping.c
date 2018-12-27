@@ -227,6 +227,7 @@ main(int argc, char **argv)
 	socket_st sock6 = { .fd = -1 };
 	char *target;
 
+	atexit(close_stdout);
 	limit_capabilities();
 
 #if defined(USE_IDN) || defined(ENABLE_NLS)

@@ -17,6 +17,16 @@ conf = configuration_data()
 conf.set_quoted('PACKAGE_NAME', meson.project_name())
 conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that have them.')
 
+# Check functions.
+foreach f : '''
+	__fpending
+'''.split()
+	if cc.has_function(f, args : '-D_GNU_SOURCE')
+		conf.set('HAVE_' + f.to_upper(), 1,
+			description : 'Define to 1 if you have the ' + f + ' function')
+	endif
+endforeach
+
 if cc.compiles('''
 	#include <sys/types.h>
 	#include <netinet/in.h>

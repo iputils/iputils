@@ -304,6 +304,7 @@ int main(int argc, char **argv)
 #ifdef RDISC_SERVER
 	int val;
 
+	atexit(close_stdout);
 	min_adv_int =( max_adv_int * 3 / 4);
 	lifetime = (3*max_adv_int);
 #endif

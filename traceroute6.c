@@ -659,6 +659,7 @@ int main(int argc, char **argv)
 	uint32_t seq = 0;
 	char *resolved_hostname = NULL;
 
+	atexit(close_stdout);
 	ctl.datalen = sizeof(struct pkt_format);
 	ctl.icmp_sock = socket(AF_INET6, SOCK_RAW, IPPROTO_ICMPV6);
 	if (ctl.icmp_sock < 0)
