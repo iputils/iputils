@@ -674,26 +674,8 @@ int main(int argc, char **argv)
 		error(1, errno, "failed to bind any socket");
 
 	if (!debug) {
-		int fd;
-		pid_t pid = fork();
-
-		if (pid > 0)
-			exit(0);
-		else if (pid == -1)
-			error(1, errno, "fork");
-
-		if (chdir("/") < 0)
-			error(1, errno, "chdir");
-
-		fd = open("/dev/null", O_RDWR);
-		if (fd >= 0) {
-			dup2(fd, 0);
-			dup2(fd, 1);
-			dup2(fd, 2);
-			if (fd > 2)
-				close(fd);
-		}
-		setsid();
+		if (daemon(0, 0) < 0)
+			error(1, errno, "failed to daemon()");
 	}
 
 	openlog("rarpd", LOG_PID | LOG_CONS, LOG_DAEMON);
