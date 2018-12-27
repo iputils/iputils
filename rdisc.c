@@ -256,26 +256,10 @@ static void prusage(void)
 
 void do_fork(void)
 {
-	int t;
-	pid_t pid;
-	long open_max;
-
 	if (trace)
 		return;
-	if ((open_max = sysconf(_SC_OPEN_MAX)) == -1) {
-		if (errno == 0)
-			error(1, 0, "sysconf(_SC_OPEN_MAX) is not supported");
-		error(1, errno, "sysconf(_SC_OPEN_MAX)");
-	}
-
-	if ((pid=fork()) != 0)
-		exit(0);
-
-	for (t = 0; t < open_max; t++)
-		if (t != s)
-			close(t);
-
-	setsid();
+	if (daemon(0, 0) < 0)
+		error(1, errno, "failed to daemon()");
 	initlog();
 }
 
