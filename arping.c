@@ -37,11 +37,6 @@
 # include <sys/prctl.h>
 #endif
 
-#ifdef USE_SYSFS
-# include <dirent.h>
-# include <sys/types.h>
-#endif
-
 #include "iputils_common.h"
 
 #ifdef USE_IDN
@@ -61,61 +56,11 @@
 
 #define FINAL_PACKS		2
 
-#ifdef USE_SYSFS
-enum {
-	SYSFS_DEVATTR_IFINDEX,
-	SYSFS_DEVATTR_FLAGS,
-	SYSFS_DEVATTR_ADDR_LEN,
-	SYSFS_DEVATTR_BROADCAST,
-	SYSFS_DEVATTR_NUM
-};
-
-union sysfs_devattr_value {
-	unsigned long ulong;
-	void *ptr;
-};
-
-struct sysfs_devattr_values {
-	char *ifname;
-	union sysfs_devattr_value value[SYSFS_DEVATTR_NUM];
-};
-
-static int sysfs_devattr_ulong_dec(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
-static int sysfs_devattr_ulong_hex(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
-static int sysfs_devattr_macaddr(char *ptr, struct sysfs_devattr_values *v, unsigned idx);
-
-struct sysfs_devattrs {
-	const char *name;
-	int (*handler)(char *ptr, struct sysfs_devattr_values *v, unsigned int idx);
-	int free;
-} sysfs_devattrs[SYSFS_DEVATTR_NUM] = {
-	[SYSFS_DEVATTR_IFINDEX] = {
-		.name		= "ifindex",
-		.handler	= sysfs_devattr_ulong_dec,
-	},
-	[SYSFS_DEVATTR_ADDR_LEN] = {
-		.name		= "addr_len",
-		.handler	= sysfs_devattr_ulong_dec,
-	},
-	[SYSFS_DEVATTR_FLAGS] = {
-		.name		= "flags",
-		.handler	= sysfs_devattr_ulong_hex,
-	},
-	[SYSFS_DEVATTR_BROADCAST] = {
-		.name		= "broadcast",
-		.handler	= sysfs_devattr_macaddr,
-		.free		= 1,
-	},
-};
-#endif	/* USE_SYSFS */
 
 struct device {
 	char *name;
 	int ifindex;
 	struct ifaddrs *ifa;
-#ifdef USE_SYSFS
-	struct sysfs_devattr_values *sysfs;
-#endif
 };
 
 struct run_state {
@@ -493,31 +438,6 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 	return 1;
 }
 
-/*
- * find_device()
- *
- * This function checks 1) if the device (if given) is okay for ARP,
- * or 2) find fist appropriate device on the system.
- *
- * Return value:
- *	>0	: Succeeded, and appropriate device not found.
- *		  device.ifindex remains 0.
- *	0	: Succeeded, and approptiate device found.
- *		  device.ifindex is set.
- *	<0	: Failed.  Support not found, or other
- *		: system error.  Try other method.
- *
- * If an appropriate device found, it is recorded inside the
- * "device" variable for later reference.
- *
- * We have several implementations for this.
- *	by_ifaddrs():	requires getifaddr() in glibc, and rtnetlink in
- *			kernel. default and recommended for recent systems.
- *	by_sysfs():	requires sysfs in kernel.
- *	by_ioctl():	unable to list devices without ipv4 address; this
- *			means, you need to supply the device name for
- *			DAD purpose.
- */
 /* Common check for ifa->ifa_flags */
 static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags)
 {
@@ -540,7 +460,25 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 	return 0;
 }
 
-static int find_device_by_ifaddrs(struct run_state *ctl)
+/*
+ * find_device()
+ *
+ * This function checks 1) if the device (if given) is okay for ARP,
+ * or 2) find fist appropriate device on the system.
+ *
+ * Return value:
+ *	>0	: Succeeded, and appropriate device not found.
+ *		  device.ifindex remains 0.
+ *	0	: Succeeded, and approptiate device found.
+ *		  device.ifindex is set.
+ *	<0	: Failed.  Support not found, or other
+ *		: system error.
+ *
+ * If an appropriate device found, it is recorded inside the
+ * "device" variable for later reference.
+ *
+ */
+static int find_device(struct run_state *ctl)
 {
 	int rc;
 	struct ifaddrs *ifa;
@@ -587,270 +525,6 @@ static int find_device_by_ifaddrs(struct run_state *ctl)
 	return 1;
 }
 
-#ifdef USE_SYSFS
-static void sysfs_devattr_values_init(struct sysfs_devattr_values *v, int do_free)
-{
-	if (do_free) {
-		int i;
-
-		free(v->ifname);
-		for (i = 0; i < SYSFS_DEVATTR_NUM; i++) {
-			if (sysfs_devattrs[i].free)
-				free(v->value[i].ptr);
-		}
-	}
-	memset(v, 0, sizeof(*v));
-}
-
-static int sysfs_devattr_ulong(char *ptr, struct sysfs_devattr_values *v, unsigned int idx,
-				     unsigned int base)
-{
-	unsigned long *p;
-	char *ep;
-
-	if (!ptr || !v)
-		return -1;
-
-	p = &v->value[idx].ulong;
-	errno = 0;
-	*p = strtoul(ptr, &ep, base);
-	if ((*ptr && isspace(*ptr & 0xff)) || errno || (*ep != '\0' && *ep != '\n'))
-		return -1;
-	return 0;
-}
-
-static int sysfs_devattr_ulong_dec(char *ptr, struct sysfs_devattr_values *v, unsigned int idx)
-{
-	return sysfs_devattr_ulong(ptr, v, idx, 10);
-}
-
-static int sysfs_devattr_ulong_hex(char *ptr, struct sysfs_devattr_values *v, unsigned int idx)
-{
-	return sysfs_devattr_ulong(ptr, v, idx, 16);
-}
-
-static int sysfs_devattr_macaddr(char *ptr, struct sysfs_devattr_values *v, unsigned int idx)
-{
-	unsigned char *m;
-	unsigned int i;
-	unsigned int addrlen;
-
-	if (!ptr || !v)
-		return -1;
-
-	addrlen = v->value[SYSFS_DEVATTR_ADDR_LEN].ulong;
-	m = malloc(addrlen);
-
-	for (i = 0; i < addrlen; i++) {
-		if (i && *(ptr + i * 3 - 1) != ':')
-			goto out;
-		if (sscanf(ptr + i * 3, "%02hhx", &m[i]) != 1)
-			goto out;
-	}
-
-	v->value[idx].ptr = m;
-	return 0;
-out:
-	free(m);
-	return -1;
-}
-
-static int find_device_by_sysfs(struct run_state *ctl)
-{
-	int rc = -1;
-	DIR *dir;
-	struct dirent *dirp;
-	struct sysfs_devattr_values sysfs_devattr_values;
-	int n = 0;
-
-	if (!ctl->device.sysfs) {
-		ctl->device.sysfs = malloc(sizeof(*ctl->device.sysfs));
-		sysfs_devattr_values_init(ctl->device.sysfs, 0);
-	}
-	dir = opendir("/sys/class/net");
-
-	sysfs_devattr_values_init(&sysfs_devattr_values, 0);
-
-	while ((dirp = readdir(dir)) != NULL) {
-		int i;
-		int ret = -1;
-
-		if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
-			continue;
-		if (ctl->device.name && strcmp(dirp->d_name, ctl->device.name))
-			goto do_next;
-
-		sysfs_devattr_values_init(&sysfs_devattr_values, 1);
-
-		for (i = 0; i < SYSFS_DEVATTR_NUM; i++) {
-			char path[PATH_MAX];
-			char str[256];
-			FILE *f;
-
-			sprintf(path, "/sys/class/net/%s/%s", dirp->d_name, sysfs_devattrs[i].name);
-			f = fopen(path, "r");
-			if (!f)
-				continue;
-			if (fscanf(f, "%255s", str) != 1)
-				str[0] = '\0';
-			fclose(f);
-			ret = sysfs_devattrs[i].handler(str, &sysfs_devattr_values, i);
-
-			if (ret < 0)
-				break;
-		}
-
-		if (ret < 0)
-			goto do_next;
-
-		if (check_ifflags(ctl, sysfs_devattr_values.value[SYSFS_DEVATTR_FLAGS].ulong) < 0)
-			goto do_next;
-
-		if (!sysfs_devattr_values.value[SYSFS_DEVATTR_ADDR_LEN].ulong)
-			goto do_next;
-
-		if (ctl->device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong) {
-			if (ctl->device.sysfs->value[SYSFS_DEVATTR_FLAGS].ulong & IFF_RUNNING)
-				goto do_next;
-		}
-
-		sysfs_devattr_values.ifname = strdup(dirp->d_name);
-		if (!sysfs_devattr_values.ifname) {
-			error(0, errno, "malloc");
-			goto out;
-		}
-
-		sysfs_devattr_values_init(ctl->device.sysfs, 1);
-		memcpy(ctl->device.sysfs, &sysfs_devattr_values, sizeof(*ctl->device.sysfs));
-		sysfs_devattr_values_init(&sysfs_devattr_values, 0);
-
-		if (n++)
-			break;
-
-		continue;
-do_next:
-		sysfs_devattr_values_init(&sysfs_devattr_values, 1);
-	}
-
-	if (n == 1) {
-		ctl->device.ifindex = ctl->device.sysfs->value[SYSFS_DEVATTR_IFINDEX].ulong;
-		ctl->device.name = ctl->device.sysfs->ifname;
-	}
-	rc = !ctl->device.ifindex;
-out:
-	closedir(dir);
-	return rc;
-}
-#else
-static int find_device_by_sysfs(struct run_state *ctl __attribute__((__unused__)))
-{
-	return -1;
-}
-#endif	/* USE_SYSFS */
-
-static int check_device_by_ioctl(struct run_state *ctl, int s, struct ifreq *ifr)
-{
-	if (ioctl(s, SIOCGIFFLAGS, ifr) < 0) {
-		error(0, errno, "ioctl SIOCGIFFLAGS");
-		return -1;
-	}
-
-	if (check_ifflags(ctl, ifr->ifr_flags) < 0)
-		return 1;
-
-	if (ioctl(s, SIOCGIFINDEX, ifr) < 0) {
-		error(0, errno, "ioctl SIOCGIFINDEX");
-		return -1;
-	}
-
-	return 0;
-}
-
-static int find_device_by_ioctl(struct run_state *ctl)
-{
-	int s;
-	struct ifreq *ifr0, *ifr, *ifr_end;
-	size_t ifrsize = sizeof(*ifr);
-	struct ifconf ifc;
-	static struct ifreq ifrbuf;
-	int n = 0;
-
-	s = socket(AF_INET, SOCK_DGRAM, 0);
-	if (s < 0) {
-		error(0, errno, "socket");
-		return -1;
-	}
-
-	memset(&ifrbuf, 0, sizeof(ifrbuf));
-
-	if (ctl->device.name) {
-		strncpy(ifrbuf.ifr_name, ctl->device.name, sizeof(ifrbuf.ifr_name) - 1);
-		if (check_device_by_ioctl(ctl, s, &ifrbuf))
-			goto out;
-		n++;
-	} else {
-		do {
-			int rc;
-			ifr0 = malloc(ifrsize);
-			if (!ifr0) {
-				error(0, errno, "malloc");
-				goto out;
-			}
-
-			ifc.ifc_buf = (char *)ifr0;
-			ifc.ifc_len = ifrsize;
-
-			rc = ioctl(s, SIOCGIFCONF, &ifc);
-			if (rc < 0) {
-				error(0, errno, "ioctl SIOCGIFCONF");
-				goto out;
-			}
-
-			if (ifc.ifc_len + sizeof(*ifr0) + sizeof(struct sockaddr_storage) - sizeof(struct sockaddr) <= ifrsize)
-				break;
-			ifrsize *= 2;
-			free(ifr0);
-			ifr0 = NULL;
-		} while (ifrsize < INT_MAX / 2);
-
-		if (!ifr0) {
-			error(0, 0, _("too many interfaces!?"));
-			goto out;
-		}
-
-		ifr_end = (struct ifreq *)(((char *)ifr0) + ifc.ifc_len - sizeof(*ifr0));
-		for (ifr = ifr0; ifr <= ifr_end; ifr++) {
-			if (check_device_by_ioctl(ctl, s, &ifrbuf))
-				continue;
-			memcpy(&ifrbuf.ifr_name, ifr->ifr_name, sizeof(ifrbuf.ifr_name));
-			if (n++)
-				break;
-		}
-	}
-
-	close(s);
-
-	if (n == 1) {
-		ctl->device.ifindex = ifrbuf.ifr_ifindex;
-		ctl->device.name = ifrbuf.ifr_name;
-	}
-	return !ctl->device.ifindex;
-out:
-	close(s);
-	return -1;
-}
-
-static int find_device(struct run_state *ctl)
-{
-	int rc;
-
-	if ((rc = find_device_by_ifaddrs(ctl)) >= 0)
-		return rc;
-	if ((rc = find_device_by_sysfs(ctl)) >= 0)
-		return rc;
-	return find_device_by_ioctl(ctl);
-}
-
 /*
  * set_device_broadcast()
  *
@@ -870,16 +544,6 @@ static void set_device_broadcast(struct run_state *ctl)
 			return;
 		}
 	}
-#ifdef USE_SYSFS
-	if (ctl->device.sysfs && ctl->device.sysfs->value[SYSFS_DEVATTR_ADDR_LEN].ulong !=
-	    he->sll_halen) {
-		memcpy(he->sll_addr,
-		       ctl->device.sysfs->value[SYSFS_DEVATTR_BROADCAST].ptr,
-		       he->sll_halen);
-		free(ctl->device.sysfs->value[SYSFS_DEVATTR_BROADCAST].ptr);
-		return;
-	}
-#endif
 	if (!ctl->quiet)
 		fprintf(stderr, _("WARNING: using default broadcast address.\n"));
 	memset(he->sll_addr, -1, he->sll_halen);
@@ -1018,12 +682,6 @@ static int event_loop(struct run_state *ctl)
 	close(sfd);
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
-#ifdef USE_SYSFS
-	if (ctl->device.sysfs) {
-		free(ctl->device.sysfs);
-		free(ctl->device.name);
-	}
-#endif
 	rc |= finish(ctl);
 	rc |= !(ctl->brd_sent != ctl->received);
 	return rc;

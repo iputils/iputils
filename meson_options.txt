@@ -50,9 +50,6 @@ option('BUILD_HTML_MANS', type : 'boolean', value : false,
 option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 	description : 'Default device for arping')
 
-option('USE_SYSFS', type : 'boolean', value : true,
-	description : 'Use /sys file system (arping)')
-
 option('systemdunitdir', type: 'string', value: '',
 	description: 'Directory for systemd units')
 

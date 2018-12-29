@@ -86,11 +86,6 @@ if opt == true
 	subdir ('po')
 endif
 
-opt = get_option('USE_SYSFS')
-if opt == true
-	conf.set('USE_SYSFS', 1, description : 'If set use /sys file system.')
-endif
-
 opt = get_option('USE_IDN')
 if opt == true
 	idn_dep = cc.find_library('idn2', required : false)
