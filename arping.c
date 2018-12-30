@@ -590,7 +590,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 }
 
 /*
- * find_device()
+ * check_device()
  *
  * This function checks 1) if the device (if given) is okay for ARP,
  * or 2) find fist appropriate device on the system.
@@ -607,7 +607,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
  * "device" variable for later reference.
  *
  */
-static int find_device(struct run_state *ctl)
+static int check_device(struct run_state *ctl)
 {
 	int rc;
 	struct ifaddrs *ifa;
@@ -655,12 +655,12 @@ static int find_device(struct run_state *ctl)
 }
 
 /*
- * set_device_broadcast()
+ * find_broadcast_address()
  *
  * This fills the device "broadcast address"
- * based on information found by find_device() funcion.
+ * based on information found by check_device() funcion.
  */
-static void set_device_broadcast(struct run_state *ctl)
+static void find_broadcast_address(struct run_state *ctl)
 {
 	struct sockaddr_ll *he = (struct sockaddr_ll *)&(ctl->he);
 
@@ -925,7 +925,7 @@ int main(int argc, char **argv)
 	if (!ctl.device.name)
 		guess_device(&ctl);
 
-	if (find_device(&ctl) < 0)
+	if (check_device(&ctl) < 0)
 		exit(2);
 
 	if (!ctl.device.ifindex) {
@@ -998,7 +998,7 @@ int main(int argc, char **argv)
 
 	ctl.he = ctl.me;
 
-	set_device_broadcast(&ctl);
+	find_broadcast_address(&ctl);
 
 	if (!ctl.quiet) {
 		printf(_("ARPING %s "), inet_ntoa(ctl.gdst));
