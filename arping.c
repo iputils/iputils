@@ -838,14 +838,6 @@ int main(int argc, char **argv)
 	textdomain (PACKAGE_NAME);
 #endif
 #endif
-	enable_capability_raw(&ctl);
-
-	ctl.socketfd = socket(PF_PACKET, SOCK_DGRAM, 0);
-	if (ctl.socketfd < 0)
-		error(2, errno, "socket");
-
-	disable_capability_raw(&ctl);
-
 	while ((ch = getopt(argc, argv, "h?bfDUAqc:w:i:s:I:V")) != EOF) {
 		switch (ch) {
 		case 'b':
@@ -897,6 +889,12 @@ int main(int argc, char **argv)
 
 	if (argc != 1)
 		usage();
+
+	enable_capability_raw(&ctl);
+	ctl.socketfd = socket(PF_PACKET, SOCK_DGRAM, 0);
+	if (ctl.socketfd < 0)
+		error(2, errno, "socket");
+	disable_capability_raw(&ctl);
 
 	ctl.target = *argv;
 
