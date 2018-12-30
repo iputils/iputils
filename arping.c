@@ -934,7 +934,6 @@ int main(int argc, char **argv)
 		if (ctl.device.name)
 			error(2, 0, _("Device %s not available."), ctl.device.name);
 		error(0, 0, _("Suitable device could not be determined. Please, use option -I."));
-		usage();
 	}
 
 	if (ctl.source && inet_aton(ctl.source, &ctl.gsrc) != 1)
