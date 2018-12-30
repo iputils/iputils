@@ -16,6 +16,8 @@
 #include <ifaddrs.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
 #include <netdb.h>
 #include <net/if_arp.h>
 #include <net/if.h>
@@ -28,6 +30,7 @@
 #include <sys/ioctl.h>
 #include <sys/param.h>
 #include <sys/signalfd.h>
+#include <sys/socket.h>
 #include <sys/timerfd.h>
 #include <time.h>
 #include <unistd.h>
@@ -69,6 +72,7 @@ struct run_state {
 	struct ifaddrs *ifa0;
 	struct in_addr gsrc;
 	struct in_addr gdst;
+	int gdst_family;
 	char *target;
 	int count;
 	int timeout;
@@ -438,6 +442,131 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 	return 1;
 }
 
+static int outgoing_device(struct run_state *const ctl, struct nlmsghdr *nh)
+{
+	struct rtmsg *rm = NLMSG_DATA(nh);
+	int len = RTM_PAYLOAD(nh);
+	struct rtattr *ra;
+
+	if (nh->nlmsg_type != RTM_NEWROUTE) {
+		error(0, 0, "NETLINK new route message type");
+		return 1;
+	}
+	for (ra = RTM_RTA(rm); RTA_OK(ra, len); ra = RTA_NEXT(ra, len)) {
+		if (ra->rta_type == RTA_OIF) {
+			int *oif = RTA_DATA(ra);
+			static char dev_name[IF_NAMESIZE];
+
+			ctl->device.ifindex = *oif;
+			if (!if_indextoname(ctl->device.ifindex, dev_name)) {
+				error(0, errno, "if_indextoname failed");
+				return 1;
+			}
+			ctl->device.name = dev_name;
+		}
+	}
+	return 0;
+}
+
+static void netlink_query(struct run_state *const ctl, const int flags,
+			  const int type, void const *const arg, size_t len)
+{
+	const size_t buffer_size = 4096;
+	int fd;
+	static uint32_t seq;
+	struct msghdr mh = { 0 };
+	struct sockaddr_nl sa = {.nl_family = AF_NETLINK };
+	struct nlmsghdr *nh, *unmodified_nh;
+	struct iovec iov;
+	ssize_t msg_len;
+	int ret = 1;
+
+	mh.msg_name = (void *)&sa;
+	mh.msg_namelen = sizeof(sa);
+	mh.msg_iov = &iov;
+	mh.msg_iovlen = 1;
+
+	unmodified_nh = nh = calloc(1, buffer_size);
+	if (!nh)
+		error(1, errno, "allocating %zu bytes failed", buffer_size);
+
+	nh->nlmsg_len = NLMSG_LENGTH(len);
+	nh->nlmsg_flags = flags;
+	nh->nlmsg_type = type;
+	nh->nlmsg_seq = ++seq;
+	memcpy(NLMSG_DATA(nh), arg, len);
+
+	iov.iov_base = nh;
+	iov.iov_len = NLMSG_LENGTH(len);
+
+	fd = socket(PF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
+	if (fd < 0) {
+		error(0, errno, "NETLINK_ROUTE socket failed");
+		goto fail;
+	}
+	if (sendmsg(fd, &mh, 0) < 0) {
+		error(0, errno, "NETLINK_ROUTE socket failed");
+		goto fail;
+	}
+	iov.iov_len = buffer_size;
+	do {
+		msg_len = recvmsg(fd, &mh, 0);
+	} while (msg_len < 0 && errno == EINTR);
+
+	for (nh = iov.iov_base; NLMSG_OK(nh, msg_len); nh = NLMSG_NEXT(nh, msg_len)) {
+		if (nh->nlmsg_seq != seq)
+			continue;
+		switch (nh->nlmsg_type) {
+		case NLMSG_ERROR:
+		case NLMSG_OVERRUN:
+			errno = EIO;
+			error(0, 0, "NETLINK_ROUTE unexpected iov element");
+			goto fail;
+		case NLMSG_DONE:
+			ret = 0;
+			break;
+		default:
+			ret = outgoing_device(ctl, nh);
+			break;
+		}
+	}
+ fail:
+	free(unmodified_nh);
+	if (0 <= fd)
+		close(fd);
+	if (ret)
+		exit(1);
+}
+
+static void guess_device(struct run_state *const ctl)
+{
+	size_t addr_len, len;
+	struct {
+		struct rtmsg rm;
+		struct rtattr ra;
+		char addr[16];
+	} query = { {0}, {0}, {0} };
+
+	switch (ctl->gdst_family) {
+	case AF_INET:
+		addr_len = 4;
+		break;
+	case AF_INET6:
+		addr_len = 16;
+		break;
+	default:
+		error(1, 0, "unknown address family, please, use option -I.");
+		abort();
+	}
+
+	query.rm.rtm_family = ctl->gdst_family;
+	query.ra.rta_len = RTA_LENGTH(addr_len);
+	query.ra.rta_type = RTA_DST;
+	memcpy(RTA_DATA(&query.ra), &ctl->gdst, addr_len);
+	len = NLMSG_ALIGN(sizeof(struct rtmsg)) + RTA_LENGTH(addr_len);
+	netlink_query(ctl, NLM_F_REQUEST, RTM_GETROUTE, &query, len);
+}
+
 /* Common check for ifa->ifa_flags */
 static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags)
 {
@@ -774,16 +903,6 @@ int main(int argc, char **argv)
 	if (ctl.device.name && !*ctl.device.name)
 		ctl.device.name = NULL;
 
-	if (find_device(&ctl) < 0)
-		exit(2);
-
-	if (!ctl.device.ifindex) {
-		if (ctl.device.name)
-			error(2, 0, _("Device %s not available."), ctl.device.name);
-		error(0, 0, _("Suitable device could not be determined. Please, use option -I."));
-		usage();
-	}
-
 	if (inet_aton(ctl.target, &ctl.gdst) != 1) {
 		struct addrinfo hints = {
 			.ai_family = AF_INET,
@@ -800,7 +919,22 @@ int main(int argc, char **argv)
 			error(2, 0, "%s: %s", ctl.target, gai_strerror(status));
 
 		memcpy(&ctl.gdst, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof ctl.gdst);
+		ctl.gdst_family = result->ai_family;
 		freeaddrinfo(result);
+	} else
+		ctl.gdst_family = AF_INET;
+
+	if (!ctl.device.name)
+		guess_device(&ctl);
+
+	if (find_device(&ctl) < 0)
+		exit(2);
+
+	if (!ctl.device.ifindex) {
+		if (ctl.device.name)
+			error(2, 0, _("Device %s not available."), ctl.device.name);
+		error(0, 0, _("Suitable device could not be determined. Please, use option -I."));
+		usage();
 	}
 
 	if (ctl.source && inet_aton(ctl.source, &ctl.gsrc) != 1)
