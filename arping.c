@@ -11,28 +11,22 @@
  */
 
 #include <arpa/inet.h>
-#include <ctype.h>
 #include <errno.h>
 #include <ifaddrs.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
-#include <linux/netlink.h>
 #include <linux/rtnetlink.h>
 #include <netdb.h>
 #include <net/if_arp.h>
 #include <net/if.h>
-#include <netinet/in.h>
 #include <poll.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
 #include <sys/param.h>
 #include <sys/signalfd.h>
-#include <sys/socket.h>
 #include <sys/timerfd.h>
-#include <time.h>
 #include <unistd.h>
 
 #ifdef HAVE_LIBCAP
