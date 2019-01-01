@@ -1,0 +1,26 @@
+# Merge with git instead of github UI
+
+If someone sends patches by email apply them on top of latest master, and
+push to upstream.  Github pull requests are best to get as extra remote
+repositories to your working clone, where commits can be rebased, tidied up,
+and so on, before pushing to upstream.
+
+See also https://github.com/iputils/iputils/issues/155
+
+# Do not steal contributions
+
+Use git commit --author 'Contributor <email>' when receiving changes that
+are not applicable as-is.  Not stealing contributions applies even if change
+has to be worked out, that is common case with commit message.
+
+Exeception to this rule is a change that is a good idea, but has to be
+completely rewrote to be acceptable for the project.  In this case
+maintainer should attribute the person who gave the idea in commit message.
+
+# Use references in commit messages
+
+For example when a change fixes a distribution bug add link to the bug
+report.  Links to reference materials can also be useful when in future
+trying to understand why something was done.  It is also nice when commit id
+of the change that caused a bug is referred in commit message.  That helps
+understanding what versions are impacted by an issue.
