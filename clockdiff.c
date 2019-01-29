@@ -473,7 +473,6 @@ int main(int argc, char **argv)
 	};
 	struct addrinfo *result;
 	int status;
-	char hostname[MAX_HOSTNAMELEN];
 
 	atexit(close_stdout);
 	if (argc == 2 && !strcmp(argv[1], "-V")) {
@@ -508,13 +507,6 @@ int main(int argc, char **argv)
 		ctl.interactive = 1;
 
 	ctl.id = getpid();
-
-	gethostname(hostname, sizeof(hostname));
-	status = getaddrinfo(hostname, NULL, &hints, &result);
-	if (status)
-		error(2, 0, "%s: %s", hostname, gai_strerror(status));
-	ctl.myname = strdup(result->ai_canonname);
-	freeaddrinfo(result);
 
 	status = getaddrinfo(argv[1], NULL, &hints, &result);
 	if (status)
