@@ -956,14 +956,22 @@ void finish(void)
 
 	if (nreceived && timing) {
 		double tmdev;
+		long total = nreceived + nrepeats;
+		long tmavg = tsum / total;
+		long long tmvar;
 
-		tsum /= nreceived + nrepeats;
-		tsum2 /= nreceived + nrepeats;
-		tmdev = llsqrt(tsum2 - tsum * tsum);
+		if (tsum < INT_MAX)
+			/* This slightly clumsy computation order is important to avoid
+			 * integer rounding errors for small ping times. */
+			tmvar = (tsum2 - ((tsum * tsum) / total)) / total;
+		else
+			tmvar = (tsum2 / total) - (tmavg * tmavg);
+
+		tmdev = llsqrt(tmvar);
 
 		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
 		       (long)tmin/1000, (long)tmin%1000,
-		       (unsigned long)(tsum/1000), (long)tsum%1000,
+		       (unsigned long)(tmavg/1000), (long)(tmavg%1000),
 		       (long)tmax/1000, (long)tmax%1000,
 		       (long)tmdev/1000, (long)tmdev%1000
 		       );
