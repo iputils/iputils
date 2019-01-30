@@ -78,8 +78,6 @@
 
 #include "iputils_common.h"
 
-#define MAX_HOSTNAMELEN	NI_MAXHOST
-
 enum {
 	RANGE = 1,		/* best expected round-trip time, ms */
 	MSGS = 50,
@@ -114,7 +112,6 @@ struct run_state {
 	long rtt;
 	long min_rtt;
 	long rtt_sigma;
-	char *myname;
 	char *hisname;
 };
 
