@@ -428,7 +428,7 @@ void arp_advise(int ifindex, unsigned char *lladdr, int lllen, uint32_t ipaddr)
 void serve_it(int fd)
 {
 	unsigned char buf[1024];
-	struct sockaddr_ll sll;
+	struct sockaddr_ll sll = { 0 };
 	socklen_t sll_len = sizeof(sll);
 	struct arphdr *a = (struct arphdr*)buf;
 	struct rarp_map *rmap;

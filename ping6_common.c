@@ -721,8 +721,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
-	hold = 1;
-
 	/* Estimate memory eaten by single packet. It is rough estimate.
 	 * Actually, for small datalen's it depends on kernel side a lot. */
 	hold = datalen+8;

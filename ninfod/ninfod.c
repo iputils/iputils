@@ -677,7 +677,7 @@ int main (int argc, char **argv)
 
 		init_core(0);
 
-		p = malloc(sizeof(*p));
+		p = calloc(1, sizeof(*p));
 		if (!p) {
 			DEBUG(LOG_WARNING, "%s(): failed to allocate packet context; sleep 1 sec.\n",
 			      __func__);

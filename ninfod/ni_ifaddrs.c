@@ -179,7 +179,6 @@ static int nl_getmsg(int sd, uint32_t seq, struct nlmsghdr **nlhp, int *done)
 		}
 		if (read_size == 0)
 			break;
-		nh = (struct nlmsghdr *) buff;
 		for (nh = (struct nlmsghdr *) buff; NLMSG_OK(nh, read_size); nh = (struct nlmsghdr *) NLMSG_NEXT(nh, read_size)) {
 			if ((pid_t) nh->nlmsg_pid != pid || nh->nlmsg_seq != seq)
 				continue;

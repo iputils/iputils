@@ -280,7 +280,7 @@ char    *sendaddress, *recvaddress;
 
 int main(int argc, char **argv)
 {
-	struct sockaddr_in from;
+	struct sockaddr_in from = { 0 };
 	char **av = argv;
 	struct sockaddr_in *to = &whereto;
 	struct sockaddr_in joinaddr;

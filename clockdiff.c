@@ -340,7 +340,7 @@ static int measure(struct run_state *ctl)
 		.min1 = 0x7fffffff,
 		.min2 = 0x7fffffff
 	};
-	unsigned char opacket[64];
+	unsigned char opacket[64] = { 0 };
 	struct icmphdr *oicp = (struct icmphdr *)opacket;
 
 	mv.ip = (struct iphdr *)mv.packet;
@@ -527,7 +527,7 @@ int main(int argc, char **argv)
 	if (connect(ctl.sock_raw, (struct sockaddr *)&ctl.server, sizeof(ctl.server)) == -1)
 		error(1, errno, "connect");
 	if (ctl.ip_opt_len) {
-		struct sockaddr_in myaddr;
+		struct sockaddr_in myaddr = { 0 };
 		socklen_t addrlen = sizeof(myaddr);
 		unsigned char rspace[ctl.ip_opt_len];
 

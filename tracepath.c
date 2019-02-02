@@ -518,8 +518,10 @@ int main(int argc, char **argv)
 	sprintf(pbuf, "%u", ctl.base_port);
 
 	status = getaddrinfo(argv[0], pbuf, &hints, &result);
-	if (status)
+	if (status || !result) {
 		error(1, 0, "%s: %s", argv[0], gai_strerror(status));
+		abort();
+	}
 
 	for (ctl.ai = result; ctl.ai; ctl.ai = ctl.ai->ai_next) {
 		if (ctl.ai->ai_family != AF_INET6 && ctl.ai->ai_family != AF_INET)
