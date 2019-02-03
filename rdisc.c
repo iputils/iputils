@@ -1212,13 +1212,15 @@ join(int sock, struct sockaddr_in *sin)
 {
 	int i, j;
 	struct ip_mreqn mreq;
-	int joined[num_interfaces];
-
-	memset(joined, 0, sizeof(joined));
+	int *joined;
 
 	if (isbroadcast(sin))
 		return (0);
 
+	if ((joined = calloc(num_interfaces, sizeof(int))) == NULL) {
+		logperror("cannot allocate memory");
+		return (-1);
+	}
 	mreq.imr_multiaddr = sin->sin_addr;
 	for (i = 0; i < num_interfaces; i++) {
 		for (j = 0; j < i; j++) {
@@ -1234,11 +1236,13 @@ join(int sock, struct sockaddr_in *sin)
 		if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP,
 			       (char *)&mreq, sizeof(mreq)) < 0) {
 			logperror("setsockopt (IP_ADD_MEMBERSHIP)");
+			free(joined);
 			return (-1);
 		}
 
 		joined[i] = interfaces[i].ifindex;
 	}
+	free(joined);
 	return (0);
 }
 

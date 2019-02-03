@@ -350,7 +350,7 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 #endif
 
 		if (build) {
-			data = calloc(1, NLMSG_ALIGN(sizeof(struct ni_ifaddrs[icnt]))
+			data = calloc(1, NLMSG_ALIGN(sizeof(struct ni_ifaddrs) * icnt)
 				      + dlen + xlen);
 			ifa = (struct ni_ifaddrs *) data;
 			if (ifap != NULL)

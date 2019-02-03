@@ -529,9 +529,11 @@ int main(int argc, char **argv)
 	if (ctl.ip_opt_len) {
 		struct sockaddr_in myaddr = { 0 };
 		socklen_t addrlen = sizeof(myaddr);
-		unsigned char rspace[ctl.ip_opt_len];
+		uint8_t *rspace;
 
-		memset(rspace, 0, sizeof(rspace));
+		if ((rspace = calloc(ctl.ip_opt_len, sizeof(uint8_t))) == NULL)
+			error(1, errno, "allocating %zu bytes failed",
+					ctl.ip_opt_len * sizeof(uint8_t));
 		rspace[0] = IPOPT_TIMESTAMP;
 		rspace[1] = ctl.ip_opt_len;
 		rspace[2] = 5;
@@ -550,6 +552,7 @@ int main(int argc, char **argv)
 			error(0, errno, "IP_OPTIONS (fallback to icmp tstamps)");
 			ctl.ip_opt_len = 0;
 		}
+		free(rspace);
 	}
 
 	measure_status = measure(&ctl);
