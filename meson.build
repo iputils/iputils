@@ -145,7 +145,6 @@ if build_ninfod == true
 		conf.set('STDC_HEADERS', 1, description : 'Defined if we have standard c headers.')
 	endif
 	foreach h : [
-		'error.h',
 		'gcrypt.h',
 		'gnutls/openssl.h',
 		'inttypes.h',
@@ -183,6 +182,15 @@ if build_ninfod == true
 		conf.set('ENABLE_DEBUG', 1, description : 'Enable ninfod syslog messages.')
 	endif
 endif
+
+foreach h : [
+	'error.h',
+]
+	if cc.has_header(h)
+		conf.set('HAVE_' + h.to_upper().underscorify(), 1,
+			description : 'Define if ' + h + ' can be included.')
+	endif
+endforeach
 
 git_version_h = vcs_tag(
 	input : 'git-version.h.meson',
