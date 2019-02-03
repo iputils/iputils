@@ -852,13 +852,13 @@ int main(int argc, char **argv)
 			ctl.quiet = 1;
 			break;
 		case 'c':
-			ctl.count = atoi(optarg);
+			ctl.count = strtol_or_err(optarg, _("invalid argument"), 1, INT_MAX);
 			break;
 		case 'w':
-			ctl.timeout = atoi(optarg);
+			ctl.timeout = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'i':
-			ctl.interval = (unsigned int)atoi(optarg);
+			ctl.interval = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'I':
 			ctl.device.name = optarg;

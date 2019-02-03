@@ -479,18 +479,13 @@ int main(int argc, char **argv)
 			ctl.show_both = 1;
 			break;
 		case 'l':
-			if ((ctl.mtu = atoi(optarg)) <= ctl.overhead)
-				error(1, 0, _("pktlen must be > %d and <= %d"),
-					      ctl.overhead, INT_MAX);
+			ctl.mtu = strtol_or_err(optarg, _("invalid argument"), ctl.overhead, INT_MAX);
 			break;
 		case 'm':
-			ctl.max_hops = atoi(optarg);
-			if (ctl.max_hops < 0 || ctl.max_hops > MAX_HOPS_LIMIT)
-				error(1, 0, _("max hops must be 0 .. %d (inclusive)"),
-					      MAX_HOPS_LIMIT);
+			ctl.max_hops = strtol_or_err(optarg, _("invalid argument"), 0, MAX_HOPS_LIMIT);
 			break;
 		case 'p':
-			ctl.base_port = atoi(optarg);
+			ctl.base_port = strtol_or_err(optarg, _("invalid argument"), 0, UINT16_MAX);
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("tracepath"));
@@ -511,7 +506,7 @@ int main(int argc, char **argv)
 		p = strchr(argv[0], '/');
 		if (p) {
 			*p = 0;
-			ctl.base_port = atoi(p + 1);
+			ctl.base_port = strtol_or_err(p + 1, _("invalid argument"), 0, UINT16_MAX);
 		} else
 			ctl.base_port = DEFAULT_BASEPORT;
 	}
@@ -631,5 +626,5 @@ int main(int argc, char **argv)
 	exit(0);
 
  pktlen_error:
-	error(1, 0, _("pktlen must be > %d and <= %d"), ctl.overhead, INT_MAX);
+	error(1, 0, _("pktlen must be within: %d < value <= %d"), ctl.overhead, INT_MAX);
 }

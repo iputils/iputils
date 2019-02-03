@@ -331,10 +331,10 @@ struct run_state {
 	char *source;
 	char *device;
 	char *hostname;
-	int nprobes;
+	long nprobes;
 	int max_ttl;
 	pid_t ident;
-	unsigned short port;		/* start udp dest port # for probe packets */
+	uint16_t port;			/* start udp dest port # for probe packets */
 	int options;			/* socket options */
 	int waittime;			/* time to wait for response (in seconds) */
 	unsigned int
@@ -655,7 +655,8 @@ int main(int argc, char **argv)
 	int status;
 	struct sockaddr_in6 from;
 	struct sockaddr_in6 *to = (struct sockaddr_in6 *)&ctl.whereto;
-	int ch, i, probe, ttl, on = 1;
+	int ch, i, ttl, on = 1;
+	long probe;
 	uint32_t seq = 0;
 	char *resolved_hostname = NULL;
 
@@ -690,22 +691,16 @@ int main(int argc, char **argv)
 			ctl.options |= SO_DEBUG;
 			break;
 		case 'm':
-			ctl.max_ttl = atoi(optarg);
-			if (ctl.max_ttl <= 1)
-				error(1, 0, _("max ttl must be >1"));
+			ctl.max_ttl = strtol_or_err(optarg, _("invalid argument"), 2, INT_MAX);
 			break;
 		case 'n':
 			ctl.nflag = 1;
 			break;
 		case 'p':
-			ctl.port = atoi(optarg);
-			if (ctl.port < 1)
-				error(1, 0, _("port must be >0"));
+			ctl.port = strtol_or_err(optarg, _("invalid argument"), 1, UINT16_MAX);
 			break;
 		case 'q':
-			ctl.nprobes = atoi(optarg);
-			if (ctl.nprobes < 1)
-				error(1, 0, _("nprobes must be >0"));
+			ctl.nprobes = strtol_or_err(optarg, _("invalid argument"), 1, LONG_MAX);
 			break;
 		case 'r':
 			ctl.options |= SO_DONTROUTE;
@@ -863,7 +858,7 @@ int main(int argc, char **argv)
 	for (ttl = 1; ttl <= ctl.max_ttl; ++ttl) {
 		struct in6_addr lastaddr = { {{0,}} };
 		uint8_t got_there = 0;
-		int unreachable = 0;
+		long unreachable = 0;
 
 		printf("%2d ", ttl);
 		for (probe = 0; probe < ctl.nprobes; ++probe) {

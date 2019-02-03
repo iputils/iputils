@@ -304,9 +304,7 @@ main(int argc, char **argv)
 			options |= F_STRICTSOURCE;
 			break;
 		case 'c':
-			npackets = atoi(optarg);
-			if (npackets <= 0)
-				error(2, 0, _("bad number of packets to transmit: %ld"), npackets);
+			npackets = strtol_or_err(optarg, _("invalid argument"), 1, LONG_MAX);
 			break;
 		case 'd':
 			options |= F_SO_DEBUG;
@@ -352,11 +350,7 @@ main(int argc, char **argv)
 			}
 			break;
 		case 'l':
-			preload = atoi(optarg);
-			if (preload <= 0)
-				error(2, 0, _("bad preload value: %s, should be 1..%d"), optarg, MAX_DUP_CHK);
-			if (preload > MAX_DUP_CHK)
-				preload = MAX_DUP_CHK;
+			preload = strtol_or_err(optarg, _("invalid argument"), 1, MAX_DUP_CHK);
 			if (uid && preload > 3)
 				error(2, 0, _("cannot set preload to value greater than 3: %d"), preload);
 			break;
@@ -364,14 +358,9 @@ main(int argc, char **argv)
 			options |= F_NOLOOP;
 			break;
 		case 'm':
-		{
-			char *endp;
-			mark = (int)strtoul(optarg, &endp, 10);
-			if (mark < 0 || *endp != '\0')
-				error(2, 0, _("mark cannot be negative: %s"), optarg);
+			mark = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			options |= F_MARK;
 			break;
-		}
 		case 'M':
 			if (strcmp(optarg, "do") == 0)
 				pmtudisc = IP_PMTUDISC_DO;
@@ -408,22 +397,14 @@ main(int argc, char **argv)
 			options |= F_SO_DONTROUTE;
 			break;
 		case 's':
-			datalen = atoi(optarg);
-			if (datalen < 0)
-				error(2, 0, _("illegal packet size: %d"), datalen);
-			if (datalen > MAXPACKET - 8)
-				error(2, 0, _("packet size too large: %d"), datalen);
+			datalen = strtol_or_err(optarg, _("invalid argument"), 0, MAXPACKET - 8);
 			break;
 		case 'S':
-			sndbuf = atoi(optarg);
-			if (sndbuf <= 0)
-				error(2, 0, _("bad sndbuf value: %s"), optarg);
+			sndbuf = strtol_or_err(optarg, _("invalid argument"), 1, INT_MAX);
 			break;
 		case 't':
+			ttl = strtol_or_err(optarg, _("invalid argument"), 0, 255);
 			options |= F_TTL;
-			ttl = atoi(optarg);
-			if (ttl < 0 || ttl > 255)
-				error(2, 0, _("ttl out of range: %s"), optarg);
 			break;
 		case 'U':
 			options |= F_LATENCY;
@@ -435,9 +416,7 @@ main(int argc, char **argv)
 			printf(IPUTILS_VERSION("ping"));
 			exit(0);
 		case 'w':
-			deadline = atoi(optarg);
-			if (deadline < 0)
-				error(2, 0, _("bad wait time: %s"), optarg);
+			deadline = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'W':
 		{
