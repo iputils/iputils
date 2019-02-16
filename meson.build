@@ -20,6 +20,7 @@ conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that 
 # Check functions.
 foreach f : '''
 	__fpending
+	nanosleep
 '''.split()
 	if cc.has_function(f, args : '-D_GNU_SOURCE')
 		conf.set('HAVE_' + f.to_upper(), 1,
@@ -157,6 +158,8 @@ if build_ninfod == true
 		'netinet/ip6.h',
 		'openssl/md5.h',
 		'pwd.h',
+		'stdint.h',
+		'stdlib.h',
 		'string.h',
 		'strings.h',
 		'sys/capability.h',
@@ -172,10 +175,18 @@ if build_ninfod == true
 				description : 'Define if ' + h + ' can be included.')
 		endif
 	endforeach
+	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h') and cc.has_header('stdarg.h')
+		conf.set('STDC_HEADERS', 1,
+			description : 'Define to 1 if you have the ANSI C header files.')
+	endif
 	threads = dependency('threads')
 	if threads.found()
 		conf.set('ENABLE_THREADS', 1,
 			description : 'Defined if libpthread is found.')
+	endif
+	if host_machine.endian() == 'big'
+		conf.set('WORDS_BIGENDIAN', 1,
+			description : 'Defined if processor stores words with the most significant byte first.')
 	endif
 	opt = get_option('NINFOD_MESSAGES')
 	if opt == true
