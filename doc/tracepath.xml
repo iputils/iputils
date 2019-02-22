@@ -171,7 +171,7 @@ root@mops:~ # tracepath -6 3ffe:2400:0:109::2
     the probe. It is either address of router or word [LOCALHOST],
     if the probe was not sent to the network.</para>
     <para>The rest of line shows miscellaneous information about
-    path to the correspinding network hop. As rule it contains
+    path to the corresponding network hop. As rule it contains
     value of RTT. Additionally, it can show Path MTU, when it
     changes. If the path is asymmetric or the probe finishes before
     it reach prescribed hop, difference between number of hops in
