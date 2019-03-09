@@ -4,7 +4,7 @@
  *
  *	<roque@di.fc.ul.pt>
  *
- *	Original copyright notice included bellow
+ *	Original copyright notice included below
  */
 
 /*

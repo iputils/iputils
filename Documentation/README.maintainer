@@ -13,7 +13,7 @@ Use git commit --author 'Contributor <email>' when receiving changes that
 are not applicable as-is.  Not stealing contributions applies even if change
 has to be worked out, that is common case with commit message.
 
-Exeception to this rule is a change that is a good idea, but has to be
+Exception to this rule is a change that is a good idea, but has to be
 completely rewrote to be acceptable for the project.  In this case
 maintainer should attribute the person who gave the idea in commit message.
 

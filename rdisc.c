@@ -788,7 +788,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 				      pr_name(from->sin_addr),
 				      ntohs(rap->icmp_lifetime));
 
-		/* Check that at least one router address is a neighboor
+		/* Check that at least one router address is a neighbour
 		 * on the arriving link.
 		 */
 		for (i = 0; (unsigned)i < rap->icmp_num_addrs; i++) {
@@ -861,7 +861,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 				      pr_type((int)icp->type),
 				      pr_name(from->sin_addr));
 
-		/* Check that ip_src is either a neighboor
+		/* Check that ip_src is either a neighbour
 		 * on the arriving link or 0.
 		 */
 		sin.sin_family = AF_INET;

@@ -82,7 +82,7 @@ static uint32_t route[10];
 
 static struct sockaddr_in whereto;	/* who to ping */
 static int optlen = 0;
-static int settos = 0;			/* Set TOS, Precendence or other QOS options */
+static int settos = 0;			/* Set TOS, Precedence or other QOS options */
 
 static int broadcast_pings = 0;
 

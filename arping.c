@@ -652,7 +652,7 @@ static int check_device(struct run_state *ctl)
  * find_broadcast_address()
  *
  * This fills the device "broadcast address"
- * based on information found by check_device() funcion.
+ * based on information found by check_device() function.
  */
 static void find_broadcast_address(struct run_state *ctl)
 {

@@ -544,9 +544,7 @@ void setup(socket_st *sock)
 		disable_capability_admin();
 
 		if (ret == -1) {
-			/* we probably dont wanna exit since old kernels
-			 * dont support mark ..
-			*/
+			/* Do not exit, old kernels do not support mark. */
 			error(0, errno_save, _("Warning: Failed to set mark: %d"), mark);
 		}
 	}

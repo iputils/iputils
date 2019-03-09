@@ -527,7 +527,7 @@ void serve_it(int fd)
 
 	/* Prepare reply. It is almost ready, we only
 	   replace ARP packet type, put our lladdr and
-	   IP address to source fileds,
+	   IP address to source fields,
 	   and fill target IP address.
 	 */
 	a->ar_op = htons(ARPOP_RREPLY);
