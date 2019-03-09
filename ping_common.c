@@ -58,7 +58,7 @@ long nerrors;			/* icmp errors */
 int interval = 1000;		/* interval between packets (msec) */
 int preload = 1;
 int deadline = 0;		/* time to die */
-int lingertime = MAXWAIT*1000;
+int lingertime = MAXWAIT * 1000;
 struct timeval start_time, cur_time;
 volatile int exiting;
 volatile int status_snapshot;
@@ -82,7 +82,7 @@ long tmax;			/* maximum round trip time */
  */
 double tsum;			/* sum of all times, for doing average */
 double tsum2;
-int  pipesize = -1;
+int pipesize = -1;
 
 int datalen = DEFDATALEN;
 
@@ -256,7 +256,7 @@ void fill(char *patp, unsigned char *packet, unsigned packet_size)
 	int ii, jj;
 	unsigned int pat[16];
 	char *cp;
-	unsigned char *bp = packet+8;
+	unsigned char *bp = packet + 8;
 
 #ifdef USE_IDN
 	setlocale(LC_ALL, "C");
@@ -267,10 +267,10 @@ void fill(char *patp, unsigned char *packet, unsigned packet_size)
 			error(2, 0, _("patterns must be specified as hex digits: %s"), cp);
 	}
 	ii = sscanf(patp,
-	    "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
-	    &pat[0], &pat[1], &pat[2], &pat[3], &pat[4], &pat[5], &pat[6],
-	    &pat[7], &pat[8], &pat[9], &pat[10], &pat[11], &pat[12],
-	    &pat[13], &pat[14], &pat[15]);
+		    "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
+		    &pat[0], &pat[1], &pat[2], &pat[3], &pat[4], &pat[5],
+		    &pat[6], &pat[7], &pat[8], &pat[9], &pat[10], &pat[11],
+		    &pat[12], &pat[13], &pat[14], &pat[15]);
 
 	if (ii > 0) {
 		unsigned kk;
@@ -302,7 +302,6 @@ static void sigstatus(int signo __attribute__((__unused__)))
 	status_snapshot = 1;
 }
 
-
 int __schedule_exit(int next)
 {
 	static unsigned long waittime;
@@ -313,27 +312,27 @@ int __schedule_exit(int next)
 
 	if (nreceived) {
 		waittime = 2 * tmax;
-		if (waittime < (unsigned long) (1000*interval))
-			waittime = 1000*interval;
+		if (waittime < (unsigned long)(1000 * interval))
+			waittime = 1000 * interval;
 	} else
-		waittime = lingertime*1000;
+		waittime = lingertime * 1000;
 
-	if (next < 0 || (unsigned long)next < waittime/1000)
-		next = waittime/1000;
+	if (next < 0 || (unsigned long)next < waittime / 1000)
+		next = waittime / 1000;
 
 	it.it_interval.tv_sec = 0;
 	it.it_interval.tv_usec = 0;
-	it.it_value.tv_sec = waittime/1000000;
-	it.it_value.tv_usec = waittime%1000000;
+	it.it_value.tv_sec = waittime / 1000000;
+	it.it_value.tv_usec = waittime % 1000000;
 	setitimer(ITIMER_REAL, &it, NULL);
 	return next;
 }
 
 static inline void update_interval(void)
 {
-	int est = rtt ? rtt/8 : interval*1000;
+	int est = rtt ? rtt / 8 : interval * 1000;
 
-	interval = (est+rtt_addend+500)/1000;
+	interval = (est + rtt_addend + 500) / 1000;
 	if (uid && interval < MINUSERINTERVAL)
 		interval = MINUSERINTERVAL;
 }
@@ -372,23 +371,23 @@ int pinger(ping_func_set_st *fset, socket_st *sock)
 	/* Check that packets < rate*time + preload */
 	if (cur_time.tv_sec == 0) {
 		gettimeofday(&cur_time, NULL);
-		tokens = interval*(preload-1);
+		tokens = interval * (preload - 1);
 	} else {
 		long ntokens;
 		struct timeval tv;
 
 		gettimeofday(&tv, NULL);
-		ntokens = (tv.tv_sec - cur_time.tv_sec)*1000 +
-			(tv.tv_usec-cur_time.tv_usec)/1000;
+		ntokens = (tv.tv_sec - cur_time.tv_sec) * 1000 +
+			  (tv.tv_usec - cur_time.tv_usec) / 1000;
 		if (!interval) {
 			/* Case of unlimited flood is special;
 			 * if we see no reply, they are limited to 100pps */
 			if (ntokens < MININTERVAL && in_flight() >= preload)
-				return MININTERVAL-ntokens;
+				return MININTERVAL - ntokens;
 		}
 		ntokens += tokens;
-		if (ntokens > interval*preload)
-			ntokens = interval*preload;
+		if (ntokens > interval * preload)
+			ntokens = interval * preload;
 		if (ntokens < interval)
 			return interval - ntokens;
 
@@ -430,14 +429,14 @@ resend:
 		/* Device queue overflow or OOM. Packet is not sent. */
 		tokens = 0;
 		/* Slowdown. This works only in adaptive mode (option -A) */
-		rtt_addend += (rtt < 8*50000 ? rtt/8 : 50000);
-		if (options&F_ADAPTIVE)
+		rtt_addend += (rtt < 8 * 50000 ? rtt / 8 : 50000);
+		if (options & F_ADAPTIVE)
 			update_interval();
-		nores_interval = SCHINT(interval/2);
+		nores_interval = SCHINT(interval / 2);
 		if (nores_interval > 500)
 			nores_interval = 500;
 		oom_count++;
-		if (oom_count*nores_interval < lingertime)
+		if (oom_count * nores_interval < lingertime)
 			return nores_interval;
 		i = 0;
 		/* Fall to hard error. It is to avoid complete deadlock
@@ -449,7 +448,7 @@ resend:
 		tokens += interval;
 		return MININTERVAL;
 	} else {
-		if ((i=fset->receive_error_msg(sock)) > 0) {
+		if ((i = fset->receive_error_msg(sock)) > 0) {
 			/* An ICMP error arrived. In this case, we've received
 			 * an error from sendto(), but we've also received an
 			 * ICMP message, which means the packet did in fact
@@ -517,7 +516,7 @@ void setup(socket_st *sock)
 	if (uid && interval < MINUSERINTERVAL)
 		error(2, 0, _("cannot flood; minimal interval allowed for user is %dms"), MINUSERINTERVAL);
 
-	if (interval >= INT_MAX/preload)
+	if (interval >= INT_MAX / preload)
 		error(2, 0, _("illegal preload and/or interval: %d"), interval);
 
 	hold = 1;
@@ -527,7 +526,7 @@ void setup(socket_st *sock)
 		setsockopt(sock->fd, SOL_SOCKET, SO_DONTROUTE, (char *)&hold, sizeof(hold));
 
 #ifdef SO_TIMESTAMP
-	if (!(options&F_LATENCY)) {
+	if (!(options & F_LATENCY)) {
 		int on = 1;
 		if (setsockopt(sock->fd, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
 			error(0, 0, _("Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"));
@@ -560,22 +559,20 @@ void setup(socket_st *sock)
 		tv.tv_sec = 0;
 		tv.tv_usec = 1000 * SCHINT(interval);
 	}
-	setsockopt(sock->fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
+	setsockopt(sock->fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv));
 
 	/* Set RCVTIMEO to "interval". Note, it is just an optimization
 	 * allowing to avoid redundant poll(). */
-	tv.tv_sec = SCHINT(interval)/1000;
-	tv.tv_usec = 1000*(SCHINT(interval)%1000);
-	if (setsockopt(sock->fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv)))
+	tv.tv_sec = SCHINT(interval) / 1000;
+	tv.tv_usec = 1000 * (SCHINT(interval) % 1000);
+	if (setsockopt(sock->fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)))
 		options |= F_FLOOD_POLL;
 
 	if (!(options & F_PINGFILLED)) {
 		int i;
-		unsigned char *p = outpack+8;
+		unsigned char *p = outpack + 8;
 
-		/* Do not forget about case of small datalen,
-		 * fill timestamp area too!
-		 */
+		/* Do not forget about case of small datalen, fill timestamp area too! */
 		for (i = 0; i < datalen; ++i)
 			*p++ = i;
 	}
@@ -621,7 +618,7 @@ int contains_pattern_in_payload(uint8_t *ptr)
 	uint8_t *cp, *dp;
  
 	/* check the data */
-	cp = ((u_char*)ptr) + sizeof(struct timeval);
+	cp = ((u_char *)ptr) + sizeof(struct timeval);
 	dp = &outpack[8 + sizeof(struct timeval)];
 	for (i = sizeof(struct timeval); i < datalen; ++i, ++cp, ++dp) {
 		if (*cp != *dp)
@@ -674,7 +671,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int pac
 		 *    timed waiting (SO_RCVTIMEO). */
 		polling = 0;
 		recv_error = 0;
-		if ((options & (F_ADAPTIVE|F_FLOOD_POLL)) || next<SCHINT(interval)) {
+		if ((options & (F_ADAPTIVE | F_FLOOD_POLL)) || next < SCHINT(interval)) {
 			int recv_expected = in_flight();
 
 			/* If we are here, recvmsg() is unable to wait for
@@ -696,16 +693,16 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int pac
 			}
 
 			if (!polling &&
-			    ((options & (F_ADAPTIVE|F_FLOOD_POLL)) || interval)) {
+			    ((options & (F_ADAPTIVE | F_FLOOD_POLL)) || interval)) {
 				struct pollfd pset;
 				pset.fd = sock->fd;
 				pset.events = POLLIN;
 				pset.revents = 0;
 				if (poll(&pset, 1, next) < 1 ||
-				    !(pset.revents&(POLLIN|POLLERR)))
+				    !(pset.revents & (POLLIN | POLLERR)))
 					continue;
 				polling = MSG_DONTWAIT;
-				recv_error = pset.revents&POLLERR;
+				recv_error = pset.revents & POLLERR;
 			}
 		}
 
@@ -752,12 +749,12 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int pac
 						continue;
 					if (c->cmsg_len < CMSG_LEN(sizeof(struct timeval)))
 						continue;
-					recv_timep = (struct timeval*)CMSG_DATA(c);
+					recv_timep = (struct timeval *)CMSG_DATA(c);
 				}
 #endif
 
-				if ((options&F_LATENCY) || recv_timep == NULL) {
-					if ((options&F_LATENCY) ||
+				if ((options & F_LATENCY) || recv_timep == NULL) {
+					if ((options & F_LATENCY) ||
 					    ioctl(sock->fd, SIOCGSTAMP, &recv_time))
 						gettimeofday(&recv_time, NULL);
 					recv_timep = &recv_time;
@@ -796,7 +793,7 @@ int gather_statistics(uint8_t *icmph, int icmplen,
 	if (!csfailed)
 		acknowledge(seq);
 
-	if (timing && cc >= (int) (8+sizeof(struct timeval))) {
+	if (timing && cc >= (int)(8 + sizeof(struct timeval))) {
 		struct timeval tmp_tv;
 		memcpy(&tmp_tv, ptr, sizeof(tmp_tv));
 
@@ -814,16 +811,16 @@ restamp:
 		}
 		if (!csfailed) {
 			tsum += triptime;
-			tsum2 += (long long)triptime * (long long)triptime;
+			tsum2 += (long long)triptime *(long long)triptime;
 			if (triptime < tmin)
 				tmin = triptime;
 			if (triptime > tmax)
 				tmax = triptime;
 			if (!rtt)
-				rtt = triptime*8;
+				rtt = triptime * 8;
 			else
-				rtt += triptime-rtt/8;
-			if (options&F_ADAPTIVE)
+				rtt += triptime - rtt / 8;
+			if (options & F_ADAPTIVE)
 				update_interval();
 		}
 	}
@@ -862,22 +859,22 @@ restamp:
 		if (hops >= 0)
 			printf(_(" ttl=%d"), hops);
 
-		if (cc < datalen+8) {
+		if (cc < datalen + 8) {
 			printf(_(" (truncated)\n"));
 			return 1;
 		}
 		if (timing) {
 			if (triptime >= 100000)
-				printf(_(" time=%ld ms"), (triptime+500)/1000);
+				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
 			else if (triptime >= 10000)
-				printf(_(" time=%ld.%01ld ms"), (triptime+50)/1000,
-				       ((triptime+50)%1000)/100);
+				printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,
+				       ((triptime + 50) % 1000) / 100);
 			else if (triptime >= 1000)
-				printf(_(" time=%ld.%02ld ms"), (triptime+5)/1000,
-				       ((triptime+5)%1000)/10);
+				printf(_(" time=%ld.%02ld ms"), (triptime + 5) / 1000,
+				       ((triptime + 5) % 1000) / 10);
 			else
-				printf(_(" time=%ld.%03ld ms"), triptime/1000,
-				       triptime%1000);
+				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
+				       triptime % 1000);
 		}
 		if (dupflag)
 			printf(_(" (DUP!)"));
@@ -885,13 +882,13 @@ restamp:
 			printf(_(" (BAD CHECKSUM!)"));
 
 		/* check the data */
-		cp = ((unsigned char*)ptr) + sizeof(struct timeval);
+		cp = ((unsigned char *)ptr) + sizeof(struct timeval);
 		dp = &outpack[8 + sizeof(struct timeval)];
 		for (i = sizeof(struct timeval); i < datalen; ++i, ++cp, ++dp) {
 			if (*cp != *dp) {
 				printf(_("\nwrong data byte #%d should be 0x%x but was 0x%x"),
 				       i, *dp, *cp);
-				cp = (unsigned char*)ptr + sizeof(struct timeval);
+				cp = (unsigned char *)ptr + sizeof(struct timeval);
 				for (i = sizeof(struct timeval); i < datalen; ++i, ++cp) {
 					if ((i % 32) == sizeof(struct timeval))
 						printf("\n#%d\t", i);
@@ -912,7 +909,7 @@ static long llsqrt(long long a)
 	if (x > 0) {
 		while (x < prev) {
 			prev = x;
-			x = (x+(a/x))/2;
+			x = (x + (a / x)) / 2;
 		}
 	}
 
@@ -941,15 +938,16 @@ void finish(void)
 		printf(_(", +%ld corrupted"), nchecksum);
 	if (nerrors)
 		printf(_(", +%ld errors"), nerrors);
+
 	if (ntransmitted) {
 #ifdef USE_IDN
-	setlocale(LC_ALL, "C");
+		setlocale(LC_ALL, "C");
 #endif
 		printf(_(", %g%% packet loss"),
-		       (float) ((((long long)(ntransmitted - nreceived)) * 100.0) /
-			      ntransmitted));
-		printf(_(", time %ldms"), 1000*tv.tv_sec+(tv.tv_usec+500)/1000);
+		       (float)((((long long)(ntransmitted - nreceived)) * 100.0) / ntransmitted));
+		printf(_(", time %ldms"), 1000 * tv.tv_sec + (tv.tv_usec + 500) / 1000);
 	}
+
 	putchar('\n');
 
 	if (nreceived && timing) {
@@ -968,26 +966,26 @@ void finish(void)
 		tmdev = llsqrt(tmvar);
 
 		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
-		       (long)tmin/1000, (long)tmin%1000,
-		       (unsigned long)(tmavg/1000), (long)(tmavg%1000),
-		       (long)tmax/1000, (long)tmax%1000,
-		       (long)tmdev/1000, (long)tmdev%1000
-		       );
+		       (long)tmin / 1000, (long)tmin % 1000,
+		       (unsigned long)(tmavg / 1000), (long)(tmavg % 1000),
+		       (long)tmax / 1000, (long)tmax % 1000,
+		       (long)tmdev / 1000, (long)tmdev % 1000);
 		comma = ", ";
 	}
 	if (pipesize > 1) {
 		printf(_("%spipe %d"), comma, pipesize);
 		comma = ", ";
 	}
-	if (nreceived && (!interval || (options&(F_FLOOD|F_ADAPTIVE))) && ntransmitted > 1) {
-		int ipg = (1000000*(long long)tv.tv_sec+tv.tv_usec)/(ntransmitted-1);
+
+	if (nreceived && (!interval || (options & (F_FLOOD | F_ADAPTIVE))) && ntransmitted > 1) {
+		int ipg = (1000000 * (long long)tv.tv_sec + tv.tv_usec) / (ntransmitted - 1);
+
 		printf(_("%sipg/ewma %d.%03d/%d.%03d ms"),
-		       comma, ipg/1000, ipg%1000, rtt/8000, (rtt/8)%1000);
+		       comma, ipg / 1000, ipg % 1000, rtt / 8000, (rtt / 8) % 1000);
 	}
 	putchar('\n');
 	exit(!nreceived || (deadline && nreceived < npackets));
 }
-
 
 void status(void)
 {
@@ -1006,15 +1004,14 @@ void status(void)
 		tavg = tsum / (nreceived + nrepeats);
 
 		fprintf(stderr, _(", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"),
-		       (long)tmin/1000, (long)tmin%1000,
-		       tavg/1000, tavg%1000,
-		       rtt/8000, (rtt/8)%1000,
-		       (long)tmax/1000, (long)tmax%1000
-		       );
+			(long)tmin / 1000, (long)tmin % 1000,
+			tavg / 1000, tavg % 1000,
+			rtt / 8000, (rtt / 8) % 1000, (long)tmax / 1000, (long)tmax % 1000);
 	}
 	fprintf(stderr, "\n");
 }
 
-inline int is_ours(socket_st *sock, uint16_t id) {
-       return sock->socktype == SOCK_DGRAM || id == ident;
+inline int is_ours(socket_st * sock, uint16_t id)
+{
+	return sock->socktype == SOCK_DGRAM || id == ident;
 }

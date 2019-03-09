@@ -30,30 +30,28 @@
 #include <resolv.h>
 
 #ifdef HAVE_LIBCAP
-#include <sys/prctl.h>
-#include <sys/capability.h>
+# include <sys/prctl.h>
+# include <sys/capability.h>
 #endif
 
 #include "iputils_common.h"
 
 #ifdef USE_IDN
-#include <idn2.h>
-
-#ifndef AI_IDN
-#define AI_IDN 0x0040
-#endif
-#ifndef AI_CANONIDN
-#define AI_CANONIDN 0x0080
-#endif
-#ifndef NI_IDN
-#define NI_IDN 32
-#endif
-
-#define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
-#define getnameinfo_flags NI_IDN
+# include <idn2.h>
+# ifndef AI_IDN
+#  define AI_IDN 0x0040
+# endif
+# ifndef AI_CANONIDN
+#  define AI_CANONIDN 0x0080
+# endif
+# ifndef NI_IDN
+#  define NI_IDN 32
+# endif
+# define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
+# define getnameinfo_flags NI_IDN
 #else
-#define getaddrinfo_flags (AI_CANONNAME)
-#define getnameinfo_flags 0
+# define getaddrinfo_flags (AI_CANONNAME)
+# define getnameinfo_flags 0
 #endif
 
 #include <ifaddrs.h>
@@ -64,7 +62,7 @@
 #include <linux/in6.h>
 
 #ifndef SCOPE_DELIMITER
-#define SCOPE_DELIMITER '%'
+# define SCOPE_DELIMITER '%'
 #endif
 
 #define	DEFDATALEN	(64 - 8)	/* default data length */
@@ -243,15 +241,15 @@ static inline int schedule_exit(int next)
 static inline int in_flight(void)
 {
 	uint16_t diff = (uint16_t)ntransmitted - acked;
-	return (diff<=0x7FFF) ? diff : ntransmitted-nreceived-nerrors;
+	return (diff <= 0x7FFF) ? diff : ntransmitted - nreceived - nerrors;
 }
 
 static inline void acknowledge(uint16_t seq)
 {
 	uint16_t diff = (uint16_t)ntransmitted - seq;
 	if (diff <= 0x7FFF) {
-		if ((int)diff+1 > pipesize)
-			pipesize = (int)diff+1;
+		if ((int)diff + 1 > pipesize)
+			pipesize = (int)diff + 1;
 		if ((int16_t)(seq - acked) > 0 ||
 		    (uint16_t)ntransmitted - acked > 0x7FFF)
 			acked = seq;
@@ -313,7 +311,7 @@ typedef struct ping_func_set_st {
 extern ping_func_set_st ping4_func_set;
 
 extern int pinger(ping_func_set_st *fset, socket_st *sock);
-extern void sock_setbufs(socket_st*, int alloc);
+extern void sock_setbufs(socket_st *, int alloc);
 extern void setup(socket_st *);
 extern int contains_pattern_in_payload(uint8_t *ptr);
 extern void main_loop(ping_func_set_st *fset, socket_st*, uint8_t *buf, int buflen) __attribute__((noreturn));
