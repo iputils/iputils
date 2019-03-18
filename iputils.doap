@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xml:lang="en" xmlns="http://usefulinc.com/ns/doap#"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <Project rdf:about="https://github.com/iputils/iputils">
+    <name>iputils</name>
+    <homepage rdf:resource="https://wiki.linuxfoundation.org/networking/iputils" />
+    <shortdesc>The iputils package is set of small utilities for
+    Linux networking.</shortdesc>
+    <description>The iputils package includes arping, clockdiff,
+    ninfod, ping, rarpd, rdisc, tftpd, tracepath, and traceroute6.
+    The rarpd is not built by default, this utility is obsoleted by
+    bootp and later dhcp protocols. The traceroute6 built is
+    disabled by default in favour of
+    http://traceroute.sourceforge.net/ that is maintained by Dmitry
+    Butskoy.</description>
+    <bug-database rdf:resource="https://github.com/iputils/iputils/issues" />
+    <download-page rdf:resource="https://github.com/iputils/iputils/releases" />
+    <programming-language>C</programming-language>
+    <repository>
+      <GitRepository>
+        <location rdf:resource="https://github.com/iputils/iputils.git" />
+        <browse rdf:resource="https://github.com/iputils/iputils" />
+      </GitRepository>
+    </repository>
+    <maintainer>
+      <foaf:Person>
+        <foaf:name>David Heidelberg</foaf:name>
+        <foaf:mbox rdf:resource="mailto:david@ixit.cz" />
+      </foaf:Person>
+    </maintainer>
+    <maintainer>
+      <foaf:Person>
+        <foaf:name>Pavel Šimerda</foaf:name>
+        <foaf:mbox rdf:resource="mailto:pavlix@pavlix.net" />
+      </foaf:Person>
+    </maintainer>
+    <maintainer>
+      <foaf:Person>
+        <foaf:name>Sami Kerola</foaf:name>
+        <foaf:mbox rdf:resource="mailto:kerolasa@iki.fi" />
+      </foaf:Person>
+    </maintainer>
+  </Project>
+</rdf:RDF>
