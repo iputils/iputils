@@ -579,7 +579,7 @@ int main(int argc, char **argv)
 		error(1, errno, "malloc");
 
 	for (ctl.ttl = 1; ctl.ttl <= ctl.max_hops; ctl.ttl++) {
-		int res;
+		int res = -1;
 		int i;
 
 		on = ctl.ttl;

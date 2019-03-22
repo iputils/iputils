@@ -448,7 +448,7 @@ int tftpd_inetd(struct run_state *ctl)
 	 * "recvfrom", inetd would spawn endless instances, clogging the system.
 	 */
 	{
-		int pid;
+		int pid = -1;
 		int i;
 		socklen_t j;
 
