@@ -95,7 +95,7 @@
 
 #include <arpa/inet.h>
 
-#if defined(HAVE_GCRYPT_H)
+#if defined(HAVE_GCRYPT_H) || defined(USE_KERNEL_CRYPTO_API)
 # include "iputils_md5dig.h"
 #elif defined(HAVE_GNUTLS_OPENSSL_H)
 # include <gnutls/openssl.h>

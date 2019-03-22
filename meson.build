@@ -99,17 +99,20 @@ else
 	idn_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 endif
 
-opt = get_option('USE_CRYPTO')
-if opt == 'nettle'
+crypto = get_option('USE_CRYPTO')
+if crypto == 'nettle'
 	crypto_dep = dependency('nettle')
 	conf.set('USE_NETTLE', 1, description : 'If set use nettle crypto library.')
-elif opt == 'gcrypt'
+elif crypto == 'gcrypt'
 	crypto_dep = cc.find_library('gcrypt')
 	conf.set('USE_GCRYPT', 1, description : 'If set use gcrypt crypto library.')
-elif opt == 'openssl'
+elif crypto == 'openssl'
 	crypto_dep = dependency('openssl')
 	conf.set('USE_OPENSSL', 1, description : 'if set use openssl crypto library.')
-elif opt == 'none'
+elif crypto == 'kernel'
+	crypto_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
+	conf.set('USE_KERNEL_CRYPTO_API', 1, description : 'if set use Linux kernel Crypto API.')
+elif crypto == 'none'
 	crypto_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 	conf.set('PING6_NONCE_MEMORY', 1,
 		description : 'If set RFC6744 random does not use any CRYPTO lib.')
@@ -142,6 +145,9 @@ endif
 
 build_ninfod = get_option('BUILD_NINFOD')
 if build_ninfod == true
+	if crypto == 'none'
+		error('BUILD_NINFOD=true and USE_CRYPTO=none cannot be combined')
+	endif
 	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h')
 		conf.set('STDC_HEADERS', 1, description : 'Defined if we have standard c headers.')
 	endif
@@ -326,9 +332,6 @@ if build_rarpd == true
 endif
 
 if build_ninfod == true
-	if not crypto_dep.found()
-		error('BUILD_NINFOD=true and USE_CRYPTO=none cannot be combined')
-	endif
 	subdir ('ninfod')
 endif
 
