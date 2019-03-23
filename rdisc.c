@@ -108,9 +108,6 @@ static void initlog(void);
 static void discard_table(void);
 static void init(void);
 
-#define ICMP_ROUTER_ADVERTISEMENT	9
-#define ICMP_ROUTER_SOLICITATION	10
-
 #define ALL_HOSTS_ADDRESS		"224.0.0.1"
 #define ALL_ROUTERS_ADDRESS		"224.0.0.2"
 
@@ -541,7 +538,7 @@ solicitor(struct sockaddr_in *sin)
 		logmsg(LOG_INFO, "Sending solicitation to %s\n",
 			 pr_name(sin->sin_addr));
 	}
-	icp->type = ICMP_ROUTER_SOLICITATION;
+	icp->type = ICMP_ROUTERSOLICIT;
 	icp->code = 0;
 	icp->checksum = 0;
 	icp->un.gateway = 0; /* Reserved */
@@ -588,7 +585,7 @@ advertise(struct sockaddr_in *sin, int lft)
 	}
 
 	for (i = 0; i < num_interfaces; i++) {
-		rap->icmp_type = ICMP_ROUTER_ADVERTISEMENT;
+		rap->icmp_type = ICMP_ROUTERADVERT;
 		rap->icmp_code = 0;
 		rap->icmp_cksum = 0;
 		rap->icmp_num_addrs = 0;
@@ -729,7 +726,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 	icp = (struct icmphdr *)ALLIGN(buf + hlen);
 
 	switch (icp->type) {
-	case ICMP_ROUTER_ADVERTISEMENT:
+	case ICMP_ROUTERADVERT:
 	{
 		struct icmp_ra *rap = (struct icmp_ra *)ALLIGN(icp);
 		struct icmp_ra_addr *ap;
@@ -820,7 +817,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 	}
 
 #ifdef RDISC_SERVER
-	case ICMP_ROUTER_SOLICITATION:
+	case ICMP_ROUTERSOLICIT:
 	{
 		struct sockaddr_in sin;
 
