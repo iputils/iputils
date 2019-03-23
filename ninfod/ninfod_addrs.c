@@ -253,7 +253,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 		     ifa && addrs < addrs0; 
 		     ifa = ifa->ifa_next) {
 			char *cp;
-			uint32_t ttl;
+			const uint32_t ttl = 0;
 
 			if (!ifa->ifa_addr)
 				continue;
@@ -265,17 +265,6 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 				continue;
 			if (filter_ipv6addr((struct in6_addr *)ifa->ifa_addr, flags))
 				continue;
-
-#if ENABLE_TTL
-			if (ifa->ifa_cacheinfo) {
-				ttl = ifa->ifa_cacheinfo->ifa_valid > 0x7fffffff ? 
-				      htonl(0x7fffffff) : htonl(ifa->ifa_cacheinfo->ifa_valid);
-			} else {
-				ttl = (ifa->ifa_flags & IFA_F_PERMANENT) ? htonl(0x7fffffff) : 0;
-			}
-#else
-			ttl = 0;
-#endif
 
 			cp = p->replydata +
 			     (sizeof(uint32_t)+sizeof(struct in6_addr)) * (ifa->ifa_flags & IFA_F_DEPRECATED ? paddrs0+daddrs : paddrs);
@@ -406,7 +395,7 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 		     ifa && addrs < addrs0; 
 		     ifa = ifa->ifa_next) {
 			char *cp;
-			uint32_t ttl;
+			const uint32_t ttl = 0;
 
 			if (!ifa->ifa_addr)
 				continue;
@@ -417,17 +406,6 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 			if (!(flags & NI_NODEADDR_FLAG_ALL) &&
 			    (ifa->ifa_ifindex != ifindex))
 				continue;
-
-#if ENABLE_TTL
-			if (ifa->ifa_cacheinfo) {
-				ttl = ifa->ifa_cacheinfo->ifa_valid > 0x7fffffff ? 
-				      htonl(0x7fffffff) : htonl(ifa->ifa_cacheinfo->ifa_valid);
-			} else {
-				ttl = 0;	/*XXX*/
-			}
-#else
-			ttl = 0;
-#endif
 
 			cp = (p->replydata +
 			      (sizeof(uint32_t)+sizeof(struct in_addr)) * (ifa->ifa_flags & IFA_F_DEPRECATED ? paddrs0+daddrs : paddrs));

@@ -43,8 +43,6 @@
 #define MAX_QUERY_SIZE		(sizeof(struct icmp6_nodeinfo)+MAX_DNSNAME_SIZE+2)
 #define MAX_REPLY_SIZE		1280-sizeof(struct ip6_hdr)
 
-#define MAX_SUPTYPES		32
-
 #define CHECKANDFILL_ARGS	struct packetcontext *p,\
 				char *subject, size_t subjlen,	\
 				unsigned int flags,		\
@@ -110,8 +108,6 @@ int pr_nodeinfo(struct packetcontext *p);
 int pr_nodeinfo_unknown(CHECKANDFILL_ARGS);
 int pr_nodeinfo_refused(CHECKANDFILL_ARGS);
 int pr_nodeinfo_noop(CHECKANDFILL_ARGS);
-void init_nodeinfo_suptypes(INIT_ARGS);
-int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS);
 
 /* ninfod_addrs.c */
 void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)));

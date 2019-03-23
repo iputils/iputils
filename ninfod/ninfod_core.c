@@ -174,14 +174,6 @@ static struct qtypeinfo qtypeinfo_table[] = {
 		.name = "NOOP",
 		.getreply = pr_nodeinfo_noop,
 	},
-#if ENABLE_SUPTYPES
-	[NI_QTYPE_SUPTYPES]	= {
-		.qtype = NI_QTYPE_SUPTYPES,
-		.name = "SupTypes",
-		.getreply = pr_nodeinfo_suptypes,
-		.init = init_nodeinfo_suptypes,
-	},
-#endif
 	[NI_QTYPE_DNSNAME]	= {
 		.qtype = NI_QTYPE_DNSNAME,
 		.name = "DnsName",
@@ -249,70 +241,6 @@ int pr_nodeinfo_noop(CHECKANDFILL_ARGS_3)
 
 	return 0;
 }
-
-#if ENABLE_SUPTYPES
-/* suptypes */
-int pr_nodeinfo_suptypes(CHECKANDFILL_ARGS)
-{
-	DEBUG(LOG_DEBUG, "%s()\n", __func__);
-
-	if (subjlen) {
-		DEBUG(LOG_WARNING, "%s(): invalid subject length(%zu)\n",
-		      __func__, subjlen);
-		return 1;
-	}
-
-	if (reply) {
-		p->reply.ni_type = ICMP6_NI_REPLY;
-		p->reply.ni_code = ICMP6_NI_SUCCESS;
-		p->reply.ni_cksum = 0;
-		p->reply.ni_qtype = htons(NI_QTYPE_SUPTYPES);
-		p->reply.ni_flags = flags&~NI_SUPTYPE_FLAG_COMPRESS;
-		
-		p->replydatalen = suptypes_len<<2;
-		p->replydata = malloc(p->replydatalen);
-		if (p->replydata == NULL) {
-			p->replydatalen = -1;
-			return -1;	/*XXX*/
-		}
-
-		memcpy(p->replydata, suptypes, p->replydatalen);
-	}
-	return 0;
-}
-
-void init_nodeinfo_suptypes(INIT_ARGS)
-{
-	size_t w, b;
-	int i;
-
-	if (!forced && initialized)
-		return;
-
-	memset(suptypes, 0, sizeof(suptypes));
-	suptypes_len = 0;
-
-	for (i=0; i < ARRAY_SIZE(qtypeinfo_table); i++) {
-		unsigned short qtype;
-
-		if (qtypeinfo_table[i].name == NULL)
-			continue;
-		qtype = qtypeinfo_table[i].qtype;
-		w = qtype>>5;
-		b = qtype&0x1f;
-		if (w >= ARRAY_SIZE(suptypes)) {
-			/* This is programming error. */
-			DEBUG(LOG_ERR, "Warning: Too Large Supported Types\n");
-			exit(1);
-		}
-		suptypes[w] |= htonl(1<<b);
-
-		if (suptypes_len < w)
-			suptypes_len = w;
-	}
-	suptypes_len++;
-}
-#endif
 
 /* ---------- */
 /* unknown qtype response */
@@ -551,7 +479,6 @@ int pr_nodeinfo(struct packetcontext *p)
 	/* Step 2: Check Subject Code */
 	switch(htons(query->ni_qtype)) {
 	case NI_QTYPE_NOOP:
-	case NI_QTYPE_SUPTYPES:
 		if (query->ni_code != ICMP6_NI_SUBJ_FQDN) {
 			DEBUG(LOG_WARNING,
 			      "%s(): invalid/unknown code %u\n",

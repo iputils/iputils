@@ -60,17 +60,14 @@ struct icmp6_nodeinfo {
 
 /* NI Codes */
 #define NI_QTYPE_NOOP			0	/* NOOP  */
-#define NI_QTYPE_SUPTYPES		1	/* Supported Qtypes */
 #define NI_QTYPE_DNSNAME		2	/* DNS Name */
 #define NI_QTYPE_NODEADDR		3	/* Node Addresses */
 #define NI_QTYPE_IPV4ADDR		4	/* IPv4 Addresses */
 
 /* NI Flags */
 #if WORDS_BIGENDIAN
-#define NI_SUPTYPE_FLAG_COMPRESS	0x1
 #define NI_FQDN_FLAG_VALIDTTL		0x1
 #else
-#define NI_SUPTYPE_FLAG_COMPRESS	0x0100
 #define NI_FQDN_FLAG_VALIDTTL		0x0100
 #endif
 
