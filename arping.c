@@ -21,6 +21,7 @@
 #include <net/if.h>
 #include <poll.h>
 #include <signal.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -108,7 +109,7 @@ static const cap_value_t caps[] = { CAP_NET_RAW };
 __attribute__((const)) static inline size_t sll_len(const size_t halen)
 {
 	const struct sockaddr_ll unused;
-	const size_t len = sizeof(unused.sll_addr) + halen;
+	const size_t len = offsetof(struct sockaddr_ll, sll_addr) + halen;
 
 	if (len < sizeof(unused))
 		return sizeof(unused);

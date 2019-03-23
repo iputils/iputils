@@ -319,7 +319,6 @@ static int niquery_set_subject_type(int type)
 }
 
 #define ARRAY_SIZE(array)	(sizeof(array) / sizeof(array[0]))
-#define OFFSET_OF(type,elem)	((size_t)&((type *)0)->elem)
 
 static int niquery_option_subject_addr_handler(int index, const char *arg)
 {
@@ -340,12 +339,12 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	switch (niquery_options[index].data) {
 	case IPUTILS_NI_ICMP6_SUBJ_IPV6:
 		ni_subject_len = sizeof(struct in6_addr);
-		offset = OFFSET_OF(struct sockaddr_in6, sin6_addr);
+		offset = offsetof(struct sockaddr_in6, sin6_addr);
 		hints.ai_family = AF_INET6;
 		break;
 	case IPUTILS_NI_ICMP6_SUBJ_IPV4:
 		ni_subject_len = sizeof(struct in_addr);
-		offset = OFFSET_OF(struct sockaddr_in, sin_addr);
+		offset = offsetof(struct sockaddr_in, sin_addr);
 		hints.ai_family = AF_INET;
 		break;
 	default:
