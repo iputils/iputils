@@ -57,6 +57,7 @@
  *	if -N option is used, this program has to run SUID to ROOT or
  *	with net_cap_raw enabled.
  */
+#include "iputils_common.h"
 #include "iputils_ni.h"
 #include "ping.h"
 
@@ -317,8 +318,6 @@ static int niquery_set_subject_type(int type)
 	ni_subject_type = type;
 	return 0;
 }
-
-#define ARRAY_SIZE(array)	(sizeof(array) / sizeof(array[0]))
 
 static int niquery_option_subject_addr_handler(int index, const char *arg)
 {

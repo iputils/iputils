@@ -29,7 +29,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-
+#include "iputils_common.h"
 #include "ping.h"
 
 #ifndef HZ
@@ -92,8 +92,6 @@ uid_t euid;
 int ident;			/* process id to identify our packets */
 
 static int screen_width = INT_MAX;
-
-#define ARRAY_SIZE(a)	(sizeof(a) / sizeof(a[0]))
 
 #ifdef HAVE_LIBCAP
 static cap_value_t cap_raw = CAP_NET_RAW;

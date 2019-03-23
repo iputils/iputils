@@ -103,10 +103,9 @@
 #endif
 #include <sys/wait.h>
 
+#include "iputils_common.h"
 #include "iputils_ni.h"
 #include "ninfod.h"
-
-#define ARRAY_SIZE(a)		(sizeof(a) / sizeof(a[0]))
 
 /* Variables */
 int initialized = 0;
