@@ -57,6 +57,7 @@
  *	if -N option is used, this program has to run SUID to ROOT or
  *	with net_cap_raw enabled.
  */
+#include "iputils_ni.h"
 #include "ping.h"
 
 ping_func_set_st ping6_func_set = {
@@ -142,15 +143,15 @@ struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("name",			0,	0,				niquery_option_name_handler),
 	NIQUERY_OPTION("fqdn",			0,	0,				niquery_option_name_handler),
 	NIQUERY_OPTION("ipv6",			0,	0,				niquery_option_ipv6_handler),
-	NIQUERY_OPTION("ipv6-all",		0,	NI_IPV6ADDR_F_ALL,		niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-compatible",	0,	NI_IPV6ADDR_F_COMPAT,		niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-linklocal",	0,	NI_IPV6ADDR_F_LINKLOCAL,	niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-sitelocal",	0,	NI_IPV6ADDR_F_SITELOCAL,	niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-global",		0,	NI_IPV6ADDR_F_GLOBAL,		niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-all",		0,	IPUTILS_NI_IPV6_FLAG_ALL,	niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-compatible",	0,	IPUTILS_NI_IPV6_FLAG_COMPAT,	niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-linklocal",	0,	IPUTILS_NI_IPV6_FLAG_LINKLOCAL,	niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-sitelocal",	0,	IPUTILS_NI_IPV6_FLAG_SITELOCAL,	niquery_option_ipv6_flag_handler),
+	NIQUERY_OPTION("ipv6-global",		0,	IPUTILS_NI_IPV6_FLAG_GLOBAL,	niquery_option_ipv6_flag_handler),
 	NIQUERY_OPTION("ipv4",			0,	0,				niquery_option_ipv4_handler),
-	NIQUERY_OPTION("ipv4-all",		0,	NI_IPV4ADDR_F_ALL,		niquery_option_ipv4_flag_handler),
-	NIQUERY_OPTION("subject-ipv6",		1,	NI_SUBJ_IPV6,			niquery_option_subject_addr_handler),
-	NIQUERY_OPTION("subject-ipv4",		1,	NI_SUBJ_IPV4,			niquery_option_subject_addr_handler),
+	NIQUERY_OPTION("ipv4-all",		0,	IPUTILS_NI_IPV4_FLAG_ALL,	niquery_option_ipv4_flag_handler),
+	NIQUERY_OPTION("subject-ipv6",		1,	IPUTILS_NI_ICMP6_SUBJ_IPV6,	niquery_option_subject_addr_handler),
+	NIQUERY_OPTION("subject-ipv4",		1,	IPUTILS_NI_ICMP6_SUBJ_IPV4,	niquery_option_subject_addr_handler),
 	NIQUERY_OPTION("subject-name",		1,	0,				niquery_option_subject_name_handler),
 	NIQUERY_OPTION("subject-fqdn",		1,	-1,				niquery_option_subject_name_handler),
 	NIQUERY_OPTION("help",			0,	0,				niquery_option_help_handler),
@@ -267,21 +268,21 @@ static int niquery_set_qtype(int type)
 
 static int niquery_option_name_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(NI_QTYPE_NAME) < 0)
+	if (niquery_set_qtype(IPUTILS_NI_QTYPE_DNSNAME) < 0)
 		return -1;
 	return 0;
 }
 
 static int niquery_option_ipv6_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(NI_QTYPE_IPV6ADDR) < 0)
+	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
 		return -1;
 	return 0;
 }
 
 static int niquery_option_ipv6_flag_handler(int index, const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(NI_QTYPE_IPV6ADDR) < 0)
+	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
 		return -1;
 	ni_flag |= niquery_options[index].data;
 	return 0;
@@ -289,14 +290,14 @@ static int niquery_option_ipv6_flag_handler(int index, const char *arg __attribu
 
 static int niquery_option_ipv4_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(NI_QTYPE_IPV4ADDR) < 0)
+	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
 		return -1;
 	return 0;
 }
 
 static int niquery_option_ipv4_flag_handler(int index, const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(NI_QTYPE_IPV4ADDR) < 0)
+	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
 		return -1;
 	ni_flag |= niquery_options[index].data;
 	return 0;
@@ -337,12 +338,12 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	ni_subject_type = niquery_options[index].data;
 
 	switch (niquery_options[index].data) {
-	case NI_SUBJ_IPV6:
+	case IPUTILS_NI_ICMP6_SUBJ_IPV6:
 		ni_subject_len = sizeof(struct in6_addr);
 		offset = OFFSET_OF(struct sockaddr_in6, sin6_addr);
 		hints.ai_family = AF_INET6;
 		break;
-	case NI_SUBJ_IPV4:
+	case IPUTILS_NI_ICMP6_SUBJ_IPV4:
 		ni_subject_len = sizeof(struct in_addr);
 		offset = OFFSET_OF(struct sockaddr_in, sin_addr);
 		hints.ai_family = AF_INET;
@@ -399,7 +400,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	int rc;
 #endif
 
-	if (niquery_set_subject_type(NI_SUBJ_NAME) < 0)
+	if (niquery_set_subject_type(IPUTILS_NI_ICMP6_SUBJ_FQDN) < 0)
 		return -1;
 
 #ifdef USE_IDN
@@ -571,7 +572,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		if (!niquery_is_subject_valid()) {
 			ni_subject = &whereto.sin6_addr;
 			ni_subject_len = sizeof(whereto.sin6_addr);
-			ni_subject_type = NI_SUBJ_IPV6;
+			ni_subject_type = IPUTILS_NI_ICMP6_SUBJ_IPV6;
 		}
 	}
 
@@ -580,7 +581,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	} else if (argc == 1) {
 		target = *argv;
 	} else {
-		if (ni_query < 0 && ni_subject_type != NI_SUBJ_NAME)
+		if (ni_query < 0 && ni_subject_type != IPUTILS_NI_ICMP6_SUBJ_FQDN)
 			usage();
 		target = ni_group;
 	}
@@ -759,7 +760,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
 
 		if (niquery_is_enabled())
-			ICMP6_FILTER_SETPASS(ICMPV6_NI_REPLY, &filter);
+			ICMP6_FILTER_SETPASS(IPUTILS_NI_ICMP6_REPLY, &filter);
 		else
 			ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
 
@@ -966,7 +967,7 @@ int build_niquery(uint8_t *_nih, unsigned packet_size __attribute__((__unused__)
 	nih = (struct ni_hdr *)_nih;
 	nih->ni_cksum = 0;
 
-	nih->ni_type = ICMPV6_NI_QUERY;
+	nih->ni_type = IPUTILS_NI_ICMP6_QUERY;
 	cc = sizeof(*nih);
 	datalen = 0;
 
@@ -1090,15 +1091,15 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 	char buf[1024];
 
 	switch (ntohs(nih->ni_qtype)) {
-	case NI_QTYPE_IPV4ADDR:
+	case IPUTILS_NI_QTYPE_IPV4ADDR:
 		af = AF_INET;
 		aflen = sizeof(struct in_addr);
-		truncated = nih->ni_flags & NI_IPV6ADDR_F_TRUNCATE;
+		truncated = nih->ni_flags & IPUTILS_NI_IPV6_FLAG_TRUNCATE;
 		break;
-	case NI_QTYPE_IPV6ADDR:
+	case IPUTILS_NI_QTYPE_IPV6ADDR:
 		af = AF_INET6;
 		aflen = sizeof(struct in6_addr);
-		truncated = nih->ni_flags & NI_IPV4ADDR_F_TRUNCATE;
+		truncated = nih->ni_flags & IPUTILS_NI_IPV4_FLAG_TRUNCATE;
 		break;
 	default:
 		/* should not happen */
@@ -1137,23 +1138,23 @@ void pr_niquery_reply(uint8_t *_nih, int len)
 	struct ni_hdr *nih = (struct ni_hdr *)_nih;
 
 	switch (nih->ni_code) {
-	case NI_SUCCESS:
+	case IPUTILS_NI_ICMP6_SUCCESS:
 		switch (ntohs(nih->ni_qtype)) {
-		case NI_QTYPE_NAME:
+		case IPUTILS_NI_QTYPE_DNSNAME:
 			pr_niquery_reply_name(nih, len);
 			break;
-		case NI_QTYPE_IPV4ADDR:
-		case NI_QTYPE_IPV6ADDR:
+		case IPUTILS_NI_QTYPE_IPV4ADDR:
+		case IPUTILS_NI_QTYPE_IPV6ADDR:
 			pr_niquery_reply_addr(nih, len);
 			break;
 		default:
 			printf(_(" unknown qtype(0x%02x)"), ntohs(nih->ni_qtype));
 		}
 		break;
-	case NI_REFUSED:
+	case IPUTILS_NI_ICMP6_REFUSED:
 		printf(_(" refused"));
 		break;
-	case NI_UNKNOWN:
+	case IPUTILS_NI_ICMP6_UNKNOWN:
 		printf(_(" unknown"));
 		break;
 	default:
@@ -1214,7 +1215,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 			fflush(stdout);
 			return 0;
 		}
-	} else if (icmph->icmp6_type == ICMPV6_NI_REPLY) {
+	} else if (icmph->icmp6_type == IPUTILS_NI_ICMP6_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
 		int seq = niquery_check_nonce(nih->ni_nonce);
 		if (seq < 0)

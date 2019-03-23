@@ -118,6 +118,7 @@
 #endif
 
 #include "iputils_common.h"
+#include "iputils_ni.h"
 #include "ninfod.h"
 
 /* Variables */
@@ -221,7 +222,7 @@ __inline__ static int init_sock(int socket)
 	struct icmp6_filter filter;
 
 	ICMP6_FILTER_SETBLOCKALL(&filter);
-	ICMP6_FILTER_SETPASS(ICMP6_NI_QUERY, &filter);
+	ICMP6_FILTER_SETPASS(IPUTILS_NI_ICMP6_QUERY, &filter);
 	if (setsockopt(socket,
 		       IPPROTO_ICMPV6, ICMP6_FILTER,
 		       &filter, sizeof(filter)) < 0) {
@@ -726,7 +727,7 @@ int main (int argc, char **argv)
 		      icmph->icmp6_type, icmph->icmp6_code,
 		      ntohs(icmph->icmp6_cksum));
 
-		if (icmph->icmp6_type != ICMP6_NI_QUERY) {
+		if (icmph->icmp6_type != IPUTILS_NI_ICMP6_QUERY) {
 #if ENABLE_DEBUG
 			DEBUG(LOG_WARNING,
 			      "Strange icmp type %d from %s\n", 

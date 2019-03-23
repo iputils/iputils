@@ -115,6 +115,7 @@
 # include <syslog.h>
 #endif
 
+#include "iputils_ni.h"
 #include "ninfod.h"
 
 /* Hmm,,, */
@@ -350,10 +351,10 @@ int pr_nodeinfo_nodename(CHECKANDFILL_ARGS_2)
 	if (reply) {
 		uint32_t ttl = 0;
 
-		p->reply.ni_type = ICMP6_NI_REPLY;
-		p->reply.ni_code = ICMP6_NI_SUCCESS;
+		p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
+		p->reply.ni_code = IPUTILS_NI_ICMP6_SUCCESS;
 		p->reply.ni_cksum = 0;
-		p->reply.ni_qtype = htons(NI_QTYPE_DNSNAME);
+		p->reply.ni_qtype = htons(IPUTILS_NI_QTYPE_DNSNAME);
 		p->reply.ni_flags = 0;
 
 		p->replydatalen = nodenamelen ? sizeof(ttl)+nodenamelen : 0;

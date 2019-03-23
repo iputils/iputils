@@ -110,6 +110,7 @@
 # include <syslog.h>
 #endif
 
+#include "iputils_ni.h"
 #include "ninfod.h"
 #include "ni_ifaddrs.h"
 
@@ -128,13 +129,13 @@ int filter_ipv6addr(const struct in6_addr *ifaddr, unsigned int flags)
 		return 1;
 	} else if (IN6_IS_ADDR_V4COMPAT(ifaddr) ||
 		   IN6_IS_ADDR_V4MAPPED(ifaddr)) {
-		return !(flags & NI_NODEADDR_FLAG_COMPAT);
+		return !(flags & IPUTILS_NI_IPV6_FLAG_COMPAT);
 	} else if (IN6_IS_ADDR_LINKLOCAL(ifaddr)) {
-		return !(flags & NI_NODEADDR_FLAG_LINKLOCAL);
+		return !(flags & IPUTILS_NI_IPV6_FLAG_LINKLOCAL);
 	} else if (IN6_IS_ADDR_SITELOCAL(ifaddr)) {
-		return !(flags & NI_NODEADDR_FLAG_SITELOCAL);
+		return !(flags & IPUTILS_NI_IPV6_FLAG_SITELOCAL);
 	}
-	return !(flags & NI_NODEADDR_FLAG_GLOBAL);
+	return !(flags & IPUTILS_NI_IPV6_FLAG_GLOBAL);
 }
 
 int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
@@ -207,7 +208,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 		unsigned int addrs0 = 0, paddrs0 = 0;
 		unsigned int addrs, paddrs = 0, daddrs = 0;
 
-		flags &= ~NI_NODEADDR_FLAG_TRUNCATE;	
+		flags &= ~IPUTILS_NI_IPV6_FLAG_TRUNCATE;
 	
 		/* pass 1: count addresses and preferred addresses to be returned */
 		for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
@@ -215,14 +216,14 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 				continue;
 			if (ifa->ifa_flags & (IFA_F_TENTATIVE|IFA_F_SECONDARY))
 				continue;
-			if (!(flags & NI_NODEADDR_FLAG_ALL) &&
+			if (!(flags & IPUTILS_NI_IPV6_FLAG_ALL) &&
 			    ifa->ifa_ifindex != ifindex)
 				continue;
 			if (filter_ipv6addr((struct in6_addr *)ifa->ifa_addr, flags))
 				continue;
 
 			if (addrs0 + 1 >= ((MAX_REPLY_SIZE - sizeof(struct icmp6_nodeinfo)) / (sizeof(uint32_t) + sizeof(struct in6_addr)))) {
-				flags |= ~NI_NODEADDR_FLAG_TRUNCATE;
+				flags |= ~IPUTILS_NI_IPV6_FLAG_TRUNCATE;
 				break;
 			}
 
@@ -231,21 +232,21 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 				paddrs0++;
 		}
 		
-		p->reply.ni_type = ICMP6_NI_REPLY;
-		p->reply.ni_code = ICMP6_NI_SUCCESS;
+		p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
+		p->reply.ni_code = IPUTILS_NI_ICMP6_SUCCESS;
 		p->reply.ni_cksum = 0;
-		p->reply.ni_qtype = htons(NI_QTYPE_NODEADDR);
-		p->reply.ni_flags = flags&(NI_NODEADDR_FLAG_COMPAT|
-					   NI_NODEADDR_FLAG_LINKLOCAL|
-					   NI_NODEADDR_FLAG_SITELOCAL|
-					   NI_NODEADDR_FLAG_GLOBAL);
+		p->reply.ni_qtype = htons(IPUTILS_NI_QTYPE_IPV6ADDR);
+		p->reply.ni_flags = flags&(IPUTILS_NI_IPV6_FLAG_COMPAT|
+					   IPUTILS_NI_IPV6_FLAG_LINKLOCAL|
+					   IPUTILS_NI_IPV6_FLAG_SITELOCAL|
+					   IPUTILS_NI_IPV6_FLAG_GLOBAL);
 
 		/* pass 2: store addresses */
 		p->replydatalen = (sizeof(uint32_t)+sizeof(struct in6_addr)) * addrs0;
 		p->replydata = p->replydatalen ? malloc(p->replydatalen) : NULL;
 
 		if (p->replydatalen && !p->replydata) {
-			p->reply.ni_flags |= NI_NODEADDR_FLAG_TRUNCATE;
+			p->reply.ni_flags |= IPUTILS_NI_IPV6_FLAG_TRUNCATE;
 			addrs0 = paddrs0 = 0;
 		}
 
@@ -259,7 +260,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 				continue;
 			if (ifa->ifa_flags & (IFA_F_TENTATIVE|IFA_F_SECONDARY))
 				continue;
-			if (!(flags & NI_NODEADDR_FLAG_ALL) &&
+			if (!(flags & IPUTILS_NI_IPV6_FLAG_ALL) &&
 			    ((subj_if && *subj_if) ? (ifa->ifa_ifindex != *subj_if) :
 						     (ifa->ifa_ifindex != p->pktinfo.ipi6_ifindex)))
 				continue;
@@ -351,7 +352,7 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 		unsigned int addrs0 = 0, paddrs0 = 0;
 		unsigned int addrs, paddrs = 0, daddrs = 0;
 
-		flags &= ~NI_IPV4ADDR_FLAG_TRUNCATE;
+		flags &= ~IPUTILS_NI_IPV4_FLAG_TRUNCATE;
 
 		/* pass 1: count addresses and preferred addresses to be returned */
 		for (ifa = ifa0; ifa; ifa = ifa->ifa_next) {
@@ -361,13 +362,13 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 			if (ifa->ifa_flags & (IFA_F_TENTATIVE))
 				continue;
 #endif
-			if (!(flags & NI_NODEADDR_FLAG_ALL) &&
+			if (!(flags & IPUTILS_NI_IPV6_FLAG_ALL) &&
 			    ((subj_if && *subj_if) ? (ifa->ifa_ifindex != *subj_if) :
 						     (ifa->ifa_ifindex != p->pktinfo.ipi6_ifindex)))
 				continue;
 
 			if (addrs0 + 1 >= ((MAX_REPLY_SIZE - sizeof(struct icmp6_nodeinfo)) / (sizeof(uint32_t) + sizeof(struct in_addr)))) {
-				flags |= NI_IPV4ADDR_FLAG_TRUNCATE;
+				flags |= IPUTILS_NI_IPV4_FLAG_TRUNCATE;
 				break;
 			}
 
@@ -376,18 +377,18 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 				paddrs0++;
 		}
 
-		p->reply.ni_type = ICMP6_NI_REPLY;
-		p->reply.ni_code = ICMP6_NI_SUCCESS;
+		p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
+		p->reply.ni_code = IPUTILS_NI_ICMP6_SUCCESS;
 		p->reply.ni_cksum = 0;
-		p->reply.ni_qtype = htons(NI_QTYPE_IPV4ADDR);
-		p->reply.ni_flags = flags & NI_IPV4ADDR_FLAG_ALL;
+		p->reply.ni_qtype = htons(IPUTILS_NI_QTYPE_IPV4ADDR);
+		p->reply.ni_flags = flags & IPUTILS_NI_IPV4_FLAG_ALL;
 
 		/* pass 2: store addresses */
 		p->replydatalen = (sizeof(uint32_t)+sizeof(struct in_addr)) * addrs0;
 		p->replydata = addrs0 ? malloc(p->replydatalen) : NULL;
 
 		if (p->replydatalen && !p->replydata) {
-			p->reply.ni_flags |= NI_NODEADDR_FLAG_TRUNCATE;
+			p->reply.ni_flags |= IPUTILS_NI_IPV6_FLAG_TRUNCATE;
 			addrs0 = paddrs0 = 0;
 		}
 
@@ -403,7 +404,7 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 			if (ifa->ifa_flags & (IFA_F_TENTATIVE))
 				continue;
 #endif
-			if (!(flags & NI_NODEADDR_FLAG_ALL) &&
+			if (!(flags & IPUTILS_NI_IPV6_FLAG_ALL) &&
 			    (ifa->ifa_ifindex != ifindex))
 				continue;
 

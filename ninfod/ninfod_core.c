@@ -103,6 +103,7 @@
 #endif
 #include <sys/wait.h>
 
+#include "iputils_ni.h"
 #include "ninfod.h"
 
 #define ARRAY_SIZE(a)		(sizeof(a) / sizeof(a[0]))
@@ -123,20 +124,20 @@ struct subjinfo {
 };
 
 static struct subjinfo subjinfo_table [] = {
-	[ICMP6_NI_SUBJ_IPV6] = {
-		.code = ICMP6_NI_SUBJ_IPV6,
+	[IPUTILS_NI_ICMP6_SUBJ_IPV6] = {
+		.code = IPUTILS_NI_ICMP6_SUBJ_IPV6,
 		.name = "IPv6",
 		//.init = init_nodeinfo_ipv6addr,
 		.checksubj = pr_nodeinfo_ipv6addr,
 	},
-	[ICMP6_NI_SUBJ_FQDN] = {
-		.code = ICMP6_NI_SUBJ_FQDN,
+	[IPUTILS_NI_ICMP6_SUBJ_FQDN] = {
+		.code = IPUTILS_NI_ICMP6_SUBJ_FQDN,
 		.name = "FQDN",
 		//.init = init_nodeinfo_nodename,
 		.checksubj = pr_nodeinfo_nodename,
 	},
-	[ICMP6_NI_SUBJ_IPV4] = {
-		.code = ICMP6_NI_SUBJ_IPV4,
+	[IPUTILS_NI_ICMP6_SUBJ_IPV4] = {
+		.code = IPUTILS_NI_ICMP6_SUBJ_IPV4,
 		.name = "IPv4",
 		//.init = init_nodeinfo_ipv4addr,
 		.checksubj = pr_nodeinfo_ipv4addr,
@@ -169,25 +170,25 @@ struct qtypeinfo {
 };
 
 static struct qtypeinfo qtypeinfo_table[] = {
-	[NI_QTYPE_NOOP]		= {
-		.qtype = NI_QTYPE_NOOP,
+	[IPUTILS_NI_QTYPE_NOOP]		= {
+		.qtype = IPUTILS_NI_QTYPE_NOOP,
 		.name = "NOOP",
 		.getreply = pr_nodeinfo_noop,
 	},
-	[NI_QTYPE_DNSNAME]	= {
-		.qtype = NI_QTYPE_DNSNAME,
+	[IPUTILS_NI_QTYPE_DNSNAME]	= {
+		.qtype = IPUTILS_NI_QTYPE_DNSNAME,
 		.name = "DnsName",
 		.getreply = pr_nodeinfo_nodename,
 		.init = init_nodeinfo_nodename,
 	},
-	[NI_QTYPE_NODEADDR]	= {
-		.qtype = NI_QTYPE_NODEADDR,
+	[IPUTILS_NI_QTYPE_IPV6ADDR]	= {
+		.qtype = IPUTILS_NI_QTYPE_IPV6ADDR,
 		.name = "NodeAddr",
 		.getreply = pr_nodeinfo_ipv6addr,
 		.init = init_nodeinfo_ipv6addr,
 	},
-	[NI_QTYPE_IPV4ADDR]	= {
-		.qtype = NI_QTYPE_IPV4ADDR,
+	[IPUTILS_NI_QTYPE_IPV4ADDR]	= {
+		.qtype = IPUTILS_NI_QTYPE_IPV4ADDR,
 		.name = "IPv4Addr",
 		.getreply = pr_nodeinfo_ipv4addr,
 		.init = init_nodeinfo_ipv4addr,
@@ -229,10 +230,10 @@ int pr_nodeinfo_noop(CHECKANDFILL_ARGS_3)
 	}
 
 	if (reply) {
-		p->reply.ni_type = ICMP6_NI_REPLY;
-		p->reply.ni_code = ICMP6_NI_SUCCESS;
+		p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
+		p->reply.ni_code = IPUTILS_NI_ICMP6_SUCCESS;
 		p->reply.ni_cksum = 0;
-		p->reply.ni_qtype = htons(NI_QTYPE_NOOP);
+		p->reply.ni_qtype = htons(IPUTILS_NI_QTYPE_NOOP);
 		p->reply.ni_flags = flags;
 	}
 
@@ -249,8 +250,8 @@ int pr_nodeinfo_unknown(CHECKANDFILL_ARGS_1)
 	if (!reply)
 		return -1;	/*???*/
 
-	p->reply.ni_type = ICMP6_NI_REPLY;
-	p->reply.ni_code = ICMP6_NI_UNKNOWN;
+	p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
+	p->reply.ni_code = IPUTILS_NI_ICMP6_UNKNOWN;
 	p->reply.ni_cksum = 0;
 	//p->reply.ni_qtype = 0;
 	p->reply.ni_flags = flags;
@@ -267,8 +268,8 @@ int pr_nodeinfo_refused(CHECKANDFILL_ARGS_1)
 	if (!reply)
 		return -1;	/*???*/
 
-	p->reply.ni_type = ICMP6_NI_REPLY;
-	p->reply.ni_code = ICMP6_NI_REFUSED;
+	p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
+	p->reply.ni_code = IPUTILS_NI_ICMP6_REFUSED;
 	p->reply.ni_cksum = 0;
 	//p->reply.ni_qtype = 0;
 	p->reply.ni_flags = flags;
@@ -478,8 +479,8 @@ int pr_nodeinfo(struct packetcontext *p)
 
 	/* Step 2: Check Subject Code */
 	switch(htons(query->ni_qtype)) {
-	case NI_QTYPE_NOOP:
-		if (query->ni_code != ICMP6_NI_SUBJ_FQDN) {
+	case IPUTILS_NI_QTYPE_NOOP:
+		if (query->ni_code != IPUTILS_NI_ICMP6_SUBJ_FQDN) {
 			DEBUG(LOG_WARNING,
 			      "%s(): invalid/unknown code %u\n",
 			      __func__, query->ni_code);
