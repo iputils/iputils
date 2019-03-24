@@ -492,7 +492,7 @@ static void netlink_query(struct run_state *const ctl, const int flags,
 	memcpy(NLMSG_DATA(nh), arg, len);
 
 	iov.iov_base = nh;
-	iov.iov_len = NLMSG_LENGTH(len);
+	iov.iov_len = buffer_size;
 
 	fd = socket(PF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 	if (fd < 0) {
@@ -503,7 +503,6 @@ static void netlink_query(struct run_state *const ctl, const int flags,
 		error(0, errno, "NETLINK_ROUTE socket failed");
 		goto fail;
 	}
-	iov.iov_len = buffer_size;
 	do {
 		msg_len = recvmsg(fd, &mh, 0);
 	} while (msg_len < 0 && errno == EINTR);

@@ -228,7 +228,7 @@ main(int argc, char **argv)
 		.ai_flags = getaddrinfo_flags
 	};
 	struct addrinfo *result, *ai;
-	int status;
+	int ret_val;
 	int ch;
 	socket_st sock4 = { .fd = -1 };
 	socket_st sock6 = { .fd = -1 };
@@ -479,29 +479,29 @@ main(int argc, char **argv)
 	if (tclass)
 		set_socket_option(&sock6, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass);
 
-	status = getaddrinfo(target, NULL, &hints, &result);
-	if (status)
-		error(2, 0, "%s: %s", target, gai_strerror(status));
+	ret_val = getaddrinfo(target, NULL, &hints, &result);
+	if (ret_val)
+		error(2, 0, "%s: %s", target, gai_strerror(ret_val));
 
 	for (ai = result; ai; ai = ai->ai_next) {
 		switch (ai->ai_family) {
 		case AF_INET:
-			status = ping4_run(argc, argv, ai, &sock4);
+			ret_val = ping4_run(argc, argv, ai, &sock4);
 			break;
 		case AF_INET6:
-			status = ping6_run(argc, argv, ai, &sock6);
+			ret_val = ping6_run(argc, argv, ai, &sock6);
 			break;
 		default:
 			error(2, 0, _("unknown protocol family: %d"), ai->ai_family);
 		}
 
-		if (status == 0)
+		if (ret_val == 0)
 			break;
 	}
 
 	freeaddrinfo(result);
 
-	return status;
+	return ret_val;
 }
 
 int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
@@ -543,12 +543,12 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 				options |= F_NUMERIC;
 		} else {
 			struct addrinfo *result = NULL;
-			int status;
+			int ret_val;
 
 			if (argc > 1 || !ai) {
-				status = getaddrinfo(target, NULL, &hints, &result);
-				if (status)
-					error(2, 0, "%s: %s", target, gai_strerror(status));
+				ret_val = getaddrinfo(target, NULL, &hints, &result);
+				if (ret_val)
+					error(2, 0, "%s: %s", target, gai_strerror(ret_val));
 				ai = result;
 			}
 

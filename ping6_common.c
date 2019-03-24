@@ -327,7 +327,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 		.ai_flags = getaddrinfo_flags
 	};
 	struct addrinfo *result, *ai;
-	int status;
+	int ret_val;
 	int offset;
 
 	if (niquery_set_subject_type(niquery_options[index].data) < 0)
@@ -351,9 +351,9 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 		offset = -1;
 	}
 
-	status = getaddrinfo(arg, 0, &hints, &result);
-	if (status) {
-		error(0, 0, "%s: %s", arg, gai_strerror(status));
+	ret_val = getaddrinfo(arg, 0, &hints, &result);
+	if (ret_val) {
+		error(0, 0, "%s: %s", arg, gai_strerror(ret_val));
 		return -1;
 	}
 
@@ -556,7 +556,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		.ai_flags = getaddrinfo_flags
 	};
 	struct addrinfo *result = NULL;
-	int status;
+	int ret_val;
 	int hold, packlen;
 	unsigned char *packet;
 	char *target;
@@ -585,9 +585,9 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	}
 
 	if (!ai) {
-		status = getaddrinfo(target, NULL, &hints, &result);
-		if (status)
-			error(2, 0, _("%s: %s"), target, gai_strerror(status));
+		ret_val = getaddrinfo(target, NULL, &hints, &result);
+		if (ret_val)
+			error(2, 0, _("%s: %s"), target, gai_strerror(ret_val));
 		ai = result;
 	}
 

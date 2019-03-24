@@ -268,7 +268,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 				continue;
 
 			cp = p->replydata +
-			     (sizeof(uint32_t)+sizeof(struct in6_addr)) * (ifa->ifa_flags & IFA_F_DEPRECATED ? paddrs0+daddrs : paddrs);
+			     (sizeof(uint32_t)+sizeof(struct in6_addr)) * ((ifa->ifa_flags & IFA_F_DEPRECATED) ? paddrs0+daddrs : paddrs);
 			memcpy(cp, &ttl, sizeof(ttl));
 			memcpy(cp + sizeof(ttl), ifa->ifa_addr, sizeof(struct in6_addr));
 
@@ -409,7 +409,7 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)
 				continue;
 
 			cp = (p->replydata +
-			      (sizeof(uint32_t)+sizeof(struct in_addr)) * (ifa->ifa_flags & IFA_F_DEPRECATED ? paddrs0+daddrs : paddrs));
+			      (sizeof(uint32_t)+sizeof(struct in_addr)) * ((ifa->ifa_flags & IFA_F_DEPRECATED) ? paddrs0+daddrs : paddrs));
 			memcpy(cp, &ttl, sizeof(ttl));
 			memcpy(cp + sizeof(ttl), ifa->ifa_addr, sizeof(struct in_addr));
 
