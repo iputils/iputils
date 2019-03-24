@@ -3,7 +3,7 @@ project('iputils', 'c',
 		'c_std=c99',
 		'warning_level=3',
 	],
-	version : 's20180629') # keep in sync with: git describe | awk -F- '{print $1}'
+	version : 's20190324') # keep in sync with: git describe | awk -F- '{print $1}'
 
 cc = meson.get_compiler('c')
 
