@@ -12,10 +12,6 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <limits.h>
-#include <linux/errqueue.h>
-#include <linux/icmp.h>
-#include <linux/icmpv6.h>
-#include <linux/types.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <resolv.h>
@@ -26,6 +22,15 @@
 #include <sys/time.h>
 #include <sys/uio.h>
 #include <unistd.h>
+
+/*
+ * Keep linux/*.h includes after standard headers.
+ * https://github.com/iputils/iputils/issues/168
+ */
+#include <linux/errqueue.h>
+#include <linux/icmp.h>
+#include <linux/icmpv6.h>
+#include <linux/types.h>
 
 #include "iputils_common.h"
 
