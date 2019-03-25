@@ -57,6 +57,7 @@
  *	if -N option is used, this program has to run SUID to ROOT or
  *	with net_cap_raw enabled.
  */
+#include <stddef.h>
 #include "iputils_common.h"
 #include "iputils_ni.h"
 #include "ping.h"
