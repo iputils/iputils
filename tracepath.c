@@ -24,7 +24,7 @@
 #include <unistd.h>
 
 /*
- * Keep linux/*.h includes after standard headers.
+ * Keep linux/ includes after standard headers.
  * https://github.com/iputils/iputils/issues/168
  */
 #include <linux/errqueue.h>
