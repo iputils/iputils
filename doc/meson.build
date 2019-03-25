@@ -49,7 +49,7 @@ xsltproc_args = [
 
 if xsltproc.found()
 	testrun = run_command([xsltproc, '--nonet',
-		'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl'])
+		'http://docbook.sourceforge.net/release/xsl-ns/current/manpages/docbook.xsl'])
 	xsltproc_works = testrun.returncode() == 0
 else
 	warning('No docbook stylesheet found for generating man pages')
