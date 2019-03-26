@@ -689,10 +689,11 @@ static int event_loop(struct run_state *ctl)
 	struct signalfd_siginfo sigval;
 
 	int tfd;
-	struct timespec now = { 0 };
 	struct itimerspec timerfd_vals = {
 		.it_interval.tv_sec = ctl->interval,
-		.it_interval.tv_nsec = 0
+		.it_interval.tv_nsec = 0,
+		.it_value.tv_sec = ctl->interval,
+		.it_value.tv_nsec = 0
 	};
 	uint64_t exp, total_expires = 1;
 
@@ -723,13 +724,7 @@ static int event_loop(struct run_state *ctl)
 		error(0, errno, "timerfd_create failed");
 		return 1;
 	}
-	if (clock_gettime(CLOCK_MONOTONIC_RAW, &now) == -1) {
-		error(0, errno, "clock_gettime failed");
-		return 1;
-	}
-	timerfd_vals.it_value.tv_sec = now.tv_sec + ctl->interval;
-	timerfd_vals.it_value.tv_nsec = now.tv_nsec;
-	if (timerfd_settime(tfd, TFD_TIMER_ABSTIME, &timerfd_vals, NULL)) {
+	if (timerfd_settime(tfd, 0, &timerfd_vals, NULL)) {
 		error(0, errno, "timerfd_settime failed");
 		return 1;
 	}
