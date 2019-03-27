@@ -13,6 +13,9 @@ addons:
       - "libcap-dev"
       - "libidn2-0-dev"
       - "nettle-dev"
+      - "xsltproc"
+      - "docbook-xsl"
+      - "docbook-xsl-ns"
 matrix:
   include:
     - env: CC=gcc
