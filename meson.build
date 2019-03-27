@@ -288,7 +288,7 @@ if build_rinfod == true
 		subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
 		unit_file = configure_file(
 			input: 'systemd/rdisc.service.in',
-			output: 'rdisc@.service',
+			output: 'rdisc.service',
 			configuration: subs
 		)
 		install_data(unit_file, install_dir: systemdunitdir)
