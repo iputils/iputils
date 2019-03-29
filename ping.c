@@ -543,19 +543,20 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 				options |= F_NUMERIC;
 		} else {
 			struct addrinfo *result = NULL;
+			struct addrinfo *tmp_ai = ai;
 			int ret_val;
 
-			if (argc > 1 || !ai) {
+			if (argc > 1 || !tmp_ai) {
 				ret_val = getaddrinfo(target, NULL, &hints, &result);
 				if (ret_val)
 					error(2, 0, "%s: %s", target, gai_strerror(ret_val));
-				ai = result;
+				tmp_ai = result;
 			}
 
-			memcpy(&whereto, ai->ai_addr, sizeof whereto);
+			memcpy(&whereto, tmp_ai->ai_addr, sizeof whereto);
 			memset(hnamebuf, 0, sizeof hnamebuf);
-			if (ai->ai_canonname)
-				strncpy(hnamebuf, ai->ai_canonname, sizeof hnamebuf - 1);
+			if (tmp_ai->ai_canonname)
+				strncpy(hnamebuf, tmp_ai->ai_canonname, sizeof hnamebuf - 1);
 			hostname = hnamebuf;
 
 			if (result)
