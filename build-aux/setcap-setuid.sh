@@ -6,6 +6,10 @@ exec_path="$1/$2"
 perm_type="$3"
 setcap="$4"
 
+if [ -n "${DESTDIR}" ]; then
+	exec_path="${DESTDIR%/}/${exec_path}"
+fi
+
 case "$perm_type" in
 	'none')
 		# Gentoo needs build system to back off.
