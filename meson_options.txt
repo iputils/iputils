@@ -47,6 +47,9 @@ option('BUILD_MANS', type : 'boolean', value : true,
 option('BUILD_HTML_MANS', type : 'boolean', value : false,
 	description : 'Build html manuals')
 
+option('NO_SETCAP_OR_SUID', type : 'boolean', value : false,
+	description : 'Allow disabling build-aux/setcap-setuid.sh')
+
 option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 	description : 'Default device for arping')
 

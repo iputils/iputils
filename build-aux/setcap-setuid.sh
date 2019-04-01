@@ -7,6 +7,10 @@ perm_type="$3"
 setcap="$4"
 
 case "$perm_type" in
+	'none')
+		# Gentoo needs build system to back off.
+		# https://github.com/iputils/iputils/issues/175
+		;;
 	'caps')
 		echo "$0: calling: $setcap cap_net_raw+ep $exec_path"
 		"$setcap" 'cap_net_raw+ep' "$exec_path" || true

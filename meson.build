@@ -219,7 +219,9 @@ config_h = configure_file(
 	configuration : conf)
 
 setcap = find_program('setcap', '/usr/sbin/setcap', '/sbin/setcap', required : false)
-if cap_dep.found() and setcap.found()
+if get_option('NO_SETCAP_OR_SUID')
+	perm_type = 'none'
+elif cap_dep.found() and setcap.found()
 	perm_type = 'caps'
 else
 	perm_type = 'setuid'
