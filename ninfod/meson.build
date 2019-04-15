@@ -14,7 +14,7 @@ executable('ninfod', [ninfod_sources, git_version_h],
 	link_with : [libcommon],
 	include_directories : inc,
 	install: true,
-	install_dir: 'sbin')
+	install_dir: get_option('sbindir'))
 conf_data = configuration_data()
 conf_data.set('prefix', get_option('prefix'))
 

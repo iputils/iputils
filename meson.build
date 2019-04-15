@@ -282,7 +282,7 @@ endif
 
 if build_rinfod == true
 	executable('rdisc', ['rdisc.c', git_version_h],
-		install_dir: 'sbin',
+		install_dir: get_option('sbindir'),
 		link_with : [libcommon],
 		install: true)
 	if systemd.found()
@@ -318,7 +318,7 @@ endif
 
 if build_rarpd == true
 	executable('rarpd', ['rarpd.c', git_version_h],
-		install_dir: 'sbin',
+		install_dir: get_option('sbindir'),
 		link_with : [libcommon],
 		install: true)
 	if systemd.found()
