@@ -499,9 +499,10 @@ static int niquery_option_subject_name_handler(int index __attribute__((__unused
 }
 #endif
 
-int niquery_option_help_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
+int niquery_option_help_handler(int index, const char *arg __attribute__((__unused__)))
 {
-	fprintf(stderr, _("ping -6 -N <nodeinfo opt>\n"
+	fprintf(index ? stdout : stderr,
+		      _("ping -6 -N <nodeinfo opt>\n"
 			"Help:\n"
 			"  help\n"
 			"Query:\n"
@@ -520,7 +521,7 @@ int niquery_option_help_handler(int index __attribute__((__unused__)), const cha
 			"  subject-name=name\n"
 			"  subject-fqdn=name\n"
 		));
-	exit(2);
+	index ? exit(0) : exit(2);
 }
 
 int niquery_option_handler(const char *opt_arg)
