@@ -61,7 +61,7 @@ if xsltproc.found()
 		testrun = run_command([xsltproc, '--nonet', xsl])
 		if testrun.returncode() != 0
 			xsltproc_works = false
-			warning('xsltproc: cannot process ' + xsl)
+			message('WARNING: xsltproc: cannot process ' + xsl)
 		endif
 	endforeach
 endif

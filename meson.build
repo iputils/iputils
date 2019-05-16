@@ -3,6 +3,7 @@ project('iputils', 'c',
 		'c_std=c99',
 		'warning_level=3',
 	],
+	meson_version : '>=0.39',
 	version : 's20190515') # keep in sync with: git describe | awk -F- '{print $1}'
 
 cc = meson.get_compiler('c')
@@ -211,7 +212,8 @@ endforeach
 
 git_version_h = vcs_tag(
 	input : 'git-version.h.meson',
-	output : 'git-version.h'
+	output : 'git-version.h',
+	fallback : meson.project_version()
 )
 
 config_h = configure_file(
