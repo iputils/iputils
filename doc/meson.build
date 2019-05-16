@@ -38,7 +38,7 @@ if build_ninfod == true
 	manpages += ['ninfod']
 endif
 
-xsltproc = find_program('xsltproc', required : true)
+xsltproc = find_program('xsltproc', required : build_mans or build_html_mans)
 xsltproc_args = [
 	'--nonet',
 	'--stringparam', 'man.output.quietly', '1',
@@ -48,19 +48,26 @@ xsltproc_args = [
 ]
 
 if xsltproc.found()
-	xsl = 'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl'
-	testrun = run_command([xsltproc, '--nonet', xsl])
-	xsltproc_works = testrun.returncode() == 0
-	if xsltproc_works == false
-		warning('xsltproc: cannot process ' + xsl)
+	doc_targets = []
+	if build_mans
+		doc_targets += ['manpages']
 	endif
-else
-	warning('No docbook stylesheet found for generating man pages')
-	xsltproc_works = false
+	if build_html_mans
+		doc_targets += ['html']
+	endif
+	xsltproc_works = true
+	foreach doc_target : doc_targets
+		xsl = 'http://docbook.sourceforge.net/release/xsl-ns/current/' + doc_target + '/docbook.xsl'
+		testrun = run_command([xsltproc, '--nonet', xsl])
+		if testrun.returncode() != 0
+			xsltproc_works = false
+			warning('xsltproc: cannot process ' + xsl)
+		endif
+	endforeach
 endif
 
 if xsltproc_works == false
-	error('Man pages cannot be built: xsltproc does not work correctly')
+	error('Docs cannot be built: xsltproc does not work correctly')
 endif
 
 if build_mans
