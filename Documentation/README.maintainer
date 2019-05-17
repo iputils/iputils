@@ -59,3 +59,12 @@ Upload the .asc files to release as additional files.  The release should be
 ready.  People tend to react to releases, so expect bug reports and pull
 requests after release.  Assuming release has fatal flaw(s) make another one
 sometime soon.
+
+# Branches in git
+
+The upstream repository has exactly one branch and it is `master`.  If a
+maintainer wants to use work in progress branches they need to be kept in
+personal clone.  There are two reasons to do this.  For contributors it is
+nice not to see random branches when cloning upstream repo.  Secondly when
+maintainer wants to add a contributor repo as additional remote it is easier
+to see what is going on there.
