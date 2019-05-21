@@ -48,7 +48,7 @@ xsltproc_args = [
 ]
 
 if xsltproc.found()
-	xsl = 'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl'
+	xsl = 'http://docbook.sourceforge.net/release/xsl-ns/current/manpages/docbook.xsl'
 	testrun = run_command([xsltproc, '--nonet', xsl])
 	xsltproc_works = testrun.returncode() == 0
 	if xsltproc_works == false
