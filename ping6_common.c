@@ -726,6 +726,10 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
+	hold = 1;
+	if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_RECVERR, &hold, sizeof hold))
+		error(2, errno, "IPV6_RECVERR");
+
 	/* Estimate memory eaten by single packet. It is rough estimate.
 	 * Actually, for small datalen's it depends on kernel side a lot. */
 	hold = datalen + 8;
@@ -753,11 +757,6 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		 */
 
 		ICMP6_FILTER_SETBLOCKALL(&filter);
-
-		ICMP6_FILTER_SETPASS(ICMP6_DST_UNREACH, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_PACKET_TOO_BIG, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_TIME_EXCEEDED, &filter);
-		ICMP6_FILTER_SETPASS(ICMP6_PARAM_PROB, &filter);
 
 		if (niquery_is_enabled())
 			ICMP6_FILTER_SETPASS(IPUTILS_NI_ICMP6_REPLY, &filter);
@@ -1254,13 +1253,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 			    !is_ours(sock, icmph1->icmp6_id))
 				return 1;
 			acknowledge(ntohs(icmph1->icmp6_seq));
-			nerrors++;
-			if (options & F_FLOOD) {
-				write_stdout("\bE", 2);
-				return 0;
-			}
-			print_timestamp();
-			printf(_("From %s: icmp_seq=%u "), pr_addr(from, sizeof *from), ntohs(icmph1->icmp6_seq));
+			return 0;
 		} else {
 			/* We've got something other than an ECHOREPLY */
 			if (!(options & F_VERBOSE) || uid)
