@@ -119,6 +119,9 @@ elif crypto == 'none'
 		description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
 
+# gpg-error is a dependency of gcrypt
+gpg_error_dep = dependency('gpg-error', required : false)
+
 systemd = dependency('systemd', required : false)
 systemdunitdir = get_option('systemdunitdir')
 if systemdunitdir == '' and systemd.found()
@@ -241,7 +244,7 @@ libcommon = static_library(
 
 if build_ping == true
 	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c', git_version_h],
-		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
+		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, gpg_error_dep, resolv_dep],
 		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
