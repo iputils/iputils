@@ -101,20 +101,22 @@ else
 endif
 
 crypto = get_option('USE_CRYPTO')
+crypto_dep = []
 if crypto == 'nettle'
-	crypto_dep = dependency('nettle')
+	crypto_dep += dependency('nettle')
 	conf.set('USE_NETTLE', 1, description : 'If set use nettle crypto library.')
 elif crypto == 'gcrypt'
-	crypto_dep = cc.find_library('gcrypt')
+	crypto_dep += cc.find_library('gcrypt')
+	crypto_dep += dependency('gpg-error', required : true)
 	conf.set('USE_GCRYPT', 1, description : 'If set use gcrypt crypto library.')
 elif crypto == 'openssl'
-	crypto_dep = dependency('openssl')
+	crypto_dep += dependency('openssl')
 	conf.set('USE_OPENSSL', 1, description : 'if set use openssl crypto library.')
 elif crypto == 'kernel'
-	crypto_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
+	crypto_dep += dependency('disabler-appears-to-disable-executable-build', required : false)
 	conf.set('USE_KERNEL_CRYPTO_API', 1, description : 'if set use Linux kernel Crypto API.')
 elif crypto == 'none'
-	crypto_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
+	crypto_dep += dependency('disabler-appears-to-disable-executable-build', required : false)
 	conf.set('PING6_NONCE_MEMORY', 1,
 		description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
