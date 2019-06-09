@@ -77,6 +77,8 @@ if opt != ''
 	conf.set_quoted('DEFAULT_DEVICE', opt, description : 'arping default device.')
 endif
 
+# Some systems needs intl for gettext
+intl_dep = []
 opt = get_option('USE_GETTEXT')
 if opt == true
 	prefix = get_option('prefix')
@@ -86,6 +88,7 @@ if opt == true
 	conf.set('ENABLE_NLS', 1, description : 'If set enable I18N.')
 	conf.set_quoted('LOCALEDIR', join_paths(prefix, localedir))
 	subdir ('po')
+	intl_dep += cc.find_library('intl', required : false)
 endif
 
 opt = get_option('USE_IDN')
@@ -243,7 +246,7 @@ libcommon = static_library(
 
 if build_ping == true
 	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c', git_version_h],
-		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
+		dependencies : [m_dep, cap_dep, idn_dep, intl_dep, crypto_dep, resolv_dep],
 		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
@@ -256,7 +259,7 @@ endif
 
 if build_tracepath == true
 	executable('tracepath', ['tracepath.c', git_version_h],
-		dependencies : idn_dep,
+		dependencies : [idn_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
 endif
@@ -276,7 +279,7 @@ endif
 
 if build_clockdiff == true
 	executable('clockdiff', ['clockdiff.c', git_version_h],
-		dependencies : [cap_dep],
+		dependencies : [cap_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
@@ -306,7 +309,7 @@ endif
 
 if build_arping == true
 	executable('arping', ['arping.c', git_version_h],
-		dependencies : [rt_dep, cap_dep, idn_dep],
+		dependencies : [rt_dep, cap_dep, idn_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
