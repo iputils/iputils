@@ -51,10 +51,10 @@
 #endif
 
 #ifndef IP_PMTUDISC_DO
-# define IP_PMTUDISC_DO		3
+# define IP_PMTUDISC_DO		2
 #endif
 #ifndef IPV6_PMTUDISC_DO
-# define IPV6_PMTUDISC_DO	3
+# define IPV6_PMTUDISC_DO	2
 #endif
 
 enum {
