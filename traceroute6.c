@@ -254,18 +254,11 @@
 #include "iputils_common.h"
 
 #ifdef USE_IDN
-# ifndef NI_IDN
-#  define NI_IDN 32
-# endif
 # define ADDRINFO_IDN_FLAGS	AI_IDN
 # define getnameinfo_flags	NI_IDN
 #else
 # define getnameinfo_flags	0
 # define ADDRINFO_IDN_FLAGS	0
-#endif
-
-#ifndef SOL_IPV6
-# define SOL_IPV6 IPPROTO_IPV6
 #endif
 
 enum {

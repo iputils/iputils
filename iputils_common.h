@@ -24,6 +24,31 @@
 # define _(Text) Text
 #endif
 
+#ifdef USE_IDN
+# include <idn2.h>
+
+# include <netdb.h>
+# ifndef AI_IDN
+#  define AI_IDN		0x0040
+# endif
+# ifndef AI_CANONIDN
+#  define AI_CANONIDN		0x0080
+# endif
+# ifndef NI_IDN
+#  define NI_IDN 32
+# endif
+#endif /* #ifdef USE_IDN */
+
+#ifndef SOL_IPV6
+# define SOL_IPV6 IPPROTO_IPV6
+#endif
+#ifndef IP_PMTUDISC_DO
+# define IP_PMTUDISC_DO		2
+#endif
+#ifndef IPV6_PMTUDISC_DO
+# define IPV6_PMTUDISC_DO	2
+#endif
+
 #ifdef HAVE_ERROR_H
 # include <error.h>
 #else
