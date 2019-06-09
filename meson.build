@@ -88,6 +88,9 @@ if opt == true
 	subdir ('po')
 endif
 
+# Some systems needs intl for gettext
+intl_dep = cc.find_library('intl', required : false)
+
 opt = get_option('USE_IDN')
 if opt == true
 	idn_dep = cc.find_library('idn2', required : false)
@@ -243,7 +246,7 @@ libcommon = static_library(
 
 if build_ping == true
 	executable('ping', ['ping.c', 'ping_common.c', 'ping6_common.c', git_version_h],
-		dependencies : [m_dep, cap_dep, idn_dep, crypto_dep, resolv_dep],
+		dependencies : [m_dep, cap_dep, idn_dep, intl_dep, crypto_dep, resolv_dep],
 		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
@@ -256,7 +259,7 @@ endif
 
 if build_tracepath == true
 	executable('tracepath', ['tracepath.c', git_version_h],
-		dependencies : idn_dep,
+		dependencies : [idn_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
 endif
@@ -276,7 +279,7 @@ endif
 
 if build_clockdiff == true
 	executable('clockdiff', ['clockdiff.c', git_version_h],
-		dependencies : [cap_dep],
+		dependencies : [cap_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
@@ -306,7 +309,7 @@ endif
 
 if build_arping == true
 	executable('arping', ['arping.c', git_version_h],
-		dependencies : [rt_dep, cap_dep, idn_dep],
+		dependencies : [rt_dep, cap_dep, idn_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
 	meson.add_install_script('build-aux/setcap-setuid.sh',
