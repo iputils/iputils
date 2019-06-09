@@ -35,26 +35,9 @@
 #include "iputils_common.h"
 
 #ifdef USE_IDN
-# ifndef AI_IDN
-#  define AI_IDN 0x0040
-# endif
-# ifndef NI_IDN
-#  define NI_IDN 32
-# endif
 # define getnameinfo_flags	NI_IDN
 #else
 # define getnameinfo_flags	0
-#endif
-
-#ifndef SOL_IPV6
-# define SOL_IPV6 IPPROTO_IPV6
-#endif
-
-#ifndef IP_PMTUDISC_DO
-# define IP_PMTUDISC_DO		2
-#endif
-#ifndef IPV6_PMTUDISC_DO
-# define IPV6_PMTUDISC_DO	2
 #endif
 
 enum {
