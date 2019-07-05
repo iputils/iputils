@@ -792,7 +792,7 @@ static int event_loop(struct run_state *ctl)
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
 	rc |= finish(ctl);
-	rc |= !(ctl->brd_sent != ctl->received);
+	rc |= (ctl->sent != ctl->received);
 	return rc;
 }
 
