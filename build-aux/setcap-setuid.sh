@@ -16,7 +16,7 @@ case "$perm_type" in
 		# https://github.com/iputils/iputils/issues/175
 		;;
 	'caps')
-		echo "$0: calling: $setcap cap_net_raw+ep $exec_path"
+		echo "$0: calling: $setcap cap_net_raw+p $exec_path"
 		"$setcap" 'cap_net_raw+ep' "$exec_path" || true
 	;;
 	'setuid')
