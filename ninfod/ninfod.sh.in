@@ -3,26 +3,21 @@
 NINFOD=@prefix@/sbin/ninfod
 PID=/var/run/ninfod.pid
 
-if ! [ -x $NINFOD ]; then
-	exit 0
-fi
+[ -x "$NINFOD" ] || exit 0
 
 case "$1" in
     start)
-	echo -n "Starting node information daemon:"
-	echo -n " ninfod" ; 
-	$NINFOD 
+	printf "Starting node information daemon: ninfod"
+	$NINFOD
 	echo "."
 	;;
     stop)
-	echo -n "Stopping node information daemon:"
-	echo -n " ninfod" ; 
+	printf "Stopping node information daemon: ninfod"
 	kill `cat $PID`
 	echo "."
 	;;
     restart)
-	echo -n "Restarting node information daemon:"
-	echo -n " ninfod"
+	printf "Restarting node information daemon: ninfod"
 	kill `cat $PID`
 	$NINFOD
 	echo "."
@@ -34,4 +29,3 @@ case "$1" in
 esac
 
 exit 0
-
