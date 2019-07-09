@@ -663,7 +663,37 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 				error(0, 0, _("Warning: source address might be selected on device other than: %s"), device);
 		}
 		close(probe_fd);
-	} while (0);
+
+	} else if (device) {
+		struct sockaddr_in dst = whereto;
+		struct ifreq ifr;
+		int fd = sock->fd;
+		int rc;
+		int errno_save;
+
+		memset(&ifr, 0, sizeof(ifr));
+		strncpy(ifr.ifr_name, device, IFNAMSIZ - 1);
+
+		enable_capability_raw();
+		rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device) + 1);
+		errno_save = errno;
+		disable_capability_raw();
+
+		if (rc == -1) {
+			if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
+				struct ip_mreqn imr;
+
+				if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
+					error(2, 0, "%s: %s", _("unknown interface"), device);
+				memset(&imr, 0, sizeof(imr));
+				imr.imr_ifindex = ifr.ifr_ifindex;
+				if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
+					       &imr, sizeof(imr)) == -1)
+					error(2, errno, "IP_MULTICAST_IF");
+			} else
+				error(2, errno_save, "SO_BINDTODEVICE %s", device);
+		}
+	}
 
 	if (whereto.sin_addr.s_addr == 0)
 		whereto.sin_addr.s_addr = source.sin_addr.s_addr;
