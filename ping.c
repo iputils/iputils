@@ -804,7 +804,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
-	printf(_("PING %s (%s) "), hostname, inet_ntoa(whereto.sin_addr));
+	printf("PING %s (%s) ", hostname, inet_ntoa(whereto.sin_addr));
 	if (device || (options & F_STRICTSOURCE))
 		printf(_("from %s %s: "), inet_ntoa(source.sin_addr), device ? device : "");
 	printf(_("%d(%d) bytes of data.\n"), datalen, datalen + 8 + optlen + 20);

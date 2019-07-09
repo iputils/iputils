@@ -828,7 +828,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #endif
 	}
 
-	printf(_("PING %s(%s) "), hostname, pr_addr(&whereto, sizeof whereto));
+	printf("PING %s(%s) ", hostname, pr_addr(&whereto, sizeof whereto));
 	if (flowlabel)
 		printf(_(", flow 0x%05x, "), (unsigned)ntohl(flowlabel));
 	if (device || (options & F_STRICTSOURCE)) {

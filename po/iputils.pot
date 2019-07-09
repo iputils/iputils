@@ -411,11 +411,6 @@ msgstr ""
 msgid "memory allocation failed"
 msgstr ""
 
-#: ping.c:810
-#, c-format
-msgid "PING %s (%s) "
-msgstr ""
-
 #: ping.c:812 ping6_common.c:836
 #, c-format
 msgid "from %s %s: "
@@ -1039,11 +1034,6 @@ msgstr ""
 
 #: ping6_common.c:825
 msgid "flowinfo is not supported"
-msgstr ""
-
-#: ping6_common.c:829
-#, c-format
-msgid "PING %s(%s) "
 msgstr ""
 
 #: ping6_common.c:831

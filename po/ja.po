@@ -462,11 +462,6 @@ msgstr "パケットサイズ %d が大きすぎます。最大値は %d です�
 msgid "memory allocation failed"
 msgstr "メモリ確保に失敗しました。"
 
-#: ping.c:810
-#, c-format
-msgid "PING %s (%s) "
-msgstr ""
-
 #: ping.c:812 ping6_common.c:836
 #, c-format
 msgid "from %s %s: "
@@ -1126,11 +1121,6 @@ msgstr "フロー情報を送信できません。"
 #
 msgid "flowinfo is not supported"
 msgstr "フロー情報はサポートされていません。"
-
-#: ping6_common.c:829
-#, c-format
-msgid "PING %s(%s) "
-msgstr ""
 
 #: ping6_common.c:831
 #, c-format
