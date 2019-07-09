@@ -34,31 +34,36 @@ release.
 
 Create release commit and tag.
 
-    date_str=$(date +s%Y%m%d) &&
-    sed --in-place "s/version : '.*')/version : '$date_str')/" meson.build &&
-    git add meson.build &&
-    git commit --signoff --message "release: iputils-$date_str" &&
-    git tag --sign --annotate $date_str --message iputils-$date_str
+    date="$(date +s%Y%m%d)"
+    sed --in-place "s/version : '.*')/version : '$date')/" meson.build
+    git add meson.build
+    git commit --signoff --message "release: iputils-$date"
+    git tag --sign --annotate $date --message iputils-$date
 
 Check that the commit and tag looks ok.
 
-    git show $date_str --show-signature
+    git show $date --show-signature
 
 Assuming things are great push to github.
 
-    git push origin master:master &&
+    git push origin master:master
     git push origin --tags
 
 Go to github https://github.com/iputils/iputils/releases and paste the
 release message you drafted earlier to text box.  Choose the tag you just
 created.  Download the release files and sign them.
 
-    for file in iputils-$date_str ; do gpg --sign --armor --detach-sign $file ; done
+    for file in iputils-$date.{zip,tar.gz}; do gpg --sign --armor --detach-sign $file; done
 
-Upload the .asc files to release as additional files.  The release should be
-ready.  People tend to react to releases, so expect bug reports and pull
-requests after release.  Assuming release has fatal flaw(s) make another one
-sometime soon.
+	out="sha256sum"
+	for file in iputils-$date.{zip,tar.gz}; do $out $file >> $out; done
+	gpg --clearsign $out
+
+Upload these three .asc files to release as additional files.
+
+The release should be ready.  People tend to react to releases, so expect bug
+reports and pull requests after release.  Assuming release has fatal flaw(s)
+make another one sometime soon.
 
 # Branches in git
 
