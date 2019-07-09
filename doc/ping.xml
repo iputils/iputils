@@ -269,11 +269,15 @@ xml:id="man.ping">
         <listitem>
           <para>
           <emphasis remap="I">interface</emphasis> is either an
-          address, or an interface name. If
+          address, an interface name or a VRF name. If
           <emphasis remap="I">interface</emphasis> is an address, it
           sets source address to specified interface address. If
-          <emphasis remap="I">interface</emphasis> in an interface
+          <emphasis remap="I">interface</emphasis> is an interface
           name, it sets source interface to specified interface.
+          If <emphasis remap="I">interface</emphasis> is a VRF
+          name, each packet is routed using the corresponding
+          routing table; in this case, the <option>-I</option> option
+          can be repeated to specify a source address.
           NOTE: For IPv6, when doing ping to a link-local scope
           address, link specification (by the '%'-notation in
           <emphasis remap="I">destination</emphasis>, or by this
