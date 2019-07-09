@@ -828,16 +828,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #endif
 	}
 
-	printf("PING %s(%s) ", hostname, pr_addr(&whereto, sizeof whereto));
-	if (flowlabel)
-		printf(_(", flow 0x%05x, "), (unsigned)ntohl(flowlabel));
-	if (device || (options & F_STRICTSOURCE)) {
-		int saved_options = options;
-
-		options |= F_NUMERIC;
-		printf(_("from %s %s: "), pr_addr(&source6, sizeof source6), device ? device : "");
-		options = saved_options;
-	}
+	print_header(AF_INET6, hostname, pr_addr(&source6, sizeof source6), pr_addr(&whereto, sizeof whereto), flowlabel);
 	printf(_("%d data bytes\n"), datalen);
 
 	setup(sock);

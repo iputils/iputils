@@ -804,9 +804,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
-	printf("PING %s (%s) ", hostname, inet_ntoa(whereto.sin_addr));
-	if (device || (options & F_STRICTSOURCE))
-		printf(_("from %s %s: "), inet_ntoa(source.sin_addr), device ? device : "");
+	print_header(AF_INET, hostname, inet_ntoa(source.sin_addr), inet_ntoa(whereto.sin_addr), 0);
 	printf(_("%d(%d) bytes of data.\n"), datalen, datalen + 8 + optlen + 20);
 
 	setup(sock);
@@ -1617,4 +1615,29 @@ void ping4_install_filter(socket_st *sock)
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		error(0, errno, _("WARNING: failed to install socket filter"));
+}
+
+void print_header(int family, char *hostname, char *source, char *whereto, uint32_t flowlabel)
+{
+	printf("PING %s(%s) ", hostname, whereto);
+
+	if (flowlabel) {
+		printf(", ");
+		printf(_("flow"));
+		printf("0x%05x, ", (unsigned)ntohl(flowlabel));
+	}
+
+	if (device || (options & F_STRICTSOURCE)) {
+		int saved_options = options;
+
+		if (family == AF_INET6)
+			options |= F_NUMERIC;
+		printf(_("from"));
+		printf(" %s", source);
+		if (device)
+			printf(" %s", device);
+		printf(": ");
+
+		options = saved_options;
+	}
 }

@@ -464,8 +464,8 @@ msgstr "メモリ確保に失敗しました。"
 
 #: ping.c:812 ping6_common.c:836
 #, c-format
-msgid "from %s %s: "
-msgstr "送信元 %s %s: "
+msgid "from"
+msgstr "送信元"
 
 #: ping.c:813
 #, c-format
@@ -1122,10 +1122,10 @@ msgstr "フロー情報を送信できません。"
 msgid "flowinfo is not supported"
 msgstr "フロー情報はサポートされていません。"
 
-#: ping6_common.c:831
+#: ping.c:1626
 #, c-format
-msgid ", flow 0x%05x, "
-msgstr ", フロー 0x%05x, "
+msgid "flow"
+msgstr "フロー"
 
 #: ping6_common.c:839
 #, c-format

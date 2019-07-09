@@ -413,7 +413,7 @@ msgstr ""
 
 #: ping.c:812 ping6_common.c:836
 #, c-format
-msgid "from %s %s: "
+msgid "from"
 msgstr ""
 
 #: ping.c:813
@@ -1036,9 +1036,9 @@ msgstr ""
 msgid "flowinfo is not supported"
 msgstr ""
 
-#: ping6_common.c:831
+#: ping.c:1626
 #, c-format
-msgid ", flow 0x%05x, "
+msgid "flow"
 msgstr ""
 
 #: ping6_common.c:839

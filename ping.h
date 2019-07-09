@@ -319,6 +319,8 @@ void fill(char *patp, unsigned char *packet, unsigned packet_size);
 extern int mark;
 extern unsigned char outpack[MAXPACKET];
 
+void print_header(int family, char *hostname, char *source, char *whereto, uint32_t flowlabel);
+
 /* IPv6 */
 
 int ping6_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock);
