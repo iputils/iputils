@@ -65,6 +65,13 @@ The release should be ready.  People tend to react to releases, so expect bug
 reports and pull requests after release.  Assuming release has fatal flaw(s)
 make another one sometime soon.
 
+# Maintainers' GPG public keys
+
+All maintainers' GPG public keys used for signing tags, releases, commits, etc.
+are stored in Documentation/project-keys.gpg. When adding new maintainer, add
+his/her key into tools/update-project-keyring.sh, run it to update keyring and
+push the result.
+
 # Branches in git
 
 The upstream repository has exactly one branch and it is `master`.  If a
