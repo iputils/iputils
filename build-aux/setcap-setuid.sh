@@ -14,10 +14,6 @@ _log() {
 }
 
 case "$perm_type" in
-	none)
-		# Gentoo needs build system to back off.
-		# https://github.com/iputils/iputils/issues/175
-		;;
 	caps)
 		params="cap_net_raw+p"
 		_log "calling: $setcap $params $exec_path"

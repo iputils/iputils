@@ -226,10 +226,7 @@ config_h = configure_file(
 	configuration : conf)
 
 setcap = find_program('setcap', '/usr/sbin/setcap', '/sbin/setcap', required : false)
-if get_option('NO_SETCAP_OR_SUID')
-	perm_type = 'none'
-	setcap_path = '/dev/null'
-elif cap_dep.found() and setcap.found()
+if cap_dep.found() and setcap.found()
 	perm_type = 'caps'
 	setcap_path = setcap.path()
 else
@@ -249,12 +246,14 @@ if build_ping == true
 		dependencies : [m_dep, cap_dep, idn_dep, intl_dep, crypto_dep, resolv_dep],
 		link_with : [libcommon],
 		install: true)
-	meson.add_install_script('build-aux/setcap-setuid.sh',
-		join_paths(get_option('prefix'), get_option('bindir')),
-		'ping',
-		perm_type,
-		setcap_path
-	)
+	if (get_option('SETCAP_OR_SUID_PING') and not get_option('NO_SETCAP_OR_SUID'))
+		meson.add_install_script('build-aux/setcap-setuid.sh',
+			join_paths(get_option('prefix'), get_option('bindir')),
+			'ping',
+			perm_type,
+			setcap_path
+		)
+	endif
 endif
 
 if build_tracepath == true
@@ -269,12 +268,14 @@ if build_traceroute6 == true
 		dependencies : [cap_dep, intl_dep, idn_dep],
 		link_with : [libcommon],
 		install: true)
-	meson.add_install_script('build-aux/setcap-setuid.sh',
-		join_paths(get_option('prefix'), get_option('bindir')),
-		'traceroute6',
-		perm_type,
-		setcap_path
-	)
+	if (get_option('SETCAP_OR_SUID_TRACEROUTE6') and not get_option('NO_SETCAP_OR_SUID'))
+		meson.add_install_script('build-aux/setcap-setuid.sh',
+			join_paths(get_option('prefix'), get_option('bindir')),
+			'traceroute6',
+			perm_type,
+			setcap_path
+		)
+	endif
 endif
 
 if build_clockdiff == true
@@ -282,12 +283,14 @@ if build_clockdiff == true
 		dependencies : [cap_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
-	meson.add_install_script('build-aux/setcap-setuid.sh',
-		join_paths(get_option('prefix'), get_option('bindir')),
-		'clockdiff',
-		perm_type,
-		setcap_path
-	)
+	if (get_option('SETCAP_OR_SUID_CLOCKDIFF') and not get_option('NO_SETCAP_OR_SUID'))
+		meson.add_install_script('build-aux/setcap-setuid.sh',
+			join_paths(get_option('prefix'), get_option('bindir')),
+			'clockdiff',
+			perm_type,
+			setcap_path
+		)
+	endif
 endif
 
 if build_rinfod == true
@@ -312,12 +315,14 @@ if build_arping == true
 		dependencies : [rt_dep, cap_dep, idn_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
-	meson.add_install_script('build-aux/setcap-setuid.sh',
-		join_paths(get_option('prefix'), get_option('bindir')),
-		'arping',
-		perm_type,
-		setcap_path
-	)
+	if (get_option('SETCAP_OR_SUID_ARPING') and not get_option('NO_SETCAP_OR_SUID'))
+		meson.add_install_script('build-aux/setcap-setuid.sh',
+			join_paths(get_option('prefix'), get_option('bindir')),
+			'arping',
+			perm_type,
+			setcap_path
+		)
+	endif
 endif
 
 if build_tftpd == true
