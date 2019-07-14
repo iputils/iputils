@@ -203,7 +203,7 @@ static int niquery_nonce(uint8_t *nonce, int fill)
 	static uint8_t digest[MD5_DIGEST_LENGTH];
 	static int seq = -1;
 
-	if (fill || seq != *(uint16_t *)nonce || seq < 0) {
+	if (fill || seq != *(uint16_t *)nonce || seq == -1) {
 		MD5_CTX ctxt;
 
 		MD5_Init(&ctxt);
@@ -476,7 +476,6 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	ni_group = nigroup_buf;
 	ni_subject = buf;
 	ni_subject_len = n + (fqdn < 0);
-	ni_group = nigroup_buf;
 
 	free(canonname);
 	free(idn);

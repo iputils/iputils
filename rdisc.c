@@ -1141,8 +1141,7 @@ initifs()
 	ifr = ifc.ifc_req;
 	for (i = 0, n = ifc.ifc_len/sizeof (struct ifreq); n > 0; n--, ifr++) {
 		ifreq = *ifr;
-		if (strlen(ifreq.ifr_name) >= IFNAMSIZ)
-			continue;
+
 		if (ioctl(sock, SIOCGIFFLAGS, (char *)&ifreq) < 0) {
 			logperror("initifs: ioctl (get interface flags)");
 			continue;

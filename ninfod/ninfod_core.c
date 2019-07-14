@@ -184,13 +184,13 @@ static struct qtypeinfo qtypeinfo_table[] = {
 		.qtype = IPUTILS_NI_QTYPE_IPV6ADDR,
 		.name = "NodeAddr",
 		.getreply = pr_nodeinfo_ipv6addr,
-		.init = init_nodeinfo_ipv6addr,
+		.init = init_nodeinfo,
 	},
 	[IPUTILS_NI_QTYPE_IPV4ADDR]	= {
 		.qtype = IPUTILS_NI_QTYPE_IPV4ADDR,
 		.name = "IPv4Addr",
 		.getreply = pr_nodeinfo_ipv4addr,
-		.init = init_nodeinfo_ipv4addr,
+		.init = init_nodeinfo,
 	},
 };
 
@@ -523,15 +523,10 @@ int pr_nodeinfo(struct packetcontext *p)
 
 	/* XXX: Step 5: Check the policy */
 	rc = ni_policy(p);
-	if (rc <= 0) {
+	if (rc == 0) {
 		free(p->replydata);
 		p->replydata = NULL;
 		p->replydatalen = 0;
-		if (rc < 0) {
-			DEBUG(LOG_WARNING, "Ignored by policy.\n");
-			free(p);
-			return -1;
-		}
 		DEBUG(LOG_WARNING, "Refused by policy.\n");
 		replyonsubjcheck = 0;
 		qtypeinfo = &qtypeinfo_refused;

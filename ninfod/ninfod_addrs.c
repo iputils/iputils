@@ -114,14 +114,6 @@
 #include "ninfod.h"
 #include "ni_ifaddrs.h"
 
-/* ---------- */
-/* ipv6 address */
-void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)))
-{
-	DEBUG(LOG_DEBUG, "%s()\n", __func__);
-	return;
-}
-
 int filter_ipv6addr(const struct in6_addr *ifaddr, unsigned int flags)
 {
 	if (IN6_IS_ADDR_UNSPECIFIED(ifaddr) ||
@@ -285,7 +277,7 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 }
 
 /* ipv4 address */
-void init_nodeinfo_ipv4addr(INIT_ARGS __attribute__((__unused__)))
+void init_nodeinfo(INIT_ARGS __attribute__((__unused__)))
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 	return;

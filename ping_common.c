@@ -310,7 +310,7 @@ int __schedule_exit(int next)
 
 	if (nreceived) {
 		waittime = 2 * tmax;
-		if (waittime < (unsigned long)(1000 * interval))
+		if (waittime < 1000 * (unsigned long)interval)
 			waittime = 1000 * interval;
 	} else
 		waittime = lingertime * 1000;
@@ -809,7 +809,7 @@ restamp:
 		}
 		if (!csfailed) {
 			tsum += triptime;
-			tsum2 += (long long)triptime *(long long)triptime;
+			tsum2 += (double)((long long)triptime * (long long)triptime);
 			if (triptime < tmin)
 				tmin = triptime;
 			if (triptime > tmax)

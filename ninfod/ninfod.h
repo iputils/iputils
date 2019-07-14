@@ -110,9 +110,8 @@ int pr_nodeinfo_refused(CHECKANDFILL_ARGS);
 int pr_nodeinfo_noop(CHECKANDFILL_ARGS);
 
 /* ninfod_addrs.c */
-void init_nodeinfo_ipv6addr(INIT_ARGS __attribute__((__unused__)));
 int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS);
-void init_nodeinfo_ipv4addr(INIT_ARGS __attribute__((__unused__)));
+void init_nodeinfo(INIT_ARGS __attribute__((__unused__)));
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS);
 
 /* ninfod_name.c */
