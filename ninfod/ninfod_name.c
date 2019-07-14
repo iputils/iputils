@@ -218,7 +218,7 @@ static int compare_dnsname(const char *s, size_t slen,
 				if (n == n0 + nlen - 1) {
 					done = 1;	/* FQDN */
 				} else if (n + 1 == n0 + nlen - 1) {
-					retcode = 1;	// trunc
+					retcode = 1;	/* trunc */
 					done = 1;
 				} else
 					return -1;

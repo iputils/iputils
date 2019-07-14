@@ -81,8 +81,6 @@
 #include "ni_ifaddrs.h"
 #include <netinet/in.h>
 
-//#define IFA_LOCAL	IFA_LOCAL
-
 /* ====================================================================== */
 struct nlmsg_list {
 	struct nlmsg_list *nlm_next;

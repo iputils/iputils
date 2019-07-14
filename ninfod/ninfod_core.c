@@ -126,19 +126,16 @@ static struct subjinfo subjinfo_table [] = {
 	[IPUTILS_NI_ICMP6_SUBJ_IPV6] = {
 		.code = IPUTILS_NI_ICMP6_SUBJ_IPV6,
 		.name = "IPv6",
-		//.init = init_nodeinfo_ipv6addr,
 		.checksubj = pr_nodeinfo_ipv6addr,
 	},
 	[IPUTILS_NI_ICMP6_SUBJ_FQDN] = {
 		.code = IPUTILS_NI_ICMP6_SUBJ_FQDN,
 		.name = "FQDN",
-		//.init = init_nodeinfo_nodename,
 		.checksubj = pr_nodeinfo_nodename,
 	},
 	[IPUTILS_NI_ICMP6_SUBJ_IPV4] = {
 		.code = IPUTILS_NI_ICMP6_SUBJ_IPV4,
 		.name = "IPv4",
-		//.init = init_nodeinfo_ipv4addr,
 		.checksubj = pr_nodeinfo_ipv4addr,
 	},
 };
@@ -252,7 +249,6 @@ int pr_nodeinfo_unknown(CHECKANDFILL_ARGS_1)
 	p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
 	p->reply.ni_code = IPUTILS_NI_ICMP6_UNKNOWN;
 	p->reply.ni_cksum = 0;
-	//p->reply.ni_qtype = 0;
 	p->reply.ni_flags = flags;
 
 	p->replydata = NULL;
@@ -270,7 +266,6 @@ int pr_nodeinfo_refused(CHECKANDFILL_ARGS_1)
 	p->reply.ni_type = IPUTILS_NI_ICMP6_REPLY;
 	p->reply.ni_code = IPUTILS_NI_ICMP6_REFUSED;
 	p->reply.ni_cksum = 0;
-	//p->reply.ni_qtype = 0;
 	p->reply.ni_flags = flags;
 
 	p->replydata = NULL;
