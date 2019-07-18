@@ -20,11 +20,15 @@ matrix:
     - env: CC=gcc
     - env: CC=clang
 install:
+  - set -e
   - export NINJA_LATEST="https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip"
   - wget "$NINJA_LATEST"
   - unzip -q ninja-linux.zip -d build
   - export PATH="$PWD/build:$PATH"
+  - sudo ln -s $PWD/build /root
   - pip3 install meson
 script:
+  - set -e
   - meson builddir -DBUILD_RARPD=true -DBUILD_TRACEROUTE6=true -DBUILD_HTML_MANS=true
   - ninja -C builddir
+  - sudo sh -c 'PATH="/root/build:$PATH" make install'
