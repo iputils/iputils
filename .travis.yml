@@ -29,6 +29,6 @@ install:
   - pip3 install meson
 script:
   - set -e
-  - meson builddir -DBUILD_RARPD=true -DBUILD_TRACEROUTE6=true -DBUILD_HTML_MANS=true
+  - meson builddir -DBUILD_RARPD=true -DBUILD_TFTPD=true -DBUILD_TRACEROUTE6=true -DBUILD_HTML_MANS=true
   - ninja -C builddir
   - sudo sh -c 'PATH="/root/build:$PATH" make install'
