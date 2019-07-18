@@ -1,0 +1,10 @@
+service tftp
+{
+	socket_type	= dgram
+	protocol	= udp
+	wait		= yes
+	user		= nobody
+	server		= @sbindir@/tftpd
+	server_args	= @tftpdatadir@/tftpboot
+	disable		= yes
+}

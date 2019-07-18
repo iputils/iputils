@@ -2,6 +2,7 @@ project('iputils', 'c',
 	default_options : [
 		'c_std=c99',
 		'warning_level=3',
+		'localstatedir=var',
 	],
 	meson_version : '>=0.39',
 	version : 's20190709') # keep in sync with: git describe | awk -F- '{print $1}'
