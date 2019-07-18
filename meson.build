@@ -326,9 +326,7 @@ if build_arping == true
 endif
 
 if build_tftpd == true
-	executable('tftpd', ['tftpd.c', 'tftpsubs.c', git_version_h],
-		link_with : [libcommon],
-		install: true)
+	subdir ('tftpd')
 endif
 
 if build_rarpd == true
