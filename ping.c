@@ -299,7 +299,7 @@ main(int argc, char **argv)
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
-			if (hints.ai_family != AF_UNSPEC)
+			if (hints.ai_family == AF_INET6)
 				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET;
 			break;
@@ -326,7 +326,7 @@ main(int argc, char **argv)
 			break;
 		/* IPv6 specific options */
 		case '6':
-			if (hints.ai_family != AF_UNSPEC)
+			if (hints.ai_family == AF_INET)
 				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET6;
 			break;
