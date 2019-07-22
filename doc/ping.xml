@@ -643,7 +643,8 @@ xml:id="man.ping">
           <option>-v</option>
         </term>
         <listitem>
-          <para>Verbose output.</para>
+          <para>Verbose output. Do not suppress DUP replies when pinging
+          multicast address.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

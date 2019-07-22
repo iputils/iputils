@@ -312,7 +312,7 @@ extern void common_options(int ch);
 extern int gather_statistics(uint8_t *ptr, int icmplen,
 			     int cc, uint16_t seq, int hops,
 			     int csfailed, struct timeval *tv, char *from,
-			     void (*pr_reply)(uint8_t *ptr, int cc));
+			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast);
 extern void print_timestamp(void);
 void fill(char *patp, unsigned char *packet, unsigned packet_size);
 

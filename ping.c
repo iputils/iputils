@@ -85,6 +85,7 @@ static int optlen = 0;
 static int settos = 0;			/* Set TOS, Precedence or other QOS options */
 
 static int broadcast_pings = 0;
+static int multicast;
 
 static void pr_options(unsigned char *cp, int hlen);
 static void pr_iph(struct iphdr *ip);
@@ -708,6 +709,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	}
 
 	if (broadcast_pings || IN_MULTICAST(ntohl(whereto.sin_addr.s_addr))) {
+		multicast = 1;
 		if (uid) {
 			if (interval < 1000)
 				error(2, 0, _("broadcast ping with too short interval: %d"), interval);
@@ -1061,7 +1063,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 		if (gather_statistics((uint8_t *)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
 				      reply_ttl, 0, tv, pr_addr(from, sizeof *from),
-				      pr_echo_reply)) {
+				      pr_echo_reply, multicast)) {
 			fflush(stdout);
 			return 0;
 		}

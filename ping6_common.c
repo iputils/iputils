@@ -78,6 +78,7 @@ uint32_t tclass;
 
 static struct sockaddr_in6 whereto;
 static struct sockaddr_in6 firsthop;
+static int multicast;
 
 static unsigned char cmsgbuf[4096];
 static size_t cmsglen = 0;
@@ -697,7 +698,8 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		ipi->ipi6_ifindex = if_name2index(device);
 	}
 
-	if ((whereto.sin6_addr.s6_addr16[0] & htons(0xff00)) == htons(0xff00)) {
+	if (IN6_IS_ADDR_MULTICAST(&whereto.sin6_addr)) {
+		multicast = 1;
 		if (uid) {
 			if (interval < 1000)
 				error(2, 0, _("multicast ping with too short interval: %d"), interval);
@@ -1209,7 +1211,8 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 		if (gather_statistics((uint8_t *)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(from, sizeof *from),
-				      pr_echo_reply)) {
+				      pr_echo_reply,
+				      multicast)) {
 			fflush(stdout);
 			return 0;
 		}
@@ -1221,7 +1224,8 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 		if (gather_statistics((uint8_t *)icmph, sizeof(*icmph), cc,
 				      seq,
 				      hops, 0, tv, pr_addr(from, sizeof *from),
-				      pr_niquery_reply))
+				      pr_niquery_reply,
+				      multicast))
 			return 0;
 	} else {
 		int nexthdr;

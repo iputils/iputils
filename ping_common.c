@@ -781,7 +781,7 @@ void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int pac
 int gather_statistics(uint8_t *icmph, int icmplen,
 		      int cc, uint16_t seq, int hops,
 		      int csfailed, struct timeval *tv, char *from,
-		      void (*pr_reply)(uint8_t *icmph, int cc))
+		      void (*pr_reply)(uint8_t *icmph, int cc), int multicast)
 {
 	int dupflag = 0;
 	long triptime = 0;
@@ -874,7 +874,7 @@ restamp:
 				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
 				       triptime % 1000);
 		}
-		if (dupflag)
+		if (dupflag && (!multicast || options & F_VERBOSE))
 			printf(_(" (DUP!)"));
 		if (csfailed)
 			printf(_(" (BAD CHECKSUM!)"));
