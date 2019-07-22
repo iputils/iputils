@@ -83,8 +83,6 @@ static int multicast;
 static unsigned char cmsgbuf[4096];
 static size_t cmsglen = 0;
 
-static int pr_icmph(uint8_t type, uint8_t code, uint32_t info);
-
 struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
 extern char *device;
 
@@ -848,6 +846,80 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	main_loop(&ping6_func_set, sock, packet, packlen);
 }
 
+int print_icmp(uint8_t type, uint8_t code, uint32_t info)
+{
+	switch (type) {
+	case ICMP6_DST_UNREACH:
+		printf(_("Destination unreachable: "));
+		switch (code) {
+		case ICMP6_DST_UNREACH_NOROUTE:
+			printf(_("No route"));
+			break;
+		case ICMP6_DST_UNREACH_ADMIN:
+			printf(_("Administratively prohibited"));
+			break;
+		case ICMP6_DST_UNREACH_BEYONDSCOPE:
+			printf(_("Beyond scope of source address"));
+			break;
+		case ICMP6_DST_UNREACH_ADDR:
+			printf(_("Address unreachable"));
+			break;
+		case ICMP6_DST_UNREACH_NOPORT:
+			printf(_("Port unreachable"));
+			break;
+		default:
+			printf(_("Unknown code %d"), code);
+			break;
+		}
+		break;
+	case ICMP6_PACKET_TOO_BIG:
+		printf(_("Packet too big: mtu=%u"), info);
+		if (code)
+			printf(_(", code=%d"), code);
+		break;
+	case ICMP6_TIME_EXCEEDED:
+		printf(_("Time exceeded: "));
+		if (code == ICMP6_TIME_EXCEED_TRANSIT)
+			printf(_("Hop limit"));
+		else if (code == ICMP6_TIME_EXCEED_REASSEMBLY)
+			printf(_("Defragmentation failure"));
+		else
+			printf(_("code %d"), code);
+		break;
+	case ICMP6_PARAM_PROB:
+		printf(_("Parameter problem: "));
+		if (code == ICMP6_PARAMPROB_HEADER)
+			printf(_("Wrong header field "));
+		else if (code == ICMP6_PARAMPROB_NEXTHEADER)
+			printf(_("Unknown header "));
+		else if (code == ICMP6_PARAMPROB_OPTION)
+			printf(_("Unknown option "));
+		else
+			printf(_("code %d "), code);
+		printf(_("at %u"), info);
+		break;
+	case ICMP6_ECHO_REQUEST:
+		printf(_("Echo request"));
+		break;
+	case ICMP6_ECHO_REPLY:
+		printf(_("Echo reply"));
+		break;
+	case MLD_LISTENER_QUERY:
+		printf(_("MLD Query"));
+		break;
+	case MLD_LISTENER_REPORT:
+		printf(_("MLD Report"));
+		break;
+	case MLD_LISTENER_REDUCTION:
+		printf(_("MLD Reduction"));
+		break;
+	default:
+		printf(_("unknown icmp type: %u"), type);
+
+	}
+	return 0;
+}
+
 int ping6_receive_error_msg(socket_st *sock)
 {
 	ssize_t res;
@@ -918,7 +990,7 @@ int ping6_receive_error_msg(socket_st *sock)
 		} else {
 			print_timestamp();
 			printf(_("From %s icmp_seq=%u "), pr_addr(sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
-			pr_icmph(e->ee_type, e->ee_code, e->ee_info);
+			print_icmp(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
 			fflush(stdout);
 		}
@@ -1264,7 +1336,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 			print_timestamp();
 			printf(_("From %s: "), pr_addr(from, sizeof *from));
 		}
-		pr_icmph(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
+		print_icmp(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
 
 	if (options & F_AUDIBLE) {
@@ -1275,81 +1347,6 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 	if (!(options & F_FLOOD)) {
 		putchar('\n');
 		fflush(stdout);
-	}
-	return 0;
-}
-
-
-int pr_icmph(uint8_t type, uint8_t code, uint32_t info)
-{
-	switch (type) {
-	case ICMP6_DST_UNREACH:
-		printf(_("Destination unreachable: "));
-		switch (code) {
-		case ICMP6_DST_UNREACH_NOROUTE:
-			printf(_("No route"));
-			break;
-		case ICMP6_DST_UNREACH_ADMIN:
-			printf(_("Administratively prohibited"));
-			break;
-		case ICMP6_DST_UNREACH_BEYONDSCOPE:
-			printf(_("Beyond scope of source address"));
-			break;
-		case ICMP6_DST_UNREACH_ADDR:
-			printf(_("Address unreachable"));
-			break;
-		case ICMP6_DST_UNREACH_NOPORT:
-			printf(_("Port unreachable"));
-			break;
-		default:
-			printf(_("Unknown code %d"), code);
-			break;
-		}
-		break;
-	case ICMP6_PACKET_TOO_BIG:
-		printf(_("Packet too big: mtu=%u"), info);
-		if (code)
-			printf(_(", code=%d"), code);
-		break;
-	case ICMP6_TIME_EXCEEDED:
-		printf(_("Time exceeded: "));
-		if (code == ICMP6_TIME_EXCEED_TRANSIT)
-			printf(_("Hop limit"));
-		else if (code == ICMP6_TIME_EXCEED_REASSEMBLY)
-			printf(_("Defragmentation failure"));
-		else
-			printf(_("code %d"), code);
-		break;
-	case ICMP6_PARAM_PROB:
-		printf(_("Parameter problem: "));
-		if (code == ICMP6_PARAMPROB_HEADER)
-			printf(_("Wrong header field "));
-		else if (code == ICMP6_PARAMPROB_NEXTHEADER)
-			printf(_("Unknown header "));
-		else if (code == ICMP6_PARAMPROB_OPTION)
-			printf(_("Unknown option "));
-		else
-			printf(_("code %d "), code);
-		printf(_("at %u"), info);
-		break;
-	case ICMP6_ECHO_REQUEST:
-		printf(_("Echo request"));
-		break;
-	case ICMP6_ECHO_REPLY:
-		printf(_("Echo reply"));
-		break;
-	case MLD_LISTENER_QUERY:
-		printf(_("MLD Query"));
-		break;
-	case MLD_LISTENER_REPORT:
-		printf(_("MLD Report"));
-		break;
-	case MLD_LISTENER_REDUCTION:
-		printf(_("MLD Reduction"));
-		break;
-	default:
-		printf(_("unknown icmp type: %u"), type);
-
 	}
 	return 0;
 }
