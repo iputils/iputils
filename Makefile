@@ -1,3 +1,5 @@
+.PHONY: all clean install dist check
+
 all:
 	ninja -C builddir
 
