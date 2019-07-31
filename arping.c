@@ -792,7 +792,11 @@ static int event_loop(struct run_state *ctl)
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
 	rc |= finish(ctl);
-	rc |= (ctl->sent != ctl->received);
+	if (ctl->dad && ctl->quit_on_reply)
+		/* Duplicate address detection mode return value */
+		rc |= !(ctl->brd_sent != ctl->received);
+	else
+		rc |= (ctl->sent != ctl->received);
 	return rc;
 }
 
