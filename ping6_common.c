@@ -837,7 +837,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		printf(_("from %s %s: "), pr_addr(&source6, sizeof source6), device ? device : "");
 		options = saved_options;
 	}
-	printf(_("%d data bytes\n"), datalen);
+	printf(_("%zu data bytes\n"), datalen);
 
 	setup(sock);
 

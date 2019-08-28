@@ -272,6 +272,7 @@ main(int argc, char **argv)
 	socket_st sock4 = { .fd = -1 };
 	socket_st sock6 = { .fd = -1 };
 	char *target;
+	char *outpack_fill = NULL;
 
 	atexit(close_stdout);
 	limit_capabilities();
@@ -430,7 +431,9 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			options |= F_PINGFILLED;
-			fill(optarg, outpack, sizeof(outpack));
+			outpack_fill = strdup(optarg);
+			if (!outpack_fill)
+				error(2, errno, _("memory allocation failed"));
 			break;
 		case 'q':
 			options |= F_QUIET;
@@ -443,7 +446,7 @@ main(int argc, char **argv)
 			options |= F_SO_DONTROUTE;
 			break;
 		case 's':
-			datalen = strtol_or_err(optarg, _("invalid argument"), 0, MAXPACKET - 8);
+			datalen = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'S':
 			sndbuf = strtol_or_err(optarg, _("invalid argument"), 1, INT_MAX);
@@ -488,6 +491,14 @@ main(int argc, char **argv)
 		error(1, EDESTADDRREQ, "usage error");
 
 	target = argv[argc - 1];
+
+	outpack = malloc(datalen + 28);
+	if (!outpack)
+		error(2, errno, _("memory allocation failed"));
+	if (outpack_fill) {
+		fill(outpack_fill, outpack, datalen);
+		free(outpack_fill);
+	}
 
 	/* Create sockets */
 	enable_capability_raw();
@@ -539,6 +550,7 @@ main(int argc, char **argv)
 	}
 
 	freeaddrinfo(result);
+	free(outpack);
 
 	return ret_val;
 }
@@ -864,10 +876,6 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			error(2, errno, _("cannot set unicast time-to-live"));
 	}
 
-	if (datalen > 0xFFFF - 8 - optlen - 20)
-		error(2, 0, _("packet size %d is too large. Maximum is %d"),
-		      datalen, 0xFFFF - 8 - 20 - optlen);
-
 	if (datalen >= (int)sizeof(struct timeval))	/* can we time transfer */
 		timing = 1;
 	packlen = datalen + MAXIPLEN + MAXICMPLEN;
@@ -877,7 +885,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	printf(_("PING %s (%s) "), hostname, inet_ntoa(whereto.sin_addr));
 	if (device || (options & F_STRICTSOURCE))
 		printf(_("from %s %s: "), inet_ntoa(source.sin_addr), device ? device : "");
-	printf(_("%d(%d) bytes of data.\n"), datalen, datalen + 8 + optlen + 20);
+	printf(_("%zu(%zu) bytes of data.\n"), datalen, datalen + 8 + optlen + 20);
 
 	setup(sock);
 

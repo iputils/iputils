@@ -45,7 +45,7 @@ int rtt;
 int rtt_addend;
 uint16_t acked;
 
-unsigned char outpack[MAXPACKET];
+unsigned char *outpack;
 struct rcvd_table rcvd_tbl;
 
 /* counters */
@@ -84,7 +84,7 @@ double tsum;			/* sum of all times, for doing average */
 double tsum2;
 int pipesize = -1;
 
-int datalen = DEFDATALEN;
+size_t datalen = DEFDATALEN;
 
 char *hostname;
 int uid;
@@ -249,7 +249,7 @@ void drop_capabilities(void)
 /* Fills all the outpack, excluding ICMP header, but _including_
  * timestamp area with supplied pattern.
  */
-void fill(char *patp, unsigned char *packet, unsigned packet_size)
+void fill(char *patp, unsigned char *packet, size_t packet_size)
 {
 	int ii, jj;
 	unsigned int pat[16];
@@ -271,8 +271,10 @@ void fill(char *patp, unsigned char *packet, unsigned packet_size)
 		    &pat[12], &pat[13], &pat[14], &pat[15]);
 
 	if (ii > 0) {
-		unsigned kk;
-		for (kk = 0; kk <= packet_size - (8 + ii); kk += ii)
+		size_t kk;
+		size_t max = packet_size < (size_t)(8 + ii) ? 0 : packet_size - (8 + ii);
+
+		for (kk = 0; kk <= max; kk += ii)
 			for (jj = 0; jj < ii; ++jj)
 				bp[jj + kk] = pat[jj];
 	}
@@ -567,7 +569,7 @@ void setup(socket_st *sock)
 		options |= F_FLOOD_POLL;
 
 	if (!(options & F_PINGFILLED)) {
-		int i;
+		size_t i;
 		unsigned char *p = outpack + 8;
 
 		/* Do not forget about case of small datalen, fill timestamp area too! */
@@ -612,7 +614,7 @@ void setup(socket_st *sock)
  */
 int contains_pattern_in_payload(uint8_t *ptr)
 {
-	int i;
+	size_t i;
 	uint8_t *cp, *dp;
  
 	/* check the data */
@@ -845,7 +847,7 @@ restamp:
 		else
 			write_stdout("\bC", 2);
 	} else {
-		int i;
+		size_t i;
 		uint8_t *cp, *dp;
 
 		print_timestamp();
@@ -857,7 +859,7 @@ restamp:
 		if (hops >= 0)
 			printf(_(" ttl=%d"), hops);
 
-		if (cc < datalen + 8) {
+		if ((size_t)cc < datalen + 8) {
 			printf(_(" (truncated)\n"));
 			return 1;
 		}
@@ -884,12 +886,12 @@ restamp:
 		dp = &outpack[8 + sizeof(struct timeval)];
 		for (i = sizeof(struct timeval); i < datalen; ++i, ++cp, ++dp) {
 			if (*cp != *dp) {
-				printf(_("\nwrong data byte #%d should be 0x%x but was 0x%x"),
+				printf(_("\nwrong data byte #%zu should be 0x%x but was 0x%x"),
 				       i, *dp, *cp);
 				cp = (unsigned char *)ptr + sizeof(struct timeval);
 				for (i = sizeof(struct timeval); i < datalen; ++i, ++cp) {
 					if ((i % 32) == sizeof(struct timeval))
-						printf("\n#%d\t", i);
+						printf("\n#%zu\t", i);
 					printf("%x ", *cp);
 				}
 				break;

@@ -139,7 +139,7 @@ static inline bitmap_t rcvd_test(uint16_t seq)
 	return A(bit) & B(bit);
 }
 
-extern int datalen;
+extern size_t datalen;
 extern char *hostname;
 extern int uid;
 extern int ident;			/* process id to identify our packets */
@@ -298,7 +298,6 @@ typedef struct ping_func_set_st {
 	void (*install_filter)(socket_st *);
 } ping_func_set_st;
 
-#define	MAXPACKET	128000		/* max packet size */
 extern ping_func_set_st ping4_func_set;
 
 extern int pinger(ping_func_set_st *fset, socket_st *sock);
@@ -314,10 +313,10 @@ extern int gather_statistics(uint8_t *ptr, int icmplen,
 			     int csfailed, struct timeval *tv, char *from,
 			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast);
 extern void print_timestamp(void);
-void fill(char *patp, unsigned char *packet, unsigned packet_size);
+void fill(char *patp, unsigned char *packet, size_t packet_size);
 
 extern int mark;
-extern unsigned char outpack[MAXPACKET];
+extern unsigned char *outpack;
 
 /* IPv6 */
 
