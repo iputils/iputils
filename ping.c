@@ -889,7 +889,9 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 	setup(sock);
 
-	main_loop(&ping4_func_set, sock, packet, packlen);
+	hold = main_loop(&ping4_func_set, sock, packet, packlen);
+	free(packet);
+	return hold;
 }
 
 static void pr_options(unsigned char *cp, int hlen)

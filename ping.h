@@ -304,8 +304,8 @@ extern int pinger(ping_func_set_st *fset, socket_st *sock);
 extern void sock_setbufs(socket_st *, int alloc);
 extern void setup(socket_st *);
 extern int contains_pattern_in_payload(uint8_t *ptr);
-extern void main_loop(ping_func_set_st *fset, socket_st*, uint8_t *buf, int buflen) __attribute__((noreturn));
-extern void finish(void) __attribute__((noreturn));
+extern int main_loop(ping_func_set_st *fset, socket_st*, uint8_t *buf, int buflen);
+extern int finish(void);
 extern void status(void);
 extern void common_options(int ch);
 extern int gather_statistics(uint8_t *ptr, int icmplen,
