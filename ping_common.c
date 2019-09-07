@@ -627,7 +627,7 @@ int contains_pattern_in_payload(uint8_t *ptr)
 	return 1;
 }
 
-int main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int packlen)
+void main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int packlen)
 {
 	char addrbuf[128];
 	char ans_data[4096];
@@ -777,7 +777,7 @@ int main_loop(ping_func_set_st *fset, socket_st *sock, uint8_t *packet, int pack
 			 * and return to pinger. */
 		}
 	}
-	return finish();
+	finish();
 }
 
 int gather_statistics(uint8_t *icmph, int icmplen,
@@ -920,7 +920,7 @@ static long llsqrt(long long a)
  * finish --
  *	Print out statistics, and give up.
  */
-int finish(void)
+void finish(void)
 {
 	struct timeval tv = cur_time;
 	char *comma = "";
@@ -984,7 +984,7 @@ int finish(void)
 		       comma, ipg / 1000, ipg % 1000, rtt / 8000, (rtt / 8) % 1000);
 	}
 	putchar('\n');
-	return (!nreceived || (deadline && nreceived < npackets));
+	exit(!nreceived || (deadline && nreceived < npackets));
 }
 
 void status(void)

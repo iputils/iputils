@@ -843,9 +843,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	drop_capabilities();
 
-	hold = main_loop(&ping6_func_set, sock, packet, packlen);
-	free(packet);
-	return hold;
+	main_loop(&ping6_func_set, sock, packet, packlen);
 }
 
 int print_icmp(uint8_t type, uint8_t code, uint32_t info)
