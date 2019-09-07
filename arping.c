@@ -765,7 +765,7 @@ static int event_loop(struct run_state *ctl)
 				}
 				total_expires += exp;
 				if ((0 < ctl->count && (uint64_t)ctl->count < total_expires) ||
-				    (ctl->quit_on_reply && ctl->timeout < total_expires)) {
+				    (ctl->quit_on_reply && ctl->timeout < (int)total_expires)) {
 					exit_loop = 1;
 					continue;
 				}
