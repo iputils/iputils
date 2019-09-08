@@ -4,7 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
+
+#if HAVE_GETRANDOM
+# include <sys/random.h>
+#endif
 
 #ifdef HAVE_ERROR_H
 # include <error.h>
@@ -78,4 +83,39 @@ long strtol_or_err(char const *const str, char const *const errmesg,
  err:
 	error(EXIT_FAILURE, errno, "%s: '%s'", errmesg, str);
 	abort();
+}
+
+static unsigned int iputil_srand_fallback(void)
+{
+	struct timespec ts;
+
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return ((getpid() << 16) ^ getuid() ^ ts.tv_sec ^ ts.tv_nsec);
+}
+
+void iputils_srand(void)
+{
+	unsigned int i;
+#if HAVE_GETRANDOM
+	ssize_t ret;
+
+	while ((ret = getrandom(&i, sizeof(i), GRND_NONBLOCK)) != sizeof(i)) {
+		switch(errno) {
+		case EINTR:
+			continue;
+		default:
+			i = iputil_srand_fallback();
+			break;
+		}
+	}
+#else
+	i = iputil_srand_fallback();
+#endif
+	srand(i);
+	/* Consume up to 31 random numbers */
+	i = rand() & 0x1F;
+	while (0 < i) {
+		rand();
+		i--;
+	}
 }

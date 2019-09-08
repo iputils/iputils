@@ -176,14 +176,7 @@ struct {
 static void niquery_init_nonce(void)
 {
 #if PING6_NONCE_MEMORY
-	struct timeval tv;
-	unsigned long seed;
-
-	seed = (unsigned long)getpid();
-	if (!gettimeofday(&tv, NULL))
-		seed ^= tv.tv_usec;
-	srand(seed);
-
+	iputils_srand();
 	ni_nonce_ptr = calloc(NI_NONCE_SIZE, MAX_DUP_CHK);
 	if (!ni_nonce_ptr)
 		error(2, errno, "calloc");

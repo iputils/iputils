@@ -419,7 +419,7 @@ next:
 
 #ifdef RDISC_SERVER
 	if (responder)
-		srandom((int)gethostid());
+		iputils_srand();
 #endif
 
 	if ((s = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0) {
@@ -503,7 +503,7 @@ void timer()
 		else
 			left_until_advertise = min_adv_int +
 				((max_adv_int - min_adv_int) *
-				 (random() % 1000)/1000);
+				 (rand() % 1000)/1000);
 	} else
 #endif
 	if (solicit && left_until_solicit <= 0) {
@@ -873,7 +873,7 @@ pr_pack(char *buf, int cc, struct sockaddr_in *from)
 			/* Restart the timer when we broadcast */
 			left_until_advertise = min_adv_int +
 				((max_adv_int - min_adv_int)
-				 * (random() % 1000)/1000);
+				 * (rand() % 1000)/1000);
 		} else {
 			sin.sin_addr.s_addr = ip->saddr;
 			if (!is_directly_connected(sin.sin_addr)) {
