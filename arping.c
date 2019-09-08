@@ -268,7 +268,7 @@ static int send_pack(struct run_state *ctl)
 	memcpy(p, &ctl->gdst, 4);
 	p += 4;
 
-	clock_gettime(CLOCK_MONOTONIC_RAW, &now);
+	clock_gettime(CLOCK_MONOTONIC, &now);
 	err = sendto(ctl->socketfd, buf, p - buf, 0, (struct sockaddr *)HE, sll_len(ah->ar_hln));
 	if (err == p - buf) {
 		ctl->last = now;
@@ -323,7 +323,7 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 	unsigned char *p = (unsigned char *)(ah + 1);
 	struct in_addr src_ip, dst_ip;
 
-	clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+	clock_gettime(CLOCK_MONOTONIC, &ts);
 
 	/* Filter out wild packets */
 	if (FROM->sll_pkttype != PACKET_HOST &&

@@ -171,7 +171,7 @@ static int recverr(struct run_state *const ctl)
 	memset(&rcvbuf, -1, sizeof(rcvbuf));
 	msg = reset;
 
-	clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+	clock_gettime(CLOCK_MONOTONIC, &ts);
 	recv_size = recvmsg(ctl->socket_fd, &msg, MSG_ERRQUEUE);
 	if (recv_size < 0) {
 		if (errno == EAGAIN)
@@ -376,7 +376,7 @@ static int probe_ttl(struct run_state *const ctl)
 			    htons(ctl->base_port + ctl->hisptr);
 			break;
 		}
-		clock_gettime(CLOCK_MONOTONIC_RAW, &hdr->ts);
+		clock_gettime(CLOCK_MONOTONIC, &hdr->ts);
 		ctl->his[ctl->hisptr].hops = ctl->ttl;
 		ctl->his[ctl->hisptr].sendtime = hdr->ts;
 		if (sendto(ctl->socket_fd, ctl->pktbuf, ctl->mtu - ctl->overhead, 0,
