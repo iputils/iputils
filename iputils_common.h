@@ -60,5 +60,7 @@ extern void close_stdout(void);
 extern long strtol_or_err(char const *const str, char const *const errmesg,
 			  const long min, const long max);
 extern void iputils_srand(void);
+extern void timespecsub(struct timespec *a, struct timespec *b,
+			struct timespec *res);
 
 #endif /* IPUTILS_COMMON_H */
