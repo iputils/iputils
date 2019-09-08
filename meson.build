@@ -22,6 +22,7 @@ conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that 
 # Check functions.
 foreach f : '''
 	__fpending
+	getrandom
 	nanosleep
 '''.split()
 	if cc.has_function(f, args : '-D_GNU_SOURCE')

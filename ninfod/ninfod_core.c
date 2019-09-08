@@ -305,21 +305,7 @@ void init_core(int forced)
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
 
 	if (!initialized || forced) {
-		struct timeval tv;
-		unsigned int seed = 0;
-		pid_t pid;
-
-		if (gettimeofday(&tv, NULL) < 0) {
-			DEBUG(LOG_WARNING, "%s(): failed to gettimeofday()\n", __func__);
-		} else {
-			seed = (tv.tv_usec & 0xffffffff);
-		}
-
-		pid = getpid();
-		seed ^= (((unsigned long)pid) & 0xffffffff);
-
-		srand(seed);
-
+		iputils_srand();
 #if ENABLE_THREADS
 		if (initialized)
 			pthread_attr_destroy(&pattr);
