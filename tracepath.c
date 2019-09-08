@@ -21,6 +21,7 @@
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/uio.h>
+#include <time.h>
 #include <unistd.h>
 
 /*
@@ -38,6 +39,18 @@
 # define getnameinfo_flags	NI_IDN
 #else
 # define getnameinfo_flags	0
+#endif
+
+#ifndef timespecsub
+#define timespecsub(tsp, usp, vsp)					\
+	do {								\
+		(vsp)->tv_sec = (tsp)->tv_sec - (usp)->tv_sec;		\
+		(vsp)->tv_nsec = (tsp)->tv_nsec - (usp)->tv_nsec;	\
+		if ((vsp)->tv_nsec < 0) {				\
+			(vsp)->tv_sec--;				\
+			(vsp)->tv_nsec += 1000000000L;			\
+		}							\
+	} while (0)
 #endif
 
 enum {
@@ -63,12 +76,12 @@ enum {
 
 struct hhistory {
 	int hops;
-	struct timeval sendtime;
+	struct timespec sendtime;
 };
 
 struct probehdr {
 	uint32_t ttl;
-	struct timeval tv;
+	struct timespec ts;
 };
 
 struct run_state {
@@ -131,8 +144,8 @@ static int recverr(struct run_state *const ctl)
 	struct cmsghdr *cmsg;
 	struct sock_extended_err *e;
 	struct sockaddr_storage addr;
-	struct timeval tv;
-	struct timeval *rettv;
+	struct timespec ts;
+	struct timespec *retts;
 	int slot = 0;
 	int rethops;
 	int sndhops;
@@ -158,7 +171,7 @@ static int recverr(struct run_state *const ctl)
 	memset(&rcvbuf, -1, sizeof(rcvbuf));
 	msg = reset;
 
-	gettimeofday(&tv, NULL);
+	clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
 	recv_size = recvmsg(ctl->socket_fd, &msg, MSG_ERRQUEUE);
 	if (recv_size < 0) {
 		if (errno == EAGAIN)
@@ -171,7 +184,7 @@ static int recverr(struct run_state *const ctl)
 	rethops = -1;
 	sndhops = -1;
 	e = NULL;
-	rettv = NULL;
+	retts = NULL;
 	broken_router = 0;
 
 	slot = -ctl->base_port;
@@ -183,18 +196,17 @@ static int recverr(struct run_state *const ctl)
 		slot += ntohs(((struct sockaddr_in *)&addr)->sin_port);
 		break;
 	}
-
 	if (slot >= 0 && slot < (HIS_ARRAY_SIZE - 1) && ctl->his[slot].hops) {
 		sndhops = ctl->his[slot].hops;
-		rettv = &ctl->his[slot].sendtime;
+		retts = &ctl->his[slot].sendtime;
 		ctl->his[slot].hops = 0;
 	}
 	if (recv_size == sizeof(rcvbuf)) {
-		if (rcvbuf.ttl == 0 || rcvbuf.tv.tv_sec == 0)
+		if (rcvbuf.ttl == 0 || rcvbuf.ts.tv_sec == 0)
 			broken_router = 1;
 		else {
 			sndhops = rcvbuf.ttl;
-			rettv = &rcvbuf.tv;
+			retts = &rcvbuf.ts;
 		}
 	}
 
@@ -277,11 +289,12 @@ static int recverr(struct run_state *const ctl)
 			print_host(ctl, hnamebuf, abuf);
 	}
 
-	if (rettv) {
-		struct timeval res;
+	if (retts) {
+		struct timespec res;
 
-		timersub(&tv, rettv, &res);
-		printf(_("%3ld.%03ldms "), res.tv_sec * 1000 + res.tv_usec / 1000, res.tv_usec % 1000);
+		timespecsub(&ts, retts, &res);
+		printf(_("%3ld.%03ldms "), res.tv_sec * 1000 + res.tv_nsec / 1000000,
+					   (res.tv_nsec % 1000000) / 1000);
 		if (broken_router)
 			printf(_("(This broken router returned corrupted payload) "));
 	}
@@ -363,9 +376,9 @@ static int probe_ttl(struct run_state *const ctl)
 			    htons(ctl->base_port + ctl->hisptr);
 			break;
 		}
-		gettimeofday(&hdr->tv, NULL);
+		clock_gettime(CLOCK_MONOTONIC_RAW, &hdr->ts);
 		ctl->his[ctl->hisptr].hops = ctl->ttl;
-		ctl->his[ctl->hisptr].sendtime = hdr->tv;
+		ctl->his[ctl->hisptr].sendtime = hdr->ts;
 		if (sendto(ctl->socket_fd, ctl->pktbuf, ctl->mtu - ctl->overhead, 0,
 			   (struct sockaddr *)&ctl->target, ctl->targetlen) > 0)
 			break;
