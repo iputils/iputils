@@ -382,26 +382,31 @@ static int ni_send_fork(struct packetcontext *p)
 
 static int ni_ratelimit(void)
 {
-	static struct timeval last;
-	struct timeval tv, sub;
+	static struct timespec last = { 0 };
+	struct timespec now, sub;
 
-	if (gettimeofday(&tv, NULL) < 0) {
-		DEBUG(LOG_WARNING, "%s(): gettimeofday(): %s\n",
+	if (clock_gettime(CLOCK_MONOTONIC, &now) < 0) {
+		DEBUG(LOG_WARNING, "%s(): clock_gettime(): %s\n",
 		      __func__, strerror(errno));
 		return -1;
 	}
 
-	if (!timerisset(&last)) {
-		last = tv;
+	if (!(last.tv_sec || last.tv_nsec)) {
+		last = now;
 		return 0;
 	}
 
-	timersub(&tv, &last, &sub);
+	sub.tv_sec = now.tv_sec - last.tv_sec;
+	sub.tv_nsec = now.tv_nsec - last.tv_nsec;
+	if (sub.tv_nsec < 0) {
+		sub.tv_sec--;
+		sub.tv_nsec += 1000000000L;
+	}
 
 	if (sub.tv_sec < 1)
 		return 1;
 
-	last = tv;
+	last = now;
 	return 0;
 }
 
