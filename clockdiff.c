@@ -61,6 +61,7 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
+#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -116,9 +117,8 @@ struct run_state {
 };
 
 struct measure_vars {
-	fd_set ready;
-	struct timeval tv1;
-	struct timeval tout;
+	struct timespec ts1;
+	struct timespec tout;
 	int count;
 	int cc;
 	unsigned char packet[PACKET_IN];
@@ -198,20 +198,19 @@ static int measure_inner_loop(struct run_state *ctl, struct measure_vars *mv)
 	long histime1 = 0;
 	long recvtime;
 	long sendtime;
+	struct pollfd p = { .fd = ctl->sock_raw, .events = POLLIN | POLLHUP };
 
-	FD_ZERO(&mv->ready);
-	FD_SET(ctl->sock_raw, &mv->ready);
 	{
 		long tmo = ctl->rtt + ctl->rtt_sigma;
 
 		mv->tout.tv_sec = tmo / 1000;
-		mv->tout.tv_usec = (tmo - (tmo / 1000) * 1000) * 1000;
+		mv->tout.tv_nsec = (tmo - (tmo / 1000) * 1000) * 1000000;
 	}
 
-	if ((mv->count = select(FD_SETSIZE, &mv->ready, NULL, NULL, &mv->tout)) <= 0)
+	if ((mv->count = ppoll(&p, 1, &mv->tout, NULL)) <= 0)
 		return BREAK;
 
-	gettimeofday(&mv->tv1, NULL);
+	clock_gettime(CLOCK_REALTIME, &mv->ts1);
 	mv->cc = recvfrom(ctl->sock_raw, (char *)mv->packet, PACKET_IN, 0, NULL, &mv->length);
 
 	if (mv->cc < 0)
@@ -265,8 +264,8 @@ static int measure_inner_loop(struct run_state *ctl, struct measure_vars *mv)
 				return -1;
 			}
 		} else {
-			recvtime = (mv->tv1.tv_sec % (24 * 60 * 60)) * 1000 +
-					mv->tv1.tv_usec / 1000;
+			recvtime = (mv->ts1.tv_sec % (24 * 60 * 60)) * 1000 +
+					mv->ts1.tv_nsec / 1000000;
 			sendtime = ntohl(*(uint32_t *) (mv->icp + 1));
 		}
 		diff = recvtime - sendtime;
@@ -339,6 +338,7 @@ static int measure(struct run_state *ctl)
 	};
 	unsigned char opacket[64] = { 0 };
 	struct icmphdr *oicp = (struct icmphdr *)opacket;
+	struct pollfd p = { .fd = ctl->sock_raw, .events = POLLIN | POLLHUP };
 
 	mv.ip = (struct iphdr *)mv.packet;
 	ctl->min_rtt = 0x7fffffff;
@@ -346,10 +346,8 @@ static int measure(struct run_state *ctl)
 	ctl->measure_delta1 = HOSTDOWN;
 
 	/* empties the icmp input queue */
-	FD_ZERO(&mv.ready);
  empty:
-	FD_SET(ctl->sock_raw, &mv.ready);
-	if (select(FD_SETSIZE, &mv.ready, NULL, NULL, &mv.tout)) {
+	if (ppoll(&p, 1, &mv.tout, NULL)) {
 		mv.length = sizeof(struct sockaddr_in);
 		mv.cc = recvfrom(ctl->sock_raw, (char *)mv.packet, PACKET_IN, 0,
 			      NULL, &mv.length);
@@ -377,7 +375,6 @@ static int measure(struct run_state *ctl)
 	((uint32_t *) (oicp + 1))[0] = 0;
 	((uint32_t *) (oicp + 1))[1] = 0;
 	((uint32_t *) (oicp + 1))[2] = 0;
-	FD_ZERO(&mv.ready);
 
 	ctl->acked = ctl->seqno = ctl->seqno0 = 0;
 
@@ -396,9 +393,9 @@ static int measure(struct run_state *ctl)
 		oicp->un.echo.sequence = ++ctl->seqno;
 		oicp->checksum = 0;
 
-		gettimeofday(&mv.tv1, NULL);
+		clock_gettime(CLOCK_REALTIME, &mv.ts1);
 		*(uint32_t *) (oicp + 1) =
-		    htonl((mv.tv1.tv_sec % (24 * 60 * 60)) * 1000 + mv.tv1.tv_usec / 1000);
+		    htonl((mv.ts1.tv_sec % (24 * 60 * 60)) * 1000 + mv.ts1.tv_nsec / 1000000);
 		oicp->checksum = in_cksum((unsigned short *)oicp, sizeof(*oicp) + 12);
 
 		mv.count = sendto(ctl->sock_raw, (char *)opacket, sizeof(*oicp) + 12, 0,
