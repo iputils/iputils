@@ -57,6 +57,9 @@
 #include <ifaddrs.h>
 #include <math.h>
 
+/* FIXME: global_rts will be removed in future */
+struct ping_rts *global_rts;
+
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
 struct icmp_filter {
@@ -76,22 +79,8 @@ ping_func_set_st ping4_func_set = {
 #define	NROUTES		9		/* number of record route slots */
 #define TOS_MAX		255		/* 8-bit TOS field */
 
-static int ts_type;
-static int nroute = 0;
-static uint32_t route[10];
-
-static struct sockaddr_in whereto;	/* who to ping */
-static int optlen = 0;
-static int settos = 0;			/* Set TOS, Precedence or other QOS options */
-
-static int broadcast_pings = 0;
-static int multicast;
-
-static struct sockaddr_in source = { .sin_family = AF_INET };
-char *device;
-int pmtudisc = -1;
-
-static void create_socket(socket_st *sock, int family, int socktype, int protocol, int requisite)
+static void create_socket(struct ping_rts *rts, socket_st *sock, int family,
+			  int socktype, int protocol, int requisite)
 {
 	int do_fallback = 0;
 
@@ -161,7 +150,7 @@ static void create_socket(socket_st *sock, int family, int socktype, int protoco
 		 * verbose mode. Report other errors always.
 		 */
 		if ((errno == EAFNOSUPPORT && socktype == AF_INET6) ||
-		    options & F_VERBOSE || requisite)
+		    rts->opt_verbose || requisite)
 			error(0, errno, "socket");
 		if (requisite)
 			exit(2);
@@ -273,9 +262,30 @@ main(int argc, char **argv)
 	socket_st sock6 = { .fd = -1 };
 	char *target;
 	char *outpack_fill = NULL;
+	struct ping_rts rts = {
+		.interval = 1000,
+		.preload = 1,
+		.lingertime = MAXWAIT * 1000,
+		.confirm_flag = MSG_CONFIRM,
+		.tmin = LONG_MAX,
+		.pipesize = -1,
+		.datalen = DEFDATALEN,
+		.screen_width = INT_MAX,
+#ifdef HAVE_LIBCAP
+		.cap_raw = CAP_NET_RAW,
+		.cap_admin = CAP_NET_ADMIN,
+#endif
+		.pmtudisc = -1,
+		.source.sin_family = AF_INET,
+		.ni_query = -1,
+		.ni_subject_type = -1,
+		0
+	};
+	/* FIXME: global_rts will be removed in future */
+	global_rts = &rts;
 
 	atexit(close_stdout);
-	limit_capabilities();
+	limit_capabilities(&rts);
 
 #if defined(USE_IDN) || defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
@@ -305,23 +315,23 @@ main(int argc, char **argv)
 			hints.ai_family = AF_INET;
 			break;
 		case 'b':
-			broadcast_pings = 1;
+			rts.broadcast_pings = 1;
 			break;
 		case 'R':
-			if (options & F_TIMESTAMP)
+			if (rts.opt_timestamp)
 				error(2, 0, _("only one of -T or -R may be used"));
-			options |= F_RROUTE;
+			rts.opt_rroute = 1;
 			break;
 		case 'T':
-			if (options & F_RROUTE)
+			if (rts.opt_rroute)
 				error(2, 0, _("only one of -T or -R may be used"));
-			options |= F_TIMESTAMP;
+			rts.opt_timestamp = 1;
 			if (strcmp(optarg, "tsonly") == 0)
-				ts_type = IPOPT_TS_TSONLY;
+				rts.ts_type = IPOPT_TS_TSONLY;
 			else if (strcmp(optarg, "tsandaddr") == 0)
-				ts_type = IPOPT_TS_TSANDADDR;
+				rts.ts_type = IPOPT_TS_TSANDADDR;
 			else if (strcmp(optarg, "tsprespec") == 0)
-				ts_type = IPOPT_TS_PRESPEC;
+				rts.ts_type = IPOPT_TS_PRESPEC;
 			else
 				error(2, 0, _("invalid timestamp type: %s"), optarg);
 			break;
@@ -332,32 +342,32 @@ main(int argc, char **argv)
 			hints.ai_family = AF_INET6;
 			break;
 		case 'F':
-			flowlabel = parseflow(optarg);
-			options |= F_FLOWINFO;
+			rts.flowlabel = parseflow(optarg);
+			rts.opt_flowinfo = 1;
 			break;
 		case 'N':
-			if (niquery_option_handler(optarg) < 0)
+			if (niquery_option_handler(&rts, optarg) < 0)
 				usage();
 			hints.ai_socktype = SOCK_RAW;
 			break;
 		/* Common options */
 		case 'a':
-			options |= F_AUDIBLE;
+			rts.opt_audible = 1;
 			break;
 		case 'A':
-			options |= F_ADAPTIVE;
+			rts.opt_adaptive = 1;
 			break;
 		case 'B':
-			options |= F_STRICTSOURCE;
+			rts.opt_sourceroute = 1;
 			break;
 		case 'c':
-			npackets = strtol_or_err(optarg, _("invalid argument"), 1, LONG_MAX);
+			rts.npackets = strtol_or_err(optarg, _("invalid argument"), 1, LONG_MAX);
 			break;
 		case 'd':
-			options |= F_SO_DEBUG;
+			rts.opt_so_debug = 1;
 			break;
 		case 'D':
-			options |= F_PTIMEOFDAY;
+			rts.opt_ptimeofday = 1;
 			break;
 		case 'i':
 		{
@@ -366,8 +376,8 @@ main(int argc, char **argv)
 			optval = ping_strtod(optarg, _("bad timing interval"));
 			if (isgreater(optval, (double)(INT_MAX / 1000)))
 				error(2, 0, _("bad timing interval: %s"), optarg);
-			interval = (int)(optval * 1000);
-			options |= F_INTERVAL;
+			rts.interval = (int)(optval * 1000);
+			rts.opt_interval = 1;
 		}
 			break;
 		case 'I':
@@ -381,91 +391,92 @@ main(int argc, char **argv)
 				p = strchr(addr, SCOPE_DELIMITER);
 				if (p) {
 					*p = '\0';
-					device = optarg + (p - addr) + 1;
+					rts.device = optarg + (p - addr) + 1;
 				}
 
-				if (inet_pton(AF_INET6, addr, (char *)&source6.sin6_addr) <= 0)
+				if (inet_pton(AF_INET6, addr, (char *)&rts.source6.sin6_addr) <= 0)
 					error(2, 0, _("invalid source address: %s"), optarg);
 
-				options |= F_STRICTSOURCE;
+				rts.opt_strictsource = 1;
 
 				free(addr);
-			} else if (inet_pton(AF_INET, optarg, &source.sin_addr) > 0) {
-				options |= F_STRICTSOURCE;
+			} else if (inet_pton(AF_INET, optarg, &rts.source.sin_addr) > 0) {
+				rts.opt_strictsource = 1;
 			} else {
-				device = optarg;
+				rts.device = optarg;
 			}
 			break;
 		case 'l':
-			preload = strtol_or_err(optarg, _("invalid argument"), 1, MAX_DUP_CHK);
-			if (uid && preload > 3)
-				error(2, 0, _("cannot set preload to value greater than 3: %d"), preload);
+			rts.preload = strtol_or_err(optarg, _("invalid argument"), 1, MAX_DUP_CHK);
+			if (rts.uid && rts.preload > 3)
+				error(2, 0, _("cannot set preload to value greater than 3: %d"), rts.preload);
 			break;
 		case 'L':
-			options |= F_NOLOOP;
+			rts.opt_noloop = 1;
 			break;
 		case 'm':
-			mark = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
-			options |= F_MARK;
+			rts.mark = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
+			rts.opt_mark = 1;
 			break;
 		case 'M':
 			if (strcmp(optarg, "do") == 0)
-				pmtudisc = IP_PMTUDISC_DO;
+				rts.pmtudisc = IP_PMTUDISC_DO;
 			else if (strcmp(optarg, "dont") == 0)
-				pmtudisc = IP_PMTUDISC_DONT;
+				rts.pmtudisc = IP_PMTUDISC_DONT;
 			else if (strcmp(optarg, "want") == 0)
-				pmtudisc = IP_PMTUDISC_WANT;
+				rts.pmtudisc = IP_PMTUDISC_WANT;
 			else
 				error(2, 0, _("invalid -M argument: %s"), optarg);
 			break;
 		case 'n':
-			options |= F_NUMERIC;
+			rts.opt_numeric = 1;
 			break;
 		case 'O':
-			options |= F_OUTSTANDING;
+			rts.opt_outstanding = 1;
 			break;
 		case 'f':
+			rts.opt_flood = 1;
 			/* avoid `getaddrinfo()` during flood */
-			options |= F_FLOOD | F_NUMERIC;
+			rts.opt_numeric = 1;
 			setbuf(stdout, (char *)NULL);
 			break;
 		case 'p':
-			options |= F_PINGFILLED;
+			rts.opt_pingfilled = 1;
 			outpack_fill = strdup(optarg);
 			if (!outpack_fill)
 				error(2, errno, _("memory allocation failed"));
 			break;
 		case 'q':
-			options |= F_QUIET;
+			rts.opt_quiet = 1;
 			break;
 		case 'Q':
-			settos = parsetos(optarg); /* IPv4 */
-			tclass = settos; /* IPv6 */
+			rts.settos = parsetos(optarg); /* IPv4 */
+			rts.tclass = rts.settos; /* IPv6 */
 			break;
 		case 'r':
-			options |= F_SO_DONTROUTE;
+			rts.opt_so_dontroute = 1;
 			break;
 		case 's':
-			datalen = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
+			rts.datalen = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'S':
-			sndbuf = strtol_or_err(optarg, _("invalid argument"), 1, INT_MAX);
+			rts.sndbuf = strtol_or_err(optarg, _("invalid argument"), 1, INT_MAX);
 			break;
 		case 't':
-			ttl = strtol_or_err(optarg, _("invalid argument"), 0, 255);
-			options |= F_TTL;
+			rts.ttl = strtol_or_err(optarg, _("invalid argument"), 0, 255);
+			rts.opt_ttl = 1;
 			break;
 		case 'U':
-			options |= F_LATENCY;
+			rts.opt_latency = 1;
 			break;
 		case 'v':
-			options |= F_VERBOSE;
+			rts.opt_verbose = 1;
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("ping"));
 			exit(0);
 		case 'w':
-			deadline = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
+			rts.deadline = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'W':
 		{
@@ -475,7 +486,7 @@ main(int argc, char **argv)
 			if (isless(optval, 0.001) || isgreater(optval, (double)(INT_MAX / 1000)))
 				error(2, 0, _("bad linger time: %s"), optarg);
 			/* lingertime will be converted to usec later */
-			lingertime = (int)(optval * 1000);
+			rts.lingertime = (int)(optval * 1000);
 		}
 			break;
 		default:
@@ -492,26 +503,26 @@ main(int argc, char **argv)
 
 	target = argv[argc - 1];
 
-	outpack = malloc(datalen + 28);
-	if (!outpack)
+	rts.outpack = malloc(rts.datalen + 28);
+	if (!rts.outpack)
 		error(2, errno, _("memory allocation failed"));
 	if (outpack_fill) {
-		fill(outpack_fill, outpack, datalen);
+		fill(&rts, outpack_fill, rts.outpack, rts.datalen);
 		free(outpack_fill);
 	}
 
 	/* Create sockets */
 	enable_capability_raw();
 	if (hints.ai_family != AF_INET6)
-		create_socket(&sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP,
+		create_socket(&rts, &sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP,
 			      hints.ai_family == AF_INET);
 	if (hints.ai_family != AF_INET) {
-		create_socket(&sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6, sock4.fd == -1);
+		create_socket(&rts, &sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6, sock4.fd == -1);
 		/* This may not be needed if both protocol versions always had the same value, but
 		 * since I don't know that, it's better to be safe than sorry. */
-		pmtudisc = pmtudisc == IP_PMTUDISC_DO   ? IPV6_PMTUDISC_DO :
-			   pmtudisc == IP_PMTUDISC_DONT ? IPV6_PMTUDISC_DONT :
-			   pmtudisc == IP_PMTUDISC_WANT ? IPV6_PMTUDISC_WANT : pmtudisc;
+		rts.pmtudisc = rts.pmtudisc == IP_PMTUDISC_DO	? IPV6_PMTUDISC_DO   :
+			       rts.pmtudisc == IP_PMTUDISC_DONT ? IPV6_PMTUDISC_DONT :
+			       rts.pmtudisc == IP_PMTUDISC_WANT ? IPV6_PMTUDISC_WANT : rts.pmtudisc;
 	}
 	disable_capability_raw();
 
@@ -524,10 +535,10 @@ main(int argc, char **argv)
 	}
 
 	/* Set socket options */
-	if (settos)
-		set_socket_option(&sock4, IPPROTO_IP, IP_TOS, &settos, sizeof settos);
-	if (tclass)
-		set_socket_option(&sock6, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass);
+	if (rts.settos)
+		set_socket_option(&sock4, IPPROTO_IP, IP_TOS, &rts.settos, sizeof rts.settos);
+	if (rts.tclass)
+		set_socket_option(&sock6, IPPROTO_IPV6, IPV6_TCLASS, &rts.tclass, sizeof rts.tclass);
 
 	ret_val = getaddrinfo(target, NULL, &hints, &result);
 	if (ret_val)
@@ -536,10 +547,10 @@ main(int argc, char **argv)
 	for (ai = result; ai; ai = ai->ai_next) {
 		switch (ai->ai_family) {
 		case AF_INET:
-			ret_val = ping4_run(argc, argv, ai, &sock4);
+			ret_val = ping4_run(&rts, argc, argv, ai, &sock4);
 			break;
 		case AF_INET6:
-			ret_val = ping6_run(argc, argv, ai, &sock6);
+			ret_val = ping6_run(&rts, argc, argv, ai, &sock6);
 			break;
 		default:
 			error(2, 0, _("unknown protocol family: %d"), ai->ai_family);
@@ -550,12 +561,13 @@ main(int argc, char **argv)
 	}
 
 	freeaddrinfo(result);
-	free(outpack);
+	free(rts.outpack);
 
 	return ret_val;
 }
 
-int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
+int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
+	      socket_st *sock)
 {
 	static const struct addrinfo hints = {
 		.ai_family = AF_INET,
@@ -570,28 +582,28 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	uint32_t *tmp_rspace;
 
 	if (argc > 1) {
-		if (options & F_RROUTE)
+		if (rts->opt_rroute)
 			usage();
-		else if (options & F_TIMESTAMP) {
-			if (ts_type != IPOPT_TS_PRESPEC)
+		else if (rts->opt_timestamp) {
+			if (rts->ts_type != IPOPT_TS_PRESPEC)
 				usage();
 			if (argc > 5)
 				usage();
 		} else {
 			if (argc > 10)
 				usage();
-			options |= F_SOURCEROUTE;
+			rts->opt_sourceroute = 1;
 		}
 	}
 	while (argc > 0) {
 		target = *argv;
 
-		memset((char *)&whereto, 0, sizeof(whereto));
-		whereto.sin_family = AF_INET;
-		if (inet_aton(target, &whereto.sin_addr) == 1) {
-			hostname = target;
+		memset((char *)&rts->whereto, 0, sizeof(rts->whereto));
+		rts->whereto.sin_family = AF_INET;
+		if (inet_aton(target, &rts->whereto.sin_addr) == 1) {
+			rts->hostname = target;
 			if (argc == 1)
-				options |= F_NUMERIC;
+				rts->opt_numeric = 1;
 		} else {
 			struct addrinfo *result = NULL;
 			struct addrinfo *tmp_ai = ai;
@@ -604,35 +616,35 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 				tmp_ai = result;
 			}
 
-			memcpy(&whereto, tmp_ai->ai_addr, sizeof whereto);
+			memcpy(&rts->whereto, tmp_ai->ai_addr, sizeof rts->whereto);
 			memset(hnamebuf, 0, sizeof hnamebuf);
 			if (tmp_ai->ai_canonname)
 				strncpy(hnamebuf, tmp_ai->ai_canonname, sizeof hnamebuf - 1);
-			hostname = hnamebuf;
+			rts->hostname = hnamebuf;
 
 			if (result)
 				freeaddrinfo(result);
 		}
 		if (argc > 1)
-			route[nroute++] = whereto.sin_addr.s_addr;
+			rts->route[rts->nroute++] = rts->whereto.sin_addr.s_addr;
 		argc--;
 		argv++;
 	}
 
-	if (source.sin_addr.s_addr == 0) {
+	if (rts->source.sin_addr.s_addr == 0) {
 		socklen_t alen;
-		struct sockaddr_in dst = whereto;
+		struct sockaddr_in dst = rts->whereto;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
 		if (probe_fd < 0)
 			error(2, errno, "socket");
-		if (device) {
+		if (rts->device) {
 			struct ifreq ifr;
 			int i;
 			int fds[2] = {probe_fd, sock->fd};
 
 			memset(&ifr, 0, sizeof(ifr));
-			strncpy(ifr.ifr_name, device, IFNAMSIZ - 1);
+			strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
 
 			for (i = 0; i < 2; i++) {
 				int fd = fds[i];
@@ -641,7 +653,7 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 
 				enable_capability_raw();
 				rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
-						device, strlen(device) + 1);
+						rts->device, strlen(rts->device) + 1);
 				errno_save = errno;
 				disable_capability_raw();
 
@@ -649,45 +661,45 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 					if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
 						struct ip_mreqn imr;
 						if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
-							error(2, 0, _("unknown iface: %s"), device);
+							error(2, 0, _("unknown iface: %s"), rts->device);
 						memset(&imr, 0, sizeof(imr));
 						imr.imr_ifindex = ifr.ifr_ifindex;
 						if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
 							       &imr, sizeof(imr)) == -1)
 							error(2, errno, "IP_MULTICAST_IF");
 					} else
-						error(2, errno_save, "SO_BINDTODEVICE %s", device);
+						error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
 				}
 			}
 		}
 
-		if (settos &&
-		    setsockopt(probe_fd, IPPROTO_IP, IP_TOS, (char *)&settos, sizeof(int)) < 0)
+		if (rts->settos &&
+		    setsockopt(probe_fd, IPPROTO_IP, IP_TOS, (char *)&rts->settos, sizeof(int)) < 0)
 			error(0, errno, _("warning: QOS sockopts"));
 
 		dst.sin_port = htons(1025);
-		if (nroute)
-			dst.sin_addr.s_addr = route[0];
+		if (rts->nroute)
+			dst.sin_addr.s_addr = rts->route[0];
 		if (connect(probe_fd, (struct sockaddr *)&dst, sizeof(dst)) == -1) {
 			if (errno == EACCES) {
-				if (broadcast_pings == 0)
+				if (rts->broadcast_pings == 0)
 					error(2, 0,
 						_("Do you want to ping broadcast? Then -b. If not, check your local firewall rules"));
 				fprintf(stderr, _("WARNING: pinging broadcast address\n"));
 				if (setsockopt(probe_fd, SOL_SOCKET, SO_BROADCAST,
-					       &broadcast_pings, sizeof(broadcast_pings)) < 0)
+					       &rts->broadcast_pings, sizeof(rts->broadcast_pings)) < 0)
 					error(2, errno, _("cannot set broadcasting"));
 				if (connect(probe_fd, (struct sockaddr *)&dst, sizeof(dst)) == -1)
 					error(2, errno, "connect");
 			} else
 				error(2, errno, "connect");
 		}
-		alen = sizeof(source);
-		if (getsockname(probe_fd, (struct sockaddr *)&source, &alen) == -1)
+		alen = sizeof(rts->source);
+		if (getsockname(probe_fd, (struct sockaddr *)&rts->source, &alen) == -1)
 			error(2, errno, "getsockname");
-		source.sin_port = 0;
+		rts->source.sin_port = 0;
 
-		if (device) {
+		if (rts->device) {
 			struct ifaddrs *ifa0, *ifa;
 			int ret;
 
@@ -698,35 +710,35 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 				if (!ifa->ifa_name || !ifa->ifa_addr ||
 				    ifa->ifa_addr->sa_family != AF_INET)
 					continue;
-				if (!strcmp(ifa->ifa_name, device) &&
+				if (!strcmp(ifa->ifa_name, rts->device) &&
 				    !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
-					    &source.sin_addr, sizeof(source.sin_addr)))
+					    &rts->source.sin_addr, sizeof(rts->source.sin_addr)))
 					break;
 			}
 			if (ifa && !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
-			    &dst.sin_addr, sizeof(source.sin_addr))) {
+			    &dst.sin_addr, sizeof(rts->source.sin_addr))) {
 				enable_capability_raw();
 				setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, "", 0);
 				disable_capability_raw();
 			}
 			freeifaddrs(ifa0);
 			if (!ifa)
-				error(0, 0, _("Warning: source address might be selected on device other than: %s"), device);
+				error(0, 0, _("Warning: source address might be selected on device other than: %s"), rts->device);
 		}
 		close(probe_fd);
 
-	} else if (device) {
-		struct sockaddr_in dst = whereto;
+	} else if (rts->device) {
+		struct sockaddr_in dst = rts->whereto;
 		struct ifreq ifr;
 		int fd = sock->fd;
 		int rc;
 		int errno_save;
 
 		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, device, IFNAMSIZ - 1);
+		strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
 
 		enable_capability_raw();
-		rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device) + 1);
+		rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, rts->device, strlen(rts->device) + 1);
 		errno_save = errno;
 		disable_capability_raw();
 
@@ -735,48 +747,48 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 				struct ip_mreqn imr;
 
 				if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
-					error(2, 0, "%s: %s", _("unknown interface"), device);
+					error(2, 0, "%s: %s", _("unknown interface"), rts->device);
 				memset(&imr, 0, sizeof(imr));
 				imr.imr_ifindex = ifr.ifr_ifindex;
 				if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
 					       &imr, sizeof(imr)) == -1)
 					error(2, errno, "IP_MULTICAST_IF");
 			} else
-				error(2, errno_save, "SO_BINDTODEVICE %s", device);
+				error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
 		}
 	}
 
-	if (whereto.sin_addr.s_addr == 0)
-		whereto.sin_addr.s_addr = source.sin_addr.s_addr;
+	if (rts->whereto.sin_addr.s_addr == 0)
+		rts->whereto.sin_addr.s_addr = rts->source.sin_addr.s_addr;
 
-	if (device) {
+	if (rts->device) {
 		struct ifreq ifr;
 
 		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, device, IFNAMSIZ - 1);
+		strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
 		if (ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0)
-			error(2, 0, _("unknown iface: %s"), device);
+			error(2, 0, _("unknown iface: %s"), rts->device);
 	}
 
-	if (broadcast_pings || IN_MULTICAST(ntohl(whereto.sin_addr.s_addr))) {
-		multicast = 1;
-		if (uid) {
-			if (interval < 1000)
-				error(2, 0, _("broadcast ping with too short interval: %d"), interval);
-			if (pmtudisc >= 0 && pmtudisc != IP_PMTUDISC_DO)
+	if (rts->broadcast_pings || IN_MULTICAST(ntohl(rts->whereto.sin_addr.s_addr))) {
+		rts->multicast = 1;
+		if (rts->uid) {
+			if (rts->interval < 1000)
+				error(2, 0, _("broadcast ping with too short interval: %d"), rts->interval);
+			if (rts->pmtudisc >= 0 && rts->pmtudisc != IP_PMTUDISC_DO)
 				error(2, 0, _("broadcast ping does not fragment"));
 		}
-		if (pmtudisc < 0)
-			pmtudisc = IP_PMTUDISC_DO;
+		if (rts->pmtudisc < 0)
+			rts->pmtudisc = IP_PMTUDISC_DO;
 	}
 
-	if (pmtudisc >= 0) {
-		if (setsockopt(sock->fd, SOL_IP, IP_MTU_DISCOVER, &pmtudisc, sizeof pmtudisc) == -1)
+	if (rts->pmtudisc >= 0) {
+		if (setsockopt(sock->fd, SOL_IP, IP_MTU_DISCOVER, &rts->pmtudisc, sizeof rts->pmtudisc) == -1)
 			error(2, errno, "IP_MTU_DISCOVER");
 	}
 
-	if ((options & F_STRICTSOURCE) &&
-	    bind(sock->fd, (struct sockaddr *)&source, sizeof source) == -1)
+	if (rts->opt_strictsource &&
+	    bind(sock->fd, (struct sockaddr *)&rts->source, sizeof rts->source) == -1)
 		error(2, errno, "bind");
 
 	if (sock->socktype == SOCK_RAW) {
@@ -803,28 +815,28 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 	}
 
 	/* record route option */
-	if (options & F_RROUTE) {
+	if (rts->opt_rroute) {
 		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_NOP;
 		rspace[1 + IPOPT_OPTVAL] = IPOPT_RR;
 		rspace[1 + IPOPT_OLEN] = sizeof(rspace) - 1;
 		rspace[1 + IPOPT_OFFSET] = IPOPT_MINOFF;
-		optlen = 40;
+		rts->optlen = 40;
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, sizeof rspace) < 0)
 			error(2, errno, "record route");
 	}
-	if (options & F_TIMESTAMP) {
+	if (rts->opt_timestamp) {
 		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_TIMESTAMP;
-		rspace[1] = (ts_type == IPOPT_TS_TSONLY ? 40 : 36);
+		rspace[1] = (rts->ts_type == IPOPT_TS_TSONLY ? 40 : 36);
 		rspace[2] = 5;
-		rspace[3] = ts_type;
-		if (ts_type == IPOPT_TS_PRESPEC) {
+		rspace[3] = rts->ts_type;
+		if (rts->ts_type == IPOPT_TS_PRESPEC) {
 			int i;
-			rspace[1] = 4 + nroute * 8;
-			for (i = 0; i < nroute; i++) {
+			rspace[1] = 4 + rts->nroute * 8;
+			for (i = 0; i < rts->nroute; i++) {
 				tmp_rspace = (uint32_t *)&rspace[4 + i * 8];
-				*tmp_rspace = route[i];
+				*tmp_rspace = rts->route[i];
 			}
 		}
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0) {
@@ -832,69 +844,69 @@ int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock)
 			if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0)
 				error(2, errno, "ts option");
 		}
-		optlen = 40;
+		rts->optlen = 40;
 	}
-	if (options & F_SOURCEROUTE) {
+	if (rts->opt_sourceroute) {
 		int i;
 		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_NOOP;
-		rspace[1 + IPOPT_OPTVAL] = (options & F_SO_DONTROUTE) ? IPOPT_SSRR : IPOPT_LSRR;
-		rspace[1 + IPOPT_OLEN] = 3 + nroute * 4;
+		rspace[1 + IPOPT_OPTVAL] = rts->opt_so_dontroute ? IPOPT_SSRR : IPOPT_LSRR;
+		rspace[1 + IPOPT_OLEN] = 3 + rts->nroute * 4;
 		rspace[1 + IPOPT_OFFSET] = IPOPT_MINOFF;
-		for (i = 0; i < nroute; i++) {
+		for (i = 0; i < rts->nroute; i++) {
 			tmp_rspace = (uint32_t *)&rspace[4 + i * 4];
-			*tmp_rspace = route[i];
+			*tmp_rspace = rts->route[i];
 		}
 
-		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + nroute * 4) < 0)
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + rts->nroute * 4) < 0)
 			error(2, errno, "record route");
-		optlen = 40;
+		rts->optlen = 40;
 	}
 
 	/* Estimate memory eaten by single packet. It is rough estimate.
 	 * Actually, for small datalen's it depends on kernel side a lot. */
-	hold = datalen + 8;
-	hold += ((hold + 511) / 512) * (optlen + 20 + 16 + 64 + 160);
-	sock_setbufs(sock, hold);
+	hold = rts->datalen + 8;
+	hold += ((hold + 511) / 512) * (rts->optlen + 20 + 16 + 64 + 160);
+	sock_setbufs(rts, sock, hold);
 
-	if (broadcast_pings) {
-		if (setsockopt(sock->fd, SOL_SOCKET, SO_BROADCAST, &broadcast_pings,
-			       sizeof broadcast_pings) < 0)
+	if (rts->broadcast_pings) {
+		if (setsockopt(sock->fd, SOL_SOCKET, SO_BROADCAST, &rts->broadcast_pings,
+			       sizeof rts->broadcast_pings) < 0)
 			error(2, errno, _("cannot set broadcasting"));
 	}
 
-	if (options & F_NOLOOP) {
+	if (rts->opt_noloop) {
 		int loop = 0;
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof loop) == -1)
 			error(2, errno, _("cannot disable multicast loopback"));
 	}
-	if (options & F_TTL) {
-		int ittl = ttl;
-		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof ttl) == -1)
+	if (rts->opt_ttl) {
+		int ittl = rts->ttl;
+		if (setsockopt(sock->fd, IPPROTO_IP, IP_MULTICAST_TTL, &rts->ttl, sizeof rts->ttl) == -1)
 			error(2, errno, _("cannot set multicast time-to-live"));
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_TTL, &ittl, sizeof ittl) == -1)
 			error(2, errno, _("cannot set unicast time-to-live"));
 	}
 
-	if (datalen >= (int)sizeof(struct timeval))	/* can we time transfer */
-		timing = 1;
-	packlen = datalen + MAXIPLEN + MAXICMPLEN;
+	if (rts->datalen >= (int)sizeof(struct timeval))	/* can we time transfer */
+		rts->timing = 1;
+	packlen = rts->datalen + MAXIPLEN + MAXICMPLEN;
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
-	printf(_("PING %s (%s) "), hostname, inet_ntoa(whereto.sin_addr));
-	if (device || (options & F_STRICTSOURCE))
-		printf(_("from %s %s: "), inet_ntoa(source.sin_addr), device ? device : "");
-	printf(_("%zu(%zu) bytes of data.\n"), datalen, datalen + 8 + optlen + 20);
+	printf(_("PING %s (%s) "), rts->hostname, inet_ntoa(rts->whereto.sin_addr));
+	if (rts->device || rts->opt_strictsource)
+		printf(_("from %s %s: "), inet_ntoa(rts->source.sin_addr), rts->device ? rts->device : "");
+	printf(_("%zu(%zu) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
 
-	setup(sock);
+	setup(rts, sock);
 
-	hold = main_loop(&ping4_func_set, sock, packet, packlen);
+	hold = main_loop(rts, &ping4_func_set, sock, packet, packlen);
 	free(packet);
 	return hold;
 }
 
-static void pr_options(unsigned char *cp, int hlen)
+static void pr_options(struct ping_rts *rts, unsigned char *cp, int hlen)
 {
 	int i, j;
 	int olen, totlen;
@@ -940,7 +952,7 @@ static void pr_options(unsigned char *cp, int hlen)
 							}
 						};
 
-						printf("\t%s", pr_addr(&sin, sizeof sin));
+						printf("\t%s", pr_addr(rts, &sin, sizeof sin));
 					}
 					j -= 4;
 					putchar('\n');
@@ -959,7 +971,7 @@ static void pr_options(unsigned char *cp, int hlen)
 				break;
 			if (i == old_rrlen
 			    && !memcmp(cp, old_rr, i)
-			    && !(options & F_FLOOD)) {
+			    && !rts->opt_flood) {
 				printf(_("\t(same route)"));
 				break;
 			}
@@ -981,7 +993,7 @@ static void pr_options(unsigned char *cp, int hlen)
 						}
 					};
 
-					printf("\t%s", pr_addr(&sin, sizeof sin));
+					printf("\t%s", pr_addr(rts, &sin, sizeof sin));
 				}
 				i -= 4;
 				putchar('\n');
@@ -1020,7 +1032,7 @@ static void pr_options(unsigned char *cp, int hlen)
 							}
 						};
 
-						printf("\t%s", pr_addr(&sin, sizeof sin));
+						printf("\t%s", pr_addr(rts, &sin, sizeof sin));
 					}
 					i -= 4;
 					if (i <= 0)
@@ -1066,7 +1078,7 @@ static void pr_options(unsigned char *cp, int hlen)
  * pr_iph --
  *	Print an IP header with options.
  */
-static void pr_iph(struct iphdr *ip)
+static void pr_iph(struct ping_rts *rts, struct iphdr *ip)
 {
 	int hlen;
 	unsigned char *cp;
@@ -1083,14 +1095,15 @@ static void pr_iph(struct iphdr *ip)
 	printf(" %s ", inet_ntoa(*(struct in_addr *)&ip->saddr));
 	printf(" %s ", inet_ntoa(*(struct in_addr *)&ip->daddr));
 	printf("\n");
-	pr_options(cp, hlen);
+	pr_options(rts, cp, hlen);
 }
 
 /*
  * pr_icmph --
  *	Print a descriptive string about an ICMP header.
  */
-static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *icp)
+static void pr_icmph(struct ping_rts *rts, uint8_t type, uint8_t code,
+		     uint32_t info, struct icmphdr *icp)
 {
 	switch (type) {
 	case ICMP_ECHOREPLY:
@@ -1151,13 +1164,13 @@ static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *
 			printf(_("Dest Unreachable, Bad Code: %d\n"), code);
 			break;
 		}
-		if (icp && (options & F_VERBOSE))
-			pr_iph((struct iphdr *)(icp + 1));
+		if (icp && rts->opt_verbose)
+			pr_iph(rts, (struct iphdr *)(icp + 1));
 		break;
 	case ICMP_SOURCE_QUENCH:
 		printf(_("Source Quench\n"));
-		if (icp && (options & F_VERBOSE))
-			pr_iph((struct iphdr *)(icp + 1));
+		if (icp && rts->opt_verbose)
+			pr_iph(rts, (struct iphdr *)(icp + 1));
 		break;
 	case ICMP_REDIRECT:
 		switch (code) {
@@ -1185,10 +1198,10 @@ static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *
 				}
 			};
 
-			printf(_("(New nexthop: %s)\n"), pr_addr(&sin, sizeof sin));
+			printf(_("(New nexthop: %s)\n"), pr_addr(rts, &sin, sizeof sin));
 		}
-		if (icp && (options & F_VERBOSE))
-			pr_iph((struct iphdr *)(icp + 1));
+		if (icp && rts->opt_verbose)
+			pr_iph(rts, (struct iphdr *)(icp + 1));
 		break;
 	case ICMP_ECHO:
 		printf(_("Echo Request\n"));
@@ -1206,14 +1219,14 @@ static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *
 			printf(_("Time exceeded, Bad Code: %d\n"), code);
 			break;
 		}
-		if (icp && (options & F_VERBOSE))
-			pr_iph((struct iphdr *)(icp + 1));
+		if (icp && rts->opt_verbose)
+			pr_iph(rts, (struct iphdr *)(icp + 1));
 		break;
 	case ICMP_PARAMETERPROB:
 		printf(_("Parameter problem: pointer = %u\n"),
 			icp ? (ntohl(icp->un.gateway) >> 24) : info);
-		if (icp && (options & F_VERBOSE))
-			pr_iph((struct iphdr *)(icp + 1));
+		if (icp && rts->opt_verbose)
+			pr_iph(rts, (struct iphdr *)(icp + 1));
 		break;
 	case ICMP_TIMESTAMP:
 		printf(_("Timestamp\n"));
@@ -1246,7 +1259,7 @@ static void pr_icmph(uint8_t type, uint8_t code, uint32_t info, struct icmphdr *
 	}
 }
 
-int ping4_receive_error_msg(socket_st *sock)
+int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 {
 	ssize_t res;
 	char cbuf[512];
@@ -1286,28 +1299,28 @@ int ping4_receive_error_msg(socket_st *sock)
 
 	if (e->ee_origin == SO_EE_ORIGIN_LOCAL) {
 		local_errors++;
-		if (options & F_QUIET)
+		if (rts->opt_quiet)
 			goto out;
-		if (options & F_FLOOD)
+		if (rts->opt_flood)
 			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
 			error(0, 0, _("local error: %s"), strerror(e->ee_errno));
 		else
 			error(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
-		nerrors++;
+		rts->nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
 		struct sockaddr_in *sin = (struct sockaddr_in *)(e + 1);
 
 		if (res < (ssize_t) sizeof(icmph) ||
-		    target.sin_addr.s_addr != whereto.sin_addr.s_addr ||
+		    target.sin_addr.s_addr != rts->whereto.sin_addr.s_addr ||
 		    icmph.type != ICMP_ECHO ||
-		    !is_ours(sock, icmph.un.echo.id)) {
+		    !is_ours(rts, sock, icmph.un.echo.id)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
 		}
 
-		acknowledge(ntohs(icmph.un.echo.sequence));
+		acknowledge(rts, ntohs(icmph.un.echo.sequence));
 
 		if (sock->socktype == SOCK_RAW) {
 			struct icmp_filter filt;
@@ -1320,15 +1333,15 @@ int ping4_receive_error_msg(socket_st *sock)
 				error(2, errno, "setsockopt(ICMP_FILTER)");
 		}
 		net_errors++;
-		nerrors++;
-		if (options & F_QUIET)
+		rts->nerrors++;
+		if (rts->opt_quiet)
 			goto out;
-		if (options & F_FLOOD) {
+		if (rts->opt_flood) {
 			write_stdout("\bE", 2);
 		} else {
-			print_timestamp();
-			printf(_("From %s icmp_seq=%u "), pr_addr(sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
-			pr_icmph(e->ee_type, e->ee_code, e->ee_info, NULL);
+			print_timestamp(rts);
+			printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
+			pr_icmph(rts, e->ee_type, e->ee_code, e->ee_info, NULL);
 			fflush(stdout);
 		}
 	}
@@ -1386,7 +1399,8 @@ in_cksum(const unsigned short *addr, int len, unsigned short csum)
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int ping4_send_probe(socket_st *sock, void *packet, unsigned packet_size __attribute__((__unused__)))
+int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
+		     unsigned packet_size __attribute__((__unused__)))
 {
 	struct icmphdr *icp;
 	int cc;
@@ -1396,13 +1410,13 @@ int ping4_send_probe(socket_st *sock, void *packet, unsigned packet_size __attri
 	icp->type = ICMP_ECHO;
 	icp->code = 0;
 	icp->checksum = 0;
-	icp->un.echo.sequence = htons(ntransmitted + 1);
-	icp->un.echo.id = ident;			/* ID */
+	icp->un.echo.sequence = htons(rts->ntransmitted + 1);
+	icp->un.echo.id = rts->ident;			/* ID */
 
-	rcvd_clear(ntransmitted + 1);
+	rcvd_clear(rts, rts->ntransmitted + 1);
 
-	if (timing) {
-		if (options & F_LATENCY) {
+	if (rts->timing) {
+		if (rts->opt_latency) {
 			struct timeval tmp_tv;
 			gettimeofday(&tmp_tv, NULL);
 			memcpy(icp + 1, &tmp_tv, sizeof(tmp_tv));
@@ -1411,19 +1425,19 @@ int ping4_send_probe(socket_st *sock, void *packet, unsigned packet_size __attri
 		}
 	}
 
-	cc = datalen + 8;			/* skips ICMP portion */
+	cc = rts->datalen + 8;			/* skips ICMP portion */
 
 	/* compute ICMP checksum here */
 	icp->checksum = in_cksum((unsigned short *)icp, cc, 0);
 
-	if (timing && !(options & F_LATENCY)) {
+	if (rts->timing && !rts->opt_latency) {
 		struct timeval tmp_tv;
 		gettimeofday(&tmp_tv, NULL);
 		memcpy(icp + 1, &tmp_tv, sizeof(tmp_tv));
 		icp->checksum = in_cksum((unsigned short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
 	}
 
-	i = sendto(sock->fd, icp, cc, 0, (struct sockaddr *)&whereto, sizeof(whereto));
+	i = sendto(sock->fd, icp, cc, 0, (struct sockaddr *)&rts->whereto, sizeof(rts->whereto));
 
 	return (cc == i ? 0 : i);
 }
@@ -1443,8 +1457,9 @@ void pr_echo_reply(uint8_t *_icp, int len __attribute__((__unused__)))
 	printf(_(" icmp_seq=%u"), ntohs(icp->un.echo.sequence));
 }
 
-int
-ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr, struct timeval *tv)
+int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
+		      struct msghdr *msg, int cc, void *addr,
+		      struct timeval *tv)
 {
 	struct sockaddr_in *from = addr;
 	uint8_t *buf = msg->msg_iov->iov_base;
@@ -1462,9 +1477,9 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 	if (sock->socktype == SOCK_RAW) {
 		hlen = ip->ihl * 4;
 		if (cc < hlen + 8 || ip->ihl < 5) {
-			if (options & F_VERBOSE)
+			if (rts->opt_verbose)
 				error(0, 0, _("packet too short (%d bytes) from %s"), cc,
-					pr_addr(from, sizeof *from));
+					pr_addr(rts,from, sizeof *from));
 			return 1;
 		}
 		reply_ttl = ip->ttl;
@@ -1496,14 +1511,14 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 	csfailed = in_cksum((unsigned short *)icp, cc, 0);
 
 	if (icp->type == ICMP_ECHOREPLY) {
-		if (!is_ours(sock, icp->un.echo.id))
+		if (!is_ours(rts, sock, icp->un.echo.id))
 			return 1;			/* 'Twas not our ECHO */
-		if (!contains_pattern_in_payload((uint8_t *)(icp + 1)))
+		if (!contains_pattern_in_payload(rts, (uint8_t *)(icp + 1)))
 			return 1;			/* 'Twas really not our ECHO */
-		if (gather_statistics((uint8_t *)icp, sizeof(*icp), cc,
+		if (gather_statistics(rts, (uint8_t *)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      reply_ttl, 0, tv, pr_addr(from, sizeof *from),
-				      pr_echo_reply, multicast)) {
+				      reply_ttl, 0, tv, pr_addr(rts, from, sizeof *from),
+				      pr_echo_reply, rts->multicast)) {
 			fflush(stdout);
 			return 0;
 		}
@@ -1528,59 +1543,59 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
 				    cc < 8 + iph->ihl * 4 + 8)
 					return 1;
 				if (icp1->type != ICMP_ECHO ||
-				    iph->daddr != whereto.sin_addr.s_addr ||
-				    !is_ours(sock, icp1->un.echo.id))
+				    iph->daddr != rts->whereto.sin_addr.s_addr ||
+				    !is_ours(rts, sock, icp1->un.echo.id))
 					return 1;
 				error_pkt = (icp->type != ICMP_REDIRECT &&
 					     icp->type != ICMP_SOURCE_QUENCH);
 				if (error_pkt) {
-					acknowledge(ntohs(icp1->un.echo.sequence));
+					acknowledge(rts, ntohs(icp1->un.echo.sequence));
 					return 0;
 				}
-				if (options & (F_QUIET | F_FLOOD))
+				if (rts->opt_quiet || rts->opt_flood)
 					return 1;
-				print_timestamp();
-				printf(_("From %s: icmp_seq=%u "), pr_addr(from, sizeof *from),
+				print_timestamp(rts);
+				printf(_("From %s: icmp_seq=%u "), pr_addr(rts, from, sizeof *from),
 				       ntohs(icp1->un.echo.sequence));
 				if (csfailed)
 					printf(_("(BAD CHECKSUM)"));
-				pr_icmph(icp->type, icp->code, ntohl(icp->un.gateway), icp);
+				pr_icmph(rts, icp->type, icp->code, ntohl(icp->un.gateway), icp);
 				return 1;
 			}
 		default:
 			/* MUST NOT */
 			break;
 		}
-		if ((options & F_FLOOD) && !(options & (F_VERBOSE | F_QUIET))) {
+		if (rts->opt_flood && !(rts->opt_verbose || rts->opt_quiet)) {
 			if (!csfailed)
 				write_stdout("!E", 2);
 			else
 				write_stdout("!EC", 3);
 			return 0;
 		}
-		if (!(options & F_VERBOSE) || uid)
+		if (!rts->opt_verbose || rts->uid)
 			return 0;
-		if (options & F_PTIMEOFDAY) {
+		if (rts->opt_ptimeofday) {
 			struct timeval recv_time;
 			gettimeofday(&recv_time, NULL);
 			printf("%lu.%06lu ", (unsigned long)recv_time.tv_sec, (unsigned long)recv_time.tv_usec);
 		}
-		printf(_("From %s: "), pr_addr(from, sizeof *from));
+		printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		if (csfailed) {
 			printf(_("(BAD CHECKSUM)\n"));
 			return 0;
 		}
-		pr_icmph(icp->type, icp->code, ntohl(icp->un.gateway), icp);
+		pr_icmph(rts, icp->type, icp->code, ntohl(icp->un.gateway), icp);
 		return 0;
 	}
 
-	if (options & F_AUDIBLE) {
+	if (rts->opt_audible) {
 		putchar('\a');
-		if (options & F_FLOOD)
+		if (rts->opt_flood)
 			fflush(stdout);
 	}
-	if (!(options & F_FLOOD)) {
-		pr_options(opts, olen + sizeof(struct iphdr));
+	if (!rts->opt_flood) {
+		pr_options(rts, opts, olen + sizeof(struct iphdr));
 
 		putchar('\n');
 		fflush(stdout);
@@ -1593,8 +1608,7 @@ ping4_parse_reply(struct socket_st *sock, struct msghdr *msg, int cc, void *addr
  *
  * Return an ascii host address optionally with a hostname.
  */
-char *
-pr_addr(void *sa, socklen_t salen)
+char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 {
 	static char buffer[4096] = "";
 	static struct sockaddr_storage last_sa = { 0, {0}, 0 };
@@ -1607,10 +1621,10 @@ pr_addr(void *sa, socklen_t salen)
 
 	memcpy(&last_sa, sa, (last_salen = salen));
 
-	in_pr_addr = !setjmp(pr_addr_jmp);
+	rts->in_pr_addr = !setjmp(rts->pr_addr_jmp);
 
 	getnameinfo(sa, salen, address, sizeof address, NULL, 0, getnameinfo_flags | NI_NUMERICHOST);
-	if (!exiting && !(options & F_NUMERIC))
+	if (!rts->exiting && !rts->opt_numeric)
 		getnameinfo(sa, salen, name, sizeof name, NULL, 0, getnameinfo_flags);
 
 	if (*name)
@@ -1618,13 +1632,13 @@ pr_addr(void *sa, socklen_t salen)
 	else
 		snprintf(buffer, sizeof buffer, "%s", address);
 
-	in_pr_addr = 0;
+	rts->in_pr_addr = 0;
 
 	return (buffer);
 }
 
 
-void ping4_install_filter(socket_st *sock)
+void ping4_install_filter(struct ping_rts *rts, socket_st *sock)
 {
 	static int once;
 	static struct sock_filter insns[] = {
@@ -1647,7 +1661,7 @@ void ping4_install_filter(socket_st *sock)
 	once = 1;
 
 	/* Patch bpflet for current identifier. */
-	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, htons(ident), 0, 1);
+	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, htons(rts->ident), 0, 1);
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		error(0, errno, _("WARNING: failed to install socket filter"));

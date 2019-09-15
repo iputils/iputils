@@ -73,31 +73,10 @@ ping_func_set_st ping6_func_set = {
 # define SCOPE_DELIMITER '%'
 #endif
 
-uint32_t flowlabel;
-uint32_t tclass;
-
-static struct sockaddr_in6 whereto;
-static struct sockaddr_in6 firsthop;
-static int multicast;
-
-static unsigned char cmsgbuf[4096];
-static size_t cmsglen = 0;
-
-struct sockaddr_in6 source6 = { .sin6_family = AF_INET6 };
-extern char *device;
-
 #if defined(USE_GCRYPT) || defined(USE_OPENSSL) || defined(USE_NETTLE) || defined(USE_KERNEL_CRYPTO_API)
 #include "iputils_md5dig.h"
 #define USE_CRYPTO
 #endif
-
-/* Node Information query */
-int ni_query = -1;
-int ni_flag = 0;
-void *ni_subject = NULL;
-int ni_subject_len = 0;
-int ni_subject_type = -1;
-char *ni_group;
 
 static inline int ntohsp(uint16_t *p)
 {
@@ -119,7 +98,7 @@ struct niquery_option {
 	int namelen;
 	int has_arg;
 	int data;
-	int (*handler)(int index, const char *arg);
+	int (*handler)(struct ping_rts *rts, int index, const char *arg);
 };
 
 #define NIQUERY_OPTION(_name, _has_arg, _data, _handler)	\
@@ -131,14 +110,14 @@ struct niquery_option {
 		.handler = _handler				\
 	}
 
-static int niquery_option_name_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
-static int niquery_option_ipv6_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
-static int niquery_option_ipv6_flag_handler(int index, const char *arg);
-static int niquery_option_ipv4_handler(int index, const char *arg);
-static int niquery_option_ipv4_flag_handler(int index, const char *arg);
-static int niquery_option_subject_addr_handler(int index, const char *arg);
-static int niquery_option_subject_name_handler(int index, const char *arg);
-static int niquery_option_help_handler(int index, const char *arg);
+static int niquery_option_name_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
+static int niquery_option_ipv6_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
+static int niquery_option_ipv6_flag_handler(struct ping_rts *rts, int index, const char *arg);
+static int niquery_option_ipv4_handler(struct ping_rts *rts, int index, const char *arg);
+static int niquery_option_ipv4_flag_handler(struct ping_rts *rts, int index, const char *arg);
+static int niquery_option_subject_addr_handler(struct ping_rts *rts, int index, const char *arg);
+static int niquery_option_subject_name_handler(struct ping_rts *rts, int index, const char *arg);
+static int niquery_option_help_handler(struct ping_rts *rts, int index, const char *arg);
 
 struct niquery_option niquery_options[] = {
 	NIQUERY_OPTION("name",			0,	0,				niquery_option_name_handler),
@@ -159,37 +138,28 @@ struct niquery_option niquery_options[] = {
 	{NULL, 0, 0, 0, NULL}
 };
 
-static inline int niquery_is_enabled(void)
+static inline int niquery_is_enabled(struct ping_rts *rts)
 {
-	return ni_query >= 0;
+	return rts->ni_query >= 0;
 }
 
-#if PING6_NONCE_MEMORY
-uint8_t *ni_nonce_ptr;
-#else
-struct {
-	struct timeval tv;
-	pid_t pid;
-} ni_nonce_secret;
-#endif
-
-static void niquery_init_nonce(void)
+static void niquery_init_nonce(struct ping_rts *rts)
 {
 #if PING6_NONCE_MEMORY
 	iputils_srand();
-	ni_nonce_ptr = calloc(NI_NONCE_SIZE, MAX_DUP_CHK);
-	if (!ni_nonce_ptr)
+	rts->ni_nonce_ptr = calloc(NI_NONCE_SIZE, MAX_DUP_CHK);
+	if (!rts->ni_nonce_ptr)
 		error(2, errno, "calloc");
 
-	ni_nonce_ptr[0] = ~0;
+	rts->ni_nonce_ptr[0] = ~0;
 #else
-	gettimeofday(&ni_nonce_secret.tv, NULL);
-	ni_nonce_secret.pid = getpid();
+	gettimeofday(&rts->ni_nonce_secret.tv, NULL);
+	rts->ni_nonce_secret.pid = getpid();
 #endif
 }
 
 #if !PING6_NONCE_MEMORY
-static int niquery_nonce(uint8_t *nonce, int fill)
+static int niquery_nonce(struct ping_rts *rts, uint8_t *nonce, int fill)
 {
 # ifdef USE_CRYPTO
 	static uint8_t digest[MD5_DIGEST_LENGTH];
@@ -199,7 +169,7 @@ static int niquery_nonce(uint8_t *nonce, int fill)
 		MD5_CTX ctxt;
 
 		MD5_Init(&ctxt);
-		MD5_Update(&ctxt, &ni_nonce_secret, sizeof(ni_nonce_secret));
+		MD5_Update(&ctxt, &rts->ni_nonce_secret, sizeof(rts->ni_nonce_secret));
 		MD5_Update(&ctxt, nonce, sizeof(uint16_t));
 		MD5_Final(digest, &ctxt);
 
@@ -220,99 +190,99 @@ static int niquery_nonce(uint8_t *nonce, int fill)
 }
 #endif
 
-static inline void niquery_fill_nonce(uint16_t seq, uint8_t *nonce)
+static inline void niquery_fill_nonce(struct ping_rts *rts, uint16_t seq, uint8_t *nonce)
 {
 	uint16_t v = htons(seq);
 #if PING6_NONCE_MEMORY
 	int i;
 
-	memcpy(&ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], &v, sizeof(v));
+	memcpy(&rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], &v, sizeof(v));
 
 	for (i = sizeof(v); i < NI_NONCE_SIZE; i++)
-		ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK) + i] = 0x100 * (rand() / (RAND_MAX + 1.0));
+		rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK) + i] = 0x100 * (rand() / (RAND_MAX + 1.0));
 
-	memcpy(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE);
+	memcpy(nonce, &rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE);
 #else
 	memcpy(nonce, &v, sizeof(v));
-	niquery_nonce(nonce, 1);
+	niquery_nonce(rts, nonce, 1);
 #endif
 }
 
-static inline int niquery_check_nonce(uint8_t *nonce)
+static inline int niquery_check_nonce(struct ping_rts *rts, uint8_t *nonce)
 {
 #if PING6_NONCE_MEMORY
 	uint16_t seq = ntohsp((uint16_t *)nonce);
-	if (memcmp(nonce, &ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE))
+	if (memcmp(nonce, &rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE))
 		return -1;
 	return seq;
 #else
-	return niquery_nonce(nonce, 0);
+	return niquery_nonce(rts, nonce, 0);
 #endif
 }
 
-static int niquery_set_qtype(int type)
+static int niquery_set_qtype(struct ping_rts *rts, int type)
 {
-	if (niquery_is_enabled() && ni_query != type) {
+	if (niquery_is_enabled(rts) && rts->ni_query != type) {
 		printf(_("Qtype conflict\n"));
 		return -1;
 	}
-	ni_query = type;
+	rts->ni_query = type;
 	return 0;
 }
 
-static int niquery_option_name_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
+static int niquery_option_name_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(IPUTILS_NI_QTYPE_DNSNAME) < 0)
+	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_DNSNAME) < 0)
 		return -1;
 	return 0;
 }
 
-static int niquery_option_ipv6_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
+static int niquery_option_ipv6_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
+	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
 		return -1;
 	return 0;
 }
 
-static int niquery_option_ipv6_flag_handler(int index, const char *arg __attribute__((__unused__)))
+static int niquery_option_ipv6_flag_handler(struct ping_rts *rts, int index, const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
+	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
 		return -1;
-	ni_flag |= niquery_options[index].data;
+	rts->ni_flag |= niquery_options[index].data;
 	return 0;
 }
 
-static int niquery_option_ipv4_handler(int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
+static int niquery_option_ipv4_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
+	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
 		return -1;
 	return 0;
 }
 
-static int niquery_option_ipv4_flag_handler(int index, const char *arg __attribute__((__unused__)))
+static int niquery_option_ipv4_flag_handler(struct ping_rts *rts, int index, const char *arg __attribute__((__unused__)))
 {
-	if (niquery_set_qtype(IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
+	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
 		return -1;
-	ni_flag |= niquery_options[index].data;
+	rts->ni_flag |= niquery_options[index].data;
 	return 0;
 }
 
-static inline int niquery_is_subject_valid(void)
+static inline int niquery_is_subject_valid(struct ping_rts *rts)
 {
-	return ni_subject_type >= 0 && ni_subject;
+	return rts->ni_subject_type >= 0 && rts->ni_subject;
 }
 
-static int niquery_set_subject_type(int type)
+static int niquery_set_subject_type(struct ping_rts *rts, int type)
 {
-	if (niquery_is_subject_valid() && ni_subject_type != type) {
+	if (niquery_is_subject_valid(rts) && rts->ni_subject_type != type) {
 		printf(_("Subject type conflict\n"));
 		return -1;
 	}
-	ni_subject_type = type;
+	rts->ni_subject_type = type;
 	return 0;
 }
 
-static int niquery_option_subject_addr_handler(int index, const char *arg)
+static int niquery_option_subject_addr_handler(struct ping_rts *rts, int index, const char *arg)
 {
 	struct addrinfo hints = {
 		.ai_family = AF_UNSPEC,
@@ -323,19 +293,19 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	int ret_val;
 	int offset;
 
-	if (niquery_set_subject_type(niquery_options[index].data) < 0)
+	if (niquery_set_subject_type(rts, niquery_options[index].data) < 0)
 		return -1;
 
-	ni_subject_type = niquery_options[index].data;
+	rts->ni_subject_type = niquery_options[index].data;
 
 	switch (niquery_options[index].data) {
 	case IPUTILS_NI_ICMP6_SUBJ_IPV6:
-		ni_subject_len = sizeof(struct in6_addr);
+		rts->ni_subject_len = sizeof(struct in6_addr);
 		offset = offsetof(struct sockaddr_in6, sin6_addr);
 		hints.ai_family = AF_INET6;
 		break;
 	case IPUTILS_NI_ICMP6_SUBJ_IPV4:
-		ni_subject_len = sizeof(struct in_addr);
+		rts->ni_subject_len = sizeof(struct in_addr);
 		offset = offsetof(struct sockaddr_in, sin_addr);
 		hints.ai_family = AF_INET;
 		break;
@@ -351,12 +321,12 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 	}
 
 	for (ai = result; ai; ai = ai->ai_next) {
-		void *p = malloc(ni_subject_len);
+		void *p = malloc(rts->ni_subject_len);
 		if (!p)
 			continue;
-		memcpy(p, (uint8_t *)ai->ai_addr + offset, ni_subject_len);
-		free(ni_subject);
-		ni_subject = p;
+		memcpy(p, (uint8_t *)ai->ai_addr + offset, rts->ni_subject_len);
+		free(rts->ni_subject);
+		rts->ni_subject = p;
 		break;
 	}
 	freeaddrinfo(result);
@@ -373,7 +343,7 @@ static int niquery_option_subject_addr_handler(int index, const char *arg)
 #endif
 
 #ifdef USE_CRYPTO
-static int niquery_option_subject_name_handler(int index, const char *name)
+static int niquery_option_subject_name_handler(struct ping_rts *rts, int index, const char *name)
 {
 	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
 	unsigned char *dnptrs[2], **dpp, **lastdnptr;
@@ -391,7 +361,7 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	int rc;
 #endif
 
-	if (niquery_set_subject_type(IPUTILS_NI_ICMP6_SUBJ_FQDN) < 0)
+	if (niquery_set_subject_type(rts, IPUTILS_NI_ICMP6_SUBJ_FQDN) < 0)
 		return -1;
 
 #ifdef USE_IDN
@@ -463,11 +433,11 @@ static int niquery_option_subject_name_handler(int index, const char *name)
 	if (fqdn < 0)
 		buf[n] = 0;
 
-	free(ni_subject);
+	free(rts->ni_subject);
 
-	ni_group = nigroup_buf;
-	ni_subject = buf;
-	ni_subject_len = n + (fqdn < 0);
+	rts->ni_group = nigroup_buf;
+	rts->ni_subject = buf;
+	rts->ni_subject_len = n + (fqdn < 0);
 
 	free(canonname);
 	free(idn);
@@ -482,7 +452,8 @@ errexit:
 	exit(1);
 }
 #else
-static int niquery_option_subject_name_handler(int index __attribute__((__unused__)),
+static int niquery_option_subject_name_handler(struct ping_rts *rts  __attribute__((__unused__)),
+					       int index __attribute__((__unused__)),
 					       const char *name __attribute__((__unused__)))
 {
 	error(3, ENOSYS, _("niquery_option_subject_name_handler() crypto disabled"));
@@ -490,7 +461,9 @@ static int niquery_option_subject_name_handler(int index __attribute__((__unused
 }
 #endif
 
-int niquery_option_help_handler(int index, const char *arg __attribute__((__unused__)))
+int niquery_option_help_handler(struct ping_rts *rts __attribute__((__unused__)),
+				int index,
+				const char *arg __attribute__((__unused__)))
 {
 	fprintf(index ? stdout : stderr,
 		      _("ping -6 -N <nodeinfo opt>\n"
@@ -515,7 +488,7 @@ int niquery_option_help_handler(int index, const char *arg __attribute__((__unus
 	index ? exit(0) : exit(2);
 }
 
-int niquery_option_handler(const char *opt_arg)
+int niquery_option_handler(struct ping_rts *rts, const char *opt_arg)
 {
 	struct niquery_option *p;
 	int i;
@@ -525,24 +498,25 @@ int niquery_option_handler(const char *opt_arg)
 			continue;
 		if (!p->has_arg) {
 			if (opt_arg[p->namelen] == '\0') {
-				ret = p->handler(i, NULL);
+				ret = p->handler(rts, i, NULL);
 				if (ret >= 0)
 					break;
 			}
 		} else {
 			if (opt_arg[p->namelen] == '=') {
-				ret = p->handler(i, &opt_arg[p->namelen] + 1);
+				ret = p->handler(rts, i, &opt_arg[p->namelen] + 1);
 				if (ret >= 0)
 					break;
 			}
 		}
 	}
 	if (!p->name)
-		ret = niquery_option_help_handler(0, NULL);
+		ret = niquery_option_help_handler(rts, 0, NULL);
 	return ret;
 }
 
-int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock)
+int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
+	      struct socket_st *sock)
 {
 	static const struct addrinfo hints = {
 		.ai_family = AF_INET6,
@@ -557,13 +531,13 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	int err;
 	static uint32_t scope_id = 0;
 
-	if (niquery_is_enabled()) {
-		niquery_init_nonce();
+	if (niquery_is_enabled(rts)) {
+		niquery_init_nonce(rts);
 
-		if (!niquery_is_subject_valid()) {
-			ni_subject = &whereto.sin6_addr;
-			ni_subject_len = sizeof(whereto.sin6_addr);
-			ni_subject_type = IPUTILS_NI_ICMP6_SUBJ_IPV6;
+		if (!niquery_is_subject_valid(rts)) {
+			rts->ni_subject = &rts->whereto6.sin6_addr;
+			rts->ni_subject_len = sizeof(rts->whereto6.sin6_addr);
+			rts->ni_subject_type = IPUTILS_NI_ICMP6_SUBJ_IPV6;
 		}
 	}
 
@@ -572,9 +546,9 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	} else if (argc == 1) {
 		target = *argv;
 	} else {
-		if (ni_query < 0 && ni_subject_type != IPUTILS_NI_ICMP6_SUBJ_FQDN)
+		if (rts->ni_query < 0 && rts->ni_subject_type != IPUTILS_NI_ICMP6_SUBJ_FQDN)
 			usage();
-		target = ni_group;
+		target = rts->ni_group;
 	}
 
 	if (!ai) {
@@ -584,35 +558,35 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		ai = result;
 	}
 
-	memcpy(&whereto, ai->ai_addr, sizeof(whereto));
-	whereto.sin6_port = htons(IPPROTO_ICMPV6);
+	memcpy(&rts->whereto6, ai->ai_addr, sizeof(rts->whereto6));
+	rts->whereto6.sin6_port = htons(IPPROTO_ICMPV6);
 
 	if (result)
 		freeaddrinfo(result);
 
 	if (memchr(target, ':', strlen(target)))
-		options |= F_NUMERIC;
+		rts->opt_numeric = 1;
 
-	if (IN6_IS_ADDR_UNSPECIFIED(&firsthop.sin6_addr)) {
-		memcpy(&firsthop.sin6_addr, &whereto.sin6_addr, 16);
-		firsthop.sin6_scope_id = whereto.sin6_scope_id;
+	if (IN6_IS_ADDR_UNSPECIFIED(&rts->firsthop.sin6_addr)) {
+		memcpy(&rts->firsthop.sin6_addr, &rts->whereto6.sin6_addr, 16);
+		rts->firsthop.sin6_scope_id = rts->whereto6.sin6_scope_id;
 		/* Verify scope_id is the same as intermediate nodes */
-		if (firsthop.sin6_scope_id && scope_id && firsthop.sin6_scope_id != scope_id)
+		if (rts->firsthop.sin6_scope_id && scope_id && rts->firsthop.sin6_scope_id != scope_id)
 			error(2, 0, _("scope discrepancy among the nodes"));
 		else if (!scope_id)
-			scope_id = firsthop.sin6_scope_id;
+			scope_id = rts->firsthop.sin6_scope_id;
 	}
 
-	hostname = target;
+	rts->hostname = target;
 
-	if (IN6_IS_ADDR_UNSPECIFIED(&source6.sin6_addr)) {
+	if (IN6_IS_ADDR_UNSPECIFIED(&rts->source6.sin6_addr)) {
 		socklen_t alen;
 		int probe_fd = socket(AF_INET6, SOCK_DGRAM, 0);
 
 		if (probe_fd < 0)
 			error(2, errno, "socket");
-		if (device) {
-			unsigned int iface = if_name2index(device);
+		if (rts->device) {
+			unsigned int iface = if_name2index(rts->device);
 #ifdef IPV6_RECVPKTINFO
 			struct in6_pktinfo ipi;
 
@@ -620,9 +594,9 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			ipi.ipi6_ifindex = iface;
 #endif
 
-			if (IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) ||
-			    IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
-				firsthop.sin6_scope_id = iface;
+			if (IN6_IS_ADDR_LINKLOCAL(&rts->firsthop.sin6_addr) ||
+			    IN6_IS_ADDR_MC_LINKLOCAL(&rts->firsthop.sin6_addr))
+				rts->firsthop.sin6_scope_id = iface;
 			enable_capability_raw();
 #ifdef IPV6_RECVPKTINFO
 			if (setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 ||
@@ -630,27 +604,27 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 				error(2, errno, "setsockopt(IPV6_PKTINFO)");
 			}
 #endif
-			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device) + 1) == -1 ||
-			    setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, device, strlen(device) + 1) == -1) {
-				error(2, errno, "setsockopt(SO_BINDTODEVICE) %s", device);
+			if (setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE, rts->device, strlen(rts->device) + 1) == -1 ||
+			    setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, rts->device, strlen(rts->device) + 1) == -1) {
+				error(2, errno, "setsockopt(SO_BINDTODEVICE) %s", rts->device);
 			}
 			disable_capability_raw();
 		}
 
-		if (!IN6_IS_ADDR_LINKLOCAL(&firsthop.sin6_addr) &&
-		    !IN6_IS_ADDR_MC_LINKLOCAL(&firsthop.sin6_addr))
-			firsthop.sin6_family = AF_INET6;
+		if (!IN6_IS_ADDR_LINKLOCAL(&rts->firsthop.sin6_addr) &&
+		    !IN6_IS_ADDR_MC_LINKLOCAL(&rts->firsthop.sin6_addr))
+			rts->firsthop.sin6_family = AF_INET6;
 
-		firsthop.sin6_port = htons(1025);
-		if (connect(probe_fd, (struct sockaddr *)&firsthop, sizeof(firsthop)) == -1)
+		rts->firsthop.sin6_port = htons(1025);
+		if (connect(probe_fd, (struct sockaddr *)&rts->firsthop, sizeof(rts->firsthop)) == -1)
 			error(2, errno, "connect");
-		alen = sizeof source6;
-		if (getsockname(probe_fd, (struct sockaddr *)&source6, &alen) == -1)
+		alen = sizeof rts->source6;
+		if (getsockname(probe_fd, (struct sockaddr *)&rts->source6, &alen) == -1)
 			error(2, errno, "getsockname");
-		source6.sin6_port = 0;
+		rts->source6.sin6_port = 0;
 		close(probe_fd);
 
-		if (device) {
+		if (rts->device) {
 			struct ifaddrs *ifa0, *ifa;
 
 			if (getifaddrs(&ifa0))
@@ -660,61 +634,63 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 				if (!ifa->ifa_name || !ifa->ifa_addr ||
 				    ifa->ifa_addr->sa_family != AF_INET6)
 					continue;
-				if (!strcmp(ifa->ifa_name, device) &&
+				if (!strcmp(ifa->ifa_name, rts->device) &&
 				    IN6_ARE_ADDR_EQUAL(&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr,
-						       &source6.sin6_addr))
+						       &rts->source6.sin6_addr))
 					break;
 			}
 			if (!ifa)
-				error(0, 0, _("Warning: source address might be selected on device other than: %s"), device);
+				error(0, 0, _("Warning: source address might be selected on device other than: %s"), rts->device);
 
 			freeifaddrs(ifa0);
 		}
-	} else if (device && (IN6_IS_ADDR_LINKLOCAL(&source6.sin6_addr) ||
-			      IN6_IS_ADDR_MC_LINKLOCAL(&source6.sin6_addr)))
-		source6.sin6_scope_id = if_name2index(device);
+	} else if (rts->device && (IN6_IS_ADDR_LINKLOCAL(&rts->source6.sin6_addr) ||
+			      IN6_IS_ADDR_MC_LINKLOCAL(&rts->source6.sin6_addr)))
+		rts->source6.sin6_scope_id = if_name2index(rts->device);
 
-	if (device) {
+	if (rts->device) {
 		struct cmsghdr *cmsg;
 		struct in6_pktinfo *ipi;
 
-		cmsg = (struct cmsghdr *)(cmsgbuf + cmsglen);
-		cmsglen += CMSG_SPACE(sizeof(*ipi));
+		cmsg = (struct cmsghdr *)(rts->cmsgbuf + rts->cmsglen);
+		rts->cmsglen += CMSG_SPACE(sizeof(*ipi));
 		cmsg->cmsg_len = CMSG_LEN(sizeof(*ipi));
 		cmsg->cmsg_level = IPPROTO_IPV6;
 		cmsg->cmsg_type = IPV6_PKTINFO;
 
 		ipi = (struct in6_pktinfo *)CMSG_DATA(cmsg);
 		memset(ipi, 0, sizeof(*ipi));
-		ipi->ipi6_ifindex = if_name2index(device);
+		ipi->ipi6_ifindex = if_name2index(rts->device);
 	}
 
-	if (IN6_IS_ADDR_MULTICAST(&whereto.sin6_addr)) {
-		multicast = 1;
-		if (uid) {
-			if (interval < 1000)
-				error(2, 0, _("multicast ping with too short interval: %d"), interval);
-			if (pmtudisc >= 0 && pmtudisc != IPV6_PMTUDISC_DO)
+	if (IN6_IS_ADDR_MULTICAST(&rts->whereto6.sin6_addr)) {
+		rts->multicast = 1;
+		if (rts->uid) {
+			if (rts->interval < 1000)
+				error(2, 0, _("multicast ping with too short interval: %d"),
+					    rts->interval);
+			if (rts->pmtudisc >= 0 && rts->pmtudisc != IPV6_PMTUDISC_DO)
 				error(2, 0, _("multicast ping does not fragment"));
 		}
-		if (pmtudisc < 0)
-			pmtudisc = IPV6_PMTUDISC_DO;
+		if (rts->pmtudisc < 0)
+			rts->pmtudisc = IPV6_PMTUDISC_DO;
 	}
 
-	if (pmtudisc >= 0) {
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MTU_DISCOVER, &pmtudisc, sizeof pmtudisc) == -1)
+	if (rts->pmtudisc >= 0) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MTU_DISCOVER, &rts->pmtudisc,
+			       sizeof rts->pmtudisc) == -1)
 			error(2, errno, "IPV6_MTU_DISCOVER");
 	}
 
-	if ((options & F_STRICTSOURCE) &&
-	    bind(sock->fd, (struct sockaddr *)&source6, sizeof source6) == -1)
+	if (rts->opt_strictsource &&
+	    bind(sock->fd, (struct sockaddr *)&rts->source6, sizeof rts->source6) == -1)
 		error(2, errno, "bind icmp socket");
 
-	if ((ssize_t)datalen >= (ssize_t)sizeof(struct timeval) && (ni_query < 0)) {
+	if ((ssize_t)rts->datalen >= (ssize_t)sizeof(struct timeval) && (rts->ni_query < 0)) {
 		/* can we time transfer */
-		timing = 1;
+		rts->timing = 1;
 	}
-	packlen = datalen + 8 + 4096 + 40 + 8; /* 4096 for rthdr */
+	packlen = rts->datalen + 8 + 4096 + 40 + 8; /* 4096 for rthdr */
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
@@ -724,9 +700,9 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 	/* Estimate memory eaten by single packet. It is rough estimate.
 	 * Actually, for small datalen's it depends on kernel side a lot. */
-	hold = datalen + 8;
+	hold = rts->datalen + 8;
 	hold += ((hold + 511) / 512) * (40 + 16 + 64 + 160);
-	sock_setbufs(sock, hold);
+	sock_setbufs(rts, sock, hold);
 
 #ifdef __linux__
 	if (sock->socktype == SOCK_RAW) {
@@ -750,7 +726,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 
 		ICMP6_FILTER_SETBLOCKALL(&filter);
 
-		if (niquery_is_enabled())
+		if (niquery_is_enabled(rts))
 			ICMP6_FILTER_SETPASS(IPUTILS_NI_ICMP6_REPLY, &filter);
 		else
 			ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
@@ -761,15 +737,17 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 			error(2, errno, "setsockopt(ICMP6_FILTER)");
 	}
 
-	if (options & F_NOLOOP) {
+	if (rts->opt_noloop) {
 		int loop = 0;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, &loop, sizeof loop) == -1)
 			error(2, errno, _("can't disable multicast loopback"));
 	}
-	if (options & F_TTL) {
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &ttl, sizeof ttl) == -1)
+	if (rts->opt_ttl) {
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, &rts->ttl,
+			       sizeof rts->ttl) == -1)
 			error(2, errno, _("can't set multicast hop limit"));
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_UNICAST_HOPS, &ttl, sizeof ttl) == -1)
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_UNICAST_HOPS, &rts->ttl,
+			       sizeof rts->ttl) == -1)
 			error(2, errno, _("can't set unicast hop limit"));
 	}
 
@@ -784,18 +762,18 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 	   )
 		error(2, errno, _("can't receive hop limit"));
 
-	if (options & F_TCLASS) {
+	if (rts->opt_tclass) {
 #ifdef IPV6_TCLASS
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS, &tclass, sizeof tclass) == -1)
+		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS, &rts->tclass, sizeof rts->tclass) == -1)
 			error(2, errno, _("setsockopt(IPV6_TCLASS)"));
 #else
 		error(0, 0, _("traffic class is not supported"));
 #endif
 	}
 
-	if (options & F_FLOWINFO) {
+	if (rts->opt_flowinfo) {
 #ifdef IPV6_FLOWLABEL_MGR
-		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + cmsglen];
+		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + rts->cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
 		int freq_len = sizeof(*freq);
 		memset(freq, 0, sizeof(*freq));
@@ -803,7 +781,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 		freq->flr_action = IPV6_FL_A_GET;
 		freq->flr_flags = IPV6_FL_F_CREATE;
 		freq->flr_share = IPV6_FL_S_EXCL;
-		memcpy(&freq->flr_dst, &whereto.sin6_addr, 16);
+		memcpy(&freq->flr_dst, &rts->whereto6.sin6_addr, 16);
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1)
 			error(2, errno, _("can't set flowlabel"));
 		flowlabel = freq->flr_label;
@@ -812,7 +790,7 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #endif
 
 #ifdef IPV6_FLOWINFO_SEND
-		whereto.sin6_flowinfo = flowlabel;
+		rts->whereto6.sin6_flowinfo = flowlabel;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1)
 			error(2, errno, _("can't send flowinfo"));
 #else
@@ -820,23 +798,23 @@ int ping6_run(int argc, char **argv, struct addrinfo *ai, struct socket_st *sock
 #endif
 	}
 
-	printf(_("PING %s(%s) "), hostname, pr_addr(&whereto, sizeof whereto));
-	if (flowlabel)
-		printf(_(", flow 0x%05x, "), (unsigned)ntohl(flowlabel));
-	if (device || (options & F_STRICTSOURCE)) {
-		int saved_options = options;
+	printf(_("PING %s(%s) "), rts->hostname, pr_addr(rts, &rts->whereto6, sizeof rts->whereto6));
+	if (rts->flowlabel)
+		printf(_(", flow 0x%05x, "), (unsigned)ntohl(rts->flowlabel));
+	if (rts->device || rts->opt_strictsource) {
+		int saved_opt_numeric = rts->opt_numeric;
 
-		options |= F_NUMERIC;
-		printf(_("from %s %s: "), pr_addr(&source6, sizeof source6), device ? device : "");
-		options = saved_options;
+		rts->opt_numeric = 1;
+		printf(_("from %s %s: "), pr_addr(rts, &rts->source6, sizeof rts->source6), rts->device ? rts->device : "");
+		rts->opt_numeric = saved_opt_numeric;
 	}
-	printf(_("%zu data bytes\n"), datalen);
+	printf(_("%zu data bytes\n"), rts->datalen);
 
-	setup(sock);
+	setup(rts, sock);
 
 	drop_capabilities();
 
-	hold = main_loop(&ping6_func_set, sock, packet, packlen);
+	hold = main_loop(rts, &ping6_func_set, sock, packet, packlen);
 	free(packet);
 	return hold;
 }
@@ -915,7 +893,7 @@ int print_icmp(uint8_t type, uint8_t code, uint32_t info)
 	return 0;
 }
 
-int ping6_receive_error_msg(socket_st *sock)
+int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 {
 	ssize_t res;
 	char cbuf[512];
@@ -955,36 +933,36 @@ int ping6_receive_error_msg(socket_st *sock)
 
 	if (e->ee_origin == SO_EE_ORIGIN_LOCAL) {
 		local_errors++;
-		if (options & F_QUIET)
+		if (rts->opt_quiet)
 			goto out;
-		if (options & F_FLOOD)
+		if (rts->opt_flood)
 			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
 			error(0, e->ee_errno, _("local error"));
 		else
 			error(0, 0, _("local error: message too long, mtu: %u"), e->ee_info);
-		nerrors++;
+		rts->nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP6) {
 		struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)(e + 1);
 
 		if ((size_t)res < sizeof(icmph) ||
-		    memcmp(&target.sin6_addr, &whereto.sin6_addr, 16) ||
+		    memcmp(&target.sin6_addr, &rts->whereto6.sin6_addr, 16) ||
 		    icmph.icmp6_type != ICMP6_ECHO_REQUEST ||
-		    !is_ours(sock, icmph.icmp6_id)) {
+		    !is_ours(rts, sock, icmph.icmp6_id)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
 		}
 
 		net_errors++;
-		nerrors++;
-		if (options & F_QUIET)
+		rts->nerrors++;
+		if (rts->opt_quiet)
 			goto out;
-		if (options & F_FLOOD) {
+		if (rts->opt_flood) {
 			write_stdout("\bE", 2);
 		} else {
-			print_timestamp();
-			printf(_("From %s icmp_seq=%u "), pr_addr(sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
+			print_timestamp(rts);
+			printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
 			print_icmp(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
 			fflush(stdout);
@@ -1004,7 +982,8 @@ out:
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
  */
-int build_echo(uint8_t *_icmph, unsigned packet_size __attribute__((__unused__)))
+int build_echo(struct ping_rts *rts, uint8_t *_icmph,
+	       unsigned packet_size __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph;
 	int cc;
@@ -1013,20 +992,21 @@ int build_echo(uint8_t *_icmph, unsigned packet_size __attribute__((__unused__))
 	icmph->icmp6_type = ICMP6_ECHO_REQUEST;
 	icmph->icmp6_code = 0;
 	icmph->icmp6_cksum = 0;
-	icmph->icmp6_seq = htons(ntransmitted + 1);
-	icmph->icmp6_id = ident;
+	icmph->icmp6_seq = htons(rts->ntransmitted + 1);
+	icmph->icmp6_id = rts->ident;
 
-	if (timing)
+	if (rts->timing)
 		gettimeofday((struct timeval *)&_icmph[8],
 		    (struct timezone *)NULL);
 
-	cc = datalen + 8;			/* skips ICMP portion */
+	cc = rts->datalen + 8;			/* skips ICMP portion */
 
 	return cc;
 }
 
 
-int build_niquery(uint8_t *_nih, unsigned packet_size __attribute__((__unused__)))
+int build_niquery(struct ping_rts *rts, uint8_t *_nih,
+		  unsigned packet_size __attribute__((__unused__)))
 {
 	struct ni_hdr *nih;
 	int cc;
@@ -1036,32 +1016,32 @@ int build_niquery(uint8_t *_nih, unsigned packet_size __attribute__((__unused__)
 
 	nih->ni_type = IPUTILS_NI_ICMP6_QUERY;
 	cc = sizeof(*nih);
-	datalen = 0;
+	rts->datalen = 0;
 
-	niquery_fill_nonce(ntransmitted + 1, nih->ni_nonce);
-	nih->ni_code = ni_subject_type;
-	nih->ni_qtype = htons(ni_query);
-	nih->ni_flags = ni_flag;
-	memcpy(nih + 1, ni_subject, ni_subject_len);
-	cc += ni_subject_len;
+	niquery_fill_nonce(rts, rts->ntransmitted + 1, nih->ni_nonce);
+	nih->ni_code = rts->ni_subject_type;
+	nih->ni_qtype = htons(rts->ni_query);
+	nih->ni_flags = rts->ni_flag;
+	memcpy(nih + 1, rts->ni_subject, rts->ni_subject_len);
+	cc += rts->ni_subject_len;
 
 	return cc;
 }
 
-int ping6_send_probe(socket_st *sock, void *packet, unsigned packet_size)
+int ping6_send_probe(struct ping_rts *rts, socket_st *sock, void *packet, unsigned packet_size)
 {
 	int len, cc;
 
-	rcvd_clear(ntransmitted + 1);
+	rcvd_clear(rts, rts->ntransmitted + 1);
 
-	if (niquery_is_enabled())
-		len = build_niquery(packet, packet_size);
+	if (niquery_is_enabled(rts))
+		len = build_niquery(rts, packet, packet_size);
 	else
-		len = build_echo(packet, packet_size);
+		len = build_echo(rts, packet, packet_size);
 
-	if (cmsglen == 0) {
-		cc = sendto(sock->fd, (char *)packet, len, confirm,
-			    (struct sockaddr *)&whereto,
+	if (rts->cmsglen == 0) {
+		cc = sendto(sock->fd, (char *)packet, len, rts->confirm,
+			    (struct sockaddr *)&rts->whereto6,
 			    sizeof(struct sockaddr_in6));
 	} else {
 		struct msghdr mhdr;
@@ -1071,16 +1051,16 @@ int ping6_send_probe(socket_st *sock, void *packet, unsigned packet_size)
 		iov.iov_base = packet;
 
 		memset(&mhdr, 0, sizeof(mhdr));
-		mhdr.msg_name = &whereto;
+		mhdr.msg_name = &rts->whereto6;
 		mhdr.msg_namelen = sizeof(struct sockaddr_in6);
 		mhdr.msg_iov = &iov;
 		mhdr.msg_iovlen = 1;
-		mhdr.msg_control = cmsgbuf;
-		mhdr.msg_controllen = cmsglen;
+		mhdr.msg_control = rts->cmsgbuf;
+		mhdr.msg_controllen = rts->cmsglen;
 
-		cc = sendmsg(sock->fd, &mhdr, confirm);
+		cc = sendmsg(sock->fd, &mhdr, rts->confirm);
 	}
-	confirm = 0;
+	rts->confirm = 0;
 
 	return (cc == len ? 0 : cc);
 }
@@ -1237,8 +1217,9 @@ void pr_niquery_reply(uint8_t *_nih, int len)
  * which arrive ('tis only fair).  This permits multiple copies of this
  * program to be run without having intermingled output (or statistics!).
  */
-int
-ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struct timeval *tv)
+int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
+		      struct msghdr *msg, int cc, void *addr,
+		      struct timeval *tv)
 {
 	struct sockaddr_in6 *from = addr;
 	uint8_t *buf = msg->msg_iov->iov_base;
@@ -1265,34 +1246,34 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 
 	icmph = (struct icmp6_hdr *)buf;
 	if (cc < 8) {
-		if (options & F_VERBOSE)
+		if (rts->opt_verbose)
 			error(0, 0, _("packet too short: %d bytes"), cc);
 		return 1;
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (!is_ours(sock, icmph->icmp6_id))
+		if (!is_ours(rts, sock, icmph->icmp6_id))
 			return 1;
-	       if (!contains_pattern_in_payload((uint8_t *)(icmph + 1)))
+	       if (!contains_pattern_in_payload(rts, (uint8_t *)(icmph + 1)))
 			return 1;	/* 'Twas really not our ECHO */
-		if (gather_statistics((uint8_t *)icmph, sizeof(*icmph), cc,
+		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
-				      hops, 0, tv, pr_addr(from, sizeof *from),
+				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
 				      pr_echo_reply,
-				      multicast)) {
+				      rts->multicast)) {
 			fflush(stdout);
 			return 0;
 		}
 	} else if (icmph->icmp6_type == IPUTILS_NI_ICMP6_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
-		int seq = niquery_check_nonce(nih->ni_nonce);
+		int seq = niquery_check_nonce(rts, nih->ni_nonce);
 		if (seq < 0)
 			return 1;
-		if (gather_statistics((uint8_t *)icmph, sizeof(*icmph), cc,
+		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      seq,
-				      hops, 0, tv, pr_addr(from, sizeof *from),
+				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
 				      pr_niquery_reply,
-				      multicast))
+				      rts->multicast))
 			return 0;
 	} else {
 		int nexthdr;
@@ -1309,7 +1290,7 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 		if (cc < (int)(8 + sizeof(struct ip6_hdr) + 8))
 			return 1;
 
-		if (memcmp(&iph1->ip6_dst, &whereto.sin6_addr, 16))
+		if (memcmp(&iph1->ip6_dst, &rts->whereto6.sin6_addr, 16))
 			return 1;
 
 		nexthdr = iph1->ip6_nxt;
@@ -1320,33 +1301,33 @@ ping6_parse_reply(socket_st *sock, struct msghdr *msg, int cc, void *addr, struc
 		}
 		if (nexthdr == IPPROTO_ICMPV6) {
 			if (icmph1->icmp6_type != ICMP6_ECHO_REQUEST ||
-			    !is_ours(sock, icmph1->icmp6_id))
+			    !is_ours(rts, sock, icmph1->icmp6_id))
 				return 1;
-			acknowledge(ntohs(icmph1->icmp6_seq));
+			acknowledge(rts, ntohs(icmph1->icmp6_seq));
 			return 0;
 		} else {
 			/* We've got something other than an ECHOREPLY */
-			if (!(options & F_VERBOSE) || uid)
+			if (!rts->opt_verbose || rts->uid)
 				return 1;
-			print_timestamp();
-			printf(_("From %s: "), pr_addr(from, sizeof *from));
+			print_timestamp(rts);
+			printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		}
 		print_icmp(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
 
-	if (options & F_AUDIBLE) {
+	if (rts->opt_audible) {
 		putchar('\a');
-		if (options & F_FLOOD)
+		if (rts->opt_flood)
 			fflush(stdout);
 	}
-	if (!(options & F_FLOOD)) {
+	if (!rts->opt_flood) {
 		putchar('\n');
 		fflush(stdout);
 	}
 	return 0;
 }
 
-void ping6_install_filter(socket_st *sock)
+void ping6_install_filter(struct ping_rts *rts, socket_st *sock)
 {
 	static int once;
 	static struct sock_filter insns[] = {
@@ -1368,7 +1349,7 @@ void ping6_install_filter(socket_st *sock)
 	once = 1;
 
 	/* Patch bpflet for current identifier. */
-	insns[1] = (struct sock_filter)BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, htons(ident), 0, 1);
+	insns[1] = (struct sock_filter)BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, htons(rts->ident), 0, 1);
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		error(0, errno, _("WARNING: failed to install socket filter"));

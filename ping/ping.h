@@ -1,3 +1,4 @@
+/* Includes */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -51,6 +52,7 @@
 #include <linux/types.h>
 #include <linux/errqueue.h>
 #include <linux/in6.h>
+/* All includes done. */
 
 #ifndef SCOPE_DELIMITER
 # define SCOPE_DELIMITER '%'
@@ -64,31 +66,10 @@
 
 #define SCHINT(a)	(((a) <= MININTERVAL) ? MININTERVAL : (a))
 
-/* various options */
-extern int options;
-#define	F_FLOOD		0x001
-#define	F_INTERVAL	0x002
-#define	F_NUMERIC	0x004
-#define	F_PINGFILLED	0x008
-#define	F_QUIET		0x010
-#define	F_RROUTE	0x020
-#define	F_SO_DEBUG	0x040
-#define	F_SO_DONTROUTE	0x080
-#define	F_VERBOSE	0x100
-#define	F_TIMESTAMP	0x200
-#define	F_SOURCEROUTE	0x400
-#define	F_FLOOD_POLL	0x800
-#define	F_LATENCY	0x1000
-#define	F_AUDIBLE	0x2000
-#define	F_ADAPTIVE	0x4000
-#define	F_STRICTSOURCE	0x8000
-#define F_NOLOOP	0x10000
-#define F_TTL		0x20000
-#define F_MARK		0x40000
-#define F_PTIMEOFDAY	0x80000
-#define F_OUTSTANDING	0x100000
-#define F_FLOWINFO	0x200000
-#define F_TCLASS	0x400000
+
+#ifndef MSG_CONFIRM
+#define MSG_CONFIRM 0
+#endif
 
 /*
  * MAX_DUP_CHK is the number of bits in received table, i.e. the maximum
@@ -116,72 +97,168 @@ struct rcvd_table {
 	bitmap_t bitmap[MAX_DUP_CHK / (sizeof(bitmap_t) * 8)];
 };
 
-extern struct rcvd_table rcvd_tbl;
+typedef struct socket_st {
+	int fd;
+	int socktype;
+} socket_st;
 
-#define	A(bit)	(rcvd_tbl.bitmap[(bit) >> BITMAP_SHIFT])	/* identify word in array */
+struct ping_rts;
+
+int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai, socket_st *sock);
+int ping4_send_probe(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
+int ping4_receive_error_msg(struct ping_rts *, socket_st *);
+int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+void ping4_install_filter(struct ping_rts *rts, socket_st *);
+
+typedef struct ping_func_set_st {
+	int (*send_probe)(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
+	int (*receive_error_msg)(struct ping_rts *rts, socket_st *sock);
+	int (*parse_reply)(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+	void (*install_filter)(struct ping_rts *rts, socket_st *);
+} ping_func_set_st;
+
+/*ping runtime state */
+struct ping_rts {
+	int mark;
+	unsigned char *outpack;
+
+	struct rcvd_table rcvd_tbl;
+
+	size_t datalen;
+	char *hostname;
+	uid_t uid;
+	int ident;			/* process id to identify our packets */
+
+	int sndbuf;
+	int ttl;
+
+	long npackets;			/* max packets to transmit */
+	long nreceived;			/* # of packets we got back */
+	long nrepeats;			/* number of duplicates */
+	long ntransmitted;		/* sequence # for outbound packets = #sent */
+	long nchecksum;			/* replies with bad checksum */
+	long nerrors;			/* icmp errors */
+	int interval;			/* interval between packets (msec) */
+	int preload;
+	int deadline;			/* time to die */
+	int lingertime;
+	struct timeval start_time, cur_time;
+	volatile int exiting;
+	volatile int status_snapshot;
+	int confirm;
+	int confirm_flag;
+	char *device;
+	int pmtudisc;
+
+	volatile int in_pr_addr;	/* pr_addr() is executing */
+	jmp_buf pr_addr_jmp;
+
+	/* timing */
+	int timing;			/* flag to do timing */
+	long tmin;			/* minimum round trip time */
+	long tmax;			/* maximum round trip time */
+	double tsum;			/* sum of all times, for doing average */
+	double tsum2;
+	int rtt;
+	int rtt_addend;
+	uint16_t acked;
+	int pipesize;
+
+	ping_func_set_st ping4_func_set;
+	ping_func_set_st ping6_func_set;
+	uint32_t tclass;
+	uint32_t flowlabel;
+	struct sockaddr_in6 source6;
+	struct sockaddr_in6 whereto6;
+	struct sockaddr_in6 firsthop6;
+
+	/* Used only in ping.c */
+	int ts_type;
+	int nroute;
+	uint32_t route[10];
+	struct sockaddr_in whereto;	/* who to ping */
+	int optlen;
+	int settos;			/* Set TOS, Precedence or other QOS options */
+	int broadcast_pings;
+	int multicast;
+	struct sockaddr_in source;
+
+	/* Used only in ping_common.c */
+	int screen_width;
+#ifdef HAVE_LIBCAP
+	cap_value_t cap_raw;
+	cap_value_t cap_admin;
+#endif
+
+	/* Used only in ping6_common.c */
+	struct sockaddr_in6 firsthop;
+	unsigned char cmsgbuf[4096];
+	size_t cmsglen;
+	/* Node Information query */
+	int ni_query;
+	int ni_flag;
+	void *ni_subject;
+	int ni_subject_len;
+	int ni_subject_type;
+	char *ni_group;
+#if PING6_NONCE_MEMORY
+	uint8_t *ni_nonce_ptr;
+#else
+	struct {
+		struct timeval tv;
+		pid_t pid;
+	} ni_nonce_secret;
+#endif
+
+	/* boolean option bits */
+	unsigned int
+		opt_adaptive:1,
+		opt_audible:1,
+		opt_flood:1,
+		opt_flood_poll:1,
+		opt_flowinfo:1,
+		opt_interval:1,
+		opt_latency:1,
+		opt_mark:1,
+		opt_noloop:1,
+		opt_numeric:1,
+		opt_outstanding:1,
+		opt_pingfilled:1,
+		opt_ptimeofday:1,
+		opt_quiet:1,
+		opt_rroute:1,
+		opt_so_debug:1,
+		opt_so_dontroute:1,
+		opt_sourceroute:1,
+		opt_strictsource:1,
+		opt_tclass:1,
+		opt_timestamp:1,
+		opt_ttl:1,
+		opt_verbose:1;
+};
+/* FIXME: global_rts will be removed in future */
+extern struct ping_rts *global_rts;
+
+#define	A(bit)	(rts->rcvd_tbl.bitmap[(bit) >> BITMAP_SHIFT])	/* identify word in array */
 #define	B(bit)	(((bitmap_t)1) << ((bit) & ((1 << BITMAP_SHIFT) - 1)))	/* identify bit in word */
 
-static inline void rcvd_set(uint16_t seq)
+static inline void rcvd_set(struct ping_rts *rts, uint16_t seq)
 {
 	unsigned bit = seq % MAX_DUP_CHK;
 	A(bit) |= B(bit);
 }
 
-static inline void rcvd_clear(uint16_t seq)
+static inline void rcvd_clear(struct ping_rts *rts, uint16_t seq)
 {
 	unsigned bit = seq % MAX_DUP_CHK;
 	A(bit) &= ~B(bit);
 }
 
-static inline bitmap_t rcvd_test(uint16_t seq)
+static inline bitmap_t rcvd_test(struct ping_rts *rts, uint16_t seq)
 {
 	unsigned bit = seq % MAX_DUP_CHK;
 	return A(bit) & B(bit);
 }
-
-extern size_t datalen;
-extern char *hostname;
-extern int uid;
-extern int ident;			/* process id to identify our packets */
-
-extern int sndbuf;
-extern int ttl;
-
-extern long npackets;			/* max packets to transmit */
-extern long nreceived;			/* # of packets we got back */
-extern long nrepeats;			/* number of duplicates */
-extern long ntransmitted;		/* sequence # for outbound packets = #sent */
-extern long nchecksum;			/* replies with bad checksum */
-extern long nerrors;			/* icmp errors */
-extern int interval;			/* interval between packets (msec) */
-extern int preload;
-extern int deadline;			/* time to die */
-extern int lingertime;
-extern struct timeval start_time, cur_time;
-extern volatile int exiting;
-extern volatile int status_snapshot;
-extern int confirm;
-extern int confirm_flag;
-extern char *device;
-extern int pmtudisc;
-
-extern volatile int in_pr_addr;		/* pr_addr() is executing */
-extern jmp_buf pr_addr_jmp;
-
-#ifndef MSG_CONFIRM
-#define MSG_CONFIRM 0
-#endif
-
-
-/* timing */
-extern int timing;			/* flag to do timing */
-extern long tmin;			/* minimum round trip time */
-extern long tmax;			/* maximum round trip time */
-extern double tsum;			/* sum of all times, for doing average */
-extern double tsum2;
-extern int rtt;
-extern uint16_t acked;
-extern int pipesize;
 
 /*
  * Write to stdout
@@ -222,41 +299,41 @@ static inline void set_signal(int signo, void (*handler)(int))
 
 extern int __schedule_exit(int next);
 
-static inline int schedule_exit(int next)
+static inline int schedule_exit(struct ping_rts *rts, int next)
 {
-	if (npackets && ntransmitted >= npackets && !deadline)
+	if (rts->npackets && rts->ntransmitted >= rts->npackets && !rts->deadline)
 		next = __schedule_exit(next);
 	return next;
 }
 
-static inline int in_flight(void)
+static inline int in_flight(struct ping_rts *rts)
 {
-	uint16_t diff = (uint16_t)ntransmitted - acked;
-	return (diff <= 0x7FFF) ? diff : ntransmitted - nreceived - nerrors;
+	uint16_t diff = (uint16_t)rts->ntransmitted - rts->acked;
+	return (diff <= 0x7FFF) ? diff : rts->ntransmitted - rts->nreceived - rts->nerrors;
 }
 
-static inline void acknowledge(uint16_t seq)
+static inline void acknowledge(struct ping_rts *rts, uint16_t seq)
 {
-	uint16_t diff = (uint16_t)ntransmitted - seq;
+	uint16_t diff = (uint16_t)rts->ntransmitted - seq;
 	if (diff <= 0x7FFF) {
-		if ((int)diff + 1 > pipesize)
-			pipesize = (int)diff + 1;
-		if ((int16_t)(seq - acked) > 0 ||
-		    (uint16_t)ntransmitted - acked > 0x7FFF)
-			acked = seq;
+		if ((int)diff + 1 > rts->pipesize)
+			rts->pipesize = (int)diff + 1;
+		if ((int16_t)(seq - rts->acked) > 0 ||
+		    (uint16_t)rts->ntransmitted - rts->acked > 0x7FFF)
+			rts->acked = seq;
 	}
 }
 
-static inline void advance_ntransmitted(void)
+static inline void advance_ntransmitted(struct ping_rts *rts)
 {
-	ntransmitted++;
+	rts->ntransmitted++;
 	/* Invalidate acked, if 16 bit seq overflows. */
-	if ((uint16_t)ntransmitted - acked > 0x7FFF)
-		acked = (uint16_t)ntransmitted + 1;
+	if ((uint16_t)rts->ntransmitted - rts->acked > 0x7FFF)
+		rts->acked = (uint16_t)rts->ntransmitted + 1;
 }
 
 extern void usage(void) __attribute__((noreturn));
-extern void limit_capabilities(void);
+extern void limit_capabilities(struct ping_rts *rts);
 static int enable_capability_raw(void);
 static int disable_capability_raw(void);
 static int enable_capability_admin(void);
@@ -276,67 +353,37 @@ static inline int disable_capability_admin(void)	{ return modify_capability(0); 
 #endif
 extern void drop_capabilities(void);
 
-typedef struct socket_st {
-	int fd;
-	int socktype;
-} socket_st;
+char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen);
 
-char *pr_addr(void *sa, socklen_t salen);
-
-int is_ours(socket_st *sock, uint16_t id);
-
-int ping4_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock);
-int ping4_send_probe(socket_st *, void *packet, unsigned packet_size);
-int ping4_receive_error_msg(socket_st *);
-int ping4_parse_reply(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
-void ping4_install_filter(socket_st *);
-
-typedef struct ping_func_set_st {
-	int (*send_probe)(socket_st *, void *packet, unsigned packet_size);
-	int (*receive_error_msg)(socket_st *sock);
-	int (*parse_reply)(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
-	void (*install_filter)(socket_st *);
-} ping_func_set_st;
-
-extern ping_func_set_st ping4_func_set;
-
-extern int pinger(ping_func_set_st *fset, socket_st *sock);
-extern void sock_setbufs(socket_st *, int alloc);
-extern void setup(socket_st *);
-extern int contains_pattern_in_payload(uint8_t *ptr);
-extern int main_loop(ping_func_set_st *fset, socket_st*, uint8_t *buf, int buflen);
-extern int finish(void);
-extern void status(void);
+int is_ours(struct ping_rts *rts, socket_st *sock, uint16_t id);
+extern int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock);
+extern void sock_setbufs(struct ping_rts *rts, socket_st *, int alloc);
+extern void setup(struct ping_rts *rts, socket_st *);
+extern int contains_pattern_in_payload(struct ping_rts *rts, uint8_t *ptr);
+extern int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st*,
+		     uint8_t *buf, int buflen);
+extern int finish(struct ping_rts *rts);
+extern void status(struct ping_rts *rts);
 extern void common_options(int ch);
-extern int gather_statistics(uint8_t *ptr, int icmplen,
+extern int gather_statistics(struct ping_rts *rts, uint8_t *ptr, int icmplen,
 			     int cc, uint16_t seq, int hops,
 			     int csfailed, struct timeval *tv, char *from,
 			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast);
-extern void print_timestamp(void);
-void fill(char *patp, unsigned char *packet, size_t packet_size);
-
-extern int mark;
-extern unsigned char *outpack;
+extern void print_timestamp(struct ping_rts *rts);
+void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet_size);
 
 /* IPv6 */
 
-int ping6_run(int argc, char **argv, struct addrinfo *ai, socket_st *sock);
+int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
+	      socket_st *sock);
 void ping6_usage(unsigned from_ping);
 
-int ping6_send_probe(socket_st *sockets, void *packet, unsigned packet_size);
-int ping6_receive_error_msg(socket_st *sockets);
-int ping6_parse_reply(socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
-void ping6_install_filter(socket_st *sockets);
+int ping6_send_probe(struct ping_rts *rts, socket_st *sockets, void *packet, unsigned packet_size);
+int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sockets);
+int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+void ping6_install_filter(struct ping_rts *rts, socket_st *sockets);
 
-extern ping_func_set_st ping6_func_set;
-
-int niquery_option_handler(const char *opt_arg);
-
-extern uint32_t tclass;
-extern uint32_t flowlabel;
-extern struct sockaddr_in6 source6;
-extern struct sockaddr_in6 whereto6;
-extern struct sockaddr_in6 firsthop6;
+int niquery_option_handler(struct ping_rts *rts, const char *opt_arg);
 
 /* IPv6 node information query */
 
