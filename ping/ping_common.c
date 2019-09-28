@@ -577,7 +577,6 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 	char ans_data[4096];
 	struct iovec iov;
 	struct msghdr msg;
-	struct cmsghdr *c;
 	int cc;
 	int next;
 	int polling;
@@ -687,6 +686,8 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 			} else {
 
 #ifdef SO_TIMESTAMP
+				struct cmsghdr *c;
+
 				for (c = CMSG_FIRSTHDR(&msg); c; c = CMSG_NXTHDR(&msg, c)) {
 					if (c->cmsg_level != SOL_SOCKET ||
 					    c->cmsg_type != SO_TIMESTAMP)
