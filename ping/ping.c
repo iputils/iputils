@@ -512,6 +512,10 @@ main(int argc, char **argv)
 		free(outpack_fill);
 	}
 
+	rts.rcvd_tbl = calloc(1, sizeof(struct rcvd_table));
+	if (!rts.rcvd_tbl)
+		error(2, errno, _("memory allocation failed"));
+
 	/* Create sockets */
 	enable_capability_raw();
 	if (hints.ai_family != AF_INET6)
@@ -563,6 +567,7 @@ main(int argc, char **argv)
 
 	freeaddrinfo(result);
 	free(rts.outpack);
+	free(rts.rcvd_tbl);
 
 	return ret_val;
 }

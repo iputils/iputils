@@ -221,6 +221,10 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			      IN6_IS_ADDR_MC_LINKLOCAL(&rts->source6.sin6_addr)))
 		rts->source6.sin6_scope_id = if_name2index(rts->device);
 
+	rts->cmsgbuf = calloc(1, 4096);
+	if (!rts->cmsgbuf)
+		error(2, errno, _("memory allocation failed"));
+
 	if (rts->device) {
 		struct cmsghdr *cmsg;
 		struct in6_pktinfo *ipi;
@@ -389,6 +393,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	hold = main_loop(rts, &ping6_func_set, sock, packet, packlen);
 	free(packet);
+	free(rts->cmsgbuf);
 	return hold;
 }
 

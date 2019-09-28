@@ -143,7 +143,7 @@ struct ping_rts {
 	int mark;
 	unsigned char *outpack;
 
-	struct rcvd_table rcvd_tbl;
+	struct rcvd_table *rcvd_tbl;
 
 	size_t datalen;
 	char *hostname;
@@ -213,7 +213,7 @@ struct ping_rts {
 
 	/* Used only in ping6_common.c */
 	struct sockaddr_in6 firsthop;
-	unsigned char cmsgbuf[4096];
+	unsigned char *cmsgbuf;
 	size_t cmsglen;
 	struct ping_ni ni;
 
@@ -246,7 +246,7 @@ struct ping_rts {
 /* FIXME: global_rts will be removed in future */
 extern struct ping_rts *global_rts;
 
-#define	A(bit)	(rts->rcvd_tbl.bitmap[(bit) >> BITMAP_SHIFT])	/* identify word in array */
+#define	A(bit)	(rts->rcvd_tbl->bitmap[(bit) >> BITMAP_SHIFT])	/* identify word in array */
 #define	B(bit)	(((bitmap_t)1) << ((bit) & ((1 << BITMAP_SHIFT) - 1)))	/* identify bit in word */
 
 static inline void rcvd_set(struct ping_rts *rts, uint16_t seq)
