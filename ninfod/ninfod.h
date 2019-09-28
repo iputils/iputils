@@ -31,6 +31,8 @@
  * Author:
  * 	YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
  */
+#ifndef IPUTILS_NINFOD_H
+#define IPUTILS_NINFOD_H
 
 /* definitions */
 #define NINFOD			"ninfod"
@@ -118,3 +120,4 @@ int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS);
 void init_nodeinfo_nodename(INIT_ARGS);
 int pr_nodeinfo_nodename(CHECKANDFILL_ARGS);
 
+#endif /* IPUTILS_NINFOD_H */

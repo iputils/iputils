@@ -1,3 +1,5 @@
+#ifndef IPUTILS_TFTPD_H
+#define IPUTILS_TFTPD_H
 /*
  * Copyright (c) 1983, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -38,3 +40,5 @@ extern int write_behind(FILE *file, int convert);
 extern int synchnet(int f);
 extern struct tftphdr *w_init(void);
 extern struct tftphdr *r_init(void);
+
+#endif /* IPUTILS_TFTPD_H */
