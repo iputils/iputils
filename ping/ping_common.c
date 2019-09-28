@@ -316,7 +316,7 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 		gettimeofday(&rts->cur_time, NULL);
 		tokens = rts->interval * (rts->preload - 1);
 	} else {
-		long ntokens;
+		long ntokens, tmp;
 		struct timeval tv;
 
 		gettimeofday(&tv, NULL);
@@ -329,8 +329,9 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 				return MININTERVAL - ntokens;
 		}
 		ntokens += tokens;
-		if (ntokens > rts->interval * rts->preload)
-			ntokens = rts->interval * rts->preload;
+		tmp = (long)rts->interval * (long)rts->preload;
+		if (tmp < ntokens)
+			ntokens = tmp;
 		if (ntokens < rts->interval)
 			return rts->interval - ntokens;
 
