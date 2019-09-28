@@ -277,8 +277,8 @@ main(int argc, char **argv)
 #endif
 		.pmtudisc = -1,
 		.source.sin_family = AF_INET,
-		.ni_query = -1,
-		.ni_subject_type = -1,
+		.ni.query = -1,
+		.ni.subject_type = -1,
 		0
 	};
 	/* FIXME: global_rts will be removed in future */
@@ -346,7 +346,7 @@ main(int argc, char **argv)
 			rts.opt_flowinfo = 1;
 			break;
 		case 'N':
-			if (niquery_option_handler(&rts, optarg) < 0)
+			if (niquery_option_handler(&rts.ni, optarg) < 0)
 				usage();
 			hints.ai_socktype = SOCK_RAW;
 			break;

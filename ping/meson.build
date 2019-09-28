@@ -4,6 +4,7 @@ executable('ping', [
 		'ping.c',
 		'ping_common.c',
 		'ping6_common.c',
+		'node_info.c',
 		git_version_h
 	],
 	include_directories : inc,

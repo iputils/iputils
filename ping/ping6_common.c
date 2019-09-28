@@ -73,12 +73,7 @@ ping_func_set_st ping6_func_set = {
 # define SCOPE_DELIMITER '%'
 #endif
 
-#if defined(USE_GCRYPT) || defined(USE_OPENSSL) || defined(USE_NETTLE) || defined(USE_KERNEL_CRYPTO_API)
-#include "iputils_md5dig.h"
-#define USE_CRYPTO
-#endif
-
-static inline int ntohsp(uint16_t *p)
+int ntohsp(uint16_t *p)
 {
 	uint16_t v;
 	memcpy(&v, p, sizeof(v));
@@ -91,428 +86,6 @@ unsigned int if_name2index(const char *ifname)
 	if (!i)
 		error(2, 0, _("unknown iface: %s"), ifname);
 	return i;
-}
-
-struct niquery_option {
-	char *name;
-	int namelen;
-	int has_arg;
-	int data;
-	int (*handler)(struct ping_rts *rts, int index, const char *arg);
-};
-
-#define NIQUERY_OPTION(_name, _has_arg, _data, _handler)	\
-	{							\
-		.name = _name,					\
-		.namelen = sizeof(_name) - 1,			\
-		.has_arg = _has_arg,				\
-		.data = _data,					\
-		.handler = _handler				\
-	}
-
-static int niquery_option_name_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
-static int niquery_option_ipv6_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
-static int niquery_option_ipv6_flag_handler(struct ping_rts *rts, int index, const char *arg);
-static int niquery_option_ipv4_handler(struct ping_rts *rts, int index, const char *arg);
-static int niquery_option_ipv4_flag_handler(struct ping_rts *rts, int index, const char *arg);
-static int niquery_option_subject_addr_handler(struct ping_rts *rts, int index, const char *arg);
-static int niquery_option_subject_name_handler(struct ping_rts *rts, int index, const char *arg);
-static int niquery_option_help_handler(struct ping_rts *rts, int index, const char *arg);
-
-struct niquery_option niquery_options[] = {
-	NIQUERY_OPTION("name",			0,	0,				niquery_option_name_handler),
-	NIQUERY_OPTION("fqdn",			0,	0,				niquery_option_name_handler),
-	NIQUERY_OPTION("ipv6",			0,	0,				niquery_option_ipv6_handler),
-	NIQUERY_OPTION("ipv6-all",		0,	IPUTILS_NI_IPV6_FLAG_ALL,	niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-compatible",	0,	IPUTILS_NI_IPV6_FLAG_COMPAT,	niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-linklocal",	0,	IPUTILS_NI_IPV6_FLAG_LINKLOCAL,	niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-sitelocal",	0,	IPUTILS_NI_IPV6_FLAG_SITELOCAL,	niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv6-global",		0,	IPUTILS_NI_IPV6_FLAG_GLOBAL,	niquery_option_ipv6_flag_handler),
-	NIQUERY_OPTION("ipv4",			0,	0,				niquery_option_ipv4_handler),
-	NIQUERY_OPTION("ipv4-all",		0,	IPUTILS_NI_IPV4_FLAG_ALL,	niquery_option_ipv4_flag_handler),
-	NIQUERY_OPTION("subject-ipv6",		1,	IPUTILS_NI_ICMP6_SUBJ_IPV6,	niquery_option_subject_addr_handler),
-	NIQUERY_OPTION("subject-ipv4",		1,	IPUTILS_NI_ICMP6_SUBJ_IPV4,	niquery_option_subject_addr_handler),
-	NIQUERY_OPTION("subject-name",		1,	0,				niquery_option_subject_name_handler),
-	NIQUERY_OPTION("subject-fqdn",		1,	-1,				niquery_option_subject_name_handler),
-	NIQUERY_OPTION("help",			0,	0,				niquery_option_help_handler),
-	{NULL, 0, 0, 0, NULL}
-};
-
-static inline int niquery_is_enabled(struct ping_rts *rts)
-{
-	return rts->ni_query >= 0;
-}
-
-static void niquery_init_nonce(struct ping_rts *rts)
-{
-#if PING6_NONCE_MEMORY
-	iputils_srand();
-	rts->ni_nonce_ptr = calloc(NI_NONCE_SIZE, MAX_DUP_CHK);
-	if (!rts->ni_nonce_ptr)
-		error(2, errno, "calloc");
-
-	rts->ni_nonce_ptr[0] = ~0;
-#else
-	gettimeofday(&rts->ni_nonce_secret.tv, NULL);
-	rts->ni_nonce_secret.pid = getpid();
-#endif
-}
-
-#if !PING6_NONCE_MEMORY
-static int niquery_nonce(struct ping_rts *rts, uint8_t *nonce, int fill)
-{
-# ifdef USE_CRYPTO
-	static uint8_t digest[MD5_DIGEST_LENGTH];
-	static int seq = -1;
-
-	if (fill || seq != *(uint16_t *)nonce || seq == -1) {
-		MD5_CTX ctxt;
-
-		MD5_Init(&ctxt);
-		MD5_Update(&ctxt, &rts->ni_nonce_secret, sizeof(rts->ni_nonce_secret));
-		MD5_Update(&ctxt, nonce, sizeof(uint16_t));
-		MD5_Final(digest, &ctxt);
-
-		seq = *(uint16_t *)nonce;
-	}
-
-	if (fill) {
-		memcpy(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t));
-		return 0;
-	} else {
-		if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)))
-			return -1;
-		return ntohsp((uint16_t *)nonce);
-	}
-# else
-	error(3, ENOSYS, _("niquery_nonce() crypto disabled"));
-# endif
-}
-#endif
-
-static inline void niquery_fill_nonce(struct ping_rts *rts, uint16_t seq, uint8_t *nonce)
-{
-	uint16_t v = htons(seq);
-#if PING6_NONCE_MEMORY
-	int i;
-
-	memcpy(&rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], &v, sizeof(v));
-
-	for (i = sizeof(v); i < NI_NONCE_SIZE; i++)
-		rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK) + i] = 0x100 * (rand() / (RAND_MAX + 1.0));
-
-	memcpy(nonce, &rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE);
-#else
-	memcpy(nonce, &v, sizeof(v));
-	niquery_nonce(rts, nonce, 1);
-#endif
-}
-
-static inline int niquery_check_nonce(struct ping_rts *rts, uint8_t *nonce)
-{
-#if PING6_NONCE_MEMORY
-	uint16_t seq = ntohsp((uint16_t *)nonce);
-	if (memcmp(nonce, &rts->ni_nonce_ptr[NI_NONCE_SIZE * (seq % MAX_DUP_CHK)], NI_NONCE_SIZE))
-		return -1;
-	return seq;
-#else
-	return niquery_nonce(rts, nonce, 0);
-#endif
-}
-
-static int niquery_set_qtype(struct ping_rts *rts, int type)
-{
-	if (niquery_is_enabled(rts) && rts->ni_query != type) {
-		printf(_("Qtype conflict\n"));
-		return -1;
-	}
-	rts->ni_query = type;
-	return 0;
-}
-
-static int niquery_option_name_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
-{
-	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_DNSNAME) < 0)
-		return -1;
-	return 0;
-}
-
-static int niquery_option_ipv6_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
-{
-	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
-		return -1;
-	return 0;
-}
-
-static int niquery_option_ipv6_flag_handler(struct ping_rts *rts, int index, const char *arg __attribute__((__unused__)))
-{
-	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV6ADDR) < 0)
-		return -1;
-	rts->ni_flag |= niquery_options[index].data;
-	return 0;
-}
-
-static int niquery_option_ipv4_handler(struct ping_rts *rts, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)))
-{
-	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
-		return -1;
-	return 0;
-}
-
-static int niquery_option_ipv4_flag_handler(struct ping_rts *rts, int index, const char *arg __attribute__((__unused__)))
-{
-	if (niquery_set_qtype(rts, IPUTILS_NI_QTYPE_IPV4ADDR) < 0)
-		return -1;
-	rts->ni_flag |= niquery_options[index].data;
-	return 0;
-}
-
-static inline int niquery_is_subject_valid(struct ping_rts *rts)
-{
-	return rts->ni_subject_type >= 0 && rts->ni_subject;
-}
-
-static int niquery_set_subject_type(struct ping_rts *rts, int type)
-{
-	if (niquery_is_subject_valid(rts) && rts->ni_subject_type != type) {
-		printf(_("Subject type conflict\n"));
-		return -1;
-	}
-	rts->ni_subject_type = type;
-	return 0;
-}
-
-static int niquery_option_subject_addr_handler(struct ping_rts *rts, int index, const char *arg)
-{
-	struct addrinfo hints = {
-		.ai_family = AF_UNSPEC,
-		.ai_socktype = SOCK_DGRAM,
-		.ai_flags = getaddrinfo_flags
-	};
-	struct addrinfo *result, *ai;
-	int ret_val;
-	int offset;
-
-	if (niquery_set_subject_type(rts, niquery_options[index].data) < 0)
-		return -1;
-
-	rts->ni_subject_type = niquery_options[index].data;
-
-	switch (niquery_options[index].data) {
-	case IPUTILS_NI_ICMP6_SUBJ_IPV6:
-		rts->ni_subject_len = sizeof(struct in6_addr);
-		offset = offsetof(struct sockaddr_in6, sin6_addr);
-		hints.ai_family = AF_INET6;
-		break;
-	case IPUTILS_NI_ICMP6_SUBJ_IPV4:
-		rts->ni_subject_len = sizeof(struct in_addr);
-		offset = offsetof(struct sockaddr_in, sin_addr);
-		hints.ai_family = AF_INET;
-		break;
-	default:
-		/* should not happen. */
-		offset = -1;
-	}
-
-	ret_val = getaddrinfo(arg, 0, &hints, &result);
-	if (ret_val) {
-		error(0, 0, "%s: %s", arg, gai_strerror(ret_val));
-		return -1;
-	}
-
-	for (ai = result; ai; ai = ai->ai_next) {
-		void *p = malloc(rts->ni_subject_len);
-		if (!p)
-			continue;
-		memcpy(p, (uint8_t *)ai->ai_addr + offset, rts->ni_subject_len);
-		free(rts->ni_subject);
-		rts->ni_subject = p;
-		break;
-	}
-	freeaddrinfo(result);
-
-	return 0;
-}
-
-#ifdef USE_IDN
-# if IDN2_VERSION_NUMBER >= 0x02000000
-#  define IDN2_FLAGS IDN2_NONTRANSITIONAL
-# else
-#  define IDN2_FLAGS 0
-# endif
-#endif
-
-#ifdef USE_CRYPTO
-static int niquery_option_subject_name_handler(struct ping_rts *rts, int index, const char *name)
-{
-	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
-	unsigned char *dnptrs[2], **dpp, **lastdnptr;
-	int n;
-	size_t i;
-	char *p;
-	char *canonname = NULL, *idn = NULL;
-	unsigned char *buf = NULL;
-	size_t namelen;
-	size_t buflen;
-	int dots, fqdn = niquery_options[index].data;
-	MD5_CTX ctxt;
-	uint8_t digest[MD5_DIGEST_LENGTH];
-#ifdef USE_IDN
-	int rc;
-#endif
-
-	if (niquery_set_subject_type(rts, IPUTILS_NI_ICMP6_SUBJ_FQDN) < 0)
-		return -1;
-
-#ifdef USE_IDN
-	rc = idn2_lookup_ul(name, &idn, IDN2_FLAGS);
-	if (rc)
-		error(2, 0, _("IDN encoding error: %s"), idn2_strerror(rc));
-#else
-	idn = strdup(name);
-	if (!idn)
-		goto oomexit;
-#endif
-
-	p = strchr(idn, SCOPE_DELIMITER);
-	if (p) {
-		*p = '\0';
-		if (strlen(p + 1) >= IFNAMSIZ)
-			error(1, 0, _("too long scope name"));
-	}
-
-	namelen = strlen(idn);
-	canonname = malloc(namelen + 1);
-	if (!canonname)
-		goto oomexit;
-
-	dots = 0;
-	for (i = 0; i < namelen + 1; i++) {
-		canonname[i] = isupper(idn[i]) ? tolower(idn[i]) : idn[i];
-		if (idn[i] == '.')
-			dots++;
-	}
-
-	if (fqdn == 0) {
-		/* guess if hostname is FQDN */
-		fqdn = dots ? 1 : -1;
-	}
-
-	buflen = namelen + 3 + 1;	/* dn_comp() requrires strlen() + 3,
-					   plus non-fqdn indicator. */
-	buf = malloc(buflen);
-	if (!buf) {
-		error(0, errno, _("memory allocation failed"));
-		goto errexit;
-	}
-
-	dpp = dnptrs;
-	lastdnptr = &dnptrs[ARRAY_SIZE(dnptrs)];
-
-	*dpp++ = (unsigned char *)buf;
-	*dpp++ = NULL;
-
-	n = dn_comp(canonname, (unsigned char *)buf, buflen, dnptrs, lastdnptr);
-	if (n < 0) {
-		error(0, 0, _("inappropriate subject name: %s"), canonname);
-		goto errexit;
-	} else if ((size_t)n >= buflen) {
-		error(0, 0, _("dn_comp() returned too long result"));
-		goto errexit;
-	}
-
-	MD5_Init(&ctxt);
-	MD5_Update(&ctxt, buf, buf[0]);
-	MD5_Final(digest, &ctxt);
-
-	sprintf(nigroup_buf, "ff02::2:%02x%02x:%02x%02x%s%s",
-		digest[0], digest[1], digest[2], digest[3],
-		p ? "%" : "",
-		p ? p + 1 : "");
-
-	if (fqdn < 0)
-		buf[n] = 0;
-
-	free(rts->ni_subject);
-
-	rts->ni_group = nigroup_buf;
-	rts->ni_subject = buf;
-	rts->ni_subject_len = n + (fqdn < 0);
-
-	free(canonname);
-	free(idn);
-
-	return 0;
-oomexit:
-	error(0, errno, _("memory allocation failed"));
-errexit:
-	free(buf);
-	free(canonname);
-	free(idn);
-	exit(1);
-}
-#else
-static int niquery_option_subject_name_handler(struct ping_rts *rts  __attribute__((__unused__)),
-					       int index __attribute__((__unused__)),
-					       const char *name __attribute__((__unused__)))
-{
-	error(3, ENOSYS, _("niquery_option_subject_name_handler() crypto disabled"));
-	abort();
-}
-#endif
-
-int niquery_option_help_handler(struct ping_rts *rts __attribute__((__unused__)),
-				int index,
-				const char *arg __attribute__((__unused__)))
-{
-	fprintf(index ? stdout : stderr,
-		      _("ping -6 -N <nodeinfo opt>\n"
-			"Help:\n"
-			"  help\n"
-			"Query:\n"
-			"  name\n"
-			"  ipv6\n"
-			"  ipv6-all\n"
-			"  ipv6-compatible\n"
-			"  ipv6-global\n"
-			"  ipv6-linklocal\n"
-			"  ipv6-sitelocal\n"
-			"  ipv4\n"
-			"  ipv4-all\n"
-			"Subject:\n"
-			"  subject-ipv6=addr\n"
-			"  subject-ipv4=addr\n"
-			"  subject-name=name\n"
-			"  subject-fqdn=name\n"
-		));
-	index ? exit(0) : exit(2);
-}
-
-int niquery_option_handler(struct ping_rts *rts, const char *opt_arg)
-{
-	struct niquery_option *p;
-	int i;
-	int ret = -1;
-	for (i = 0, p = niquery_options; p->name; i++, p++) {
-		if (strncmp(p->name, opt_arg, p->namelen))
-			continue;
-		if (!p->has_arg) {
-			if (opt_arg[p->namelen] == '\0') {
-				ret = p->handler(rts, i, NULL);
-				if (ret >= 0)
-					break;
-			}
-		} else {
-			if (opt_arg[p->namelen] == '=') {
-				ret = p->handler(rts, i, &opt_arg[p->namelen] + 1);
-				if (ret >= 0)
-					break;
-			}
-		}
-	}
-	if (!p->name)
-		ret = niquery_option_help_handler(rts, 0, NULL);
-	return ret;
 }
 
 int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
@@ -531,13 +104,13 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	int err;
 	static uint32_t scope_id = 0;
 
-	if (niquery_is_enabled(rts)) {
-		niquery_init_nonce(rts);
+	if (niquery_is_enabled(&rts->ni)) {
+		niquery_init_nonce(&rts->ni);
 
-		if (!niquery_is_subject_valid(rts)) {
-			rts->ni_subject = &rts->whereto6.sin6_addr;
-			rts->ni_subject_len = sizeof(rts->whereto6.sin6_addr);
-			rts->ni_subject_type = IPUTILS_NI_ICMP6_SUBJ_IPV6;
+		if (!niquery_is_subject_valid(&rts->ni)) {
+			rts->ni.subject = &rts->whereto6.sin6_addr;
+			rts->ni.subject_len = sizeof(rts->whereto6.sin6_addr);
+			rts->ni.subject_type = IPUTILS_NI_ICMP6_SUBJ_IPV6;
 		}
 	}
 
@@ -546,9 +119,9 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	} else if (argc == 1) {
 		target = *argv;
 	} else {
-		if (rts->ni_query < 0 && rts->ni_subject_type != IPUTILS_NI_ICMP6_SUBJ_FQDN)
+		if (rts->ni.query < 0 && rts->ni.subject_type != IPUTILS_NI_ICMP6_SUBJ_FQDN)
 			usage();
-		target = rts->ni_group;
+		target = rts->ni.group;
 	}
 
 	if (!ai) {
@@ -686,7 +259,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	    bind(sock->fd, (struct sockaddr *)&rts->source6, sizeof rts->source6) == -1)
 		error(2, errno, "bind icmp socket");
 
-	if ((ssize_t)rts->datalen >= (ssize_t)sizeof(struct timeval) && (rts->ni_query < 0)) {
+	if ((ssize_t)rts->datalen >= (ssize_t)sizeof(struct timeval) && (rts->ni.query < 0)) {
 		/* can we time transfer */
 		rts->timing = 1;
 	}
@@ -726,7 +299,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 		ICMP6_FILTER_SETBLOCKALL(&filter);
 
-		if (niquery_is_enabled(rts))
+		if (niquery_is_enabled(&rts->ni))
 			ICMP6_FILTER_SETPASS(IPUTILS_NI_ICMP6_REPLY, &filter);
 		else
 			ICMP6_FILTER_SETPASS(ICMP6_ECHO_REPLY, &filter);
@@ -1018,12 +591,12 @@ int build_niquery(struct ping_rts *rts, uint8_t *_nih,
 	cc = sizeof(*nih);
 	rts->datalen = 0;
 
-	niquery_fill_nonce(rts, rts->ntransmitted + 1, nih->ni_nonce);
-	nih->ni_code = rts->ni_subject_type;
-	nih->ni_qtype = htons(rts->ni_query);
-	nih->ni_flags = rts->ni_flag;
-	memcpy(nih + 1, rts->ni_subject, rts->ni_subject_len);
-	cc += rts->ni_subject_len;
+	niquery_fill_nonce(&rts->ni, rts->ntransmitted + 1, nih->ni_nonce);
+	nih->ni_code = rts->ni.subject_type;
+	nih->ni_qtype = htons(rts->ni.query);
+	nih->ni_flags = rts->ni.flag;
+	memcpy(nih + 1, rts->ni.subject, rts->ni.subject_len);
+	cc += rts->ni.subject_len;
 
 	return cc;
 }
@@ -1034,7 +607,7 @@ int ping6_send_probe(struct ping_rts *rts, socket_st *sock, void *packet, unsign
 
 	rcvd_clear(rts, rts->ntransmitted + 1);
 
-	if (niquery_is_enabled(rts))
+	if (niquery_is_enabled(&rts->ni))
 		len = build_niquery(rts, packet, packet_size);
 	else
 		len = build_echo(rts, packet, packet_size);
@@ -1266,7 +839,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 		}
 	} else if (icmph->icmp6_type == IPUTILS_NI_ICMP6_REPLY) {
 		struct ni_hdr *nih = (struct ni_hdr *)icmph;
-		int seq = niquery_check_nonce(rts, nih->ni_nonce);
+		int seq = niquery_check_nonce(&rts->ni, nih->ni_nonce);
 		if (seq < 0)
 			return 1;
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,

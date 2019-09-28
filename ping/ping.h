@@ -117,6 +117,24 @@ typedef struct ping_func_set_st {
 	void (*install_filter)(struct ping_rts *rts, socket_st *);
 } ping_func_set_st;
 
+/* Node Information query */
+struct ping_ni {
+	int query;
+	int flag;
+	void *subject;
+	int subject_len;
+	int subject_type;
+	char *group;
+#if PING6_NONCE_MEMORY
+	uint8_t *nonce_ptr;
+#else
+	struct {
+		struct timeval tv;
+		pid_t pid;
+	} nonce_secret;
+#endif
+};
+
 /*ping runtime state */
 struct ping_rts {
 	int mark;
@@ -194,21 +212,7 @@ struct ping_rts {
 	struct sockaddr_in6 firsthop;
 	unsigned char cmsgbuf[4096];
 	size_t cmsglen;
-	/* Node Information query */
-	int ni_query;
-	int ni_flag;
-	void *ni_subject;
-	int ni_subject_len;
-	int ni_subject_type;
-	char *ni_group;
-#if PING6_NONCE_MEMORY
-	uint8_t *ni_nonce_ptr;
-#else
-	struct {
-		struct timeval tv;
-		pid_t pid;
-	} ni_nonce_secret;
-#endif
+	struct ping_ni ni;
 
 	/* boolean option bits */
 	unsigned int
@@ -382,10 +386,16 @@ int ping6_send_probe(struct ping_rts *rts, socket_st *sockets, void *packet, uns
 int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sockets);
 int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
 void ping6_install_filter(struct ping_rts *rts, socket_st *sockets);
-
-int niquery_option_handler(struct ping_rts *rts, const char *opt_arg);
+int ntohsp(uint16_t *p);
 
 /* IPv6 node information query */
+
+int niquery_is_enabled(struct ping_ni *ni);
+void niquery_init_nonce(struct ping_ni *ni);
+int niquery_option_handler(struct ping_ni *ni, const char *opt_arg);
+int niquery_is_subject_valid(struct ping_ni *ni);
+int niquery_check_nonce(struct ping_ni *ni, uint8_t *nonce);
+void niquery_fill_nonce(struct ping_ni *ni, uint16_t seq, uint8_t *nonce);
 
 #define NI_NONCE_SIZE			8
 
