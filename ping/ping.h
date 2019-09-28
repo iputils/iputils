@@ -249,95 +249,9 @@ extern struct ping_rts *global_rts;
 #define	A(bit)	(rts->rcvd_tbl->bitmap[(bit) >> BITMAP_SHIFT])	/* identify word in array */
 #define	B(bit)	(((bitmap_t)1) << ((bit) & ((1 << BITMAP_SHIFT) - 1)))	/* identify bit in word */
 
-static inline void rcvd_set(struct ping_rts *rts, uint16_t seq)
-{
-	unsigned bit = seq % MAX_DUP_CHK;
-	A(bit) |= B(bit);
-}
-
-static inline void rcvd_clear(struct ping_rts *rts, uint16_t seq)
-{
-	unsigned bit = seq % MAX_DUP_CHK;
-	A(bit) &= ~B(bit);
-}
-
-static inline bitmap_t rcvd_test(struct ping_rts *rts, uint16_t seq)
-{
-	unsigned bit = seq % MAX_DUP_CHK;
-	return A(bit) & B(bit);
-}
-
-/*
- * Write to stdout
- */
-static inline void write_stdout(const char *str, size_t len)
-{
-	size_t o = 0;
-	ssize_t cc;
-	do {
-		cc = write(STDOUT_FILENO, str + o, len - o);
-		o += cc;
-	} while (len > o || cc < 0);
-}
-
-/*
- * tvsub --
- *	Subtract 2 timeval structs:  out = out - in.  Out is assumed to
- * be >= in.
- */
-static inline void tvsub(struct timeval *out, struct timeval *in)
-{
-	if ((out->tv_usec -= in->tv_usec) < 0) {
-		--out->tv_sec;
-		out->tv_usec += 1000000;
-	}
-	out->tv_sec -= in->tv_sec;
-}
-
-static inline void set_signal(int signo, void (*handler)(int))
-{
-	struct sigaction sa;
-
-	memset(&sa, 0, sizeof(sa));
-
-	sa.sa_handler = (void (*)(int))handler;
-	sigaction(signo, &sa, NULL);
-}
-
-extern int __schedule_exit(int next);
-
-static inline int schedule_exit(struct ping_rts *rts, int next)
-{
-	if (rts->npackets && rts->ntransmitted >= rts->npackets && !rts->deadline)
-		next = __schedule_exit(next);
-	return next;
-}
-
-static inline int in_flight(struct ping_rts *rts)
-{
-	uint16_t diff = (uint16_t)rts->ntransmitted - rts->acked;
-	return (diff <= 0x7FFF) ? diff : rts->ntransmitted - rts->nreceived - rts->nerrors;
-}
-
-static inline void acknowledge(struct ping_rts *rts, uint16_t seq)
-{
-	uint16_t diff = (uint16_t)rts->ntransmitted - seq;
-	if (diff <= 0x7FFF) {
-		if ((int)diff + 1 > rts->pipesize)
-			rts->pipesize = (int)diff + 1;
-		if ((int16_t)(seq - rts->acked) > 0 ||
-		    (uint16_t)rts->ntransmitted - rts->acked > 0x7FFF)
-			rts->acked = seq;
-	}
-}
-
-static inline void advance_ntransmitted(struct ping_rts *rts)
-{
-	rts->ntransmitted++;
-	/* Invalidate acked, if 16 bit seq overflows. */
-	if ((uint16_t)rts->ntransmitted - rts->acked > 0x7FFF)
-		rts->acked = (uint16_t)rts->ntransmitted + 1;
-}
+void rcvd_clear(struct ping_rts *rts, uint16_t seq);
+void write_stdout(const char *str, size_t len);
+void acknowledge(struct ping_rts *rts, uint16_t seq);
 
 extern void usage(void) __attribute__((noreturn));
 extern void limit_capabilities(struct ping_rts *rts);

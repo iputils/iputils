@@ -1619,8 +1619,6 @@ char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 	static char buffer[4096] = "";
 	static struct sockaddr_storage last_sa = {};
 	static socklen_t last_salen = 0;
-	char name[NI_MAXHOST] = "";
-	char address[NI_MAXHOST] = "";
 
 	if (salen == last_salen && !memcmp(sa, &last_sa, salen))
 		return buffer;
@@ -1629,14 +1627,20 @@ char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 
 	rts->in_pr_addr = !setjmp(rts->pr_addr_jmp);
 
-	getnameinfo(sa, salen, address, sizeof address, NULL, 0, getnameinfo_flags | NI_NUMERICHOST);
-	if (!rts->exiting && !rts->opt_numeric)
-		getnameinfo(sa, salen, name, sizeof name, NULL, 0, getnameinfo_flags);
+	{
+		char name[NI_MAXHOST] = "";
+		char address[NI_MAXHOST] = "";
 
-	if (*name)
-		snprintf(buffer, sizeof buffer, "%s (%s)", name, address);
-	else
-		snprintf(buffer, sizeof buffer, "%s", address);
+		getnameinfo(sa, salen, address, sizeof address, NULL, 0,
+			    getnameinfo_flags | NI_NUMERICHOST);
+		if (!rts->exiting && !rts->opt_numeric)
+			getnameinfo(sa, salen, name, sizeof name, NULL, 0, getnameinfo_flags);
+
+		if (*name)
+			snprintf(buffer, sizeof buffer, "%s (%s)", name, address);
+		else
+			snprintf(buffer, sizeof buffer, "%s", address);
+	}
 
 	rts->in_pr_addr = 0;
 
