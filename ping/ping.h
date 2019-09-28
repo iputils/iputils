@@ -1,3 +1,6 @@
+#ifndef IPUTILS_PING_H
+#define IPUTILS_PING_H
+
 /* Includes */
 #include <stdio.h>
 #include <stdlib.h>
@@ -409,3 +412,5 @@ struct ni_hdr {
 #define ni_cksum	ni_u.icmp6_cksum
 #define ni_qtype	ni_u.icmp6_data16[0]
 #define ni_flags	ni_u.icmp6_data16[1]
+
+#endif /* IPUTILS_PING_H */
