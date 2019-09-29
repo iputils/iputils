@@ -517,7 +517,7 @@ main(int argc, char **argv)
 		error(2, errno, _("memory allocation failed"));
 
 	/* Create sockets */
-	enable_capability_raw();
+	modify_capability(&rts, CAP_NET_RAW, CAP_SET);
 	if (hints.ai_family != AF_INET6)
 		create_socket(&rts, &sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP,
 			      hints.ai_family == AF_INET);
@@ -529,7 +529,7 @@ main(int argc, char **argv)
 			       rts.pmtudisc == IP_PMTUDISC_DONT ? IPV6_PMTUDISC_DONT :
 			       rts.pmtudisc == IP_PMTUDISC_WANT ? IPV6_PMTUDISC_WANT : rts.pmtudisc;
 	}
-	disable_capability_raw();
+	modify_capability(&rts, CAP_NET_RAW, CAP_CLEAR);
 
 	/* Limit address family on single-protocol systems */
 	if (hints.ai_family == AF_UNSPEC) {
@@ -657,11 +657,11 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 				int rc;
 				int errno_save;
 
-				enable_capability_raw();
+				modify_capability(rts, CAP_NET_RAW, CAP_SET);
 				rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 						rts->device, strlen(rts->device) + 1);
 				errno_save = errno;
-				disable_capability_raw();
+				modify_capability(rts, CAP_NET_RAW, CAP_CLEAR);
 
 				if (rc == -1) {
 					if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
@@ -723,9 +723,9 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			}
 			if (ifa && !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
 			    &dst.sin_addr, sizeof(rts->source.sin_addr))) {
-				enable_capability_raw();
+				modify_capability(rts, CAP_NET_RAW, CAP_SET);
 				setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, "", 0);
-				disable_capability_raw();
+				modify_capability(rts, CAP_NET_RAW, CAP_CLEAR);
 			}
 			freeifaddrs(ifa0);
 			if (!ifa)
@@ -743,10 +743,10 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		memset(&ifr, 0, sizeof(ifr));
 		strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
 
-		enable_capability_raw();
+		modify_capability(rts, CAP_NET_RAW, CAP_SET);
 		rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, rts->device, strlen(rts->device) + 1);
 		errno_save = errno;
-		disable_capability_raw();
+		modify_capability(rts, CAP_NET_RAW, CAP_CLEAR);
 
 		if (rc == -1) {
 			if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {

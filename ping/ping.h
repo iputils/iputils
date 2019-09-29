@@ -148,8 +148,8 @@ struct ping_rts {
 	size_t datalen;
 	char *hostname;
 	uid_t uid;
+	uid_t euid;
 	int ident;			/* random id to identify our packets */
-
 	int sndbuf;
 	int ttl;
 
@@ -255,23 +255,16 @@ void acknowledge(struct ping_rts *rts, uint16_t seq);
 
 extern void usage(void) __attribute__((noreturn));
 extern void limit_capabilities(struct ping_rts *rts);
-static int enable_capability_raw(void);
-static int disable_capability_raw(void);
-static int enable_capability_admin(void);
-static int disable_capability_admin(void);
 #ifdef HAVE_LIBCAP
-extern int modify_capability(cap_value_t, cap_flag_value_t);
-static inline int enable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_SET);   }
-static inline int disable_capability_raw(void)		{ return modify_capability(CAP_NET_RAW,   CAP_CLEAR); }
-static inline int enable_capability_admin(void)		{ return modify_capability(CAP_NET_ADMIN, CAP_SET);   }
-static inline int disable_capability_admin(void)	{ return modify_capability(CAP_NET_ADMIN, CAP_CLEAR); }
+extern int modify_capability(struct ping_rts *rts, cap_value_t, cap_flag_value_t);
 #else
-extern int modify_capability(int);
-static inline int enable_capability_raw(void)		{ return modify_capability(1); }
-static inline int disable_capability_raw(void)		{ return modify_capability(0); }
-static inline int enable_capability_admin(void)		{ return modify_capability(1); }
-static inline int disable_capability_admin(void)	{ return modify_capability(0); }
+extern int modify_capability(struct ping_rts *rts, int dummy __attribute__((__unused__)), int on);
+# define CAP_NET_RAW 0
+# define CAP_NET_ADMIN 0
+# define CAP_SET 1
+# define CAP_CLEAR 0
 #endif
+
 extern void drop_capabilities(void);
 
 char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen);

@@ -170,7 +170,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			if (IN6_IS_ADDR_LINKLOCAL(&rts->firsthop.sin6_addr) ||
 			    IN6_IS_ADDR_MC_LINKLOCAL(&rts->firsthop.sin6_addr))
 				rts->firsthop.sin6_scope_id = iface;
-			enable_capability_raw();
+			modify_capability(rts, CAP_NET_RAW, CAP_SET);
 #ifdef IPV6_RECVPKTINFO
 			if (setsockopt(probe_fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1 ||
 			    setsockopt(sock->fd, IPPROTO_IPV6, IPV6_PKTINFO, &ipi, sizeof ipi) == -1) {
@@ -181,7 +181,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			    setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, rts->device, strlen(rts->device) + 1) == -1) {
 				error(2, errno, "setsockopt(SO_BINDTODEVICE) %s", rts->device);
 			}
-			disable_capability_raw();
+			modify_capability(rts, CAP_NET_RAW, CAP_CLEAR);
 		}
 
 		if (!IN6_IS_ADDR_LINKLOCAL(&rts->firsthop.sin6_addr) &&

@@ -36,10 +36,6 @@
 #define HZ sysconf(_SC_CLK_TCK)
 #endif
 
-#ifndef HAVE_LIBCAP
-static uid_t euid;
-#endif
-
 void usage(void)
 {
 	fprintf(stderr,
@@ -119,18 +115,18 @@ void limit_capabilities(struct ping_rts *rts)
 		error(-1, errno, "prctl");
 	cap_free(cap_p);
 	cap_free(cap_cur_p);
-#else
-	euid = geteuid();
 #endif
 	rts->uid = getuid();
 #ifndef HAVE_LIBCAP
+	rts->euid = geteuid();
 	if (seteuid(rts->uid))
 		error(-1, errno, "setuid");
 #endif
 }
 
 #ifdef HAVE_LIBCAP
-int modify_capability(cap_value_t cap, cap_flag_value_t on)
+int modify_capability(struct ping_rts *rts  __attribute__((__unused__)),
+		      cap_value_t cap, cap_flag_value_t on)
 {
 	cap_t cap_p = cap_get_proc();
 	cap_flag_value_t cap_ok;
@@ -165,9 +161,9 @@ out:
 	return rc;
 }
 #else
-int modify_capability(int on)
+int modify_capability(struct ping_rts *rts, int dummy __attribute__((__unused__)), int on)
 {
-	if (seteuid(on ? euid : getuid())) {
+	if (seteuid(on == CAP_SET ? rts->euid : getuid())) {
 		error(0, errno, "seteuid");
 		return -1;
 	}
@@ -541,10 +537,10 @@ void setup(struct ping_rts *rts, socket_st *sock)
 		int ret;
 		int errno_save;
 
-		enable_capability_admin();
+		modify_capability(rts, CAP_NET_ADMIN, CAP_SET);
 		ret = setsockopt(sock->fd, SOL_SOCKET, SO_MARK, &rts->mark, sizeof(rts->mark));
 		errno_save = errno;
-		disable_capability_admin();
+		modify_capability(rts, CAP_NET_ADMIN, CAP_CLEAR);
 
 		if (ret == -1) {
 			/* Do not exit, old kernels do not support mark. */
