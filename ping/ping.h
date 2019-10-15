@@ -145,7 +145,7 @@ struct ping_rts {
 	size_t datalen;
 	char *hostname;
 	uid_t uid;
-	int ident;			/* process id to identify our packets */
+	int ident;			/* random id to identify our packets */
 
 	int sndbuf;
 	int ttl;
