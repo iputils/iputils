@@ -550,7 +550,7 @@ out:
 /*
  * pinger --
  * 	Compose and transmit an ICMP ECHO REQUEST packet.  The IP packet
- * will be added on by the kernel.  The ID field is our UNIX process ID,
+ * will be added on by the kernel.  The ID field is a random number,
  * and the sequence number is an ascending integer.  The first several bytes
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.
