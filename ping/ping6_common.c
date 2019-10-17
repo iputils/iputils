@@ -350,20 +350,20 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
 		int freq_len = sizeof(*freq);
 		memset(freq, 0, sizeof(*freq));
-		freq->flr_label = htonl(flowlabel & IPV6_FLOWINFO_FLOWLABEL);
+		freq->flr_label = htonl(rts->flowlabel & IPV6_FLOWINFO_FLOWLABEL);
 		freq->flr_action = IPV6_FL_A_GET;
 		freq->flr_flags = IPV6_FL_F_CREATE;
 		freq->flr_share = IPV6_FL_S_EXCL;
 		memcpy(&freq->flr_dst, &rts->whereto6.sin6_addr, 16);
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1)
 			error(2, errno, _("can't set flowlabel"));
-		flowlabel = freq->flr_label;
+		rts->flowlabel = freq->flr_label;
 #else
 		error(2, 0, _("flow labels are not supported"));
 #endif
 
 #ifdef IPV6_FLOWINFO_SEND
-		rts->whereto6.sin6_flowinfo = flowlabel;
+		rts->whereto6.sin6_flowinfo = rts->flowlabel;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1)
 			error(2, errno, _("can't send flowinfo"));
 #else
