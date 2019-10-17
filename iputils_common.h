@@ -2,6 +2,7 @@
 #define IPUTILS_COMMON_H
 
 #include <stdio.h>
+#include <sys/time.h>
 
 #define ARRAY_SIZE(arr) \
   (sizeof(arr) / sizeof((arr)[0]) + \
