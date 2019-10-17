@@ -106,7 +106,9 @@ void niquery_init_nonce(struct ping_ni *ni)
 }
 
 #if !PING6_NONCE_MEMORY
-static int niquery_nonce(struct ping_ni *ni, uint8_t *nonce, int fill)
+static int niquery_nonce(struct ping_ni *ni __attribute__((__unused__)),
+			 uint8_t *nonce __attribute__((__unused__)),
+			 int fill __attribute__((__unused__)))
 {
 # ifdef USE_CRYPTO
 	static uint8_t digest[MD5_DIGEST_LENGTH];
