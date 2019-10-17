@@ -689,7 +689,7 @@ static int event_loop(struct run_state *ctl)
 	uint64_t exp, total_expires = 1;
 
 	unsigned char packet[4096];
-	struct sockaddr_storage from = { 0 };
+	struct sockaddr_storage from = {};
 	socklen_t addr_len = sizeof(from);
 
 	/* signalfd */
