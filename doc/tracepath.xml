@@ -56,21 +56,21 @@ xml:id="man.tracepath">
     <info>
       <title>DESCRIPTION</title>
     </info>
-    <para>It traces path to
+    <para>It traces the network path to
     <emphasis remap='I'>destination</emphasis> discovering MTU along
     this path. It uses UDP port
     <emphasis remap='I'>port</emphasis> or some random port. It is
     similar to
-    <emphasis remap='B'>traceroute</emphasis>, only does not
+    <emphasis remap='B'>traceroute</emphasis>. However, it does not
     require superuser privileges and has no fancy options.</para>
     <para>
-    <emphasis remap='B'>tracepath -6</emphasis> is good replacement
+    <emphasis remap='B'>tracepath -6</emphasis> is a good replacement
     for
     <emphasis remap='B'>traceroute6</emphasis> and classic example
     of application of Linux error queues. The situation with IPv4
     is worse, because commercial IP routers do not return enough
     information in ICMP error messages. Probably, it will change,
-    when they will be updated. For now it uses Van Jacobson's
+    when they are updated. For now it uses Van Jacobson's
     trick, sweeping a range of UDP ports to maintain trace
     history.</para>
   </refsection>
@@ -85,7 +85,7 @@ xml:id="man.tracepath">
           <option>-4</option>
         </term>
         <listitem>
-          <para>Use IPv4 only..</para>
+          <para>Use IPv4 only.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -93,7 +93,7 @@ xml:id="man.tracepath">
           <option>-6</option>
         </term>
         <listitem>
-          <para>Use IPv6 only..</para>
+          <para>Use IPv6 only.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -109,7 +109,7 @@ xml:id="man.tracepath">
           <option>-b</option>
         </term>
         <listitem>
-          <para>Print both of host names and IP addresses.</para>
+          <para>Print both: Host names and IP addresses.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -162,28 +162,28 @@ root@mops:~ # tracepath -6 3ffe:2400:0:109::2
  2:  3ffe:2400:0:109::2               463.514ms reached
      Resume: pmtu 1480 hops 2 back 2
     </literallayout>
-    <para>The first column shows TTL of the probe, followed by
-    colon. Usually value of TTL is obtained from reply from
-    network, but sometimes reply does not contain necessary
+    <para>The first column shows the TTL of the probe, followed by
+    colon. Usually the value of TTL is obtained from the reply from
+    the network, but sometimes it does not contain the necessary
     information and we have to guess it. In this case the number is
     followed by ?.</para>
-    <para>The second column shows the network hop, which replied to
-    the probe. It is either address of router or word [LOCALHOST],
-    if the probe was not sent to the network.</para>
-    <para>The rest of line shows miscellaneous information about
-    path to the corresponding network hop. As rule it contains
-    value of RTT. Additionally, it can show Path MTU, when it
+    <para>The second column shows the network hop which replied to
+    the probe. It is either the address of the router or the word
+    [LOCALHOST], if the probe was not sent to the network.</para>
+    <para>The rest of the line shows miscellaneous information about
+    the path to the corresponding network hop. It contains
+    the value of RTT, and additionally it can show Path MTU when it
     changes. If the path is asymmetric or the probe finishes before
-    it reach prescribed hop, difference between number of hops in
-    forward and backward direction is shown following keyword
-    async. This information is not reliable. F.e. the third line
-    shows asymmetry of 1, it is because the first probe with TTL of
-    2 was rejected at the first hop due to Path MTU
+    it reaches the prescribed hop, the difference between number of
+    hops in forward and return direction is shown next to the
+    keyword "async". This information is not reliable, e.g. the
+    third line shows asymmetry of 1. This is because the first probe
+    with TTL of 2 was rejected at the first hop due to Path MTU
     Discovery.</para>
-    <para>The last line summarizes information about all the path
-    to the destination, it shows detected Path MTU, amount of hops
-    to the destination and our guess about amount of hops from the
-    destination to us, which can be different when the path is
+    <para>The last line summarizes information about all the paths
+    to the destination. It shows detected Path MTU, amount of hops
+    to the destination and our guess about the number of hops from
+    the destination to us, which can be different when the path is
     asymmetric.</para>
   </refsect1>
 
@@ -217,11 +217,10 @@ root@mops:~ # tracepath -6 3ffe:2400:0:109::2
     <para>This lapidary deserves to be elaborated.
     <command>tracepath</command> is not a privileged program, unlike
     <command>traceroute</command>,
-    <command>ping</command> and other beasts of this
-    kind.
+    <command>ping</command> and other beasts of their kind.
     <command>tracepath</command> may be executed by everyone who has
-    some access to network, enough to send UDP datagrams to
-    investigated destination using given port.</para>
+    enough access to the network to send UDP datagrams to the
+    desired destination using the given port.</para>
   </refsect1>
 
   <refsect1 id='availability'>
