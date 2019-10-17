@@ -279,7 +279,6 @@ main(int argc, char **argv)
 		.source.sin_family = AF_INET,
 		.ni.query = -1,
 		.ni.subject_type = -1,
-		0
 	};
 	/* FIXME: global_rts will be removed in future */
 	global_rts = &rts;
@@ -1611,7 +1610,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 {
 	static char buffer[4096] = "";
-	static struct sockaddr_storage last_sa = { 0, {0}, 0 };
+	static struct sockaddr_storage last_sa = {};
 	static socklen_t last_salen = 0;
 	char name[NI_MAXHOST] = "";
 	char address[NI_MAXHOST] = "";
