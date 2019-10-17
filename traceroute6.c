@@ -222,6 +222,7 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <linux/types.h>
 #include <netdb.h>
 #include <net/if.h>
