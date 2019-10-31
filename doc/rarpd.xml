@@ -37,20 +37,19 @@ xml:id="man.rarpd">
     <info>
       <title>DESCRIPTION</title>
     </info>
-    <para>Listens RARP requests from clients. Provided MAC address
-    of client is found in
-    <filename>/etc/ethers</filename> database and obtained host name
-    is resolvable to an IP address appropriate for attached
-    network,
-    <command>rarpd</command> answers to client with RARPD reply
-    carrying an IP address.</para>
+    <para>Listens for RARP requests broadcasted by clients. If the MAC address
+    of the client is found in <filename>/etc/ethers</filename> and the obtained
+    hostname is resolvable to a valid IP address from the attached network,
+    <command>rarpd</command> answers to the client with a RARPD reply
+    and provides an IP address.</para>
+
     <para>To allow multiple boot servers on the network
-    <command>rarpd</command> optionally checks for presence Sun-like
-    bootable image in TFTP directory. It should have form
-    <emphasis remap="B">Hexadecimal_IP.ARCH</emphasis>, f.e. to
-    load sparc 193.233.7.98
+    <command>rarpd</command> optionally checks if a Sun-like
+    bootable image in the TFTP directory is present. It should be formatted like
+    <emphasis remap="B">Hexadecimal_IP.ARCH</emphasis>. For example: To
+    load sparc 193.233.7.98,
     <emphasis remap="I">C1E90762.SUN4M</emphasis> is linked to an
-    image appropriate for SUM4M in directory
+    image appropriate for SUN4M in the directory
     <filename>/etc/tftpboot</filename>.</para>
   </refsection>
 
@@ -59,7 +58,7 @@ xml:id="man.rarpd">
       <title>WARNING</title>
     </info>
     <para>This facility is deeply obsoleted by BOOTP and later DHCP
-    protocols. However, some clients really still need this to
+    protocols. However, some clients actually still need this to
     boot.</para>
   </refsection>
 
@@ -73,8 +72,8 @@ xml:id="man.rarpd">
           <option>-a</option>
         </term>
         <listitem>
-          <para>Listen on all the interfaces. Currently it is an
-          internal option, its function is overridden with
+          <para>Listen on all available interfaces. Currently it is an
+          internal option, its function is overwritten with the
           <emphasis remap="I">interface</emphasis> argument. It
           should not be used.</para>
         </listitem>
@@ -84,8 +83,8 @@ xml:id="man.rarpd">
           <option>-A</option>
         </term>
         <listitem>
-          <para>Listen not only RARP but also ARP messages, some
-          rare clients use ARP by some unknown reason.</para>
+          <para>Listen not only to RARP but also ARP messages. Some
+          rare clients use ARP for some unknown reason.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -109,7 +108,7 @@ xml:id="man.rarpd">
           <option>-e</option>
         </term>
         <listitem>
-          <para>Do not check for presence of a boot image, reply if
+          <para>Do not check for the presence of a boot image. Reply if
           MAC address resolves to a valid IP address using
           <filename>/etc/ethers</filename> database and DNS.</para>
         </listitem>
@@ -166,12 +165,12 @@ xml:id="man.rarpd">
     <para>
     <command>rarpd</command> requires CAP_NET_RAW capability to
     listen and send RARP and ARP packets. It also needs
-    CAP_NET_ADMIN to give to kernel hint for ARP resolution; this
-    is not strictly required, but some (most of, to be more exact)
-    clients are so badly broken that are not able to answer ARP
-    before they are finally booted. This is not wonderful taking
+    CAP_NET_ADMIN to assist the kernel with ARP resolution; this
+    is not strictly required, but some (to be more exact: most) of
+    the clients are so badly broken that they are not able to answer
+    to ARP before they are fully booted. This is no surprise, taking
     into account that clients using RARPD in 2002 are all
-    unsupported relic creatures of 90's and even earlier.</para>
+    unsupported relic creatures of the 90's and even earlier.</para>
   </refsection>
 
   <refsection xml:id="availability">
@@ -179,7 +178,7 @@ xml:id="man.rarpd">
       <title>AVAILABILITY</title>
     </info>
     <para>
-    <emphasis remap="B">rarpd</emphasis> is part of
+    <emphasis remap="B">rarpd</emphasis> is part of the
     <emphasis remap="I">iputils</emphasis> package.</para>
   </refsection>
 </refentry>
