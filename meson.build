@@ -44,6 +44,7 @@ systemdunitdir = get_option('systemdunitdir')
 if systemdunitdir == '' and systemd.found()
 	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 endif
+systemdunitdir = prefix + systemdunitdir
 
 setcap_arping = false
 setcap_clockdiff = false
