@@ -34,6 +34,17 @@ build_traceroute6 = get_option('BUILD_TRACEROUTE6')
 build_mans = get_option('BUILD_MANS')
 build_html_mans = get_option('BUILD_HTML_MANS')
 
+prefix = get_option('prefix')
+bindir = join_paths(prefix, get_option('bindir'))
+localedir = join_paths(prefix, get_option('localedir'))
+sbindir = join_paths(prefix, get_option('sbindir'))
+
+systemd = dependency('systemd', required : false)
+systemdunitdir = get_option('systemdunitdir')
+if systemdunitdir == '' and systemd.found()
+	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+endif
+
 setcap_arping = false
 setcap_clockdiff = false
 setcap_ping = false
@@ -43,12 +54,6 @@ if (not get_option('NO_SETCAP_OR_SUID'))
   setcap_clockdiff = get_option('SETCAP_OR_SUID_CLOCKDIFF')
   setcap_ping = get_option('SETCAP_OR_SUID_PING')
   setcap_traceroute6 = get_option('SETCAP_OR_SUID_TRACEROUTE6')
-endif
-
-systemd = dependency('systemd', required : false)
-systemdunitdir = get_option('systemdunitdir')
-if systemdunitdir == '' and systemd.found()
-	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 endif
 
 # Check functions.
@@ -115,12 +120,10 @@ endif
 intl_dep = []
 gettext = get_option('USE_GETTEXT')
 if gettext == true
-	prefix = get_option('prefix')
-	localedir = get_option('localedir')
 	add_project_arguments(['-DGETTEXT_PACKAGE="iputils"'], language: 'c')
 
 	conf.set('ENABLE_NLS', 1, description : 'If set enable I18N.')
-	conf.set_quoted('LOCALEDIR', join_paths(prefix, localedir))
+	conf.set_quoted('LOCALEDIR', localedir)
 	subdir ('po')
 	intl_dep += cc.find_library('intl', required : false)
 endif
@@ -272,7 +275,7 @@ if build_traceroute6 == true
 		install: true)
 	if (setcap_traceroute6)
 		meson.add_install_script('build-aux/setcap-setuid.sh',
-			join_paths(get_option('prefix'), get_option('bindir')),
+			bindir,
 			'traceroute6',
 			perm_type,
 			setcap_path
@@ -287,7 +290,7 @@ if build_clockdiff == true
 		install: true)
 	if (setcap_clockdiff)
 		meson.add_install_script('build-aux/setcap-setuid.sh',
-			join_paths(get_option('prefix'), get_option('bindir')),
+			bindir,
 			'clockdiff',
 			perm_type,
 			setcap_path
@@ -297,12 +300,12 @@ endif
 
 if build_rdisc == true
 	executable('rdisc', ['rdisc.c', git_version_h],
-		install_dir: get_option('sbindir'),
+		install_dir: sbindir,
 		link_with : [libcommon],
 		install: true)
 	if systemd.found()
 		subs = configuration_data()
-		subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
+		subs.set('sbindir', sbindir)
 		unit_file = configure_file(
 			input: 'systemd/rdisc.service.in',
 			output: 'rdisc.service',
@@ -319,7 +322,7 @@ if build_arping == true
 		install: true)
 	if (setcap_arping)
 		meson.add_install_script('build-aux/setcap-setuid.sh',
-			join_paths(get_option('prefix'), get_option('bindir')),
+			bindir,
 			'arping',
 			perm_type,
 			setcap_path
@@ -333,12 +336,12 @@ endif
 
 if build_rarpd == true
 	executable('rarpd', ['rarpd.c', git_version_h],
-		install_dir: get_option('sbindir'),
+		install_dir: sbindir,
 		link_with : [libcommon],
 		install: true)
 	if systemd.found()
 		subs = configuration_data()
-		subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
+		subs.set('sbindir', sbindir)
 		unit_file = configure_file(
 			input: 'systemd/rarpd.service.in',
 			output: 'rarpd@.service',
@@ -381,6 +384,13 @@ output += 'Crypto: ' + crypto + '\n'
 output += 'IDN (with libidn2): ' + idn.to_string() + '\n'
 output += 'I18N (with gettext): ' + gettext.to_string() + '\n'
 output += 'systemd: ' + systemd.found().to_string() + '\n'
+
+output += '\nSYSTEM PATHS\n'
+output += 'prefix: ' + prefix + '\n'
+output += 'bindir: ' + bindir + '\n'
+output += 'localedir: ' + localedir + '\n'
+output += 'sbindir: ' + sbindir + '\n'
+output += 'systemdunitdir: ' + systemdunitdir + '\n'
 
 message(output)
 

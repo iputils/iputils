@@ -21,7 +21,7 @@ executable('ping', [
 
 if (setcap_ping)
 	meson.add_install_script('../build-aux/setcap-setuid.sh',
-		join_paths(get_option('prefix'), get_option('bindir')),
+		bindir,
 		'ping',
 		perm_type,
 		setcap_path

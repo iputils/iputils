@@ -14,13 +14,13 @@ executable('ninfod', [ninfod_sources, git_version_h],
 	link_with : [libcommon],
 	include_directories : inc,
 	install: true,
-	install_dir: get_option('sbindir'))
+	install_dir: sbindir)
 conf_data = configuration_data()
-conf_data.set('prefix', get_option('prefix'))
+conf_data.set('prefix', prefix)
 
 if systemd.found()
 	subs = configuration_data()
-	subs.set('sbindir', join_paths(get_option('prefix'), get_option('sbindir')))
+	subs.set('sbindir', sbindir)
 	unit_file = configure_file(
 		input: '../systemd/ninfod.service.in',
 		output: 'ninfod.service',
