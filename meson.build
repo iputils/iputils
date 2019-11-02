@@ -136,7 +136,7 @@ build_arping = get_option('BUILD_ARPING')
 build_clockdiff = get_option('BUILD_CLOCKDIFF')
 build_ping = get_option('BUILD_PING')
 build_rarpd = get_option('BUILD_RARPD')
-build_rinfod = get_option('BUILD_RDISC')
+build_rdisc = get_option('BUILD_RDISC')
 build_tftpd = get_option('BUILD_TFTPD')
 build_tracepath = get_option('BUILD_TRACEPATH')
 build_traceroute6 = get_option('BUILD_TRACEROUTE6')
@@ -144,7 +144,7 @@ build_traceroute6 = get_option('BUILD_TRACEROUTE6')
 build_mans = get_option('BUILD_MANS')
 build_html_mans = get_option('BUILD_HTML_MANS')
 
-if build_rinfod == true
+if build_rdisc == true
 	opt = get_option('ENABLE_RDISC_SERVER')
 	if opt == true
 		conf.set('RDISC_SERVER', 1, description : 'If set build rdisc server.')
@@ -284,7 +284,7 @@ if build_clockdiff == true
 	endif
 endif
 
-if build_rinfod == true
+if build_rdisc == true
 	executable('rdisc', ['rdisc.c', git_version_h],
 		install_dir: get_option('sbindir'),
 		link_with : [libcommon],

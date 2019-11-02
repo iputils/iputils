@@ -18,7 +18,7 @@ if build_rarpd == true
 	manpages += ['rarpd']
 endif
 
-if build_rinfod == true
+if build_rdisc == true
 	manpages += ['rdisc']
 endif
 
