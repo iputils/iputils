@@ -31,6 +31,5 @@ else
 	configure_file(input : 'ninfod.sh.in',
 		output : 'ninfod.sh',
 		configuration : conf_data,
-		install : true,
 		install_dir : join_paths(get_option('sysconfdir'), 'init.d'))
 endif
