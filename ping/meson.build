@@ -19,7 +19,7 @@ executable('ping', [
 	link_with : [libcommon],
 	install: true)
 
-if (get_option('SETCAP_OR_SUID_PING') and not get_option('NO_SETCAP_OR_SUID'))
+if (setcap_ping)
 	meson.add_install_script('../build-aux/setcap-setuid.sh',
 		join_paths(get_option('prefix'), get_option('bindir')),
 		'ping',

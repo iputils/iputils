@@ -19,6 +19,38 @@ conf = configuration_data()
 conf.set_quoted('PACKAGE_NAME', meson.project_name())
 conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that have them.')
 
+build_arping = get_option('BUILD_ARPING')
+build_clockdiff = get_option('BUILD_CLOCKDIFF')
+build_ninfod = get_option('BUILD_NINFOD')
+nifold_messages = get_option('NINFOD_MESSAGES')
+build_ping = get_option('BUILD_PING')
+build_rarpd = get_option('BUILD_RARPD')
+build_rdisc = get_option('BUILD_RDISC')
+build_rdisc_server = get_option('ENABLE_RDISC_SERVER')
+build_tftpd = get_option('BUILD_TFTPD')
+build_tracepath = get_option('BUILD_TRACEPATH')
+build_traceroute6 = get_option('BUILD_TRACEROUTE6')
+
+build_mans = get_option('BUILD_MANS')
+build_html_mans = get_option('BUILD_HTML_MANS')
+
+setcap_arping = false
+setcap_clockdiff = false
+setcap_ping = false
+setcap_traceroute6 = false
+if (not get_option('NO_SETCAP_OR_SUID'))
+  setcap_arping = get_option('SETCAP_OR_SUID_ARPING')
+  setcap_clockdiff = get_option('SETCAP_OR_SUID_CLOCKDIFF')
+  setcap_ping = get_option('SETCAP_OR_SUID_PING')
+  setcap_traceroute6 = get_option('SETCAP_OR_SUID_TRACEROUTE6')
+endif
+
+systemd = dependency('systemd', required : false)
+systemdunitdir = get_option('systemdunitdir')
+if systemdunitdir == '' and systemd.found()
+	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+endif
+
 # Check functions.
 foreach f : '''
 	__fpending
@@ -65,8 +97,8 @@ else
 	rt_dep = cc.find_library('rt')
 endif
 
-opt = get_option('USE_CAP')
-if opt == true
+cap = get_option('USE_CAP')
+if cap == true
 	cap_dep = cc.find_library('cap')
 	conf.set('HAVE_LIBCAP', 1,
 		description : 'Defined if libcap exists.')
@@ -81,8 +113,8 @@ endif
 
 # Some systems needs intl for gettext
 intl_dep = []
-opt = get_option('USE_GETTEXT')
-if opt == true
+gettext = get_option('USE_GETTEXT')
+if gettext == true
 	prefix = get_option('prefix')
 	localedir = get_option('localedir')
 	add_project_arguments(['-DGETTEXT_PACKAGE="iputils"'], language: 'c')
@@ -93,8 +125,8 @@ if opt == true
 	intl_dep += cc.find_library('intl', required : false)
 endif
 
-opt = get_option('USE_IDN')
-if opt == true
+idn = get_option('USE_IDN')
+if idn == true
 	idn_dep = cc.find_library('idn2', required : false)
 	if idn_dep.found()
 		add_project_arguments('-DUSE_IDN', language : 'c')
@@ -126,32 +158,12 @@ elif crypto == 'none'
 		description : 'If set RFC6744 random does not use any CRYPTO lib.')
 endif
 
-systemd = dependency('systemd', required : false)
-systemdunitdir = get_option('systemdunitdir')
-if systemdunitdir == '' and systemd.found()
-	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
-endif
-
-build_arping = get_option('BUILD_ARPING')
-build_clockdiff = get_option('BUILD_CLOCKDIFF')
-build_ping = get_option('BUILD_PING')
-build_rarpd = get_option('BUILD_RARPD')
-build_rdisc = get_option('BUILD_RDISC')
-build_tftpd = get_option('BUILD_TFTPD')
-build_tracepath = get_option('BUILD_TRACEPATH')
-build_traceroute6 = get_option('BUILD_TRACEROUTE6')
-
-build_mans = get_option('BUILD_MANS')
-build_html_mans = get_option('BUILD_HTML_MANS')
-
 if build_rdisc == true
-	opt = get_option('ENABLE_RDISC_SERVER')
-	if opt == true
+	if build_rdisc_server == true
 		conf.set('RDISC_SERVER', 1, description : 'If set build rdisc server.')
 	endif
 endif
 
-build_ninfod = get_option('BUILD_NINFOD')
 if build_ninfod == true
 	if crypto == 'none'
 		error('BUILD_NINFOD=true and USE_CRYPTO=none cannot be combined')
@@ -202,8 +214,7 @@ if build_ninfod == true
 		conf.set('WORDS_BIGENDIAN', 1,
 			description : 'Defined if processor stores words with the most significant byte first.')
 	endif
-	opt = get_option('NINFOD_MESSAGES')
-	if opt == true
+	if nifold_messages == true
 		conf.set('ENABLE_DEBUG', 1, description : 'Enable ninfod syslog messages.')
 	endif
 endif
@@ -259,7 +270,7 @@ if build_traceroute6 == true
 		dependencies : [cap_dep, intl_dep, idn_dep],
 		link_with : [libcommon],
 		install: true)
-	if (get_option('SETCAP_OR_SUID_TRACEROUTE6') and not get_option('NO_SETCAP_OR_SUID'))
+	if (setcap_traceroute6)
 		meson.add_install_script('build-aux/setcap-setuid.sh',
 			join_paths(get_option('prefix'), get_option('bindir')),
 			'traceroute6',
@@ -274,7 +285,7 @@ if build_clockdiff == true
 		dependencies : [cap_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
-	if (get_option('SETCAP_OR_SUID_CLOCKDIFF') and not get_option('NO_SETCAP_OR_SUID'))
+	if (setcap_clockdiff)
 		meson.add_install_script('build-aux/setcap-setuid.sh',
 			join_paths(get_option('prefix'), get_option('bindir')),
 			'clockdiff',
@@ -306,7 +317,7 @@ if build_arping == true
 		dependencies : [rt_dep, cap_dep, idn_dep, intl_dep],
 		link_with : [libcommon],
 		install: true)
-	if (get_option('SETCAP_OR_SUID_ARPING') and not get_option('NO_SETCAP_OR_SUID'))
+	if (setcap_arping)
 		meson.add_install_script('build-aux/setcap-setuid.sh',
 			join_paths(get_option('prefix'), get_option('bindir')),
 			'arping',
@@ -344,6 +355,34 @@ endif
 if build_mans == true or build_html_mans == true
 	subdir ('doc')
 endif
+
+output = '\n\nAPPLICATIONS (build)\n'
+output += 'man: ' + build_mans.to_string() + '\n'
+output += 'HTML man: ' + build_html_mans.to_string() + '\n'
+output += 'arping: ' + build_arping.to_string()
+output += ' (capability or suid: ' + setcap_arping.to_string() + ')\n'
+output += 'clockdiff: ' + build_clockdiff.to_string()
+output += ' (capability or suid: ' + setcap_clockdiff.to_string() + ')\n'
+output += 'ninfod: ' + build_ninfod.to_string()
+output += ' (syslog: ' + nifold_messages.to_string() + ')\n'
+output += 'ping: ' + build_ping.to_string()
+output += ' (capability or suid: ' + setcap_ping.to_string() + ')\n'
+output += 'rarpd: ' + build_rarpd.to_string() + '\n'
+output += 'rdisc: ' + build_rdisc.to_string()
+output += ' (server: ' + build_rdisc_server.to_string() + ')\n'
+output += 'tftpd: ' + build_tftpd.to_string() + '\n'
+output += 'tracepath: ' + build_tracepath.to_string() + '\n'
+output += 'traceroute6: ' + build_traceroute6.to_string()
+output += ' (capability or suid: ' + setcap_traceroute6.to_string() + ')\n'
+
+output += '\nCONFIGURATION\n'
+output += 'Capatiblity (with libcap): ' + cap.to_string() + '\n'
+output += 'Crypto: ' + crypto + '\n'
+output += 'IDN (with libidn2): ' + idn.to_string() + '\n'
+output += 'I18N (with gettext): ' + gettext.to_string() + '\n'
+output += 'systemd: ' + systemd.found().to_string() + '\n'
+
+message(output)
 
 ############################################################
 # FIXME: write tests
