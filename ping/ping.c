@@ -1617,9 +1617,10 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 {
 	static char buffer[4096] = "";
-	static struct sockaddr_storage last_sa = {};
+	static struct sockaddr_storage last_sa;
 	static socklen_t last_salen = 0;
 
+	memset(&last_sa, 0, sizeof(last_sa));
 	if (salen == last_salen && !memcmp(sa, &last_sa, salen))
 		return buffer;
 
