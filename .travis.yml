@@ -1,34 +1,69 @@
-os: linux
-dist: trusty
-sudo: false
-language: python
-python: 3.6
-cache:
-  apt: true
-  ccache: true
-addons:
-  apt:
-    packages:
-      - "python3-pip"
-      - "libcap-dev"
-      - "libidn2-0-dev"
-      - "nettle-dev"
-      - "xsltproc"
-      - "docbook-xsl-ns"
+sudo: required
+language: c
+services:
+    - docker
+
 matrix:
-  include:
-    - env: CC=gcc
-    - env: CC=clang
-install:
-  - set -e
-  - export NINJA_LATEST="https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip"
-  - wget "$NINJA_LATEST"
-  - unzip -q ninja-linux.zip -d build
-  - export PATH="$PWD/build:$PATH"
-  - sudo ln -s $PWD/build /root
-  - pip3 install meson
+    include:
+        # cross compilation
+        # NOTE: cannot set cross compiler as compiler variable (meson tests also native build)
+        - os: linux
+          env: DISTRO=debian:unstable VARIANT=cross-compile.aarch64
+          compiler: gcc
+
+        - os: linux
+          env: DISTRO=debian:testing VARIANT=cross-compile.ppc64le
+          compiler: gcc
+
+        # musl (native)
+        - os: linux
+          # Message: WARNING: xsltproc: cannot process http://docbook.sourceforge.net/release/xsl-ns/current/manpages/docbook.xsl
+          # doc/meson.build:70:1: ERROR: Problem encountered: Docs cannot be built: xsltproc does not work correctly
+          env: DISTRO=alpine:latest EXTRA_BUILD_OPTS='-DBUILD_HTML_MANS=false -DBUILD_MANS=false'
+          compiler: gcc
+
+        # glibc (gcc/clang)
+        - os: linux
+          env: DISTRO=opensuse/tumbleweed
+          compiler: gcc
+
+        - os: linux
+          env: DISTRO=ubuntu:xenial
+          compiler: clang
+
+        - os: linux
+          env: DISTRO=ubuntu:latest
+          compiler: gcc
+
+        - os: linux
+          env: DISTRO=fedora:latest
+          compiler: clang
+
+        - os: linux
+          env: DISTRO=centos:7
+          compiler: gcc
+
+        - os: linux
+          env: DISTRO=debian:testing
+          compiler: gcc
+
+        - os: linux
+          env: DISTRO=debian:stable
+          compiler: gcc
+
+        - os: linux
+          env: DISTRO=debian:oldstable
+          compiler: clang
+
+before_install:
+    - DIR="/usr/src/iputils"
+    - printf "FROM $DISTRO\nRUN mkdir -p $DIR\nWORKDIR $DIR\nCOPY . $DIR\n" > Dockerfile
+    - echo "cat Dockerfile"; cat Dockerfile
+    - docker build -t iputils .
+
 script:
-  - set -e
-  - meson builddir -DBUILD_RARPD=true -DBUILD_TFTPD=true -DBUILD_TRACEROUTE6=true -DBUILD_HTML_MANS=true
-  - ninja -C builddir
-  - sudo sh -c 'PATH="/root/build:$PATH" make install'
+  - INSTALL="${DISTRO%%:*}"
+  - INSTALL="${INSTALL%%/*}"
+  - DISTRO_VERSION="${DISTRO#*:}"
+  - case $VARIANT in cross-compile*) BUILD="cross";; i386) BUILD="32";; *) BUILD="native";; esac
+  - docker run -it iputils /bin/sh -c "cd travis && DISTRO_VERSION=\"$DISTRO_VERSION\" ./$INSTALL.sh && if [ \"$VARIANT\" ]; then ./$INSTALL.$VARIANT.sh; fi && CC=$CC EXTRA_BUILD_OPTS=\"$EXTRA_BUILD_OPTS\" ../build.sh"
