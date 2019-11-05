@@ -1,6 +1,6 @@
 [Unit]
 Description=Respond to IPv6 Node Information Queries
-Documentation=ninfod(8)
+Documentation=man:ninfod(8)
 Requires=network.target
 After=network.target
 
