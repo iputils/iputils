@@ -100,6 +100,11 @@ enum {
 	PACKET_IN = 1024
 };
 
+enum {
+	time_format_ctime,
+	time_format_iso
+};
+
 struct run_state {
 	int interactive;
 	uint16_t id;
@@ -115,6 +120,7 @@ struct run_state {
 	long min_rtt;
 	long rtt_sigma;
 	char *hisname;
+	int time_format;
 };
 
 struct measure_vars {
@@ -448,6 +454,9 @@ static void usage(int exit_status)
 		"                without -o, use ip timestamp only\n"
 		"  -o            use ip timestamp and icmp echo\n"
 		"  -o1           use three-term ip timestamp and icmp echo\n"
+		"  -T, --time-format <ctime|iso>\n"
+		"                  specify display time format, ctime is the default\n"
+		"  -I            alias of --time-format=iso\n"
 		"  -h, --help    display this help\n"
 		"  -V, --version print version and exit\n"
 		"  <destination> dns name or ip address\n"
@@ -458,19 +467,32 @@ static void usage(int exit_status)
 static void parse_opts(struct run_state *ctl, int argc, char **argv)
 {
 	static const struct option longopts[] = {
+		{"time-format", required_argument, NULL, 'T'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
 	int c;
 
-	while ((c = getopt_long(argc, argv, "o1Vh", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "o1T:IVh", longopts, NULL)) != -1)
 		switch (c) {
 		case 'o':
 			ctl->ip_opt_len = 4 + 4 * 8;
 			break;
 		case '1':
 			ctl->ip_opt_len = 4 + 3 * 8;
+			break;
+		case 'T':
+			if (!strcmp(optarg, "iso"))
+				ctl->time_format = time_format_iso;
+			else if (!strcmp(optarg, "ctime"))
+				ctl->time_format = time_format_ctime;
+			else
+				error(1, 0, "invalid time-format argument: %s",
+				      optarg);
+			break;
+		case 'I':
+			ctl->time_format = time_format_iso;
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("clockdiff"));
@@ -489,7 +511,7 @@ int main(int argc, char **argv)
 {
 	struct run_state ctl = {
 		.rtt = 1000,
-		0
+		.time_format = time_format_ctime
 	};
 	int measure_status;
 
@@ -584,11 +606,19 @@ int main(int argc, char **argv)
 	{
 		time_t now = time(NULL);
 
-		if (ctl.interactive)
+		if (ctl.interactive) {
+			char s[32];
+
+			if (ctl.time_format == time_format_iso) {
+				struct tm tm;
+				localtime_r(&now, &tm);
+				strftime(s, sizeof(s), "%Y-%m-%dT%H:%M:%S%z\n", &tm);
+			} else
+				ctime_r(&now, s);
 			printf(_("\nhost=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"),
 				ctl.hisname, ctl.rtt, ctl.rtt_sigma, ctl.min_rtt,
-				ctl.measure_delta, ctl.measure_delta1, ctime(&now));
-		else
+				ctl.measure_delta, ctl.measure_delta1, s);
+		} else
 			printf("%ld %d %d\n", now, ctl.measure_delta, ctl.measure_delta1);
 	}
 	exit(0);
