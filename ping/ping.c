@@ -277,6 +277,7 @@ main(int argc, char **argv)
 #endif
 		.pmtudisc = -1,
 		.source.sin_family = AF_INET,
+		.source6.sin6_family = AF_INET6,
 		.ni.query = -1,
 		.ni.subject_type = -1,
 	};
