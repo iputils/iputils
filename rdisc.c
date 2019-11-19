@@ -201,7 +201,8 @@ static unsigned short in_cksum(unsigned short *addr, int len);
 
 static int logging = 0;
 
-static void logmsg(int prio, char *fmt, ...)
+__iputils_attribute_format(__printf__, 2, 3)
+static void logmsg(int const prio, char const *const fmt, ...)
 {
 	va_list ap;
 

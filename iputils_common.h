@@ -10,6 +10,12 @@
 	  !!__builtin_types_compatible_p(__typeof__(arr), \
 					 __typeof__(&arr[0]))])) * 0)
 
+#ifdef __GNUC__
+# define __iputils_attribute_format(t, n, m) __attribute__((__format__ (t, n, m)))
+#else
+# define __iputils_attribute_format(t, n, m)
+#endif
+
 #if defined(USE_IDN) || defined(ENABLE_NLS)
 # include <locale.h>
 #endif
