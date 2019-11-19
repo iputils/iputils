@@ -102,7 +102,7 @@ int ni_recv(struct packetcontext *p);
 int ni_send(struct packetcontext *p);
 
 /* ninfod_core.c */
-extern void DEBUG(int pri, char *fmt, ...);
+extern void DEBUG(int const pri, char const *const fmt, ...);
 
 void init_core(int forced);
 int pr_nodeinfo(struct packetcontext *p);

@@ -151,7 +151,8 @@ __inline__ static const char * log_level(int priority) {
 	}
 }
 
-void DEBUG(int pri, char *fmt, ...)
+iputils_attribute_format(__printf__, 2, 3)
+void DEBUG(int const pri, char const *const fmt, ...)
 {
 	int saved_errno = errno;
 	va_list ap;
