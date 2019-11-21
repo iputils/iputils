@@ -67,7 +67,9 @@ if xsltproc.found()
 endif
 
 if xsltproc_works == false
-	error('Docs cannot be built: xsltproc does not work correctly')
+	message('Docs cannot be built: xsltproc does not work correctly')
+	build_mans = false
+	build_html_mans = false
 endif
 
 if build_mans
