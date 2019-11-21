@@ -78,7 +78,21 @@ xml:id="man.clockdiff">
       </varlistentry>
       <varlistentry>
         <term>
+          <option>-h</option>
+        </term>
+        <term>
+          <option>--help</option>
+        </term>
+        <listitem>
+          <para>Print help and exit.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
           <option>-V</option>
+        </term>
+        <term>
+          <option>--version</option>
         </term>
         <listitem>
           <para>Print version and exit.</para>
