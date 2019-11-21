@@ -55,6 +55,7 @@
 #include <errno.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <linux/types.h>
 #include <math.h>
 #include <netdb.h>
@@ -424,21 +425,6 @@ static int measure(struct run_state *ctl)
 	return GOOD;
 }
 
-static void usage(void)
-{
-	fprintf(stderr, _(
-		"\nUsage:\n"
-		"  clockdiff [options] <destination>\n"
-		"\nOptions:\n"
-		"                without -o, use ip timestamp only\n"
-		"  -o            use ip timestamp and icmp echo\n"
-		"  -o1           use three-term ip timestamp and icmp echo\n"
-		"  -V            print version and exit\n"
-		"  <destination> dns name or ip address\n"
-		"\nFor more details see clockdiff(8).\n"));
-	exit(1);
-}
-
 static void drop_rights(void)
 {
 #ifdef HAVE_LIBCAP
@@ -450,6 +436,53 @@ static void drop_rights(void)
 #endif
 	if (setuid(getuid()))
 		error(-1, errno, "setuid");
+}
+
+static void usage(int exit_status)
+{
+	drop_rights();
+	fprintf(stderr, _(
+		"\nUsage:\n"
+		"  clockdiff [options] <destination>\n"
+		"\nOptions:\n"
+		"                without -o, use ip timestamp only\n"
+		"  -o            use ip timestamp and icmp echo\n"
+		"  -o1           use three-term ip timestamp and icmp echo\n"
+		"  -h, --help    display this help\n"
+		"  -V, --version print version and exit\n"
+		"  <destination> dns name or ip address\n"
+		"\nFor more details see clockdiff(8).\n"));
+	exit(exit_status);
+}
+
+static void parse_opts(struct run_state *ctl, int argc, char **argv)
+{
+	static const struct option longopts[] = {
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
+	int c;
+
+	while ((c = getopt_long(argc, argv, "o1Vh", longopts, NULL)) != -1)
+		switch (c) {
+		case 'o':
+			ctl->ip_opt_len = 4 + 4 * 8;
+			break;
+		case '1':
+			ctl->ip_opt_len = 4 + 3 * 8;
+			break;
+		case 'V':
+			printf(IPUTILS_VERSION("clockdiff"));
+			exit(0);
+		case 'h':
+			usage(0);
+			abort();
+		default:
+			printf("Try '%s --help' for more information.\n",
+			       program_invocation_short_name);
+			exit(1);
+		}
 }
 
 int main(int argc, char **argv)
@@ -469,14 +502,12 @@ int main(int argc, char **argv)
 	int status;
 
 	atexit(close_stdout);
-	if (argc == 2 && !strcmp(argv[1], "-V")) {
-		printf(IPUTILS_VERSION("clockdiff"));
-		return 0;
-	}
-	if (argc < 2) {
-		drop_rights();
-		usage();
-	}
+
+	parse_opts(&ctl, argc, argv);
+	argc -= optind;
+	argv += optind;
+	if (argc != 1)
+		usage(1);
 
 	ctl.sock_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	if (ctl.sock_raw < 0)
@@ -485,26 +516,14 @@ int main(int argc, char **argv)
 		error(1, errno, "nice");
 	drop_rights();
 
-	if (argc == 3) {
-		if (strcmp(argv[1], "-o") == 0) {
-			ctl.ip_opt_len = 4 + 4 * 8;
-			argv++;
-		} else if (strcmp(argv[1], "-o1") == 0) {
-			ctl.ip_opt_len = 4 + 3 * 8;
-			argv++;
-		} else
-			usage();
-	} else if (argc != 2)
-		usage();
-
 	if (isatty(fileno(stdin)) && isatty(fileno(stdout)))
 		ctl.interactive = 1;
 
 	ctl.id = getpid();
 
-	status = getaddrinfo(argv[1], NULL, &hints, &result);
+	status = getaddrinfo(argv[0], NULL, &hints, &result);
 	if (status)
-		error(1, 0, "%s: %s", argv[1], gai_strerror(status));
+		error(1, 0, "%s: %s", argv[0], gai_strerror(status));
 	ctl.hisname = strdup(result->ai_canonname);
 
 	memcpy(&ctl.server, result->ai_addr, sizeof ctl.server);
