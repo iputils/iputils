@@ -44,14 +44,14 @@ xml:id="man.rdisc">
     </info>
     <para>
     <command>rdisc</command> implements client side of the ICMP
-    router discover protocol.
+    Internet Router Discovery Protocol (IRDP).
     <command>rdisc</command> is invoked at boot time to populate the
     network routing tables with default routes.</para>
     <para>
     <command>rdisc</command> listens on the ALL_HOSTS (224.0.0.1)
     multicast address (or
-    <emphasis remap="I">receive_address</emphasis> provided it is
-    given) for ROUTER_ADVERTISE messages from routers. The received
+    <emphasis remap="I">receive_address</emphasis> if it is provided)
+    for ROUTER_ADVERTISE messages from routers. The received
     messages are handled by first ignoring those listed router
     addresses with which the host does not share a network. Among
     the remaining addresses the ones with the highest preference
@@ -61,22 +61,22 @@ xml:id="man.rdisc">
     <command>rdisc</command> can avoid waiting for routers to
     announce themselves by sending out a few ROUTER_SOLICITATION
     messages to the ALL_ROUTERS (224.0.0.2) multicast address (or
-    <emphasis remap="I">send_address</emphasis> provided it is
-    given) when it is started.</para>
+    <emphasis remap="I">send_address</emphasis> if it is provided)
+    when it is started.</para>
     <para>A timer is associated with each router address and the
-    address will no longer be considered for inclusion in the the
+    address will no longer be considered for inclusion in the
     routing tables if the timer expires before a new
     <emphasis remap="B">advertise</emphasis> message is received
     from the router. The address will also be excluded from
-    consideration if the host receives an
-    <emphasis remap="B">advertise</emphasis> message with the
-    preference being maximally negative.</para>
+    consideration if the received
+    <emphasis remap="B">advertise</emphasis> message has a
+    preference of maximum negative.</para>
     <para>Server side of router discovery protocol is supported by
     Cisco IOS and by any more or less complete UNIX routing daemon,
-    f.e
-    <emphasis remap="B">gated</emphasis>. Or,
-    <command>rdisc</command> can act as responder, if compiled with
-    ENABLE_RDISC_SERVER.</para>
+    for example
+    <emphasis remap="B">gated</emphasis>. If compiled with
+    ENABLE_RDISC_SERVER, <command>rdisc</command> can act as
+    responder.</para>
   </refsection>
 
   <refsection xml:id="options">
@@ -105,7 +105,7 @@ xml:id="man.rdisc">
         <listitem>
           <para>Opposite to
           <option>-a</option>, i.e. install only router with the
-          best preference value. It is default behaviour.</para>
+          best preference value. This is the default behaviour.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -121,13 +121,13 @@ xml:id="man.rdisc">
           <option>-f</option>
         </term>
         <listitem>
-          <para>Run
-          <command>rdisc</command> forever even if no routers are
-          found. Normally
+          <para>Keep
+          <command>rdisc</command> running in the background even
+          if no routers are found. Normally
           <command>rdisc</command> gives up if it has not received
           any
           <emphasis remap="B">advertise</emphasis> message after
-          after soliciting three times, in which case it exits with
+          soliciting three times. In this case it exits with
           a non-zero exit code. If
           <option>-f</option> is not specified in the first form
           then
@@ -165,7 +165,7 @@ xml:id="man.rdisc">
           <emphasis remap="I">preference</emphasis>
         </term>
         <listitem>
-          <para>Set preference in advertisement. Available only
+          <para>Set preference in advertisement messages. Available only
           with -r option.</para>
         </listitem>
       </varlistentry>
@@ -176,7 +176,7 @@ xml:id="man.rdisc">
         </term>
         <listitem>
           <para>Set maximum advertisement interval in seconds.
-          Default is 600 secs. Available only with -r
+          Default is 600. Available only with -r
           option.</para>
         </listitem>
       </varlistentry>
@@ -193,7 +193,7 @@ xml:id="man.rdisc">
           <option>-v</option>
         </term>
         <listitem>
-          <para>Be verbose i.e. send lots of debugging messages to
+          <para>Be verbose and send lots of debugging messages to
           syslog.</para>
         </listitem>
       </varlistentry>
@@ -214,7 +214,7 @@ xml:id="man.rdisc">
     </info>
     <para>This program was developed by Sun Microsystems (see
     copyright notice in source file). It was ported to Linux by
-    Alexey Kuznetsov&lt;kuznet@ms2.inr.ac.ru&gt;.</para>
+    Alexey Kuznetsov <email>kuznet@ms2.inr.ac.ru</email>.</para>
   </refsection>
 
   <refsection xml:id="see_also">
@@ -240,9 +240,8 @@ xml:id="man.rdisc">
     <info>
       <title>REFERENCES</title>
     </info>
-    <para>Deering, S.E.,ed "ICMP Router Discovery Messages",
-    RFC1256, Network Information Center, SRI International, Menlo
-    Park, Calif., September 1991.</para>
+    <para>RFC1256 ICMP Router Discovery Messages. S. Deering, Ed..
+    September 1991.</para>
   </refsection>
 
   <refsection xml:id="security">
