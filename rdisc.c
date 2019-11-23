@@ -323,6 +323,13 @@ int main(int argc, char **argv)
 				break;
 			case 'V':
 				printf(IPUTILS_VERSION("rdisc"));
+				printf("Compiled %s ENABLE_RDISC_SERVER.\n",
+#ifdef RDISC_SERVER
+						"with"
+#else
+						"without"
+#endif
+				);
 				exit(0);
 #ifdef RDISC_SERVER
 			case 'T':
