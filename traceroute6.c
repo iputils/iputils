@@ -556,11 +556,11 @@ static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 
 		p = (unsigned char *)(icp + 1);
 
-		printf("\n%d bytes from %s to %s", cc,
+		printf(_("\n%d bytes from %s to %s"), cc,
 		       inet_ntop(AF_INET6, &from->sin6_addr, pa1, sizeof(pa1)),
 		       inet_ntop(AF_INET6, to, pa2, sizeof(pa2)));
 
-		printf(": icmp type %d (%s) code %d\n", type, pr_type(type), icp->icmp6_code);
+		printf(_(": icmp type %d (%s) code %d\n"), type, pr_type(type), icp->icmp6_code);
 
 		cc -= sizeof(struct icmp6_hdr);
 		for (i = 0; i < cc; i++) {
@@ -745,7 +745,7 @@ int main(int argc, char **argv)
 		memcpy(to, result->ai_addr, sizeof *to);
 		resolved_hostname = strdup(result->ai_canonname);
 		if (resolved_hostname == NULL)
-			error(1, errno, "cannot allocate memory");
+			error(1, errno, _("cannot allocate memory"));
 		ctl.hostname = resolved_hostname;
 		freeaddrinfo(result);
 	}
@@ -771,7 +771,7 @@ int main(int argc, char **argv)
 
 	ctl.sendbuff = malloc(ctl.datalen);
 	if (ctl.sendbuff == NULL)
-		error(1, errno, "cannot allocate memory");
+		error(1, errno, _("cannot allocate memory"));
 
 #ifdef IPV6_RECVPKTINFO
 	setsockopt(ctl.icmp_sock, SOL_IPV6, IPV6_RECVPKTINFO, &on, sizeof(on));
@@ -797,7 +797,7 @@ int main(int argc, char **argv)
 #endif
 
 	if ((ctl.sndsock = socket(AF_INET6, SOCK_DGRAM, 0)) < 0)
-		error(5, errno, "UDP socket");
+		error(5, errno, _("UDP socket"));
 #ifdef SO_SNDBUF
 	if (setsockopt(ctl.sndsock, SOL_SOCKET, SO_SNDBUF, (char *)&ctl.datalen,
 		       sizeof(ctl.datalen)) < 0)
@@ -838,9 +838,9 @@ int main(int argc, char **argv)
 	}
 
 	if (bind(ctl.sndsock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0)
-		error(1, errno, "bind sending socket");
+		error(1, errno, _("bind sending socket"));
 	if (bind(ctl.icmp_sock, (struct sockaddr *)&ctl.saddr, sizeof(ctl.saddr)) < 0)
-		error(1, errno, "bind icmp6 socket");
+		error(1, errno, _("bind icmp6 socket"));
 
 	fprintf(stderr, _("traceroute to %s (%s)"), ctl.hostname,
 		inet_ntop(AF_INET6, &to->sin6_addr, pa, sizeof(pa)));

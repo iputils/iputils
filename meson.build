@@ -255,6 +255,7 @@ common_sources = files('iputils_common.h', 'iputils_common.c')
 libcommon = static_library(
 	'common',
 	[common_sources, git_version_h],
+	dependencies : [intl_dep],
 	install : false)
 
 if build_ping == true

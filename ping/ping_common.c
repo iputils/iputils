@@ -42,7 +42,7 @@ static uid_t euid;
 
 void usage(void)
 {
-	fprintf(stderr,
+	fprintf(stderr, _(
 		"\nUsage\n"
 		"  ping [options] <destination>\n"
 		"\nOptions:\n"
@@ -84,7 +84,7 @@ void usage(void)
 		"  -F <flowlabel>     define flow label, default is random\n"
 		"  -N <nodeinfo opt>  use icmp6 node info query, try <help> as argument\n"
 		"\nFor more details see ping(8).\n"
-	);
+	));
 	exit(2);
 }
 

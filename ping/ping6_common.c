@@ -257,7 +257,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	if (rts->opt_strictsource &&
 	    bind(sock->fd, (struct sockaddr *)&rts->source6, sizeof rts->source6) == -1)
-		error(2, errno, "bind icmp socket");
+		error(2, errno, _("bind icmp socket"));
 
 	if ((ssize_t)rts->datalen >= (ssize_t)sizeof(struct timeval) && (rts->ni.query < 0)) {
 		/* can we time transfer */

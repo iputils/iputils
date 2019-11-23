@@ -613,7 +613,7 @@ static void print_copying(void) {
 }
 
 static void print_usage(void) {
-	fprintf(stderr, 
+	fprintf(stderr, _(
 		"Usage:\n"
 		"  ninfod [options]\n"
 		"\nOptions:\n"
@@ -624,7 +624,7 @@ static void print_usage(void) {
 		"  -v            verbose mode\n"
 		"  -V            print version and exit\n"
 		"\nFor more details see ninfod(8).\n"
-	);
+	));
 }
 
 /* --------- */

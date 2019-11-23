@@ -7,6 +7,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "iputils_common.h"
+
 #if HAVE_GETRANDOM
 # include <sys/random.h>
 #endif
@@ -55,9 +57,9 @@ void close_stdout(void)
 {
 	if (close_stream(stdout) != 0 && !(errno == EPIPE)) {
 		if (errno)
-			error(0, errno, "write error");
+			error(0, errno, _("write error"));
 		else
-			error(0, 0, "write error");
+			error(0, 0, _("write error"));
 		_exit(EXIT_FAILURE);
 	}
 	if (close_stream(stderr) != 0)
@@ -77,7 +79,7 @@ long strtol_or_err(char const *const str, char const *const errmesg,
 	if (errno || str == end || (end && *end))
 		goto err;
 	if (num < min || max < num)
-		error(EXIT_FAILURE, 0, "%s: '%s': out of range: %lu <= value <= %lu",
+		error(EXIT_FAILURE, 0, _("%s: '%s': out of range: %lu <= value <= %lu"),
 		      errmesg, str,  min, max);
 	return num;
  err:

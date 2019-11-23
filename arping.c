@@ -435,7 +435,7 @@ static int outgoing_device(struct run_state *const ctl, struct nlmsghdr *nh)
 	struct rtattr *ra;
 
 	if (nh->nlmsg_type != RTM_NEWROUTE) {
-		error(0, 0, "NETLINK new route message type");
+		error(0, 0, _("NETLINK new route message type"));
 		return 1;
 	}
 	for (ra = RTM_RTA(rm); RTA_OK(ra, len); ra = RTA_NEXT(ra, len)) {
@@ -445,7 +445,7 @@ static int outgoing_device(struct run_state *const ctl, struct nlmsghdr *nh)
 
 			ctl->device.ifindex = *oif;
 			if (!if_indextoname(ctl->device.ifindex, dev_name)) {
-				error(0, errno, "if_indextoname failed");
+				error(0, errno, _("if_indextoname failed"));
 				return 1;
 			}
 			ctl->device.name = dev_name;
@@ -474,7 +474,7 @@ static void netlink_query(struct run_state *const ctl, const int flags,
 
 	unmodified_nh = nh = calloc(1, buffer_size);
 	if (!nh)
-		error(1, errno, "allocating %zu bytes failed", buffer_size);
+		error(1, errno, _("allocating %zu bytes failed"), buffer_size);
 
 	nh->nlmsg_len = NLMSG_LENGTH(len);
 	nh->nlmsg_flags = flags;
@@ -487,11 +487,11 @@ static void netlink_query(struct run_state *const ctl, const int flags,
 
 	fd = socket(PF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 	if (fd < 0) {
-		error(0, errno, "NETLINK_ROUTE socket failed");
+		error(0, errno, _("NETLINK_ROUTE socket failed"));
 		goto fail;
 	}
 	if (sendmsg(fd, &mh, 0) < 0) {
-		error(0, errno, "NETLINK_ROUTE socket failed");
+		error(0, errno, _("NETLINK_ROUTE socket failed"));
 		goto fail;
 	}
 	do {
@@ -505,7 +505,7 @@ static void netlink_query(struct run_state *const ctl, const int flags,
 		case NLMSG_ERROR:
 		case NLMSG_OVERRUN:
 			errno = EIO;
-			error(0, 0, "NETLINK_ROUTE unexpected iov element");
+			error(0, 0, _("NETLINK_ROUTE unexpected iov element"));
 			goto fail;
 		case NLMSG_DONE:
 			ret = 0;
@@ -540,7 +540,7 @@ static void guess_device(struct run_state *const ctl)
 		addr_len = 16;
 		break;
 	default:
-		error(1, 0, "unknown address family, please, use option -I.");
+		error(1, 0, _("unknown address family, please, use option -I."));
 		abort();
 	}
 
@@ -699,7 +699,7 @@ static int event_loop(struct run_state *ctl)
 	sigaddset(&mask, SIGQUIT);
 	sigaddset(&mask, SIGTERM);
 	if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1) {
-		error(0, errno, "sigprocmask failed");
+		error(0, errno, _("sigprocmask failed"));
 		return 1;
 	}
 	sfd = signalfd(-1, &mask, 0);
@@ -713,11 +713,11 @@ static int event_loop(struct run_state *ctl)
 	/* timerfd */
 	tfd = timerfd_create(CLOCK_MONOTONIC, 0);
 	if (tfd == -1) {
-		error(0, errno, "timerfd_create failed");
+		error(0, errno, _("timerfd_create failed"));
 		return 1;
 	}
 	if (timerfd_settime(tfd, 0, &timerfd_vals, NULL)) {
-		error(0, errno, "timerfd_settime failed");
+		error(0, errno, _("timerfd_settime failed"));
 		return 1;
 	}
 	pfds[POLLFD_TIMER].fd = tfd;
@@ -737,7 +737,7 @@ static int event_loop(struct run_state *ctl)
 			if (errno == EAGAIN)
 				continue;
 			if (errno)
-				error(0, errno, "poll failed");
+				error(0, errno, _("poll failed"));
 			exit_loop = 1;
 			continue;
 		}
@@ -749,19 +749,19 @@ static int event_loop(struct run_state *ctl)
 			case POLLFD_SIGNAL:
 				s = read(sfd, &sigval, sizeof(struct signalfd_siginfo));
 				if (s != sizeof(struct signalfd_siginfo)) {
-					error(0, errno, "could not read signalfd");
+					error(0, errno, _("could not read signalfd"));
 					continue;
 				}
 				if (sigval.ssi_signo == SIGINT || sigval.ssi_signo == SIGQUIT ||
 				    sigval.ssi_signo == SIGTERM)
 					exit_loop = 1;
 				else
-					error(0, errno, "unexpected signal: %d", sigval.ssi_signo);
+					error(0, errno, _("unexpected signal: %d"), sigval.ssi_signo);
 				break;
 			case POLLFD_TIMER:
 				s = read(tfd, &exp, sizeof(uint64_t));
 				if (s != sizeof(uint64_t)) {
-					error(0, errno, "could not read timerfd");
+					error(0, errno, _("could not read timerfd"));
 					continue;
 				}
 				total_expires += exp;

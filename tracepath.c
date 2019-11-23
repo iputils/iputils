@@ -601,7 +601,7 @@ int main(int argc, char **argv)
 		if (res < 0)
 			printf(_("%2d:  no reply\n"), ctl.ttl);
 	}
-	printf("     Too many hops: pmtu %d\n", ctl.mtu);
+	printf(_("     Too many hops: pmtu %d\n"), ctl.mtu);
 
  done:
 	freeaddrinfo(result);

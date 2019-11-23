@@ -559,7 +559,7 @@ int main(int argc, char **argv)
 		uint8_t *rspace;
 
 		if ((rspace = calloc(ctl.ip_opt_len, sizeof(uint8_t))) == NULL)
-			error(1, errno, "allocating %zu bytes failed",
+			error(1, errno, _("allocating %zu bytes failed"),
 					ctl.ip_opt_len * sizeof(uint8_t));
 		rspace[0] = IPOPT_TIMESTAMP;
 		rspace[1] = ctl.ip_opt_len;
@@ -576,7 +576,7 @@ int main(int argc, char **argv)
 		}
 
 		if (setsockopt(ctl.sock_raw, IPPROTO_IP, IP_OPTIONS, rspace, ctl.ip_opt_len) < 0) {
-			error(0, errno, "IP_OPTIONS (fallback to icmp tstamps)");
+			error(0, errno, _("IP_OPTIONS (fallback to icmp tstamps)"));
 			ctl.ip_opt_len = 0;
 		}
 		free(rspace);

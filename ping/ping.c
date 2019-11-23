@@ -499,7 +499,7 @@ main(int argc, char **argv)
 	argv += optind;
 
 	if (!argc)
-		error(1, EDESTADDRREQ, "usage error");
+		error(1, EDESTADDRREQ, _("usage error"));
 
 	iputils_srand();
 
@@ -825,7 +825,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		rspace[1 + IPOPT_OFFSET] = IPOPT_MINOFF;
 		rts->optlen = 40;
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, sizeof rspace) < 0)
-			error(2, errno, "record route");
+			error(2, errno, _("record route"));
 	}
 	if (rts->opt_timestamp) {
 		memset(rspace, 0, sizeof(rspace));
@@ -844,7 +844,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0) {
 			rspace[3] = 2;
 			if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0)
-				error(2, errno, "ts option");
+				error(2, errno, _("ts option"));
 		}
 		rts->optlen = 40;
 	}
@@ -861,7 +861,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		}
 
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + rts->nroute * 4) < 0)
-			error(2, errno, "record route");
+			error(2, errno, _("record route"));
 		rts->optlen = 40;
 	}
 
