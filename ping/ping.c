@@ -184,8 +184,10 @@ static double ping_strtod(const char *str, const char *err_msg)
 #ifdef USE_IDN
 	setlocale(LC_ALL, "");
 #endif
-	if (errno || str == end || (end && *end))
-		goto err;
+	if (errno || str == end || (end && *end)) {
+		error(0, 0, _("option argument contains garbage: %s"), end);
+		error(0, 0, _("this will become fatal error in future"));
+	}
 	switch (fpclassify(num)) {
 	case FP_NORMAL:
 	case FP_ZERO:
