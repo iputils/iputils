@@ -431,14 +431,14 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 static int outgoing_device(struct run_state *const ctl, struct nlmsghdr *nh)
 {
 	struct rtmsg *rm = NLMSG_DATA(nh);
-	int len = RTM_PAYLOAD(nh);
+	size_t len = RTM_PAYLOAD(nh);
 	struct rtattr *ra;
 
 	if (nh->nlmsg_type != RTM_NEWROUTE) {
 		error(0, 0, "NETLINK new route message type");
 		return 1;
 	}
-	for (ra = RTM_RTA(rm); RTA_OK(ra, len); ra = RTA_NEXT(ra, len)) {
+	for (ra = RTM_RTA(rm); RTA_OK(ra, (unsigned short)len); ra = RTA_NEXT(ra, len)) {
 		if (ra->rta_type == RTA_OIF) {
 			int *oif = RTA_DATA(ra);
 			static char dev_name[IF_NAMESIZE];

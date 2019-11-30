@@ -419,7 +419,7 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 				rtasize = NLMSG_PAYLOAD(nlh, nlmlen) - NLMSG_ALIGN(nlm_struct_size);
 				for (rta = (struct rtattr *) (((char *) NLMSG_DATA(nlh)) + 
 									NLMSG_ALIGN(nlm_struct_size)); 
-				     RTA_OK(rta, rtasize); 
+				     RTA_OK(rta, (unsigned short)rtasize);
 				     rta = RTA_NEXT(rta, rtasize)) {
 					void *rtadata = RTA_DATA(rta);
 					size_t rtapayload = RTA_PAYLOAD(rta);
