@@ -103,10 +103,14 @@ static void iputils_md5dig_init(iputils_md5dig_ctx *const ctx)
 	};
 
 	ctx->comm_sock = -1;
-	if ((ctx->bind_sock = socket(AF_ALG, SOCK_SEQPACKET, 0)) < 0)
+	if ((ctx->bind_sock = socket(AF_ALG, SOCK_SEQPACKET, 0)) < 0) {
+		error(0, errno, "WARNING: kernel crypto API socket() failed");
 		return;
-	if (bind(ctx->bind_sock, (struct sockaddr *)&sa, sizeof(sa)) < 0)
+	}
+	if (bind(ctx->bind_sock, (struct sockaddr *)&sa, sizeof(sa)) < 0) {
+		error(0, errno, "WARNING: kernel crypto API bind() failed");
 		return;
+	}
 	ctx->comm_sock = accept(ctx->bind_sock, NULL, 0);
 	return;
 }
