@@ -160,7 +160,7 @@ static int interfaces_size;			/* Number of elements in interfaces */
 /* fraser */
 int debugfile;
 
-int s;			/* Socket file descriptor */
+int socketfd;		/* Socket file descriptor */
 struct sockaddr_in whereto;/* Address to send to */
 
 /* Common variables */
@@ -430,7 +430,7 @@ next:
 		iputils_srand();
 #endif
 
-	if ((s = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0) {
+	if ((socketfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0) {
 		logperror("socket");
 		exit(5);
 	}
@@ -450,7 +450,7 @@ next:
 	sigaddset(&sset, SIGINT);
 
 	init();
-	if (join(s, &joinaddr) < 0) {
+	if (join(socketfd, &joinaddr) < 0) {
 		logmsg(LOG_ERR, "Failed joining addresses\n");
 		exit (2);
 	}
@@ -463,7 +463,7 @@ next:
 		socklen_t fromlen = sizeof (from);
 		int cc;
 
-		cc=recvfrom(s, (char *)packet, len, 0,
+		cc=recvfrom(socketfd, (char *)packet, len, 0,
 			    (struct sockaddr *)&from, &fromlen);
 		if (cc<0) {
 			if (errno == EINTR)
@@ -556,11 +556,11 @@ solicitor(struct sockaddr_in *sin)
 	icp->checksum = in_cksum( (unsigned short *)icp, packetlen );
 
 	if (isbroadcast(sin))
-		i = sendbcast(s, (char *)outpack, packetlen);
+		i = sendbcast(socketfd, (char *)outpack, packetlen);
 	else if (ismulticast(sin))
-		i = sendmcast(s, (char *)outpack, packetlen, sin);
+		i = sendmcast(socketfd, (char *)outpack, packetlen, sin);
 	else
-		i = sendto( s, (char *)outpack, packetlen, 0,
+		i = sendto(socketfd, (char *)outpack, packetlen, 0,
 			   (struct sockaddr *)sin, sizeof(struct sockaddr));
 
 	if( i < 0 || i != packetlen )  {
@@ -616,10 +616,10 @@ advertise(struct sockaddr_in *sin, int lft)
 		rap->icmp_cksum = in_cksum( (unsigned short *)rap, packetlen );
 
 		if (isbroadcast(sin))
-			cc = sendbcastif(s, (char *)outpack, packetlen,
+			cc = sendbcastif(socketfd, (char *)outpack, packetlen,
 					&interfaces[i]);
 		else if (ismulticast(sin))
-			cc = sendmcastif( s, (char *)outpack, packetlen, sin,
+			cc = sendmcastif(socketfd, (char *)outpack, packetlen, sin,
 					&interfaces[i]);
 		else {
 			struct interface *ifp = &interfaces[i];
@@ -636,7 +636,7 @@ advertise(struct sockaddr_in *sin, int lft)
 						 ifp->name,
 						 pr_name(ifp->address));
 				}
-				cc = sendto( s, (char *)outpack, packetlen, 0,
+				cc = sendto(socketfd, (char *)outpack, packetlen, 0,
 					    (struct sockaddr *)sin,
 					    sizeof(struct sockaddr));
 			} else
