@@ -11,11 +11,9 @@ zypper --non-interactive install --no-recommends \
 	libcap-devel \
 	libcap-progs \
 	libidn2-devel \
-	libnettle-devel \
 	libxslt-tools \
 	make \
 	meson \
 	ninja \
-	openssl-devel \
 	pkg-config \
 	which

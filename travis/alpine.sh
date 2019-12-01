@@ -16,6 +16,4 @@ apk add \
 	make \
 	meson \
 	musl-dev \
-	nettle-dev \
-	openssl-dev \
 	pkgconfig

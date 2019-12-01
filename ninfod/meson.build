@@ -10,7 +10,7 @@ ninfod_sources = files('''
 	ninfod_name.c
 '''.split())
 executable('ninfod', [ninfod_sources, git_version_h],
-	dependencies : [cap_dep, crypto_dep, rt_dep, threads],
+	dependencies : [cap_dep, rt_dep, threads],
 	link_with : [libcommon],
 	include_directories : inc,
 	install: true,

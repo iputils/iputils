@@ -9,8 +9,6 @@ yum -y install \
 	libcap-devel \
 	libxslt \
 	make \
-	nettle-devel \
-	openssl-devel \
 	pkg-config \
 	which
 

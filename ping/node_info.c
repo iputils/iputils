@@ -33,12 +33,8 @@
 #include <stddef.h>
 
 #include "iputils_common.h"
+#include "md5.h"
 #include "ping.h"
-
-#if defined(USE_GCRYPT) || defined(USE_OPENSSL) || defined(USE_NETTLE) || defined(USE_KERNEL_CRYPTO_API)
-#include "iputils_md5dig.h"
-#define USE_CRYPTO
-#endif
 
 struct niquery_option {
 	char *name;
@@ -105,21 +101,19 @@ void niquery_init_nonce(struct ping_ni *ni)
 }
 
 #if !PING6_NONCE_MEMORY
-static int niquery_nonce(struct ping_ni *ni __attribute__((__unused__)),
-			 uint8_t *nonce __attribute__((__unused__)),
-			 int fill __attribute__((__unused__)))
+static int niquery_nonce(struct ping_ni *ni, uint8_t *nonce, int fill)
 {
-# ifdef USE_CRYPTO
-	static uint8_t digest[MD5_DIGEST_LENGTH];
+	static uint8_t digest[IPUTILS_MD5LENGTH];
 	static int seq = -1;
 
 	if (fill || seq != *(uint16_t *)nonce || seq == -1) {
-		MD5_CTX ctxt;
+		IPUTILS_MD5_CTX ctxt;
 
-		MD5_Init(&ctxt);
-		MD5_Update(&ctxt, &ni->nonce_secret, sizeof(ni->nonce_secret));
-		MD5_Update(&ctxt, nonce, sizeof(uint16_t));
-		MD5_Final(digest, &ctxt);
+		iputils_MD5Init(&ctxt);
+		iputils_MD5Update(&ctxt, (const char *)&ni->nonce_secret,
+				  sizeof(ni->nonce_secret));
+		iputils_MD5Update(&ctxt, (const char *)nonce, sizeof(uint16_t));
+		iputils_MD5Final(digest, &ctxt);
 
 		seq = *(uint16_t *)nonce;
 	}
@@ -132,10 +126,6 @@ static int niquery_nonce(struct ping_ni *ni __attribute__((__unused__)),
 			return -1;
 		return ntohsp((uint16_t *)nonce);
 	}
-# else
-	error(3, ENOSYS, _("niquery_nonce() crypto disabled"));
-	return -1;
-# endif
 }
 #endif
 
@@ -291,7 +281,6 @@ static int niquery_option_subject_addr_handler(struct ping_ni *ni, int index, co
 # endif
 #endif
 
-#ifdef USE_CRYPTO
 static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, const char *name)
 {
 	static char nigroup_buf[INET6_ADDRSTRLEN + 1 + IFNAMSIZ];
@@ -300,12 +289,12 @@ static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, co
 	size_t i;
 	char *p;
 	char *canonname = NULL, *idn = NULL;
-	unsigned char *buf = NULL;
+	char *buf = NULL;
 	size_t namelen;
 	size_t buflen;
 	int dots, fqdn = niquery_options[index].data;
-	MD5_CTX ctxt;
-	uint8_t digest[MD5_DIGEST_LENGTH];
+	IPUTILS_MD5_CTX ctxt;
+	uint8_t digest[IPUTILS_MD5LENGTH];
 #ifdef USE_IDN
 	int rc;
 #endif
@@ -370,9 +359,9 @@ static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, co
 		goto errexit;
 	}
 
-	MD5_Init(&ctxt);
-	MD5_Update(&ctxt, buf, buf[0]);
-	MD5_Final(digest, &ctxt);
+	iputils_MD5Init(&ctxt);
+	iputils_MD5Update(&ctxt, buf, buf[0]);
+	iputils_MD5Final(digest, &ctxt);
 
 	sprintf(nigroup_buf, "ff02::2:%02x%02x:%02x%02x%s%s",
 		digest[0], digest[1], digest[2], digest[3],
@@ -400,15 +389,6 @@ errexit:
 	free(idn);
 	exit(1);
 }
-#else
-static int niquery_option_subject_name_handler(struct ping_ni *ni  __attribute__((__unused__)),
-					       int index __attribute__((__unused__)),
-					       const char *name __attribute__((__unused__)))
-{
-	error(3, ENOSYS, _("niquery_option_subject_name_handler() crypto disabled"));
-	abort();
-}
-#endif
 
 int niquery_option_help_handler(struct ping_ni *ni __attribute__((__unused__)),
 				int index,

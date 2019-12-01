@@ -29,7 +29,6 @@ apt install -y --no-install-recommends \
 	libssl-dev \
 	make \
 	meson \
-	nettle-dev \
 	pkg-config \
 	xsltproc
 

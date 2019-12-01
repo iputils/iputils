@@ -140,25 +140,8 @@ else
 	idn_dep = dependency('disabler-appears-to-disable-executable-build', required : false)
 endif
 
-crypto = get_option('USE_CRYPTO')
-crypto_dep = []
-if crypto == 'nettle'
-	crypto_dep += dependency('nettle')
-	conf.set('USE_NETTLE', 1, description : 'If set use nettle crypto library.')
-elif crypto == 'gcrypt'
-	crypto_dep += cc.find_library('gcrypt')
-	crypto_dep += dependency('gpg-error', required : true)
-	conf.set('USE_GCRYPT', 1, description : 'If set use gcrypt crypto library.')
-elif crypto == 'openssl'
-	crypto_dep += dependency('openssl')
-	conf.set('USE_OPENSSL', 1, description : 'if set use openssl crypto library.')
-elif crypto == 'kernel'
-	crypto_dep += dependency('disabler-appears-to-disable-executable-build', required : false)
-	conf.set('USE_KERNEL_CRYPTO_API', 1, description : 'if set use Linux kernel Crypto API.')
-elif crypto == 'none'
-	crypto_dep += dependency('disabler-appears-to-disable-executable-build', required : false)
-	conf.set('PING6_NONCE_MEMORY', 1,
-		description : 'If set RFC6744 random does not use any CRYPTO lib.')
+if host_machine.endian() == 'big'
+	conf.set('WORDS_BIGENDIAN', '1')
 endif
 
 if build_rdisc == true
@@ -168,15 +151,10 @@ if build_rdisc == true
 endif
 
 if build_ninfod == true
-	if crypto == 'none'
-		error('BUILD_NINFOD=true and USE_CRYPTO=none cannot be combined')
-	endif
 	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h')
 		conf.set('STDC_HEADERS', 1, description : 'Defined if we have standard c headers.')
 	endif
 	foreach h : [
-		'gcrypt.h',
-		'gnutls/openssl.h',
 		'inttypes.h',
 		'limits.h',
 		'linux/rtnetlink.h',
@@ -185,7 +163,6 @@ if build_ninfod == true
 		'netinet/icmp6.h',
 		'netinet/in.h',
 		'netinet/ip6.h',
-		'openssl/md5.h',
 		'pwd.h',
 		'stdint.h',
 		'stdlib.h',
@@ -251,7 +228,10 @@ else
 endif
 
 ############################################################
-common_sources = files('iputils_common.h', 'iputils_common.c')
+common_sources = files(
+	'iputils_common.h', 'iputils_common.c',
+	'md5.h', 'md5.c'
+)
 libcommon = static_library(
 	'common',
 	[common_sources, git_version_h],
@@ -380,7 +360,6 @@ output += ' (capability or suid: ' + setcap_traceroute6.to_string() + ')\n'
 
 output += '\nCONFIGURATION\n'
 output += 'Capatiblity (with libcap): ' + cap.to_string() + '\n'
-output += 'Crypto: ' + crypto + '\n'
 output += 'IDN (with libidn2): ' + idn.to_string() + '\n'
 output += 'I18N (with gettext): ' + gettext.to_string() + '\n'
 output += 'systemd: ' + systemd.found().to_string() + '\n'

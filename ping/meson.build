@@ -10,7 +10,6 @@ executable('ping', [
 	include_directories : inc,
 	dependencies : [
 		cap_dep,
-		crypto_dep,
 		idn_dep,
 		intl_dep,
 		m_dep,

@@ -95,14 +95,6 @@
 
 #include <arpa/inet.h>
 
-#if defined(HAVE_GCRYPT_H) || defined(USE_KERNEL_CRYPTO_API) || defined(USE_NETTLE)
-# include "iputils_md5dig.h"
-#elif defined(HAVE_GNUTLS_OPENSSL_H)
-# include <gnutls/openssl.h>
-#elif defined(HAVE_OPENSSL_MD5_H)
-# include <openssl/md5.h>
-#endif
-
 #if HAVE_SYS_UTSNAME_H
 # include <sys/utsname.h>
 #endif
@@ -117,6 +109,7 @@
 
 #include "iputils_ni.h"
 #include "ninfod.h"
+#include "md5.h"
 
 /* Hmm,,, */
 #ifndef IPV6_JOIN_GROUP
@@ -242,15 +235,15 @@ static int compare_dnsname(const char *s, size_t slen,
 
 static int nodeinfo_group(const char *dnsname, struct in6_addr *nigrp)
 {
-	MD5_CTX ctxt;
+	IPUTILS_MD5_CTX ctxt;
 	unsigned char digest[16];
 
 	if (!dnsname || !nigrp)
 		return -1;
 
-	MD5_Init(&ctxt);
-	MD5_Update(&ctxt, dnsname, *dnsname);
-	MD5_Final(digest, &ctxt);
+	iputils_MD5Init(&ctxt);
+	iputils_MD5Update(&ctxt, dnsname, *dnsname);
+	iputils_MD5Final(digest, &ctxt);
 
 #ifdef s6_addr32
 	nigrp->s6_addr32[0] = htonl(0xff020000);
