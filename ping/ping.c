@@ -609,24 +609,22 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			if (argc == 1)
 				rts->opt_numeric = 1;
 		} else {
-			struct addrinfo *result = NULL;
-			struct addrinfo *tmp_ai = ai;
+			struct addrinfo *result = ai;
 			int ret_val;
 
-			if (argc > 1 || !tmp_ai) {
+			if (argc > 1) {
 				ret_val = getaddrinfo(target, NULL, &hints, &result);
 				if (ret_val)
 					error(2, 0, "%s: %s", target, gai_strerror(ret_val));
-				tmp_ai = result;
 			}
 
-			memcpy(&rts->whereto, tmp_ai->ai_addr, sizeof rts->whereto);
+			memcpy(&rts->whereto, result->ai_addr, sizeof rts->whereto);
 			memset(hnamebuf, 0, sizeof hnamebuf);
-			if (tmp_ai->ai_canonname)
-				strncpy(hnamebuf, tmp_ai->ai_canonname, sizeof hnamebuf - 1);
+			if (result->ai_canonname)
+				strncpy(hnamebuf, result->ai_canonname, sizeof hnamebuf - 1);
 			rts->hostname = hnamebuf;
 
-			if (result)
+			if (argc > 1)
 				freeaddrinfo(result);
 		}
 		if (argc > 1)

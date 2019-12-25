@@ -91,12 +91,6 @@ unsigned int if_name2index(const char *ifname)
 int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	      struct socket_st *sock)
 {
-	static const struct addrinfo hints = {
-		.ai_family = AF_INET6,
-		.ai_flags = getaddrinfo_flags
-	};
-	struct addrinfo *result = NULL;
-	int ret_val;
 	int hold, packlen;
 	unsigned char *packet;
 	char *target;
@@ -124,18 +118,8 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		target = rts->ni.group;
 	}
 
-	if (!ai) {
-		ret_val = getaddrinfo(target, NULL, &hints, &result);
-		if (ret_val)
-			error(2, 0, _("%s: %s"), target, gai_strerror(ret_val));
-		ai = result;
-	}
-
 	memcpy(&rts->whereto6, ai->ai_addr, sizeof(rts->whereto6));
 	rts->whereto6.sin6_port = htons(IPPROTO_ICMPV6);
-
-	if (result)
-		freeaddrinfo(result);
 
 	if (memchr(target, ':', strlen(target)))
 		rts->opt_numeric = 1;
