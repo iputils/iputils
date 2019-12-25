@@ -174,8 +174,13 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			rts->firsthop.sin6_family = AF_INET6;
 
 		rts->firsthop.sin6_port = htons(1025);
-		if (connect(probe_fd, (struct sockaddr *)&rts->firsthop, sizeof(rts->firsthop)) == -1)
+		if (connect(probe_fd, (struct sockaddr *)&rts->firsthop, sizeof(rts->firsthop)) == -1) {
+			if ((errno == EHOSTUNREACH || errno == ENETUNREACH) && ai->ai_next) {
+				close(probe_fd);
+				return -1;
+			}
 			error(2, errno, "connect");
+		}
 		alen = sizeof rts->source6;
 		if (getsockname(probe_fd, (struct sockaddr *)&rts->source6, &alen) == -1)
 			error(2, errno, "getsockname");

@@ -697,6 +697,9 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 					error(2, errno, _("cannot set broadcasting"));
 				if (connect(probe_fd, (struct sockaddr *)&dst, sizeof(dst)) == -1)
 					error(2, errno, "connect");
+			} else if ((errno == EHOSTUNREACH || errno == ENETUNREACH) && ai->ai_next) {
+				close(probe_fd);
+				return -1;
 			} else
 				error(2, errno, "connect");
 		}
