@@ -88,6 +88,7 @@ unsigned int if_name2index(const char *ifname)
 	return i;
 }
 
+/* return >= 0: exit with this code, < 0: go on to next addrinfo result */
 int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	      struct socket_st *sock)
 {
