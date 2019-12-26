@@ -560,8 +560,11 @@ main(int argc, char **argv)
 			error(2, 0, _("unknown protocol family: %d"), ai->ai_family);
 		}
 
-		if (ret_val == 0)
+		if (ret_val >= 0)
 			break;
+		/* ret_val < 0 means to go on to next addrinfo result, there
+		 * better be one. */
+		assert(ai->ai_next);
 	}
 
 	freeaddrinfo(result);
@@ -570,6 +573,7 @@ main(int argc, char **argv)
 	return ret_val;
 }
 
+/* return >= 0: exit with this code, < 0: go on to next addrinfo result */
 int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	      socket_st *sock)
 {
