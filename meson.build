@@ -130,7 +130,7 @@ endif
 
 idn = get_option('USE_IDN')
 if idn == true
-	idn_dep = cc.find_library('idn2', required : false)
+	idn_dep = dependency('libidn2', required : false)
 	if idn_dep.found()
 		add_project_arguments('-DUSE_IDN', language : 'c')
 		conf.set('USE_IDN', 1,
