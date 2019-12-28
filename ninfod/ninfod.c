@@ -455,7 +455,7 @@ static void do_daemonize(void)
 /* --------- */
 #ifdef HAVE_LIBCAP
 static const cap_value_t cap_net_raw = CAP_NET_RAW;
-static const cap_value_t cap_setuid =  CAP_SETUID; 
+static const cap_value_t cap_setuserid = CAP_SETUID;
 static cap_flag_value_t cap_ok;
 #else
 static uid_t euid;
@@ -487,7 +487,7 @@ static void limit_capabilities(void)
 
 	cap_get_flag(cap_cur_p, CAP_SETUID, CAP_PERMITTED, &cap_ok);
 	if (cap_ok != CAP_CLEAR)
-		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_setuid, CAP_SET);
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_setuserid, CAP_SET);
 
 	if (cap_set_proc(cap_p) < 0) {
 		DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
@@ -520,8 +520,8 @@ static void drop_capabilities(void)
 
 	/* setuid / setuid */
 	if (cap_ok != CAP_CLEAR) {
-		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_setuid, CAP_SET);
-		cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap_setuid, CAP_SET);
+		cap_set_flag(cap_p, CAP_PERMITTED, 1, &cap_setuserid, CAP_SET);
+		cap_set_flag(cap_p, CAP_EFFECTIVE, 1, &cap_setuserid, CAP_SET);
 
 		if (cap_set_proc(cap_p) < 0) {
 			DEBUG(LOG_ERR, "cap_set_proc: %s\n", strerror(errno));
