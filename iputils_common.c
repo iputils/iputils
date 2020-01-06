@@ -33,13 +33,15 @@ void error(int status, int errnum, const char *format, ...)
 
 int close_stream(FILE *stream)
 {
+	const int flush_status = fflush(stream);
 #ifdef HAVE___FPENDING
 	const int some_pending = (__fpending(stream) != 0);
 #endif
 	const int prev_fail = (ferror(stream) != 0);
 	const int fclose_fail = (fclose(stream) != 0);
 
-	if (prev_fail || (fclose_fail && (
+	if (flush_status ||
+	    prev_fail || (fclose_fail && (
 #ifdef HAVE___FPENDING
 					  some_pending ||
 #endif
