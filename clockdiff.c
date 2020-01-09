@@ -451,7 +451,7 @@ static void usage(int exit_status)
 		"\nUsage:\n"
 		"  clockdiff [options] <destination>\n"
 		"\nOptions:\n"
-		"                without -o, use ip timestamp only\n"
+		"                without -o, use icmp timestamp only(see RFC0792, page 16)\n"
 		"  -o            use ip timestamp and icmp echo\n"
 		"  -o1           use three-term ip timestamp and icmp echo\n"
 		"  -T, --time-format <ctime|iso>\n"
