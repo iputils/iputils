@@ -810,9 +810,9 @@ restamp:
 			return 1;
 		}
 		if (rts->timing) {
-			if (triptime >= 100000)
+			if (triptime >= 100000 - 50)
 				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
-			else if (triptime >= 10000)
+			else if (triptime >= 10000 - 5)
 				printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,
 				       ((triptime + 50) % 1000) / 100);
 			else if (triptime >= 1000)
