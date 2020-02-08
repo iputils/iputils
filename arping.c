@@ -794,7 +794,9 @@ static int event_loop(struct run_state *ctl)
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
 	rc |= finish(ctl);
-	if (ctl->dad && ctl->quit_on_reply)
+	if (ctl->unsolicited)
+		/* nothing */;
+	else if (ctl->dad && ctl->quit_on_reply)
 		/* Duplicate address detection mode return value */
 		rc |= !(ctl->brd_sent != ctl->received);
 	else
@@ -943,7 +945,7 @@ int main(int argc, char **argv)
 		}
 		memset(&saddr, 0, sizeof(saddr));
 		saddr.sin_family = AF_INET;
-		if (ctl.source || ctl.gsrc.s_addr) {
+		if (!ctl.unsolicited && (ctl.source || ctl.gsrc.s_addr)) {
 			saddr.sin_addr = ctl.gsrc;
 			if (bind(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1)
 				error(2, errno, "bind");
