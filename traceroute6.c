@@ -517,6 +517,7 @@ static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 {
 	struct icmp6_hdr *icp = (struct icmp6_hdr *)ctl->packet;
 	uint8_t type, code;
+	unsigned char *p;
 
 	type = icp->icmp6_type;
 	code = icp->icmp6_code;
@@ -535,6 +536,13 @@ static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 			nexthdr = *(unsigned char *)up;
 			up++;
 		}
+		if (nexthdr == 43) {
+			nexthdr = *(unsigned char*)up;
+			p = (unsigned char *)up;
+			p++;
+			p += (*p << 3) + 7;
+			up = (struct udphdr *)p;
+		}
 		if (nexthdr == IPPROTO_UDP) {
 			struct pkt_format *pkt;
 
@@ -549,7 +557,6 @@ static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 	}
 
 	if (ctl->verbose) {
-		unsigned char *p;
 		char pa1[NI_MAXHOST];
 		char pa2[NI_MAXHOST];
 		int i;
