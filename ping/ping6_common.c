@@ -61,6 +61,7 @@
 
 #include "iputils_common.h"
 #include "iputils_ni.h"
+#include "ipv6.h"
 #include "ping.h"
 
 #ifndef IPV6_FLOWLABEL_MGR
@@ -864,7 +865,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 
 		nexthdr = iph1->ip6_nxt;
 
-		if (nexthdr == 44) {
+		if (nexthdr == NEXTHDR_FRAGMENT) {
 			nexthdr = *(uint8_t *)icmph1;
 			icmph1++;
 		}

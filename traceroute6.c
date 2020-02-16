@@ -253,6 +253,7 @@
 #endif
 
 #include "iputils_common.h"
+#include "ipv6.h"
 
 #ifdef USE_IDN
 # define ADDRINFO_IDN_FLAGS	AI_IDN
@@ -531,7 +532,7 @@ static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 		up = (struct udphdr *)(hip + 1);
 		nexthdr = hip->ip6_nxt;
 
-		if (nexthdr == 44) {
+		if (nexthdr == NEXTHDR_FRAGMENT) {
 			nexthdr = *(unsigned char *)up;
 			up++;
 		}
