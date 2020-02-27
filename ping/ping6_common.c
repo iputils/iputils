@@ -815,6 +815,9 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
+		if (!rts->multicast &&
+		    memcmp(&from->sin6_addr.s6_addr, &rts->whereto6.sin6_addr.s6_addr, 16))
+			return 1;
 		if (!is_ours(rts, sock, icmph->icmp6_id))
 			return 1;
 	       if (!contains_pattern_in_payload(rts, (uint8_t *)(icmph + 1)))
