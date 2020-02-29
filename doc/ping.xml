@@ -155,8 +155,8 @@ xml:id="man.ping">
           <para>Adaptive ping. Interpacket interval adapts to
           round-trip time, so that effectively not more than one
           (or more, if preload is set) unanswered probe is present
-          in the network. Minimal interval is 200msec for not
-          super-user. On networks with low rtt this mode is
+          in the network. Minimal interval is 200msec unless
+          super-user. On networks with low RTT this mode is
           essentially equivalent to flood mode.</para>
         </listitem>
       </varlistentry>
@@ -219,7 +219,7 @@ xml:id="man.ping">
         </term>
         <listitem>
           <para>Flood ping. For every ECHO_REQUEST sent a period
-          “.” is printed, while for ever ECHO_REPLY received a
+          “.” is printed, while for every ECHO_REPLY received a
           backspace is printed. This provides a rapid display of
           how many packets are being dropped. If interval is not
           given, it sets interval to zero and outputs packets as
@@ -735,7 +735,7 @@ xml:id="man.ping">
     ECHO_REQUEST packet contains an additional 8 bytes worth of
     ICMP header followed by an arbitrary amount of data. When a
     <emphasis remap="I">packetsize</emphasis> is given, this
-    indicated the size of this extra piece of data (the default is
+    indicates the size of this extra piece of data (the default is
     56). Thus the amount of data received inside of an IP packet of
     type ICMP ECHO_REPLY will always be 8 bytes more than the
     requested data space (the ICMP header).</para>
@@ -906,7 +906,7 @@ xml:id="man.ping">
     anymore. It has been merged into
     <command>ping</command>. Creating a symlink named
     <emphasis remap="B">ping6</emphasis> pointing to
-    <command>ping</command> will result in the same funcionality as
+    <command>ping</command> will result in the same functionality as
     before.</para>
   </refsection>
 
