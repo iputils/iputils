@@ -670,6 +670,7 @@ static int event_loop(struct run_state *ctl)
 	enum {
 		POLLFD_SIGNAL = 0,
 		POLLFD_TIMER,
+		POLLFD_TIMEOUT,
 		POLLFD_SOCKET,
 		POLLFD_COUNT
 	};
@@ -684,6 +685,13 @@ static int event_loop(struct run_state *ctl)
 		.it_interval.tv_sec = ctl->interval,
 		.it_interval.tv_nsec = 0,
 		.it_value.tv_sec = ctl->interval,
+		.it_value.tv_nsec = 0
+	};
+	int timeoutfd;
+	struct itimerspec timeoutfd_vals = {
+		.it_interval.tv_sec = ctl->timeout,
+		.it_interval.tv_nsec = 0,
+		.it_value.tv_sec = ctl->timeout,
 		.it_value.tv_nsec = 0
 	};
 	uint64_t exp, total_expires = 1;
@@ -710,7 +718,7 @@ static int event_loop(struct run_state *ctl)
 	pfds[POLLFD_SIGNAL].fd = sfd;
 	pfds[POLLFD_SIGNAL].events = POLLIN | POLLERR | POLLHUP;
 
-	/* timerfd */
+	/* interval timerfd */
 	tfd = timerfd_create(CLOCK_MONOTONIC, 0);
 	if (tfd == -1) {
 		error(0, errno, "timerfd_create failed");
@@ -722,6 +730,19 @@ static int event_loop(struct run_state *ctl)
 	}
 	pfds[POLLFD_TIMER].fd = tfd;
 	pfds[POLLFD_TIMER].events = POLLIN | POLLERR | POLLHUP;
+
+	/* timeout timerfd */
+	timeoutfd = timerfd_create(CLOCK_MONOTONIC, 0);
+	if (tfd == -1) {
+		error(0, errno, "timerfd_create failed");
+		return 1;
+	}
+	if (timerfd_settime(timeoutfd, 0, &timeoutfd_vals, NULL)) {
+		error(0, errno, "timerfd_settime failed");
+		return 1;
+	}
+	pfds[POLLFD_TIMEOUT].fd = timeoutfd;
+	pfds[POLLFD_TIMEOUT].events = POLLIN | POLLERR | POLLHUP;
 
 	/* socket */
 	pfds[POLLFD_SOCKET].fd = ctl->socketfd;
@@ -765,12 +786,14 @@ static int event_loop(struct run_state *ctl)
 					continue;
 				}
 				total_expires += exp;
-				if ((0 < ctl->count && (uint64_t)ctl->count < total_expires) ||
-				    (ctl->quit_on_reply && ctl->timeout < (long)total_expires)) {
+				if (0 < ctl->count && (uint64_t)ctl->count < total_expires) {
 					exit_loop = 1;
 					continue;
 				}
 				send_pack(ctl);
+				break;
+			case POLLFD_TIMEOUT:
+				exit_loop = 1;
 				break;
 			case POLLFD_SOCKET:
 				if ((s =
