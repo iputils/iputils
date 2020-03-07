@@ -151,9 +151,6 @@ if build_rdisc == true
 endif
 
 if build_ninfod == true
-	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h')
-		conf.set('STDC_HEADERS', 1, description : 'Defined if we have standard c headers.')
-	endif
 	foreach h : [
 		'inttypes.h',
 		'limits.h',
