@@ -336,7 +336,7 @@ static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, co
 		fqdn = dots ? 1 : -1;
 	}
 
-	buflen = namelen + 3 + 1;	/* dn_comp() requrires strlen() + 3,
+	buflen = namelen + 3 + 1;	/* dn_comp() requires strlen() + 3,
 					   plus non-fqdn indicator. */
 	buf = malloc(buflen);
 	if (!buf) {

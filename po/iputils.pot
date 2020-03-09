@@ -1077,7 +1077,7 @@ msgstr ""
 
 #: ping6_common.c:1119
 #, c-format
-msgid " unexpeced error in inet_ntop(%s)"
+msgid " unexpected error in inet_ntop(%s)"
 msgstr ""
 
 #: ping6_common.c:1128
