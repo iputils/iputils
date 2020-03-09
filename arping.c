@@ -583,7 +583,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
  * Return value:
  *	>0	: Succeeded, and appropriate device not found.
  *		  device.ifindex remains 0.
- *	0	: Succeeded, and approptiate device found.
+ *	0	: Succeeded, and appropriate device found.
  *		  device.ifindex is set.
  *	<0	: Failed.  Support not found, or other
  *		: system error.

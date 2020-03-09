@@ -1164,7 +1164,7 @@ msgstr "解析エラー (切り詰められました)"
 
 #: ping6_common.c:1119
 #, c-format
-msgid " unexpeced error in inet_ntop(%s)"
+msgid " unexpected error in inet_ntop(%s)"
 msgstr "inet_ntop(%s) で予期せぬエラーが発生しました。"
 
 #: ping6_common.c:1128

@@ -337,7 +337,7 @@ int main(int argc, char **argv)
 				if (argc != 0) {
 					val = strtol(av[0], (char **)NULL, 0);
 					if (val < 4 || val > 1800)
-						error(1, 0, "Bad Max Advertizement Interval: %d",
+						error(1, 0, "Bad Max Advertisement Interval: %d",
 							     val);
 					max_adv_int = val;
 					min_adv_int =( max_adv_int * 3 / 4);

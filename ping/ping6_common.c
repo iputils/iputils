@@ -730,7 +730,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 			break;
 		}
 		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf)))
-			printf(_(" unexpeced error in inet_ntop(%s)"),
+			printf(_(" unexpected error in inet_ntop(%s)"),
 			       strerror(errno));
 		else
 			printf(" %s", buf);
