@@ -323,7 +323,6 @@ void init_nodeinfo_nodename(int forced)
 		}
 	}
 
-	return;
 }
 
 /* ---------- */

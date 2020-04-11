@@ -287,7 +287,6 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 void init_nodeinfo(INIT_ARGS __attribute__((__unused__)))
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
-	return;
 }
 
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)

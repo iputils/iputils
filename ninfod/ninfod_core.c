@@ -330,8 +330,6 @@ void init_core(int forced)
 	}
 
 	initialized = 1;
-
-	return;
 }
 
 #if ENABLE_THREADS
