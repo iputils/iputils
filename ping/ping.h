@@ -110,7 +110,7 @@ struct ping_rts;
 int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai, socket_st *sock);
 int ping4_send_probe(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
 int ping4_receive_error_msg(struct ping_rts *, socket_st *);
-int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
 void ping4_install_filter(struct ping_rts *rts, socket_st *);
 
 typedef struct ping_func_set_st {
@@ -368,11 +368,11 @@ extern void sock_setbufs(struct ping_rts *rts, socket_st *, int alloc);
 extern void setup(struct ping_rts *rts, socket_st *);
 extern int contains_pattern_in_payload(struct ping_rts *rts, uint8_t *ptr);
 extern int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st*,
-		     uint8_t *buf, int buflen);
+		     uint8_t *packet, int packlen);
 extern int finish(struct ping_rts *rts);
 extern void status(struct ping_rts *rts);
 extern void common_options(int ch);
-extern int gather_statistics(struct ping_rts *rts, uint8_t *ptr, int icmplen,
+extern int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 			     int cc, uint16_t seq, int hops,
 			     int csfailed, struct timeval *tv, char *from,
 			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast);
@@ -387,7 +387,7 @@ void ping6_usage(unsigned from_ping);
 
 int ping6_send_probe(struct ping_rts *rts, socket_st *sockets, void *packet, unsigned packet_size);
 int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sockets);
-int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
 void ping6_install_filter(struct ping_rts *rts, socket_st *sockets);
 int ntohsp(uint16_t *p);
 
