@@ -215,7 +215,7 @@ void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet
 
 	if (ii > 0) {
 		size_t kk;
-		size_t max = packet_size < (size_t)(8 + ii) ? 0 : packet_size - (8 + ii);
+		size_t max = packet_size < (size_t)ii + 8 ? 0 : packet_size - (size_t)ii + 8;
 
 		for (kk = 0; kk <= max; kk += ii)
 			for (jj = 0; jj < ii; ++jj)
