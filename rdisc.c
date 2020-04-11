@@ -87,9 +87,9 @@ struct interface
 #define ALLIGN(ptr)	(ptr)
 
 static int join(int sock, struct sockaddr_in *sin);
-static void solicitor(struct sockaddr_in *);
+static void solicitor(struct sockaddr_in *sin);
 #ifdef RDISC_SERVER
-static void advertise(struct sockaddr_in *, int lft);
+static void advertise(struct sockaddr_in *sin, int lft);
 #endif
 static char *pr_name(struct in_addr addr);
 static void pr_pack(char *buf, int cc, struct sockaddr_in *from);
@@ -100,7 +100,7 @@ static void del_route(struct in_addr addr);
 static void rtioctl(struct in_addr addr, int op);
 static int support_multicast(void);
 static int sendbcast(int s, char *packet, int packetlen);
-static int sendmcast(int s, char *packet, int packetlen, struct sockaddr_in *);
+static int sendmcast(int s, char *packet, int packetlen, struct sockaddr_in *sin);
 static int sendbcastif(int s, char *packet, int packetlen, struct interface *ifp);
 static int sendmcastif(int s, char *packet, int packetlen, struct sockaddr_in *sin, struct interface *ifp);
 static int is_directly_connected(struct in_addr in);
