@@ -123,7 +123,7 @@ static int niquery_nonce(struct ping_ni *ni, uint8_t *nonce, int fill)
 		return 0;
 	}
 
-	if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)))
+	if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)) != 0)
 		return -1;
 
 	return ntohsp((uint16_t *)nonce);
@@ -424,7 +424,7 @@ int niquery_option_handler(struct ping_ni *ni, const char *opt_arg)
 	int i;
 	int ret = -1;
 	for (i = 0, p = niquery_options; p->name; i++, p++) {
-		if (strncmp(p->name, opt_arg, p->namelen))
+		if (strncmp(p->name, opt_arg, p->namelen) != 0)
 			continue;
 		if (!p->has_arg) {
 			if (opt_arg[p->namelen] == '\0') {

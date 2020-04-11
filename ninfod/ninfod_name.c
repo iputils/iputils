@@ -221,7 +221,7 @@ static int compare_dnsname(const char *s, size_t slen,
 					done = 1;
 					retcode = 1;
 				} else {
-					if (memcmp(s+1, n+1, *s)) {
+					if (memcmp(s+1, n+1, *s) != 0) {
 						done = 1;
 						retcode = 1;
 					}

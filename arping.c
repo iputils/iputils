@@ -357,7 +357,7 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 			return 0;
 		if (ctl->gsrc.s_addr != dst_ip.s_addr)
 			return 0;
-		if (memcmp(p + ah->ar_hln + 4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln))
+		if (memcmp(p + ah->ar_hln + 4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln) != 0)
 			return 0;
 	} else {
 		/*
@@ -393,7 +393,7 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 			printf(_("for %s "), inet_ntoa(dst_ip));
 			s_printed = 1;
 		}
-		if (memcmp(p + ah->ar_hln + 4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln)) {
+		if (memcmp(p + ah->ar_hln + 4, ((struct sockaddr_ll *)&ctl->me)->sll_addr, ah->ar_hln) != 0) {
 			if (!s_printed)
 				printf(_("for "));
 			printf("[");
@@ -609,7 +609,7 @@ static int check_device(struct run_state *ctl)
 			continue;
 		if (ifa->ifa_addr->sa_family != AF_PACKET)
 			continue;
-		if (ctl->device.name && ifa->ifa_name && strcmp(ifa->ifa_name, ctl->device.name))
+		if (ctl->device.name && ifa->ifa_name && strcmp(ifa->ifa_name, ctl->device.name) != 0)
 			continue;
 
 		if (check_ifflags(ctl, ifa->ifa_flags) < 0)
