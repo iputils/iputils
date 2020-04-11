@@ -443,7 +443,6 @@ int ni_ifaddrs(struct ni_ifaddrs **ifap, sa_family_t family)
 							ifamap.broadcast_len = rtapayload;
 							break;
 						case IFA_LABEL:
-							break;
 						case IFA_UNSPEC:
 							break;
 #else
