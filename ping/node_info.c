@@ -46,11 +46,11 @@ struct niquery_option {
 
 #define NIQUERY_OPTION(_name, _has_arg, _data, _handler)	\
 	{							\
-		.name = _name,					\
+		.name = (_name),				\
 		.namelen = sizeof(_name) - 1,			\
-		.has_arg = _has_arg,				\
-		.data = _data,					\
-		.handler = _handler				\
+		.has_arg = (_has_arg),				\
+		.data = (_data),				\
+		.handler = (_handler)				\
 	}
 
 static int niquery_option_name_handler(struct ping_ni *ni, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
