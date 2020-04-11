@@ -871,13 +871,13 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 				return 1;
 			acknowledge(rts, ntohs(icmph1->icmp6_seq));
 			return 0;
-		} else {
-			/* We've got something other than an ECHOREPLY */
-			if (!rts->opt_verbose || rts->uid)
-				return 1;
-			print_timestamp(rts);
-			printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		}
+
+		/* We've got something other than an ECHOREPLY */
+		if (!rts->opt_verbose || rts->uid)
+			return 1;
+		print_timestamp(rts);
+		printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		print_icmp(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
 

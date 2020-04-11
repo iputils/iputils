@@ -121,11 +121,12 @@ static int niquery_nonce(struct ping_ni *ni, uint8_t *nonce, int fill)
 	if (fill) {
 		memcpy(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t));
 		return 0;
-	} else {
-		if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)))
-			return -1;
-		return ntohsp((uint16_t *)nonce);
 	}
+
+	if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)))
+		return -1;
+
+	return ntohsp((uint16_t *)nonce);
 }
 #endif
 
