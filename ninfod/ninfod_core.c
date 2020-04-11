@@ -158,11 +158,11 @@ static __inline__ struct subjinfo *subjinfo_lookup(size_t code)
 #define QTYPEINFO_F_RATELIMIT	0x1
 
 struct qtypeinfo {
-	uint16_t qtype;
 	char	*name;
 	int	(*getreply)(CHECKANDFILL_ARGS);
 	void	(*init)(INIT_ARGS);
 	int	flags;
+	uint16_t qtype;
 };
 
 static struct qtypeinfo qtypeinfo_table[] = {
