@@ -376,7 +376,7 @@ main(int argc, char **argv)
 			double optval;
 
 			optval = ping_strtod(optarg, _("bad timing interval"));
-			if (isgreater(optval, (double)(INT_MAX / 1000)))
+			if (isgreater(optval, (double)INT_MAX / 1000))
 				error(2, 0, _("bad timing interval: %s"), optarg);
 			rts.interval = (int)(optval * 1000);
 			rts.opt_interval = 1;
@@ -485,7 +485,7 @@ main(int argc, char **argv)
 			double optval;
 
 			optval = ping_strtod(optarg, _("bad linger time"));
-			if (isless(optval, 0.001) || isgreater(optval, (double)(INT_MAX / 1000)))
+			if (isless(optval, 0.001) || isgreater(optval, (double)INT_MAX / 1000))
 				error(2, 0, _("bad linger time: %s"), optarg);
 			/* lingertime will be converted to usec later */
 			rts.lingertime = (int)(optval * 1000);
