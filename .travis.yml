@@ -32,7 +32,7 @@ matrix:
           compiler: clang
 
         - os: linux
-          env: DISTRO=ubuntu:latest
+          env: DISTRO=ubuntu:eoan
           compiler: gcc
 
         - os: linux
