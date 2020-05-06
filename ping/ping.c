@@ -177,13 +177,11 @@ static double ping_strtod(const char *str, const char *err_msg)
 	if (str == NULL || *str == '\0')
 		goto err;
 	errno = 0;
-#ifdef USE_IDN
+
 	setlocale(LC_ALL, "C");
-#endif
 	num = strtod(str, &end);
-#ifdef USE_IDN
 	setlocale(LC_ALL, "");
-#endif
+
 	if (errno || str == end || (end && *end)) {
 		error(0, 0, _("option argument contains garbage: %s"), end);
 		error(0, 0, _("this will become fatal error in future"));
