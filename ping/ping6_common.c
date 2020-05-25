@@ -58,9 +58,25 @@
  *	with net_cap_raw enabled.
  */
 #include <stddef.h>
+
 #include "iputils_common.h"
 #include "iputils_ni.h"
 #include "ping.h"
+
+/*
+ * These are defined in <linux/in6.h> that is included in "ping.h" but
+ * <linux/libc-compat.h> is setting definitions avoid headers clashes with
+ * libc definitions causing <linux/in6.h> defines not to be reached.  While
+ * avoiding local #ifndef checks might be possible it doesn't seem to be
+ * unreasonable to add defines to keep things simple.  See also commit
+ * 43afde2967335e0386514a243394e434b34de4a0.
+ */
+#ifndef IPV6_FLOWLABEL_MGR
+# define IPV6_FLOWLABEL_MGR 32
+#endif
+#ifndef IPV6_FLOWINFO_SEND
+# define IPV6_FLOWINFO_SEND 33
+#endif
 
 ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,
@@ -335,10 +351,10 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	}
 
 	if (rts->opt_flowinfo) {
-#ifdef IPV6_FLOWLABEL_MGR
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + rts->cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
 		int freq_len = sizeof(*freq);
+
 		memset(freq, 0, sizeof(*freq));
 		freq->flr_label = htonl(rts->flowlabel & IPV6_FLOWINFO_FLOWLABEL);
 		freq->flr_action = IPV6_FL_A_GET;
@@ -348,17 +364,9 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1)
 			error(2, errno, _("can't set flowlabel"));
 		rts->flowlabel = freq->flr_label;
-#else
-		error(2, 0, _("flow labels are not supported"));
-#endif
-
-#ifdef IPV6_FLOWINFO_SEND
 		rts->whereto6.sin6_flowinfo = rts->flowlabel;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1)
 			error(2, errno, _("can't send flowinfo"));
-#else
-		error(2, 0, _("flowinfo is not supported"));
-#endif
 	}
 
 	printf(_("PING %s(%s) "), rts->hostname, pr_addr(rts, &rts->whereto6, sizeof rts->whereto6));
