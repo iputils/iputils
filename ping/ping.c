@@ -358,7 +358,7 @@ main(int argc, char **argv)
 			rts.opt_adaptive = 1;
 			break;
 		case 'B':
-			rts.opt_sourceroute = 1;
+			rts.opt_strictsource = 1;
 			break;
 		case 'c':
 			rts.npackets = strtol_or_err(optarg, _("invalid argument"), 1, LONG_MAX);
