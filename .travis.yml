@@ -8,7 +8,7 @@ matrix:
         # cross compilation
         # NOTE: cannot set cross compiler as compiler variable (meson tests also native build)
         - os: linux
-          env: DISTRO=debian:unstable VARIANT=cross-compile.aarch64
+          env: DISTRO=debian:testing VARIANT=cross-compile.aarch64
           compiler: gcc
 
         - os: linux
