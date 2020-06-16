@@ -391,11 +391,6 @@ errexit:
 	exit(1);
 }
 
-int test()
-{
-	return 0;
-}
-
 int niquery_option_help_handler(struct ping_ni *ni __attribute__((__unused__)),
 				int index,
 				const char *arg __attribute__((__unused__)))
