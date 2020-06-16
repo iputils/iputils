@@ -320,7 +320,7 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 		struct timeval tv;
 
 		gettimeofday(&tv, NULL);
-		if (tv.tv_sec < cur_time.tv_sec) {
+		if (tv.tv_sec < rts->cur_time.tv_sec) {
 			gettimeofday(&rts->cur_time, NULL);
 			gettimeofday(&tv, NULL);
 		}
