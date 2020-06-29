@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-29 11:58-0300\n"
+"POT-Creation-Date: 2020-06-29 12:49-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: arping.c:113
 #, c-format
@@ -50,120 +51,135 @@ msgstr ""
 
 #: arping.c:285
 #, c-format
-msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr ""
+msgid "Sent %d probe"
+msgid_plural "Sent %d probes"
+msgstr[0] ""
+msgstr[1] ""
 
-#: arping.c:286
+#: arping.c:289
 #, c-format
-msgid "Received %d response(s)"
-msgstr ""
-
-#: arping.c:290
-#, c-format
-msgid "%d request(s)"
-msgstr ""
+msgid "(%d broadcast)\n"
+msgid_plural "(%d broadcasts)\n"
+msgstr[0] ""
+msgstr[1] ""
 
 #: arping.c:292
 #, c-format
-msgid "%s%d broadcast(s)"
-msgstr ""
+msgid "Received %d response"
+msgid_plural "Received %d responses"
+msgstr[0] ""
+msgstr[1] ""
 
-#: arping.c:387
+#: arping.c:298
+#, c-format
+msgid "%d request"
+msgid_plural "%d requests"
+msgstr[0] ""
+msgstr[1] ""
+
+#: arping.c:303
+#, c-format
+msgid "%d broadcast"
+msgid_plural "%d broadcasts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: arping.c:399
 msgid "Unicast"
 msgstr ""
 
-#: arping.c:387
+#: arping.c:399
 msgid "Broadcast"
 msgstr ""
 
-#: arping.c:388
+#: arping.c:400
 #, c-format
 msgid "%s from "
 msgstr ""
 
-#: arping.c:388
+#: arping.c:400
 msgid "reply"
 msgstr ""
 
-#: arping.c:388
+#: arping.c:400
 msgid "request"
 msgstr ""
 
-#: arping.c:393
+#: arping.c:405
 #, c-format
 msgid "for %s "
 msgstr ""
 
-#: arping.c:398
+#: arping.c:410
 #, c-format
 msgid "for "
 msgstr ""
 
-#: arping.c:408
+#: arping.c:420
 #, c-format
 msgid " %ld.%03ldms\n"
 msgstr ""
 
-#: arping.c:410
+#: arping.c:422
 #, c-format
 msgid " UNSOLICITED?\n"
 msgstr ""
 
-#: arping.c:561
+#: arping.c:573
 #, c-format
 msgid "Interface \"%s\" is down\n"
 msgstr ""
 
-#: arping.c:569
+#: arping.c:581
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
 msgstr ""
 
-#: arping.c:662
+#: arping.c:674
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
 msgstr ""
 
-#: arping.c:872 arping.c:875 arping.c:878 ping/ping.c:364 ping/ping.c:410
+#: arping.c:884 arping.c:887 arping.c:890 ping/ping.c:364 ping/ping.c:410
 #: ping/ping.c:418 ping/ping.c:460 ping/ping.c:463 ping/ping.c:466
 #: ping/ping.c:479 tracepath.c:472 tracepath.c:475 tracepath.c:478
 #: tracepath.c:499 traceroute6.c:688 traceroute6.c:694 traceroute6.c:697
 msgid "invalid argument"
 msgstr ""
 
-#: arping.c:944
+#: arping.c:956
 #, c-format
 msgid "Device %s not available."
 msgstr ""
 
-#: arping.c:945
+#: arping.c:957
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr ""
 
-#: arping.c:965 traceroute6.c:822
+#: arping.c:977 traceroute6.c:822
 msgid "WARNING: interface is ignored"
 msgstr ""
 
-#: arping.c:983
+#: arping.c:995
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
 msgstr ""
 
-#: arping.c:1006
+#: arping.c:1018
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr ""
 
-#: arping.c:1015
+#: arping.c:1027
 #, c-format
 msgid "ARPING %s "
 msgstr ""
 
-#: arping.c:1016
+#: arping.c:1028
 #, c-format
 msgid "from %s %s\n"
 msgstr ""
 
-#: arping.c:1020
+#: arping.c:1032
 msgid "no source address in not-DAD mode"
 msgstr ""
 

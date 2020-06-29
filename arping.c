@@ -282,16 +282,28 @@ static int send_pack(struct run_state *ctl)
 static int finish(struct run_state *ctl)
 {
 	if (!ctl->quiet) {
-		printf(_("Sent %d probes (%d broadcast(s))\n"), ctl->sent, ctl->brd_sent);
-		printf(_("Received %d response(s)"), ctl->received);
+		printf(ngettext("Sent %d probe",
+						"Sent %d probes",
+						ctl->sent));
+		printf(" ");
+		printf(ngettext("(%d broadcast)\n",
+						"(%d broadcasts)\n",
+						ctl->brd_sent));
+		printf(ngettext("Received %d response",
+						"Received %d responses",
+						ctl->received));
 		if (ctl->brd_recv || ctl->req_recv) {
 			printf(" (");
 			if (ctl->req_recv)
-				printf(_("%d request(s)"), ctl->req_recv);
-			if (ctl->brd_recv)
-				printf(_("%s%d broadcast(s)"),
-				       ctl->req_recv ? ", " : "",
-				       ctl->brd_recv);
+				printf(ngettext("%d request",
+								"%d requests",
+								ctl->req_recv));
+			if (ctl->brd_recv) {
+				printf("%s",ctl->req_recv ? ", " : "");
+				printf(ngettext("%d broadcast",
+								"%d broadcasts",
+								ctl->brd_recv));
+			}
 			printf(")");
 		}
 		printf("\n");
