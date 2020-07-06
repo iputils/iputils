@@ -313,19 +313,15 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 
 	/* Check that packets < rate*time + preload */
 	if (rts->cur_time.tv_sec == 0) {
-		gettimeofday(&rts->cur_time, NULL);
+		clock_gettime(CLOCK_MONOTONIC_RAW, &rts->cur_time);
 		tokens = rts->interval * (rts->preload - 1);
 	} else {
 		long ntokens, tmp;
-		struct timeval tv;
+		struct timespec tv;
 
-		gettimeofday(&tv, NULL);
-		if (tv.tv_sec < rts->cur_time.tv_sec) {
-			gettimeofday(&rts->cur_time, NULL);
-			gettimeofday(&tv, NULL);
-		}
+		clock_gettime(CLOCK_MONOTONIC_RAW, &tv);
 		ntokens = (tv.tv_sec - rts->cur_time.tv_sec) * 1000 +
-			  (tv.tv_usec - rts->cur_time.tv_usec) / 1000;
+			  (tv.tv_nsec - rts->cur_time.tv_nsec) / 1000000;
 		if (!rts->interval) {
 			/* Case of unlimited flood is special;
 			 * if we see no reply, they are limited to 100pps */
@@ -535,7 +531,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	sigemptyset(&sset);
 	sigprocmask(SIG_SETMASK, &sset, NULL);
 
-	gettimeofday(&rts->start_time, NULL);
+	clock_gettime(CLOCK_MONOTONIC_RAW, &rts->start_time);
 
 	if (rts->deadline) {
 		struct itimerval it;
@@ -872,10 +868,10 @@ static long llsqrt(long long a)
  */
 int finish(struct ping_rts *rts)
 {
-	struct timeval tv = rts->cur_time;
+	struct timespec tv = rts->cur_time;
 	char *comma = "";
 
-	tvsub(&tv, &rts->start_time);
+	tssub(&tv, &rts->start_time);
 
 	putchar('\n');
 	fflush(stdout);
@@ -895,7 +891,7 @@ int finish(struct ping_rts *rts)
 #endif
 		printf(_(", %g%% packet loss"),
 		       (float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
-		printf(_(", time %ldms"), 1000 * tv.tv_sec + (tv.tv_usec + 500) / 1000);
+		printf(_(", time %ldms"), 1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000);
 	}
 
 	putchar('\n');
@@ -928,7 +924,7 @@ int finish(struct ping_rts *rts)
 	}
 
 	if (rts->nreceived && (!rts->interval || rts->opt_flood || rts->opt_adaptive) && rts->ntransmitted > 1) {
-		int ipg = (1000000 * (long long)tv.tv_sec + tv.tv_usec) / (rts->ntransmitted - 1);
+		int ipg = (1000000 * (long long)tv.tv_sec + tv.tv_nsec / 1000) / (rts->ntransmitted - 1);
 
 		printf(_("%sipg/ewma %d.%03d/%d.%03d ms"),
 		       comma, ipg / 1000, ipg % 1000, rts->rtt / 8000, (rts->rtt / 8) % 1000);
