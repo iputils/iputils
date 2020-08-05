@@ -49,7 +49,6 @@
  *	net_cap_raw enabled.
  */
 
-#include "iputils_common.h"
 #include "ping.h"
 
 #include <assert.h>
@@ -57,6 +56,7 @@
 #include <netinet/ip_icmp.h>
 #include <ifaddrs.h>
 #include <math.h>
+#include <locale.h>
 
 /* FIXME: global_rts will be removed in future */
 struct ping_rts *global_rts;
@@ -179,13 +179,13 @@ static double ping_strtod(const char *str, const char *err_msg)
 		goto err;
 	errno = 0;
 
-#ifdef ENABLE_NLS
+	/*
+	 * Here we always want to use locale regardless USE_IDN or ENABLE_NLS,
+	 * because it handles decimal point of -i/-W input options.
+	 */
 	setlocale(LC_ALL, "C");
-#endif
 	num = strtod(str, &end);
-#ifdef ENABLE_NLS
 	setlocale(LC_ALL, "");
-#endif
 
 	if (errno || str == end || (end && *end)) {
 		error(0, 0, _("option argument contains garbage: %s"), end);
