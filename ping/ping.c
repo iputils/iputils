@@ -178,9 +178,13 @@ static double ping_strtod(const char *str, const char *err_msg)
 		goto err;
 	errno = 0;
 
+#if defined(ENABLE_NLS)
 	setlocale(LC_ALL, "C");
+#endif
 	num = strtod(str, &end);
+#if defined(ENABLE_NLS)
 	setlocale(LC_ALL, "");
+#endif
 
 	if (errno || str == end || (end && *end)) {
 		error(0, 0, _("option argument contains garbage: %s"), end);
