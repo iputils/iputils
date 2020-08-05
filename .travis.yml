@@ -38,7 +38,7 @@ matrix:
           compiler: clang
 
         - os: linux
-          env: DISTRO=ubuntu:xenial
+          env: DISTRO=ubuntu:xenial EXTRA_BUILD_OPTS='-DUSE_GETTEXT=false'
           compiler: clang
 
         - os: linux
