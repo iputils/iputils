@@ -16,6 +16,10 @@ ppc64el)
 	gcc_arch="powerpc64le"
 	meson_arch="ppc64"
 	;;
+s390x)
+	gcc_arch="$ARCH"
+	meson_arch="$ARCH"
+	;;
 *) echo "unsupported arch: '$1'!" >&2; exit 1;;
 esac
 
