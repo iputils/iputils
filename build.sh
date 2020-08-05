@@ -1,5 +1,6 @@
 #!/bin/sh
 
+CFLAGS="${CFLAGS:--Wformat -Werror=format-security -Werror=implicit-function-declaration -Werror=return-type -fno-common}"
 CC="${CC:-gcc}"
 BUILD_DIR="${BUILD_DIR:-builddir}"
 PREFIX="${PREFIX:-$HOME/iputils-install}"
@@ -34,6 +35,9 @@ ninja --version
 
 echo "=== build ==="
 echo "Build options: $BUILD_OPTS"
+echo "CFLAGS: $CFLAGS"
+
+export CFLAGS
 meson $BUILD_DIR $BUILD_OPTS && \
 make -j$(getconf _NPROCESSORS_ONLN) && make install
 ret=$?
