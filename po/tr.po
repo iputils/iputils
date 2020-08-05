@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2022-07-18 11:18+0000\n"
+"PO-Revision-Date: 2022-08-15 17:38+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
@@ -1249,8 +1249,8 @@ msgstr ", zaman %ldms"
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr ""
-"rtt en düşük/ortalama/en yüksek/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld."
-"%03ld ms"
+"rtt en düşük/ortalama/en yüksek/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/"
+"%ld.%03ld ms"
 
 #: ping/ping_common.c:917
 #, c-format
