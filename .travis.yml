@@ -34,6 +34,10 @@ matrix:
           compiler: gcc
 
         - os: linux
+          env: DISTRO=opensuse/leap
+          compiler: clang
+
+        - os: linux
           env: DISTRO=ubuntu:xenial
           compiler: clang
 
