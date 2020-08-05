@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2020-08-09 15:29+0000\n"
+"PO-Revision-Date: 2021-12-07 17:18+0000\n"
 "Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: arping.c:121
 #, c-format
@@ -1239,8 +1239,8 @@ msgstr ", zaman %ldms"
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr ""
-"rtt en düşük/ortalama/en yüksek/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld."
-"%03ld ms"
+"rtt en düşük/ortalama/en yüksek/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/"
+"%ld.%03ld ms"
 
 #: ping/ping_common.c:914
 #, c-format
