@@ -163,7 +163,7 @@ struct ping_rts {
 	int preload;
 	int deadline;			/* time to die */
 	int lingertime;
-	struct timeval start_time, cur_time;
+	struct timespec start_time, cur_time;
 	volatile int exiting;
 	volatile int status_snapshot;
 	int confirm;
@@ -290,6 +290,20 @@ static inline void tvsub(struct timeval *out, struct timeval *in)
 	if ((out->tv_usec -= in->tv_usec) < 0) {
 		--out->tv_sec;
 		out->tv_usec += 1000000;
+	}
+	out->tv_sec -= in->tv_sec;
+}
+
+/*
+ * tssub --
+ *	Subtract 2 timespec structs:  out = out - in.  Out is assumed to
+ * be >= in.
+ */
+static inline void tssub(struct timespec *out, struct timespec *in)
+{
+	if ((out->tv_nsec -= in->tv_nsec) < 0) {
+		--out->tv_sec;
+		out->tv_nsec += 1000000000;
 	}
 	out->tv_sec -= in->tv_sec;
 }
