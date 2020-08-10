@@ -169,7 +169,7 @@ static void set_socket_option(socket_st *sock, int level, int optname,
 		error(2, errno, "setsockopt");
 }
 
-/* Much like stdtod(3, but will fails if str is not valid number. */
+/* Much like strtod(3), but will fails if str is not valid number. */
 static double ping_strtod(const char *str, const char *err_msg)
 {
 	double num;
