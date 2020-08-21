@@ -1,0 +1,91 @@
+===== s20200821 =====
+released August 21, 2020
+
+* incompatible changes
+Handling numeric options changed
+- ping: use '.' (dot) as a decimal separator regardless locale (for -i/-W
+  options). Since s20121121 till s20190709 decimal separator for -i option
+  depended on locales ($LC_NUMERIC), but only when compiled with USE_IDN=yes.
+  (issue #290, commit: d865d4c, 1530bc9)
+- ping: temporarily allow -i option to contain trailing non-numeric characters.
+  Previously only -W option allowed this (non-numeric characters were silently
+  discharged), now both -i/-W print warning. This will become fatal error in
+  the future. (issue: #236, #290, commit: 562e0d5)
+
+* arping
+- [security] disable setcap and setuid (prevent ARP Poisoning, issue: #203)
+- fix wrong exit code for -D option (issue: #209, originally reported:
+  https://github.com/void-linux/void-packages/issues/13304)
+- fix -f quit on first reply (issue: #211, originally reported:
+  https://bugs.debian.org/935946)
+- do not fail when unsolicited ARP mode destination does not answer when use -U
+  or -A  (issue: #247)
+
+* clockdiff
+- add timeformat options: -T/--time-format <ctime|iso> and -I (alias for
+  --time-format=iso)
+- use strftime() instead of deprecated ctime_r() (commit: d6e1d77)
+
+* ninfod
+- fix build with libcap 2.29 (issue: #246)
+- fix struct qtypeinfo packing (commit: f0a6348)
+
+* ping
+- [security] use random value for the identifier field instead of PID when using
+  SOCK_RAW socket
+- allow user to specify VRF and source IP (commit: 9e08707)
+- try next addrinfo on connect failure (fixes reachability when getaddrinfo()
+  returns IPv6 results first on hosts with only IPv4 routes available, commit:
+  2705c82, c249e48)
+- fix IPv6 name resolution for hostnames with link-local addresses (commit: d217170)
+- fix print gateway IP on little endian architectures on IPPROTO_ICMP sockets
+  (commit: e2e9a2d)
+- discard packets with wrong source address (comply RFC 1122, commit: 5e052ad)
+- suppress duplicate reply messages when ping multicast (issue: #195,
+  originally reported: https://bugs.debian.org/498429)
+- allow any package size (-s) to be defined by user (issue: #210)
+- use C locale for parsing -i/-W options without IDN (commit: d865d4c)
+- yet another fix for round-trip time (RTT) (commit: 5b6c194, never ending
+  story, see issue: #232)
+- reintroduce support of flow label for very old systems (issue: #268,
+  regression: s20190324, originally reported: https://bugs.debian.org/682511,
+  https://src.fedoraproject.org/rpms/iputils/blob/0bbd37701742cc6da0e91f6cc5ba6cf6a522fca2/f/iputils-20100418-flowlabel.patch,
+  originally fixes in fed7e6306f37a18 from November 2012)
+- fix IPv6 error handling for old kernels without ping socket (regression: s20161105)
+- move sources subdirectory (affects built binary location)
+
+* rdisc
+- report in --version whether compiled with server support
+
+* tftpd
+- stop building by default (use dnsmasq instead)
+- add example xinetd file
+- move sources subdirectory (affects built binary location)
+
+* localization
+- new translations: Ukrainian (100%), Turkish (100%), German (53%), French
+  (40%), Portuguese (Brazil) (43%), Chinese (Simplified, zh_CN) (38%)
+- updated: Japanese (84%)
+- starting to manage translations via Fedora's Weblate
+  https://translate.fedoraproject.org/projects/iputils/iputils/
+  (issue: #271)
+
+* general cleanup (across code)
+- add md5 implementation to avoiding linking to crypto libraries, or expect
+  kernel api to provide md5 functionality (issue: #239)
+- use clock_gettime() rather gettimeofday() (issue: #213, #214, #215)
+- use CLOCK_MONOTONIC instead of CLOCK_MONOTONIC_RAW
+- various fixes discovered via LGTM scan and clang-tidy (missing includes,
+  incorrect types and declarations, etc)
+- man pages spelling fixes
+- refactoring
+
+* Meson build system
+- Allow to set using setcap-setuid.sh per application (commit: 054670a)
+- fix build for non-systemd builds
+- don't require xsltproc any more (instead skip building man and html)
+- fix static build with libidn2
+
+* Travis CI
+- switch to docker based builds to tests on different distro releases,
+  including cross-compilation and musl libc (issue: #169)
