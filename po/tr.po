@@ -1519,7 +1519,7 @@ msgid "the decimal value of TOS bits must be in range 0-255: %d"
 msgstr "TOS bitlerinin ondalık değeri 0-255 aralığında olmalıdır: %d"
 
 #: ping/ping.c:189
-msgid "this will become fatal error in future"
+msgid "this will become fatal error in the future"
 msgstr "bu gelecekte ölümcül bir hata olacaktır"
 
 #: ping/node_info.c:319

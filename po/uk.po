@@ -1536,7 +1536,7 @@ msgstr ""
 "десяткове значення бітів TOS має належати до діапазону від 0 до 255: %d"
 
 #: ping/ping.c:189
-msgid "this will become fatal error in future"
+msgid "this will become fatal error in the future"
 msgstr "у майбутніх версіях це вважатиметься критичною помилкою"
 
 #: ping/node_info.c:319

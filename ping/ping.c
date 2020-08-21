@@ -189,7 +189,7 @@ static double ping_strtod(const char *str, const char *err_msg)
 
 	if (errno || str == end || (end && *end)) {
 		error(0, 0, _("option argument contains garbage: %s"), end);
-		error(0, 0, _("this will become fatal error in future"));
+		error(0, 0, _("this will become fatal error in the future"));
 	}
 	switch (fpclassify(num)) {
 	case FP_NORMAL:

@@ -1425,7 +1425,7 @@ msgid "the decimal value of TOS bits must be in range 0-255: %d"
 msgstr ""
 
 #: ping/ping.c:189
-msgid "this will become fatal error in future"
+msgid "this will become fatal error in the future"
 msgstr ""
 
 #: ping/node_info.c:319
