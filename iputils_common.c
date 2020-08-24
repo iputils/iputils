@@ -98,18 +98,24 @@ static unsigned int iputil_srand_fallback(void)
 void iputils_srand(void)
 {
 	unsigned int i;
+
 #if HAVE_GETRANDOM
 	ssize_t ret;
 
-	while ((ret = getrandom(&i, sizeof(i), GRND_NONBLOCK)) != sizeof(i)) {
-		switch(errno) {
+	do {
+		errno = 0;
+		ret = getrandom(&i, sizeof(i), GRND_NONBLOCK);
+		switch (errno) {
+		case 0:
+			break;
 		case EINTR:
 			continue;
 		default:
 			i = iputil_srand_fallback();
-			break;
+			goto done;
 		}
-	}
+	} while (ret != sizeof(i));
+ done:
 #else
 	i = iputil_srand_fallback();
 #endif
