@@ -101,15 +101,17 @@ void iputils_srand(void)
 #if HAVE_GETRANDOM
 	ssize_t ret;
 
-	while ((ret = getrandom(&i, sizeof(i), GRND_NONBLOCK)) != sizeof(i)) {
+	do {
+		ret = getrandom(&i, sizeof(i), GRND_NONBLOCK);
 		switch(errno) {
 		case EINTR:
 			continue;
 		default:
 			i = iputil_srand_fallback();
+			ret = sizeof(i); // exit the while
 			break;
 		}
-	}
+	} while (ret != sizeof(i));
 #else
 	i = iputil_srand_fallback();
 #endif
