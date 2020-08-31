@@ -63,12 +63,7 @@
 
 #define	DEFDATALEN	(64 - 8)	/* default data length */
 
-#define	MAXWAIT		10		/* max seconds to wait for response */
-#define MININTERVAL	10		/* Minimal interpacket gap */
-#define MINUSERINTERVAL	200		/* Minimal allowed interval for non-root */
-
-#define SCHINT(a)	(((a) <= MININTERVAL) ? MININTERVAL : (a))
-
+#define SCHINT(a)	(timespeccmp(&a, &MININTERVAL) < 0 ? MININTERVAL : a)
 
 #ifndef MSG_CONFIRM
 #define MSG_CONFIRM 0
@@ -110,13 +105,13 @@ struct ping_rts;
 int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai, socket_st *sock);
 int ping4_send_probe(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
 int ping4_receive_error_msg(struct ping_rts *, socket_st *);
-int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
+int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int len, void *addr, struct timespec *);
 void ping4_install_filter(struct ping_rts *rts, socket_st *);
 
 typedef struct ping_func_set_st {
 	int (*send_probe)(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
 	int (*receive_error_msg)(struct ping_rts *rts, socket_st *sock);
-	int (*parse_reply)(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
+	int (*parse_reply)(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timespec *);
 	void (*install_filter)(struct ping_rts *rts, socket_st *);
 } ping_func_set_st;
 
@@ -136,6 +131,13 @@ struct ping_ni {
 		pid_t pid;
 	} nonce_secret;
 #endif
+};
+
+/* Exponentially weighted moving average */
+struct ewma {
+	struct timespec ts;
+	int factor;
+	int weight;
 };
 
 /*ping runtime state */
@@ -159,10 +161,10 @@ struct ping_rts {
 	long ntransmitted;		/* sequence # for outbound packets = #sent */
 	long nchecksum;			/* replies with bad checksum */
 	long nerrors;			/* icmp errors */
-	int interval;			/* interval between packets (msec) */
+	struct timespec interval;	/* interval between packets */
 	int preload;
 	int deadline;			/* time to die */
-	int lingertime;
+	struct timespec lingertime;
 	struct timespec start_time, cur_time;
 	volatile int exiting;
 	volatile int status_snapshot;
@@ -176,12 +178,12 @@ struct ping_rts {
 
 	/* timing */
 	int timing;			/* flag to do timing */
-	long tmin;			/* minimum round trip time */
-	long tmax;			/* maximum round trip time */
-	double tsum;			/* sum of all times, for doing average */
+	struct timespec tmin;		/* minimum round trip time */
+	struct timespec tmax;		/* maximum round trip time */
+	struct timespec tsum;		/* sum of all times, for doing average */
 	double tsum2;
-	int rtt;
-	int rtt_addend;
+	struct ewma ewma;
+	struct timespec frequency_change;
 	uint16_t acked;
 	int pipesize;
 
@@ -280,34 +282,6 @@ static inline void write_stdout(const char *str, size_t len)
 	} while (len > o || cc < 0);
 }
 
-/*
- * tvsub --
- *	Subtract 2 timeval structs:  out = out - in.  Out is assumed to
- * be >= in.
- */
-static inline void tvsub(struct timeval *out, struct timeval *in)
-{
-	if ((out->tv_usec -= in->tv_usec) < 0) {
-		--out->tv_sec;
-		out->tv_usec += 1000000;
-	}
-	out->tv_sec -= in->tv_sec;
-}
-
-/*
- * tssub --
- *	Subtract 2 timespec structs:  out = out - in.  Out is assumed to
- * be >= in.
- */
-static inline void tssub(struct timespec *out, struct timespec *in)
-{
-	if ((out->tv_nsec -= in->tv_nsec) < 0) {
-		--out->tv_sec;
-		out->tv_nsec += 1000000000;
-	}
-	out->tv_sec -= in->tv_sec;
-}
-
 static inline void set_signal(int signo, void (*handler)(int))
 {
 	struct sigaction sa;
@@ -382,15 +356,17 @@ extern void sock_setbufs(struct ping_rts *rts, socket_st *, int alloc);
 extern void setup(struct ping_rts *rts, socket_st *);
 extern int contains_pattern_in_payload(struct ping_rts *rts, uint8_t *ptr);
 extern int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st*,
-		     uint8_t *packet, int packlen);
+		     uint8_t *buf, int buflen);
 extern int finish(struct ping_rts *rts);
 extern void status(struct ping_rts *rts);
 extern void common_options(int ch);
-extern int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
+extern int gather_statistics(struct ping_rts *rts, uint8_t *ptr, int icmplen,
 			     int cc, uint16_t seq, int hops,
-			     int csfailed, struct timeval *tv, char *from,
+			     int csfailed, struct timespec *tv, char *from,
 			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast);
-extern void print_timestamp(struct ping_rts *rts);
+extern void print_timestamp(char const *const open,
+			    struct ping_rts const *const rts,
+			    char const *const close);
 void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet_size);
 
 /* IPv6 */
@@ -401,7 +377,7 @@ void ping6_usage(unsigned from_ping);
 
 int ping6_send_probe(struct ping_rts *rts, socket_st *sockets, void *packet, unsigned packet_size);
 int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sockets);
-int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
+int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timespec *);
 void ping6_install_filter(struct ping_rts *rts, socket_st *sockets);
 int ntohsp(uint16_t *p);
 

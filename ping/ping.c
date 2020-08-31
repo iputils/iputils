@@ -268,11 +268,11 @@ main(int argc, char **argv)
 	char *target;
 	char *outpack_fill = NULL;
 	struct ping_rts rts = {
-		.interval = 1000,
+		.interval = { .tv_sec = 1 },
 		.preload = 1,
-		.lingertime = MAXWAIT * 1000,
+		.lingertime = { .tv_sec = 10 },
 		.confirm_flag = MSG_CONFIRM,
-		.tmin = LONG_MAX,
+		.tmin = { .tv_sec = LONG_MAX },
 		.pipesize = -1,
 		.datalen = DEFDATALEN,
 		.screen_width = INT_MAX,
@@ -376,12 +376,14 @@ main(int argc, char **argv)
 			break;
 		case 'i':
 		{
-			double optval;
+			double optval, subsecond;
 
 			optval = ping_strtod(optarg, _("bad timing interval"));
 			if (isgreater(optval, (double)INT_MAX / 1000))
 				error(2, 0, _("bad timing interval: %s"), optarg);
-			rts.interval = (int)(optval * 1000);
+			subsecond = remainder(optval, 1.0);
+			rts.interval.tv_sec = (time_t)(optval - subsecond);
+			rts.interval.tv_nsec = (time_t)(subsecond * NANOSECONDS_PER_SECOND);
 			rts.opt_interval = 1;
 		}
 			break;
@@ -485,13 +487,15 @@ main(int argc, char **argv)
 			break;
 		case 'W':
 		{
-			double optval;
+			double optval, subsecond;
 
 			optval = ping_strtod(optarg, _("bad linger time"));
 			if (isless(optval, 0.001) || isgreater(optval, (double)INT_MAX / 1000))
 				error(2, 0, _("bad linger time: %s"), optarg);
 			/* lingertime will be converted to usec later */
-			rts.lingertime = (int)(optval * 1000);
+			subsecond = remainder(optval, 1.0);
+			rts.lingertime.tv_sec = (time_t)(optval - subsecond);
+			rts.lingertime.tv_nsec = (time_t)(subsecond * NANOSECONDS_PER_SECOND);
 		}
 			break;
 		default:
@@ -803,8 +807,9 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	if (rts->broadcast_pings || IN_MULTICAST(ntohl(rts->whereto.sin_addr.s_addr))) {
 		rts->multicast = 1;
 		if (rts->uid) {
-			if (rts->interval < 1000)
-				error(2, 0, _("broadcast ping with too short interval: %d"), rts->interval);
+			if (rts->interval.tv_sec < 1)
+				error(2, 0, _("broadcast ping with too short interval: %ld.%09ld"),
+					    rts->interval.tv_sec, rts->interval.tv_nsec);
 			if (rts->pmtudisc >= 0 && rts->pmtudisc != IP_PMTUDISC_DO)
 				error(2, 0, _("broadcast ping does not fragment"));
 		}
@@ -918,7 +923,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, _("cannot set unicast time-to-live"));
 	}
 
-	if (rts->datalen >= (int)sizeof(struct timeval))	/* can we time transfer */
+	if (rts->datalen >= sizeof(struct timespec))	/* can we time transfer */
 		rts->timing = 1;
 	packlen = rts->datalen + MAXIPLEN + MAXICMPLEN;
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
@@ -1372,7 +1377,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 		if (rts->opt_flood) {
 			write_stdout("\bE", 2);
 		} else {
-			print_timestamp(rts);
+			print_timestamp("[", rts, "]");
 			printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
 			pr_icmph(rts, e->ee_type, e->ee_code, e->ee_info, NULL);
 			fflush(stdout);
@@ -1450,11 +1455,12 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
 
 	if (rts->timing) {
 		if (rts->opt_latency) {
-			struct timeval tmp_tv;
-			gettimeofday(&tmp_tv, NULL);
-			memcpy(icp + 1, &tmp_tv, sizeof(tmp_tv));
+			struct timespec ts;
+
+			clock_gettime(CLOCK_REALTIME, &ts);
+			memcpy(icp + 1, &ts, sizeof(ts));
 		} else {
-			memset(icp + 1, 0, sizeof(struct timeval));
+			memset(icp + 1, 0, sizeof(struct timespec));
 		}
 	}
 
@@ -1464,10 +1470,11 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
 	icp->checksum = in_cksum((unsigned short *)icp, cc, 0);
 
 	if (rts->timing && !rts->opt_latency) {
-		struct timeval tmp_tv;
-		gettimeofday(&tmp_tv, NULL);
-		memcpy(icp + 1, &tmp_tv, sizeof(tmp_tv));
-		icp->checksum = in_cksum((unsigned short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
+		struct timespec ts;
+
+		clock_gettime(CLOCK_REALTIME, &ts);
+		memcpy(icp + 1, &ts, sizeof(ts));
+		icp->checksum = in_cksum((unsigned short *)&ts, sizeof(ts), ~icp->checksum);
 	}
 
 	i = sendto(sock->fd, icp, cc, 0, (struct sockaddr *)&rts->whereto, sizeof(rts->whereto));
@@ -1492,7 +1499,7 @@ void pr_echo_reply(uint8_t *_icp, int len __attribute__((__unused__)))
 
 int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 		      struct msghdr *msg, int cc, void *addr,
-		      struct timeval *tv)
+		      struct timespec *ts)
 {
 	struct sockaddr_in *from = addr;
 	uint8_t *buf = msg->msg_iov->iov_base;
@@ -1553,7 +1560,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 			return 1;			/* 'Twas really not our ECHO */
 		if (gather_statistics(rts, (uint8_t *)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      reply_ttl, 0, tv, pr_addr(rts, from, sizeof *from),
+				      reply_ttl, 0, ts, pr_addr(rts, from, sizeof *from),
 				      pr_echo_reply, rts->multicast)) {
 			fflush(stdout);
 			return 0;
@@ -1590,7 +1597,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 				}
 				if (rts->opt_quiet || rts->opt_flood)
 					return 1;
-				print_timestamp(rts);
+				print_timestamp("[", rts, "]");
 				printf(_("From %s: icmp_seq=%u "), pr_addr(rts, from, sizeof *from),
 				       ntohs(icp1->un.echo.sequence));
 				if (csfailed)
@@ -1611,11 +1618,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 		}
 		if (!rts->opt_verbose || rts->uid)
 			return 0;
-		if (rts->opt_ptimeofday) {
-			struct timeval recv_time;
-			gettimeofday(&recv_time, NULL);
-			printf("%lu.%06lu ", (unsigned long)recv_time.tv_sec, (unsigned long)recv_time.tv_usec);
-		}
+		print_timestamp("", rts, "");
 		printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		if (csfailed) {
 			printf(_("(BAD CHECKSUM)\n"));

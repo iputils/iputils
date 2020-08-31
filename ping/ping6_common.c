@@ -58,17 +58,9 @@
  *	with net_cap_raw enabled.
  */
 #include <stddef.h>
-
 #include "iputils_common.h"
 #include "iputils_ni.h"
 #include "ping.h"
-
-#ifndef IPV6_FLOWLABEL_MGR
-# define IPV6_FLOWLABEL_MGR 32
-#endif
-#ifndef IPV6_FLOWINFO_SEND
-# define IPV6_FLOWINFO_SEND 33
-#endif
 
 ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,
@@ -96,10 +88,15 @@ unsigned int if_name2index(const char *ifname)
 	return i;
 }
 
-/* return >= 0: exit with this code, < 0: go on to next addrinfo result */
 int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	      struct socket_st *sock)
 {
+	static const struct addrinfo hints = {
+		.ai_family = AF_INET6,
+		.ai_flags = getaddrinfo_flags
+	};
+	struct addrinfo *result = NULL;
+	int ret_val;
 	int hold, packlen;
 	unsigned char *packet;
 	char *target;
@@ -127,8 +124,18 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		target = rts->ni.group;
 	}
 
+	if (!ai) {
+		ret_val = getaddrinfo(target, NULL, &hints, &result);
+		if (ret_val)
+			error(2, 0, _("%s: %s"), target, gai_strerror(ret_val));
+		ai = result;
+	}
+
 	memcpy(&rts->whereto6, ai->ai_addr, sizeof(rts->whereto6));
 	rts->whereto6.sin6_port = htons(IPPROTO_ICMPV6);
+
+	if (result)
+		freeaddrinfo(result);
 
 	if (memchr(target, ':', strlen(target)))
 		rts->opt_numeric = 1;
@@ -182,13 +189,8 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			rts->firsthop.sin6_family = AF_INET6;
 
 		rts->firsthop.sin6_port = htons(1025);
-		if (connect(probe_fd, (struct sockaddr *)&rts->firsthop, sizeof(rts->firsthop)) == -1) {
-			if ((errno == EHOSTUNREACH || errno == ENETUNREACH) && ai->ai_next) {
-				close(probe_fd);
-				return -1;
-			}
+		if (connect(probe_fd, (struct sockaddr *)&rts->firsthop, sizeof(rts->firsthop)) == -1)
 			error(2, errno, "connect");
-		}
 		alen = sizeof rts->source6;
 		if (getsockname(probe_fd, (struct sockaddr *)&rts->source6, &alen) == -1)
 			error(2, errno, "getsockname");
@@ -237,9 +239,9 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	if (IN6_IS_ADDR_MULTICAST(&rts->whereto6.sin6_addr)) {
 		rts->multicast = 1;
 		if (rts->uid) {
-			if (rts->interval < 1000)
-				error(2, 0, _("multicast ping with too short interval: %d"),
-					    rts->interval);
+			if (rts->interval.tv_sec < 1)
+				error(2, 0, _("multicast ping with too short interval: %ld.%09ld"),
+					    rts->interval.tv_sec, rts->interval.tv_nsec);
 			if (rts->pmtudisc >= 0 && rts->pmtudisc != IPV6_PMTUDISC_DO)
 				error(2, 0, _("multicast ping does not fragment"));
 		}
@@ -257,7 +259,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	    bind(sock->fd, (struct sockaddr *)&rts->source6, sizeof rts->source6) == -1)
 		error(2, errno, "bind icmp socket");
 
-	if ((ssize_t)rts->datalen >= (ssize_t)sizeof(struct timeval) && (rts->ni.query < 0)) {
+	if (rts->datalen >= sizeof(struct timespec) && (rts->ni.query < 0)) {
 		/* can we time transfer */
 		rts->timing = 1;
 	}
@@ -343,10 +345,10 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	}
 
 	if (rts->opt_flowinfo) {
+#ifdef IPV6_FLOWLABEL_MGR
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + rts->cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
 		int freq_len = sizeof(*freq);
-
 		memset(freq, 0, sizeof(*freq));
 		freq->flr_label = htonl(rts->flowlabel & IPV6_FLOWINFO_FLOWLABEL);
 		freq->flr_action = IPV6_FL_A_GET;
@@ -356,9 +358,17 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1)
 			error(2, errno, _("can't set flowlabel"));
 		rts->flowlabel = freq->flr_label;
+#else
+		error(2, 0, _("flow labels are not supported"));
+#endif
+
+#ifdef IPV6_FLOWINFO_SEND
 		rts->whereto6.sin6_flowinfo = rts->flowlabel;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1)
 			error(2, errno, _("can't send flowinfo"));
+#else
+		error(2, 0, _("flowinfo is not supported"));
+#endif
 	}
 
 	printf(_("PING %s(%s) "), rts->hostname, pr_addr(rts, &rts->whereto6, sizeof rts->whereto6));
@@ -527,7 +537,7 @@ int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 		if (rts->opt_flood) {
 			write_stdout("\bE", 2);
 		} else {
-			print_timestamp(rts);
+			print_timestamp("[", rts, "]");
 			printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
 			print_icmp(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
@@ -562,8 +572,7 @@ int build_echo(struct ping_rts *rts, uint8_t *_icmph,
 	icmph->icmp6_id = rts->ident;
 
 	if (rts->timing)
-		gettimeofday((struct timeval *)&_icmph[8],
-		    (struct timezone *)NULL);
+		clock_gettime(CLOCK_REALTIME, (struct timespec *)&_icmph[8]);
 
 	cc = rts->datalen + 8;			/* skips ICMP portion */
 
@@ -733,7 +742,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 			break;
 		}
 		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf)))
-			printf(_(" unexpected error in inet_ntop(%s)"),
+			printf(_(" unexpeced error in inet_ntop(%s)"),
 			       strerror(errno));
 		else
 			printf(" %s", buf);
@@ -785,7 +794,7 @@ void pr_niquery_reply(uint8_t *_nih, int len)
  */
 int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 		      struct msghdr *msg, int cc, void *addr,
-		      struct timeval *tv)
+		      struct timespec *ts)
 {
 	struct sockaddr_in6 *from = addr;
 	uint8_t *buf = msg->msg_iov->iov_base;
@@ -818,16 +827,13 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (!rts->multicast &&
-		    memcmp(&from->sin6_addr.s6_addr, &rts->whereto6.sin6_addr.s6_addr, 16))
-			return 1;
 		if (!is_ours(rts, sock, icmph->icmp6_id))
 			return 1;
 	       if (!contains_pattern_in_payload(rts, (uint8_t *)(icmph + 1)))
 			return 1;	/* 'Twas really not our ECHO */
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
-				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
+				      hops, 0, ts, pr_addr(rts, from, sizeof *from),
 				      pr_echo_reply,
 				      rts->multicast)) {
 			fflush(stdout);
@@ -840,7 +846,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 			return 1;
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      seq,
-				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
+				      hops, 0, ts, pr_addr(rts, from, sizeof *from),
 				      pr_niquery_reply,
 				      rts->multicast))
 			return 0;
@@ -875,11 +881,10 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 			acknowledge(rts, ntohs(icmph1->icmp6_seq));
 			return 0;
 		}
-
 		/* We've got something other than an ECHOREPLY */
 		if (!rts->opt_verbose || rts->uid)
 			return 1;
-		print_timestamp(rts);
+		print_timestamp("[", rts, "]");
 		printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		print_icmp(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
