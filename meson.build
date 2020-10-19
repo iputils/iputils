@@ -40,8 +40,10 @@ localedir = join_paths(prefix, get_option('localedir'))
 sbindir = join_paths(prefix, get_option('sbindir'))
 
 systemd = dependency('systemd', required : false)
+install_systemd_units = systemd.found() or get_option('INSTALL_SYSTEMD_UNITS')
+
 systemdunitdir = get_option('systemdunitdir')
-if systemdunitdir == '' and systemd.found()
+if systemdunitdir == '' and install_systemd_units
 	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 endif
 
@@ -280,7 +282,7 @@ if build_rdisc == true
 		install_dir: sbindir,
 		link_with : [libcommon],
 		install: true)
-	if systemd.found()
+	if install_systemd_units
 		subs = configuration_data()
 		subs.set('sbindir', sbindir)
 		unit_file = configure_file(
@@ -316,7 +318,7 @@ if build_rarpd == true
 		install_dir: sbindir,
 		link_with : [libcommon],
 		install: true)
-	if systemd.found()
+	if install_systemd_units
 		subs = configuration_data()
 		subs.set('sbindir', sbindir)
 		unit_file = configure_file(
@@ -359,7 +361,7 @@ output += '\nCONFIGURATION\n'
 output += 'Capatiblity (with libcap): ' + cap.to_string() + '\n'
 output += 'IDN (with libidn2): ' + idn.to_string() + '\n'
 output += 'I18N (with gettext): ' + gettext.to_string() + '\n'
-output += 'systemd: ' + systemd.found().to_string() + '\n'
+output += 'systemd: ' + install_systemd_units.to_string() + '\n'
 
 output += '\nSYSTEM PATHS\n'
 output += 'prefix: ' + prefix + '\n'

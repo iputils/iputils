@@ -64,5 +64,8 @@ option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 option('systemdunitdir', type: 'string', value: '',
 	description: 'Directory for systemd units')
 
+option('INSTALL_SYSTEMD_UNITS', type: 'boolean', value: false,
+        description: 'Install generated systemd unit files')
+
 option('USE_GETTEXT', type: 'boolean', value: true,
 	description: 'Enable I18N')
