@@ -968,7 +968,7 @@ int main(int argc, char **argv)
 		}
 		memset(&saddr, 0, sizeof(saddr));
 		saddr.sin_family = AF_INET;
-		if (!ctl.unsolicited && (ctl.source || ctl.gsrc.s_addr)) {
+		if (ctl.source || ctl.gsrc.s_addr) {
 			saddr.sin_addr = ctl.gsrc;
 			if (bind(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1)
 				error(2, errno, "bind");
@@ -979,12 +979,14 @@ int main(int argc, char **argv)
 			saddr.sin_port = htons(1025);
 			saddr.sin_addr = ctl.gdst;
 
-			if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on)) == -1)
-				error(0, errno, _("WARNING: setsockopt(SO_DONTROUTE)"));
-			if (connect(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1)
-				error(2, errno, "connect");
-			if (getsockname(probe_fd, (struct sockaddr *)&saddr, &alen) == -1)
-				error(2, errno, "getsockname");
+			if (!ctl.unsolicited) {
+				if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on)) == -1)
+					error(0, errno, _("WARNING: setsockopt(SO_DONTROUTE)"));
+				if (connect(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1)
+					error(2, errno, "connect");
+				if (getsockname(probe_fd, (struct sockaddr *)&saddr, &alen) == -1)
+					error(2, errno, "getsockname");
+			}
 			ctl.gsrc = saddr.sin_addr;
 		}
 		close(probe_fd);
