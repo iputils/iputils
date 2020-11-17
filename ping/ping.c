@@ -1314,8 +1314,11 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 	msg.msg_controllen = sizeof(cbuf);
 
 	res = recvmsg(sock->fd, &msg, MSG_ERRQUEUE | MSG_DONTWAIT);
-	if (res < 0)
+	if (res < 0) {
+		if (errno == EAGAIN || errno == EINTR)
+			local_errors++;
 		goto out;
+	}
 
 	e = NULL;
 	for (cmsgh = CMSG_FIRSTHDR(&msg); cmsgh; cmsgh = CMSG_NXTHDR(&msg, cmsgh)) {
