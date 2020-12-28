@@ -43,7 +43,7 @@ matrix:
           compiler: clang
 
         - os: linux
-          env: DISTRO=ubuntu:eoan
+          env: DISTRO=ubuntu:groovy
           compiler: gcc
 
         - os: linux
