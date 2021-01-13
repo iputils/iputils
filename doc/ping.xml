@@ -685,7 +685,8 @@ xml:id="man.ping">
           otherwise
           <command>ping</command> waits for two RTTs.
           Real number allowed with dot as a decimal separator
-          (regardless locale setup).</para>
+          (regardless locale setup).
+          0 means infinite timeout.</para>
         </listitem>
       </varlistentry>
     </variablelist>
