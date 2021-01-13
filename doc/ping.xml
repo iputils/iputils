@@ -683,9 +683,9 @@ xml:id="man.ping">
           <para>Time to wait for a response, in seconds. The option
           affects only timeout in absence of any responses,
           otherwise
-          <command>ping</command> waits for two RTTs.</para>
+          <command>ping</command> waits for two RTTs.
           Real number allowed with dot as a decimal separator
-          (regardless locale setup).
+          (regardless locale setup).</para>
         </listitem>
       </varlistentry>
     </variablelist>
