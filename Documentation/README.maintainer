@@ -39,7 +39,7 @@ translators to update translations.
 
 Create release commit and tag.
 
-    tag="$(date +s%Y%m%d)"
+    tag="$(date +%Y%m%d)"
     sed --in-place "s/version : '.*')/version : '$tag')/" meson.build
     git add meson.build CHANGES
     git commit --signoff --message "release: iputils-$tag"
