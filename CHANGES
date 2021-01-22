@@ -1,3 +1,37 @@
+===== 20210202 =====
+released February 2, 2021
+
+* version scheme change: dropped leading 's' (issue: #269)
+
+* Meson build system
+- new variable INSTALL_SYSTEMD_UNITS forces installing systemd units even if
+  systemd is not installed on build host (PR: #297)
+
+* all
+- fix infinite loop when getrandom fails (issue: #291)
+
+* arping
+- make update neighbours work again (issue: 298)
+
+* ping
+- fix dead loop problem (issue: #276)
+- process interrupts in ping*_receive_error_msg (commit: 2583fb7)
+- restore -W 0 as infinite timeout (issue: #290, PR: #306)
+- man: fix formatting (commit: b1ebe35)
+
+* tftpd:
+- fix: recvfile: avoid closing the file twice (PR: #311)
+- fix: install into sbindir: the xinet.d config expects the daemon to live
+  in sbin (PR: #310)
+
+* localization
+- update POTFILES and iputils.pot (PR: #280)
+- updated translations: Portuguese (Brazil) (86%), French (55%),
+  Japanese (rebased after PR: #280)
+
+* Travis CI
+- Use Ubuntu 20.10 groovy instead of Eoan
+
 ===== s20200821 =====
 released August 21, 2020
 
