@@ -387,7 +387,6 @@ void recvfile(struct run_state *ctl, struct formats *pf)
 	write_behind(ctl->file, pf->f_convert);
 	if (close_stream(ctl->file))
 		syslog(LOG_ERR, "tftpd: write error: %s\n",  strerror(errno));
-	fclose(ctl->file);		/* close data file */
 
 	ap->th_opcode = htons((uint16_t)ACK);	/* send the "final" ack */
 	ap->th_block = htons(block);
