@@ -7,15 +7,16 @@ msgstr ""
 "Project-Id-Version: iputils 20161105\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-11-16 03:31+0900\n"
-"PO-Revision-Date: 2020-08-07 07:29+0000\n"
+"PO-Revision-Date: 2021-01-26 05:47+0000\n"
 "Last-Translator: Tomohiro KATO <tomop@teamgedoh.net>\n"
-"Language-Team: Japanese <https://translate.fedoraproject.org/projects/iputils/iputils/ja/>\n"
+"Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
+"iputils/iputils/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4.2\n"
 
 #: arping.c:191
 #, c-format
@@ -64,8 +65,8 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <ソースアドレス> 送信元IPアドレスを指定します。\n"
-"  <送信先>            DNS名またはIPアドレスを指定します。\n"
+"  -s <送信元>  送信元IPアドレス\n"
+"  <送信先>       DNS名またはIPアドレス\n"
 "\n"
 "詳細は arping(8) を参照してください。\n"
 
@@ -184,7 +185,7 @@ msgstr ""
 #: arping.c:1274
 #, c-format
 msgid "ARPING %s "
-msgstr ""
+msgstr "ARPING %s "
 
 #: arping.c:1275
 #, c-format
@@ -870,7 +871,7 @@ msgstr ""
 #: ping_common.c:868
 #, c-format
 msgid " (truncated)\n"
-msgstr ""
+msgstr " (切り詰められました)\n"
 
 #: ping_common.c:873
 #, c-format
