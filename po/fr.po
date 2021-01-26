@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-09 19:20+0000\n"
-"PO-Revision-Date: 2021-01-27 16:40+0000\n"
+"PO-Revision-Date: 2021-05-04 11:34+0000\n"
 "Last-Translator: Julien Humbert <julroy67@gmail.com>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/fr/>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4.2\n"
+"X-Generator: Weblate 4.6.1\n"
 
 #: ping/ping.c:1081
 #, c-format
