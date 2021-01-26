@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-09 19:20+0000\n"
-"PO-Revision-Date: 2020-07-02 02:40+0000\n"
+"PO-Revision-Date: 2021-01-26 18:10+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
-"Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/projects/iputils/iputils/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
+"projects/iputils/iputils/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.4.2\n"
 
 #: ping/ping.c:1081
 #, c-format
@@ -781,29 +782,29 @@ msgstr "Interface \"%s\" não está ARPável (nenhum endereço de enlace)\n"
 #: ping/ping6_common.c:444
 #, c-format
 msgid "MLD Query"
-msgstr "Consulta MLD"
+msgstr "Consulta de MLD"
 
 #: ping/ping6_common.c:450
 #, c-format
 msgid "MLD Reduction"
-msgstr "Redução MLD"
+msgstr "Redução de MLD"
 
 #: ping/ping6_common.c:447
 #, c-format
 msgid "MLD Report"
-msgstr "Relatório MLD"
+msgstr "Relatório de MLD"
 
 #: traceroute6.c:480
 msgid "Membership Query"
-msgstr ""
+msgstr "Consulta de associação"
 
 #: traceroute6.c:484
 msgid "Membership Reduction"
-msgstr ""
+msgstr "Redução de associação"
 
 #: traceroute6.c:482
 msgid "Membership Report"
-msgstr ""
+msgstr "Relatório de associação"
 
 #: traceroute6.c:508
 msgid "Mobile Prefix Solicitation Advertisement"
@@ -819,113 +820,113 @@ msgstr ""
 
 #: tracepath.c:340
 msgid "NET ERROR"
-msgstr ""
+msgstr "ERRO DE REDE"
 
 #: traceroute6.c:492
 msgid "Neighbor Advertisement"
-msgstr ""
+msgstr "Anúncio de vizinho"
 
 #: traceroute6.c:496
 msgid "Neighbor Query"
-msgstr ""
+msgstr "Consulta de vizinho"
 
 #: traceroute6.c:498
 msgid "Neighbor Reply"
-msgstr ""
+msgstr "Resposta de vizinho"
 
 #: traceroute6.c:490
 msgid "Neighbor Solicitation"
-msgstr ""
+msgstr "Solicitação de vizinho"
 
 #: ping/ping6_common.c:392
 #, c-format
 msgid "No route"
-msgstr ""
+msgstr "Nenhuma rota"
 
 #: traceroute6.c:510
 msgid "OUT-OF-RANGE"
-msgstr ""
+msgstr "FORA DO INTERVALO"
 
 #: tracepath.c:456 tracepath.c:461
 msgid "Only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "Apenas uma opção -4 ou -6 pode ser especificada"
 
 #: clockdiff.c:245
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr ""
+msgstr "Excesso de %d saltos\n"
 
 #: ping/ping_common.c:225
 #, c-format
 msgid "PATTERN: 0x"
-msgstr ""
+msgstr "PADRÃO: 0x"
 
 #: ping/ping.c:924
 #, c-format
 msgid "PING %s (%s) "
-msgstr ""
+msgstr "PING %s (%s) "
 
 #: ping/ping6_common.c:364
 #, c-format
 msgid "PING %s(%s) "
-msgstr ""
+msgstr "PING %s(%s) "
 
 #: traceroute6.c:470
 msgid "Packet Too Big"
-msgstr ""
+msgstr "Pacote grande demais"
 
 #: ping/ping.c:1182
 #, c-format
 msgid "Packet filtered\n"
-msgstr ""
+msgstr "Pacote filtrado\n"
 
 #: ping/ping6_common.c:412
 #, c-format
 msgid "Packet too big: mtu=%u"
-msgstr ""
+msgstr "Pacote grande demais: mtu=%u"
 
 #: traceroute6.c:474
 msgid "Parameter Problem"
-msgstr ""
+msgstr "Problema de parâmetro"
 
 #: ping/ping6_common.c:426
 #, c-format
 msgid "Parameter problem: "
-msgstr ""
+msgstr "Problema de parâmetro: "
 
 #: ping/ping.c:1253
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr ""
+msgstr "Problema de parâmetro: ponteiro = %u\n"
 
 #: ping/ping6_common.c:404
 #, c-format
 msgid "Port unreachable"
-msgstr ""
+msgstr "Porta inalcançável"
 
 #: ping/ping.c:1188
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "Corte de precedência\n"
 
 #: ping/ping.c:1185
 #, c-format
 msgid "Precedence Violation\n"
-msgstr ""
+msgstr "Violação de precedência\n"
 
 #: ping/node_info.c:165
 #, c-format
 msgid "Qtype conflict\n"
-msgstr ""
+msgstr "Conflito de qtype\n"
 
 #: arping.c:286
 #, c-format
 msgid "Received %d response(s)"
-msgstr ""
+msgstr "Recebida(s) %d resposta(s)"
 
 #: traceroute6.c:494
 msgid "Redirect"
-msgstr ""
+msgstr "Redirecionamento"
 
 #: ping/ping.c:1208
 #, c-format
