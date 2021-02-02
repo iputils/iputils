@@ -34,7 +34,7 @@ release.
 
 Update CHANGES file. It should list the most notable changes and important or
 security related fixes. Create pull request with these changes to give people
-chance to review and test upcomming release. Notify distro maintainers, ask
+chance to review and test upcoming release. Notify distro maintainers, ask
 translators to update translations.
 
 Create release commit and tag.
@@ -55,32 +55,37 @@ Assuming things are great push to github.
     git push origin --tags
 
 Go to github https://github.com/iputils/iputils/releases and paste the
-the content of CHANGES file for upcomming release to the text box.
+the content of CHANGES file for upcoming release to the text box.
 Add there also credit for all contributors:
 
-	Many thanks to the people contributing to this release:
+    Many thanks to the people contributing to this release:
 
-	git shortlog -s -n $tag..
+    git shortlog -s -n $tag..
 
-	Also thanks to patch reviewers:
+    Also thanks to patch reviewers:
 
-	git log $tag.. | grep -Ei '(reviewed|acked)-by:' | \
-		sed 's/.*by: //' | sort | uniq -c | sort -n -r
+    git log $tag.. | grep -Ei '(reviewed|acked)-by:' | \
+        sed 's/.*by: //' | sort | uniq -c | sort -n -r
 
-	and testers:
+    and testers:
 
-	git log $tag.. | grep -Ei 'tested-by:' | \
-		sed 's/.*by: //' | sort | uniq -c | sort -n -r
+    git log $tag.. | grep -Ei 'tested-by:' | \
+        sed 's/.*by: //' | sort | uniq -c | sort -n -r
 
-Choose the tag you just created.  Download the release files and sign them.
+Choose the tag you just created.  Download the release files, compute sha256 hash:
 
-    for file in iputils-$tag.{zip,tar.gz}; do gpg --sign --armor --detach-sign $file; done
+    wget -c https://github.com/iputils/iputils/archive/$tag.zip \
+        https://github.com/iputils/iputils/archive/$tag.tar.gz
 
-	out="sha256sum"
-	for file in iputils-$tag.{zip,tar.gz}; do $out $file >> $out; done
-	gpg --clearsign $out
+    out="sha256sum"
+    for file in $tag.{zip,tar.gz}; do $out $file >> $out; done
 
-Upload these three .asc files to release as additional files.
+Sign tarballs and sha256 hash:
+
+    for file in $tag.{zip,tar.gz}; do gpg --sign --armor --detach-sign $file; done
+    gpg --clearsign $out
+
+and upload all these four files to the release as additional files.
 
 The release should be ready.  People tend to react to releases, so expect bug
 reports and pull requests after release.  Assuming release has fatal flaw(s)
