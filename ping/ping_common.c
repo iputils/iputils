@@ -40,6 +40,13 @@
 static uid_t euid;
 #endif
 
+/* 200 milliseconds => 20 Hz */
+static const struct timespec MINUSERINTERVAL =
+	{ .tv_sec = 0, .tv_nsec = 200 * MICROSECONDS_PER_SECOND };
+/* 10 milliseconds => 100 Hz  */
+static const struct timespec MININTERVAL =
+	{ .tv_sec = 0, .tv_nsec = 10 * MICROSECONDS_PER_SECOND };
+
 void usage(void)
 {
 	fprintf(stderr,
@@ -86,6 +93,32 @@ void usage(void)
 		"\nFor more details see ping(8).\n"
 	);
 	exit(2);
+}
+
+static int timespec_to_ms_int(struct timespec ts)
+{
+	return ts.tv_sec * 1000 + ts.tv_nsec / MICROSECONDS_PER_SECOND;
+}
+
+static double timespec_to_ms_double(struct timespec ts)
+{
+	return ts.tv_sec * 1000 + (ts.tv_nsec / (double)MICROSECONDS_PER_SECOND);
+}
+
+static char *timespec_to_ms_string(struct timespec ts, char *ret, size_t sz)
+{
+	double milliseconds;
+
+	milliseconds = (ts.tv_sec * 1000) + (ts.tv_nsec / (double)MICROSECONDS_PER_SECOND);
+	if (milliseconds < 1)
+		snprintf(ret, sz, "%0.03f", milliseconds);
+	else if (milliseconds < 10)
+		snprintf(ret, sz, "%0.02f", milliseconds);
+	else if (milliseconds < 100)
+		snprintf(ret, sz, "%0.01f", milliseconds);
+	else
+		snprintf(ret, sz, "%.0f", milliseconds);
+	return ret;
 }
 
 void limit_capabilities(struct ping_rts *rts)
@@ -215,7 +248,7 @@ void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet
 
 	if (ii > 0) {
 		size_t kk;
-		size_t max = packet_size < (size_t)ii + 8 ? 0 : packet_size - (size_t)ii + 8;
+		size_t max = packet_size < (size_t)(8 + ii) ? 0 : packet_size - (8 + ii);
 
 		for (kk = 0; kk <= max; kk += ii)
 			for (jj = 0; jj < ii; ++jj)
@@ -247,49 +280,78 @@ static void sigstatus(int signo __attribute__((__unused__)))
 
 int __schedule_exit(int next)
 {
-	static unsigned long waittime;
+	static struct timespec waittime = { .tv_sec = 0, .tv_nsec = 0 };
+	static struct timespec next_time;
 	struct itimerval it;
 
-	if (waittime)
+	if (waittime.tv_sec != 0 || waittime.tv_nsec != 0)
 		return next;
 
 	if (global_rts->nreceived) {
-		waittime = 2 * global_rts->tmax;
-		if (waittime < 1000 * (unsigned long)global_rts->interval)
-			waittime = 1000 * global_rts->interval;
+		timespecadd(&global_rts->tmax, &global_rts->tmax, &waittime);
+		if (timespeccmp(&waittime, &global_rts->interval) < 0)
+			waittime = global_rts->interval;
 	} else
-		waittime = global_rts->lingertime * 1000;
+		waittime = global_rts->lingertime;
 
-	if (next < 0 || (unsigned long)next < waittime / 1000)
-		next = waittime / 1000;
+	next_time.tv_sec = next / 1000;
+	next_time.tv_nsec = (next % 1000) * MICROSECONDS_PER_SECOND;
+	if (next < 0 || timespeccmp(&next_time, &waittime) < 0)
+		next = (int) waittime.tv_sec;
 
 	it.it_interval.tv_sec = 0;
 	it.it_interval.tv_usec = 0;
-	it.it_value.tv_sec = waittime / 1000000;
-	it.it_value.tv_usec = waittime % 1000000;
+	TIMESPEC_TO_TIMEVAL(&it.it_value, &waittime);
 	setitimer(ITIMER_REAL, &it, NULL);
 	return next;
 }
 
-static inline void update_interval(struct ping_rts *rts)
+static void ewma_update(struct ewma *avg, struct timespec update)
 {
-	int est = rts->rtt ? rts->rtt / 8 : rts->interval * 1000;
+	if (avg->ts.tv_sec || avg->ts.tv_nsec) {
+		struct timespec a, b, c;
 
-	rts->interval = (est + rts->rtt_addend + 500) / 1000;
-	if (rts->uid && rts->interval < MINUSERINTERVAL)
-		rts->interval = MINUSERINTERVAL;
+		a = timespecmultiply(&avg->ts, avg->weight - 1);
+		b = timespecmultiply(&update, avg->factor);
+		timespecadd(&a, &b, &c);
+		avg->ts = timespecdivide(&c, avg->weight);
+	} else {
+		/* Should happen only first call to ewma_update() */
+		avg->ts = update;
+		avg->weight = 8;
+		avg->factor = 1;
+	}
+}
+
+static void update_interval(struct ping_rts *rts)
+{
+	struct timespec est;
+
+	if (rts->ewma.ts.tv_sec != 0 || rts->ewma.ts.tv_nsec != 0)
+		est = timespecdivide(&rts->ewma.ts, 8);
+	else
+		est = rts->interval;
+	timespecadd(&est, &rts->frequency_change, &rts->interval);
+	if (rts->uid == 0) {
+		if (timespeccmp(&rts->interval, &MININTERVAL) < 0)
+			rts->interval = MININTERVAL;
+	} else {
+		if (timespeccmp(&rts->interval, &MINUSERINTERVAL) < 0)
+			rts->interval = MINUSERINTERVAL;
+	}
 }
 
 /*
  * Print timestamp
  */
-void print_timestamp(struct ping_rts *rts)
+void print_timestamp(char const *const open, struct ping_rts const *const rts,
+		     char const *const close)
 {
 	if (rts->opt_ptimeofday) {
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		printf("[%lu.%06lu] ",
-		       (unsigned long)tv.tv_sec, (unsigned long)tv.tv_usec);
+		struct timespec ts;
+
+		clock_gettime(CLOCK_REALTIME, &ts);
+		printf("%s%lu.%06lu%s ", open, ts.tv_sec, ts.tv_nsec / 1000, close);
 	}
 }
 
@@ -313,35 +375,36 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 
 	/* Check that packets < rate*time + preload */
 	if (rts->cur_time.tv_sec == 0) {
-		clock_gettime(CLOCK_MONOTONIC_RAW, &rts->cur_time);
-		tokens = rts->interval * (rts->preload - 1);
+		clock_gettime(CLOCK_REALTIME, &rts->cur_time);
+		tokens = (timespec_to_ms_int(rts->interval) * (rts->preload - 1)) / 1000;
 	} else {
-		long ntokens, tmp;
-		struct timespec tv;
+		int ntokens, tmp;
+		struct timespec ts, diff;
 
-		clock_gettime(CLOCK_MONOTONIC_RAW, &tv);
-		ntokens = (tv.tv_sec - rts->cur_time.tv_sec) * 1000 +
-			  (tv.tv_nsec - rts->cur_time.tv_nsec) / 1000000;
-		if (!rts->interval) {
+		clock_gettime(CLOCK_REALTIME, &ts);
+		timespecsub(&ts, &rts->cur_time, &diff);
+		ntokens = timespec_to_ms_int(diff);
+		if (!rts->interval.tv_sec && !rts->interval.tv_nsec) {
 			/* Case of unlimited flood is special;
 			 * if we see no reply, they are limited to 100pps */
-			if (ntokens < MININTERVAL && in_flight(rts) >= rts->preload)
-				return MININTERVAL - ntokens;
+			if (ntokens < timespec_to_ms_int(MININTERVAL) &&
+			    in_flight(rts) >= rts->preload)
+				return timespec_to_ms_int(MININTERVAL) - ntokens;
 		}
 		ntokens += tokens;
-		tmp = (long)rts->interval * (long)rts->preload;
+		tmp = (timespec_to_ms_int(rts->interval) * rts->preload);
 		if (tmp < ntokens)
 			ntokens = tmp;
-		if (ntokens < rts->interval)
-			return rts->interval - ntokens;
+		if (ntokens < timespec_to_ms_int(rts->interval))
+			return timespec_to_ms_int(rts->interval) - ntokens;
 
-		rts->cur_time = tv;
-		tokens = ntokens - rts->interval;
+		rts->cur_time = ts;
+		tokens = ntokens - timespec_to_ms_int(rts->interval);
 	}
 
 	if (rts->opt_outstanding) {
 		if (rts->ntransmitted > 0 && !rcvd_test(rts, rts->ntransmitted)) {
-			print_timestamp(rts);
+			print_timestamp("[", rts, "]");
 			printf(_("no answer yet for icmp_seq=%lu\n"), (rts->ntransmitted % MAX_DUP_CHK));
 			fflush(stdout);
 		}
@@ -360,7 +423,7 @@ resend:
 			    in_flight(rts) < rts->screen_width)
 				write_stdout(".", 1);
 		}
-		return rts->interval - tokens;
+		return timespec_to_ms_int(rts->interval) - tokens;
 	}
 
 	/* And handle various errors... */
@@ -368,20 +431,26 @@ resend:
 		/* Apparently, it is some fatal bug. */
 		abort();
 	} else if (errno == ENOBUFS || errno == ENOMEM) {
-		int nores_interval;
+		struct timespec nores_interval, addition;
+		/* nores_min == 0.5 seconds */
+		struct timespec const nores_min = {
+			.tv_sec = 0,
+			.tv_nsec = 500 * MICROSECONDS_PER_SECOND
+		};
 
 		/* Device queue overflow or OOM. Packet is not sent. */
 		tokens = 0;
 		/* Slowdown. This works only in adaptive mode (option -A) */
-		rts->rtt_addend += (rts->rtt < 8 * 50000 ? rts->rtt / 8 : 50000);
+		addition = timespecmultiply(&rts->ewma.ts, 8);
+		timespecadd(&rts->frequency_change, &addition, &rts->frequency_change);
 		if (rts->opt_adaptive)
 			update_interval(rts);
-		nores_interval = SCHINT(rts->interval / 2);
-		if (nores_interval > 500)
-			nores_interval = 500;
+		nores_interval = timespecdivide(&rts->interval, 2);
+		if (timespeccmp(&nores_interval, &nores_min) < 0)
+			nores_interval = nores_min;
 		oom_count++;
-		if (oom_count * nores_interval < rts->lingertime)
-			return nores_interval;
+		if (oom_count * timespeccmp(&nores_interval, &rts->lingertime) < 1)
+			return timespec_to_ms_int(nores_interval);
 		i = 0;
 		/* Fall to hard error. It is to avoid complete deadlock
 		 * on stuck output device even when dealine was not requested.
@@ -389,8 +458,8 @@ resend:
 		 * exit some day. :-) */
 	} else if (errno == EAGAIN) {
 		/* Socket buffer is full. */
-		tokens += rts->interval;
-		return MININTERVAL;
+		tokens += timespec_to_ms_int(rts->interval);
+		return timespec_to_ms_int(MININTERVAL);
 	} else {
 		if ((i = fset->receive_error_msg(rts, sock)) > 0) {
 			/* An ICMP error arrived. In this case, we've received
@@ -422,7 +491,9 @@ hard_local_error:
 			error(0, errno, "sendmsg");
 	}
 	tokens = 0;
-	return SCHINT(rts->interval);
+	if (timespeccmp(&rts->interval, &MININTERVAL) < 0)
+		return timespec_to_ms_int(MININTERVAL);
+	return timespec_to_ms_int(rts->interval);
 }
 
 /* Set socket buffers, "alloc" is an estimate of memory taken by single packet. */
@@ -451,17 +522,20 @@ void sock_setbufs(struct ping_rts *rts, socket_st *sock, int alloc)
 void setup(struct ping_rts *rts, socket_st *sock)
 {
 	int hold;
+	struct timespec ts;
 	struct timeval tv;
 	sigset_t sset;
 
 	if (rts->opt_flood && !rts->opt_interval)
-		rts->interval = 0;
+		memset(&rts->interval, 0, sizeof(rts->interval));
 
-	if (rts->uid && rts->interval < MINUSERINTERVAL)
-		error(2, 0, _("cannot flood; minimal interval allowed for user is %dms"), MINUSERINTERVAL);
+	if (rts->uid && timespeccmp(&rts->interval, &MINUSERINTERVAL) < 0)
+		error(2, 0, _("cannot flood; minimal interval allowed for user is %dms"),
+			    timespec_to_ms_int(MINUSERINTERVAL));
 
-	if (rts->interval >= INT_MAX / rts->preload)
-		error(2, 0, _("illegal preload and/or interval: %d"), rts->interval);
+	if ((INT_MAX / rts->preload) <= timespec_to_ms_int(rts->interval))
+		error(2, 0, _("illegal preload (%d) and/or interval (%ld.%09ld)"),
+			    rts->preload, rts->interval.tv_sec, rts->interval.tv_nsec);
 
 	hold = 1;
 	if (rts->opt_so_debug)
@@ -497,18 +571,19 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	 * on sends, when device is too slow or stalls. Just put limit
 	 * of one second, or "interval", if it is less.
 	 */
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
-	if (rts->interval < 1000) {
-		tv.tv_sec = 0;
-		tv.tv_usec = 1000 * SCHINT(rts->interval);
-	}
+	ts.tv_sec = 1;
+	ts.tv_nsec = 0;
+	if (timespeccmp(&ts, &rts->interval) < 0)
+		ts = rts->interval;
+	TIMESPEC_TO_TIMEVAL(&tv, &ts);
+	/* FIXME: replace SO_SNDTIMEO with ppoll() */
 	setsockopt(sock->fd, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv, sizeof(tv));
 
 	/* Set RCVTIMEO to "interval". Note, it is just an optimization
 	 * allowing to avoid redundant poll(). */
-	tv.tv_sec = SCHINT(rts->interval) / 1000;
-	tv.tv_usec = 1000 * (SCHINT(rts->interval) % 1000);
+	ts.tv_sec = rts->interval.tv_sec;
+	ts.tv_nsec = rts->interval.tv_nsec;
+	TIMESPEC_TO_TIMEVAL(&tv, &ts);
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv)))
 		rts->opt_flood_poll = 1;
 
@@ -531,7 +606,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	sigemptyset(&sset);
 	sigprocmask(SIG_SETMASK, &sset, NULL);
 
-	clock_gettime(CLOCK_MONOTONIC_RAW, &rts->start_time);
+	clock_gettime(CLOCK_REALTIME, &rts->start_time);
 
 	if (rts->deadline) {
 		struct itimerval it;
@@ -562,9 +637,9 @@ int contains_pattern_in_payload(struct ping_rts *rts, uint8_t *ptr)
 	uint8_t *cp, *dp;
  
 	/* check the data */
-	cp = ((u_char *)ptr) + sizeof(struct timeval);
-	dp = &rts->outpack[8 + sizeof(struct timeval)];
-	for (i = sizeof(struct timeval); i < rts->datalen; ++i, ++cp, ++dp) {
+	cp = ((u_char *)ptr) + sizeof(struct timespec);
+	dp = &rts->outpack[8 + sizeof(struct timespec)];
+	for (i = sizeof(struct timespec); i < rts->datalen; ++i, ++cp, ++dp) {
 		if (*cp != *dp)
 			return 0;
 	}
@@ -606,6 +681,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 		/* "next" is time to send next probe, if positive.
 		 * If next<=0 send now or as soon as possible. */
 
+		/* FIXME: everyone has new enough kernel, rewrite the whole thing. */
 		/* Technical part. Looks wicked. Could be dropped,
 		 * if everyone used the newest kernel. :-)
 		 * Its purpose is:
@@ -615,7 +691,8 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 		 *    timed waiting (SO_RCVTIMEO). */
 		polling = 0;
 		recv_error = 0;
-		if (rts->opt_adaptive || rts->opt_flood_poll || next < SCHINT(rts->interval)) {
+		if (rts->opt_adaptive || rts->opt_flood_poll ||
+		    next < timespec_to_ms_int(SCHINT(rts->interval))) {
 			int recv_expected = in_flight(rts);
 
 			/* If we are here, recvmsg() is unable to wait for
@@ -625,7 +702,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 				 * something, we sleep for MININTERVAL.
 				 * Otherwise, spin! */
 				if (recv_expected) {
-					next = MININTERVAL;
+					next = timespec_to_ms_int(MININTERVAL);
 				} else {
 					next = 0;
 					/* When spinning, no reasons to poll.
@@ -637,11 +714,14 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 			}
 
 			if (!polling &&
-			    (rts->opt_adaptive || rts->opt_flood_poll || rts->interval)) {
+			    (rts->opt_adaptive || rts->opt_flood_poll ||
+			     rts->interval.tv_sec || rts->interval.tv_nsec)) {
 				struct pollfd pset;
+
 				pset.fd = sock->fd;
 				pset.events = POLLIN;
 				pset.revents = 0;
+				/* FIXME: use ppoll()  */
 				if (poll(&pset, 1, next) < 1 ||
 				    !(pset.revents & (POLLIN | POLLERR)))
 					continue;
@@ -651,8 +731,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 		}
 
 		for (;;) {
-			struct timeval *recv_timep = NULL;
-			struct timeval recv_time;
+			struct timespec recv_time;
 			int not_ours = 0; /* Raw socket can receive messages
 					   * destined to other running pings. */
 
@@ -690,23 +769,28 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 				struct cmsghdr *c;
 
 				for (c = CMSG_FIRSTHDR(&msg); c; c = CMSG_NXTHDR(&msg, c)) {
+					struct timeval *tv;
+
 					if (c->cmsg_level != SOL_SOCKET ||
 					    c->cmsg_type != SO_TIMESTAMP)
 						continue;
-					if (c->cmsg_len < CMSG_LEN(sizeof(struct timeval)))
+					if (c->cmsg_len < CMSG_LEN(sizeof(struct timespec)))
 						continue;
-					recv_timep = (struct timeval *)CMSG_DATA(c);
+					/* SO_TIMESTAMP is timeval, see: man 7 socket */
+					tv = (struct timeval *)CMSG_DATA(c);
+					TIMEVAL_TO_TIMESPEC(tv, &recv_time);
 				}
 #endif
 
-				if (rts->opt_latency || recv_timep == NULL) {
+				if (rts->opt_latency ||
+				    (recv_time.tv_sec == 0 && recv_time.tv_nsec == 0)) {
 					if (rts->opt_latency ||
-					    ioctl(sock->fd, SIOCGSTAMP, &recv_time))
-						gettimeofday(&recv_time, NULL);
-					recv_timep = &recv_time;
+					    ioctl(sock->fd, SIOCGSTAMP, &recv_time)) {
+						clock_gettime(CLOCK_REALTIME, &recv_time);
+					}
 				}
 
-				not_ours = fset->parse_reply(rts, sock, &msg, cc, addrbuf, recv_timep);
+				not_ours = fset->parse_reply(rts, sock, &msg, cc, addrbuf, &recv_time);
 			}
 
 			/* See? ... someone runs another ping on this host. */
@@ -728,44 +812,43 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 
 int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 		      int cc, uint16_t seq, int hops,
-		      int csfailed, struct timeval *tv, char *from,
+		      int csfailed, struct timespec *ts, char *from,
 		      void (*pr_reply)(uint8_t *icmph, int cc), int multicast)
 {
 	int dupflag = 0;
-	long triptime = 0;
+	struct timespec time_diff;
 	uint8_t *ptr = icmph + icmplen;
 
 	++rts->nreceived;
 	if (!csfailed)
 		acknowledge(rts, seq);
 
-	if (rts->timing && cc >= (int)(8 + sizeof(struct timeval))) {
-		struct timeval tmp_tv;
-		memcpy(&tmp_tv, ptr, sizeof(tmp_tv));
+	if (rts->timing && cc >= (int)(8 + sizeof(struct timespec))) {
+		struct timespec recv_timestamp;
+		memcpy(&recv_timestamp, ptr, sizeof(recv_timestamp));
 
 restamp:
-		tvsub(tv, &tmp_tv);
-		triptime = tv->tv_sec * 1000000 + tv->tv_usec;
-		if (triptime < 0) {
-			error(0, 0, _("Warning: time of day goes back (%ldus), taking countermeasures"), triptime);
-			triptime = 0;
+		timespecsub(ts, &recv_timestamp, &time_diff);
+		if (time_diff.tv_sec < 0 || (time_diff.tv_sec == 0 && time_diff.tv_nsec < 0)) {
+			error(0, 0, _("Warning: time of day goes back (-%ld.%09ld), taking countermeasures"),
+			      labs(time_diff.tv_sec), labs(time_diff.tv_nsec));
 			if (!rts->opt_latency) {
-				gettimeofday(tv, NULL);
+				clock_gettime(CLOCK_REALTIME, ts);
 				rts->opt_latency = 1;
 				goto restamp;
 			}
 		}
 		if (!csfailed) {
-			rts->tsum += triptime;
-			rts->tsum2 += (double)((long long)triptime * (long long)triptime);
-			if (triptime < rts->tmin)
-				rts->tmin = triptime;
-			if (triptime > rts->tmax)
-				rts->tmax = triptime;
-			if (!rts->rtt)
-				rts->rtt = triptime * 8;
-			else
-				rts->rtt += triptime - rts->rtt / 8;
+			double t;
+
+			timespecadd(&rts->tsum, &time_diff, &rts->tsum);
+			t = timespec_to_ms_double(time_diff);
+			rts->tsum2 += t * t;
+			if (timespeccmp(&time_diff, &rts->tmin) < 0)
+				rts->tmin = time_diff;
+			if (timespeccmp(&rts->tmax, &time_diff) < 0)
+				rts->tmax = time_diff;
+			ewma_update(&rts->ewma, time_diff);
 			if (rts->opt_adaptive)
 				update_interval(rts);
 		}
@@ -796,7 +879,7 @@ restamp:
 		size_t i;
 		uint8_t *cp, *dp;
 
-		print_timestamp(rts);
+		print_timestamp("[", rts, "]");
 		printf(_("%d bytes from %s:"), cc, from);
 
 		if (pr_reply)
@@ -810,17 +893,8 @@ restamp:
 			return 1;
 		}
 		if (rts->timing) {
-			if (triptime >= 100000 - 50)
-				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
-			else if (triptime >= 10000 - 5)
-				printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,
-				       ((triptime + 50) % 1000) / 100);
-			else if (triptime >= 1000)
-				printf(_(" time=%ld.%02ld ms"), (triptime + 5) / 1000,
-				       ((triptime + 5) % 1000) / 10);
-			else
-				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
-				       triptime % 1000);
+			char s[32];
+			printf(" time=%s ms", timespec_to_ms_string(time_diff, s, sizeof(s)));
 		}
 		if (dupflag && (!multicast || rts->opt_verbose))
 			printf(_(" (DUP!)"));
@@ -828,15 +902,15 @@ restamp:
 			printf(_(" (BAD CHECKSUM!)"));
 
 		/* check the data */
-		cp = ((unsigned char *)ptr) + sizeof(struct timeval);
-		dp = &rts->outpack[8 + sizeof(struct timeval)];
-		for (i = sizeof(struct timeval); i < rts->datalen; ++i, ++cp, ++dp) {
+		cp = ((unsigned char *)ptr) + sizeof(struct timespec);
+		dp = &rts->outpack[8 + sizeof(struct timespec)];
+		for (i = sizeof(struct timespec); i < rts->datalen; ++i, ++cp, ++dp) {
 			if (*cp != *dp) {
 				printf(_("\nwrong data byte #%zu should be 0x%x but was 0x%x"),
 				       i, *dp, *cp);
-				cp = (unsigned char *)ptr + sizeof(struct timeval);
-				for (i = sizeof(struct timeval); i < rts->datalen; ++i, ++cp) {
-					if ((i % 32) == sizeof(struct timeval))
+				cp = (unsigned char *)ptr + sizeof(struct timespec);
+				for (i = sizeof(struct timespec); i < rts->datalen; ++i, ++cp) {
+					if ((i % 32) == sizeof(struct timespec))
 						printf("\n#%zu\t", i);
 					printf("%x ", *cp);
 				}
@@ -847,31 +921,16 @@ restamp:
 	return 0;
 }
 
-static long llsqrt(long long a)
-{
-	long long prev = LLONG_MAX;
-	long long x = a;
-
-	if (x > 0) {
-		while (x < prev) {
-			prev = x;
-			x = (x + (a / x)) / 2;
-		}
-	}
-
-	return (long)x;
-}
-
 /*
  * finish --
  *	Print out statistics, and give up.
  */
 int finish(struct ping_rts *rts)
 {
-	struct timespec tv = rts->cur_time;
+	struct timespec ts;
 	char *comma = "";
 
-	tssub(&tv, &rts->start_time);
+	timespecsub(&rts->cur_time, &rts->start_time, &ts);
 
 	putchar('\n');
 	fflush(stdout);
@@ -886,36 +945,33 @@ int finish(struct ping_rts *rts)
 		printf(_(", +%ld errors"), rts->nerrors);
 
 	if (rts->ntransmitted) {
-#ifdef USE_IDN
-		setlocale(LC_ALL, "C");
-#endif
 		printf(_(", %g%% packet loss"),
-		       (float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
-		printf(_(", time %ldms"), 1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000);
+			  ((rts->ntransmitted - rts->nreceived) * (double)100.0) /
+			  (double)rts->ntransmitted);
+		printf(_(", time %.0fms"), timespec_to_ms_double(ts));
 	}
 
 	putchar('\n');
 
 	if (rts->nreceived && rts->timing) {
-		double tmdev;
-		long total = rts->nreceived + rts->nrepeats;
-		long tmavg = rts->tsum / total;
-		long long tmvar;
+		struct timespec average;
+		double std_deviation;
+		const long total = rts->nreceived + rts->nrepeats;
 
-		if (rts->tsum < INT_MAX)
-			/* This slightly clumsy computation order is important to avoid
-			 * integer rounding errors for small ping times. */
-			tmvar = (rts->tsum2 - ((rts->tsum * rts->tsum) / total)) / total;
-		else
-			tmvar = (rts->tsum2 / total) - (tmavg * tmavg);
+		average = timespecdivide(&rts->tsum, total);
+		{
+			double avg;
+			double variance;
 
-		tmdev = llsqrt(tmvar);
-
-		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
-		       (long)rts->tmin / 1000, (long)rts->tmin % 1000,
-		       (unsigned long)(tmavg / 1000), (long)(tmavg % 1000),
-		       (long)rts->tmax / 1000, (long)rts->tmax % 1000,
-		       (long)tmdev / 1000, (long)tmdev % 1000);
+			avg = timespec_to_ms_double(average);
+			variance = (rts->tsum2 / total) - (avg * avg);
+			std_deviation = sqrt(variance);
+		}
+		printf(_("rtt min/avg/max/mdev = %0.03f/%0.03f/%0.03f/%0.03f ms"),
+		       timespec_to_ms_double(rts->tmin),
+		       timespec_to_ms_double(average),
+		       timespec_to_ms_double(rts->tmax),
+		       std_deviation);
 		comma = ", ";
 	}
 	if (rts->pipesize > 1) {
@@ -923,11 +979,14 @@ int finish(struct ping_rts *rts)
 		comma = ", ";
 	}
 
-	if (rts->nreceived && (!rts->interval || rts->opt_flood || rts->opt_adaptive) && rts->ntransmitted > 1) {
-		int ipg = (1000000 * (long long)tv.tv_sec + tv.tv_nsec / 1000) / (rts->ntransmitted - 1);
+	if (rts->nreceived && (rts->opt_flood || rts->opt_adaptive)
+	    && rts->ntransmitted > 1) {
+		struct timespec ipg;
 
-		printf(_("%sipg/ewma %d.%03d/%d.%03d ms"),
-		       comma, ipg / 1000, ipg % 1000, rts->rtt / 8000, (rts->rtt / 8) % 1000);
+		ipg = timespecdivide(&ts, rts->ntransmitted - 1);
+		printf(_("%sipg/ewma %0.03f/%0.3f ms"), comma,
+		       timespec_to_ms_double(ipg),
+		       timespec_to_ms_double(rts->ewma.ts));
 	}
 	putchar('\n');
 	return (!rts->nreceived || (rts->deadline && rts->nreceived < rts->npackets));
@@ -936,7 +995,6 @@ int finish(struct ping_rts *rts)
 void status(struct ping_rts *rts)
 {
 	int loss = 0;
-	long tavg = 0;
 
 	rts->status_snapshot = 0;
 
@@ -947,12 +1005,14 @@ void status(struct ping_rts *rts)
 	fprintf(stderr, _("%ld/%ld packets, %d%% loss"), rts->nreceived, rts->ntransmitted, loss);
 
 	if (rts->nreceived && rts->timing) {
-		tavg = rts->tsum / (rts->nreceived + rts->nrepeats);
+		struct timespec average;
 
-		fprintf(stderr, _(", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"),
-			(long)rts->tmin / 1000, (long)rts->tmin % 1000,
-			tavg / 1000, tavg % 1000,
-			rts->rtt / 8000, (rts->rtt / 8) % 1000, (long)rts->tmax / 1000, (long)rts->tmax % 1000);
+		average = timespecdivide(&rts->tsum, rts->nreceived + rts->nrepeats);
+		fprintf(stderr, _(", min/avg/ewma/max = %ld.%09ld/%lu.%09ld/%ld.%09ld/%ld.%09ld s"),
+			rts->tmin.tv_sec, rts->tmin.tv_nsec,
+			average.tv_sec, average.tv_nsec,
+			rts->ewma.ts.tv_sec, rts->ewma.ts.tv_nsec,
+			rts->tmax.tv_sec, rts->tmax.tv_nsec);
 	}
 	fprintf(stderr, "\n");
 }

@@ -67,7 +67,15 @@ extern void close_stdout(void);
 extern long strtol_or_err(char const *const str, char const *const errmesg,
 			  const long min, const long max);
 extern void iputils_srand(void);
-extern void timespecsub(struct timespec *a, struct timespec *b,
-			struct timespec *res);
+
+#define NANOSECONDS_PER_SECOND	1000000000L
+#define MICROSECONDS_PER_SECOND	1000000L
+extern void timespecsub(struct timespec const *const a,
+			struct timespec const *const b, struct timespec *res);
+extern void timespecadd(struct timespec const *const a,
+			struct timespec const *const b, struct timespec *res);
+extern int timespeccmp(struct timespec const *const a, struct timespec const *const b);
+extern struct timespec timespecmultiply(struct timespec const *const a, int const multiplier);
+extern struct timespec timespecdivide(struct timespec const *const a, int const div);
 
 #endif /* IPUTILS_COMMON_H */
