@@ -215,7 +215,14 @@ config_h = configure_file(
 	output : 'config.h',
 	configuration : conf)
 
-setcap = find_program('setcap', '/usr/sbin/setcap', '/sbin/setcap', required : false)
+if meson.is_cross_build()
+	message('limit setcap search to PATH')
+	path_setcap = ['setcap']
+else
+	message('search for setcap in PATH and admin dirs')
+	path_setcap = ['setcap', '/usr/sbin/setcap', '/sbin/setcap']
+endif
+setcap = find_program(path_setcap, required : false)
 if cap_dep.found() and setcap.found()
 	perm_type = 'caps'
 	setcap_path = setcap.path()
