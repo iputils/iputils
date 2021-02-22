@@ -31,10 +31,6 @@ matrix:
 
         # glibc (gcc/clang)
         - os: linux
-          env: DISTRO=opensuse/tumbleweed
-          compiler: gcc
-
-        - os: linux
           env: DISTRO=opensuse/leap
           compiler: clang
 
