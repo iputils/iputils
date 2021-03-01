@@ -1,6 +1,7 @@
 ---
-# Copyright (c) 2019-2020 Petr Vorel <pvorel@suse.cz>
+# Copyright (c) 2019-2021 Petr Vorel <pvorel@suse.cz>
 
+dist: bionic
 sudo: required
 language: c
 services:
@@ -30,6 +31,10 @@ matrix:
           compiler: gcc
 
         # glibc (gcc/clang)
+        - os: linux
+          env: DISTRO=opensuse/tumbleweed CONTAINER=podman CONTAINER_ARGS="--runtime=/usr/bin/runc"
+          compiler: gcc
+
         - os: linux
           env: DISTRO=opensuse/leap
           compiler: clang
@@ -63,14 +68,29 @@ matrix:
           compiler: clang
 
 before_install:
+    # Tumbleweed requires podman and newest runc due docker incompatible with glibc 2.33 (faccessat2)
+    - CONTAINER="${CONTAINER:-docker}"
+    - >
+        if [ "$CONTAINER" = "podman" ]; then
+            # podman
+            . /etc/os-release
+            sudo sh -c "echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list"
+            wget -nv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/xUbuntu_${VERSION_ID}/Release.key -O- | sudo apt-key add -
+            sudo apt update
+            sudo apt -y install podman slirp4netns
+
+            # runc
+            sudo curl -L https://github.com/opencontainers/runc/releases/download/v1.0.0-rc93/runc.amd64 -o /usr/bin/runc
+            sudo chmod +x /usr/bin/runc
+        fi
     - DIR="/usr/src/iputils"
     - printf "FROM $DISTRO\nRUN mkdir -p $DIR\nWORKDIR $DIR\nCOPY . $DIR\n" > Dockerfile
     - echo "cat Dockerfile"; cat Dockerfile
-    - docker build -t iputils .
+    - $CONTAINER $CONTAINER_ARGS build -t iputils .
 
 script:
     - INSTALL="${DISTRO%%:*}"
     - INSTALL="${INSTALL%%/*}"
     - DISTRO_VERSION="${DISTRO#*:}"
     - case $VARIANT in cross-compile*) BUILD="cross";; i386) BUILD="32";; *) BUILD="native";; esac
-    - docker run -it iputils /bin/sh -c "cd travis && DISTRO_VERSION=\"$DISTRO_VERSION\" ./$INSTALL.sh && if [ \"$VARIANT\" ]; then ARCH=\"$ARCH\" ./$INSTALL.$VARIANT.sh; fi && CC=$CC EXTRA_BUILD_OPTS=\"$EXTRA_BUILD_OPTS\" ../build.sh"
+    - $CONTAINER $CONTAINER_ARGS run -it iputils /bin/sh -c "cd travis && DISTRO_VERSION=\"$DISTRO_VERSION\" ./$INSTALL.sh && if [ \"$VARIANT\" ]; then ARCH=\"$ARCH\" ./$INSTALL.$VARIANT.sh; fi && CC=$CC EXTRA_BUILD_OPTS=\"$EXTRA_BUILD_OPTS\" ../build.sh"
