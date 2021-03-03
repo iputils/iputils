@@ -9,8 +9,8 @@ EnvironmentFile=-/etc/sysconfig/rdisc
 ExecStart=@sbindir@/rdisc -f -t $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
 
 AmbientCapabilities=CAP_NET_RAW
+CapabilityBoundingSet=CAP_NET_RAW
 PrivateTmp=yes
-PrivateUsers=yes
 ProtectSystem=strict
 ProtectHome=yes
 ProtectControlGroups=yes
