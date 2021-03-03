@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-09 19:20+0000\n"
-"PO-Revision-Date: 2021-02-19 13:40+0000\n"
-"Last-Translator: Qiyu Yan <yanqiyu01@gmail.com>\n"
+"PO-Revision-Date: 2021-03-04 07:40+0000\n"
+"Last-Translator: Zhang Boyang <zhangboyang.id@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -265,7 +265,7 @@ msgid ""
 "wrong data byte #%zu should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"错误的数据比特数 #%zu 预期为 0x%x 但实际接收到 0x%x"
+"错误的数据字节 #%zu 预期为 0x%x 但实际接收到 0x%x"
 
 #: tracepath.c:609
 #, c-format
@@ -415,7 +415,7 @@ msgstr "%3ld.%03ld 毫秒 "
 #: ping/ping_common.c:800
 #, c-format
 msgid "%d bytes from %s:"
-msgstr "%d 比特，来自 %s:"
+msgstr "%d 字节，来自 %s:"
 
 #: arping.c:290
 #, c-format
@@ -475,12 +475,12 @@ msgstr "%s 管道 %d"
 #: ping/ping6_common.c:374
 #, c-format
 msgid "%zu data bytes\n"
-msgstr "%zu 比特的数据\n"
+msgstr "%zu 字节的数据\n"
 
 #: ping/ping.c:927
 #, c-format
 msgid "%zu(%zu) bytes of data.\n"
-msgstr "%zu(%zu) 比特的数据。\n"
+msgstr "%zu(%zu) 字节的数据。\n"
 
 #: ping/ping.c:1588
 #, c-format
@@ -505,7 +505,7 @@ msgstr "(这条损坏的路由返回了错误的数据) "
 #: traceroute6.c:849
 #, c-format
 msgid ", %d hops max, %d byte packets\n"
-msgstr ", 最大 %d 跃点， %d 比特的包\n"
+msgstr ", 最大 %d 跃点， %d 字节的包\n"
 
 #: ping/ping_common.c:892
 #, c-format
@@ -1400,12 +1400,12 @@ msgstr ""
 #: ping/ping.c:1508
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr ""
+msgstr "过短的包 (%d 字节) 来自 %s"
 
 #: ping/ping6_common.c:813
 #, c-format
 msgid "packet too short: %d bytes"
-msgstr ""
+msgstr "过短的包: %d 字节"
 
 #: ping/ping_common.c:208
 #, c-format
