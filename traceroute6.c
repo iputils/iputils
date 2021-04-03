@@ -610,6 +610,7 @@ static __attribute__((noreturn)) void usage(void)
 		"  -r            use SO_DONTROUTE socket option\n"
 		"  -s <address>  use source <address>\n"
 		"  -v            verbose output\n"
+		"  -V            print version and exit\n"
 		"  -w <timeout>  time to wait for response\n"
 		"\nFor more details see traceroute6(8).\n"));
 	exit(1);
