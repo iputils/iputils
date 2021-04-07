@@ -343,6 +343,12 @@ struct pkt_format {
 	struct timespec ts;
 };
 
+struct ext_obj_hdr {
+	uint16_t ext_len;
+	uint8_t class_num;
+	uint8_t c_type;
+};
+
 /*
  * All includes, definitions, struct declarations, and global variables are
  * above.  After this comment all you can find is functions.
@@ -579,7 +585,92 @@ static int packet_ok(struct run_state *ctl, int cc, struct sockaddr_in6 *from,
 	return (0);
 }
 
-static void print(struct run_state *ctl, struct sockaddr_in6 *from)
+/*
+ * Convert an RFC5837 "role" field to a printable string.
+ */
+static char const *pr_role(const uint8_t role)
+{
+	switch (role) {
+	case 0:
+		return _("Arrival interface");
+	case 1:
+		return _("Arrival interface sub-IP component");
+	case 2:
+		return _("Forwarding interface");
+	case 3:
+		return _("IP next hop");
+	default:
+		return _("Unkown role");
+	}
+}
+
+static void print_interface_identification(unsigned char *icmpv6_pkt, long unsigned pkt_len)
+{
+	unsigned offset = 8;
+	char if_addr[NI_MAXHOST] = "";
+	uint8_t orig_datagram_len = icmpv6_pkt[4];
+	uint8_t did_print = 0;
+	uint8_t if_index_flag, ipaddr_flag, name_flag, mtu_flag, name_len, role;
+	uint32_t if_index, mtu;
+
+	if (orig_datagram_len == 0)
+		return;
+	offset += 8 * orig_datagram_len;
+	offset += 4;
+	while (offset + sizeof(struct ext_obj_hdr) <= pkt_len) {
+		struct ext_obj_hdr *obj_hdr = (struct ext_obj_hdr *) &icmpv6_pkt[offset];
+		offset += sizeof(struct ext_obj_hdr);
+		if (obj_hdr->class_num == 2) {
+			/* This is an Interface Identification object.*/
+			did_print = 1;
+			role = obj_hdr->c_type >> 6;
+			if_index_flag = (obj_hdr->c_type >> 3) & 1;
+			ipaddr_flag = (obj_hdr->c_type >> 2) & 1;
+			name_flag = (obj_hdr->c_type >> 1) & 1;
+			mtu_flag = (obj_hdr->c_type >> 0) & 1;
+			printf("\n\t%s:", pr_role(role));
+
+			if (if_index_flag) {
+				if (offset + sizeof(uint32_t) > pkt_len)
+					goto err;
+				if_index = ntohl(*((uint32_t *) &icmpv6_pkt[offset]));
+				printf(" index=%d;", if_index);
+				offset += 4;
+			}
+			if (ipaddr_flag) {
+				if (offset + 20 > pkt_len)
+					goto err;
+				printf(" address=%s;", inet_ntop(AF_INET6, &icmpv6_pkt[offset + 4], if_addr, sizeof(if_addr)));
+				offset += 20;
+			}
+			if (name_flag) {
+				if (offset + sizeof(name_len) > pkt_len)
+					goto err;
+				name_len = icmpv6_pkt[offset];
+				if (offset + name_len > pkt_len)
+					goto err;
+				printf(" name=%.*s;", name_len - 1, &icmpv6_pkt[offset + 1]);
+				offset += name_len;
+			}
+			if (mtu_flag) {
+				if (offset + sizeof(uint32_t) > pkt_len)
+					goto err;
+				mtu = ntohl(*((uint32_t *) &icmpv6_pkt[offset]));
+				printf(" mtu=%d;", mtu);
+				offset += 4;
+			}
+		}
+		offset += obj_hdr->ext_len;
+	}
+	if (did_print)
+		printf("\n");
+	return;
+
+	err:
+		printf("\tMalformed interface identification extension\n");
+}
+
+static void print(struct run_state *ctl, struct sockaddr_in6 *from, long unsigned pkt_len)
 {
 	char pa[NI_MAXHOST] = "";
 	char hnamebuf[NI_MAXHOST] = "";
@@ -592,6 +683,9 @@ static void print(struct run_state *ctl, struct sockaddr_in6 *from)
 			    sizeof hnamebuf, NULL, 0, getnameinfo_flags);
 
 		printf(" %s (%s)", hnamebuf[0] ? hnamebuf : pa, pa);
+	}
+	if (ctl->verbose) {
+		print_interface_identification(ctl->packet, pkt_len);
 	}
 }
 
@@ -870,7 +964,7 @@ int main(int argc, char **argv)
 				if ((i = packet_ok(&ctl, cc, &from, &to_addr, seq, &t1))) {
 					if (memcmp(&from.sin6_addr, &lastaddr,
 						   sizeof(from.sin6_addr))) {
-						print(&ctl, &from);
+						print(&ctl, &from, cc);
 						memcpy(&lastaddr,
 						       &from.sin6_addr, sizeof(lastaddr));
 					}
