@@ -1549,8 +1549,6 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 			return 1;
 		if (!is_ours(rts, sock, icp->un.echo.id))
 			return 1;			/* 'Twas not our ECHO */
-		if (!contains_pattern_in_payload(rts, (uint8_t *)(icp + 1)))
-			return 1;			/* 'Twas really not our ECHO */
 		if (gather_statistics(rts, (uint8_t *)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
 				      reply_ttl, 0, tv, pr_addr(rts, from, sizeof *from),
