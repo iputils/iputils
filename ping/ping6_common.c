@@ -824,8 +824,6 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 			return 1;
 		if (!is_ours(rts, sock, icmph->icmp6_id))
 			return 1;
-	       if (!contains_pattern_in_payload(rts, (uint8_t *)(icmph + 1)))
-			return 1;	/* 'Twas really not our ECHO */
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(rts, from, sizeof *from),

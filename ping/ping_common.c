@@ -553,24 +553,6 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	}
 }
 
-/*
- * Return 0 if pattern in payload point to be ptr did not match the pattern that was sent  
- */
-int contains_pattern_in_payload(struct ping_rts *rts, uint8_t *ptr)
-{
-	size_t i;
-	uint8_t *cp, *dp;
- 
-	/* check the data */
-	cp = ((u_char *)ptr) + sizeof(struct timeval);
-	dp = &rts->outpack[8 + sizeof(struct timeval)];
-	for (i = sizeof(struct timeval); i < rts->datalen; ++i, ++cp, ++dp) {
-		if (*cp != *dp)
-			return 0;
-	}
-	return 1;
-}
-
 int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 	      uint8_t *packet, int packlen)
 {
