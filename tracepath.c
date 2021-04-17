@@ -32,6 +32,7 @@
 #include <linux/icmp.h>
 #include <linux/icmpv6.h>
 #include <linux/types.h>
+#include <linux/in.h>
 
 #include "iputils_common.h"
 
@@ -68,8 +69,13 @@ struct hhistory {
 };
 
 struct probehdr {
-	uint32_t ttl;
-	struct timespec ts;
+	union {
+		struct probedata {
+			uint32_t ttl;
+			struct timespec ts;
+		} probedata;
+		char bytes[576];
+	} un;
 };
 
 struct run_state {
@@ -123,6 +129,85 @@ static void print_host(struct run_state const *const ctl, char const *const a,
 		plen = HOST_COLUMN_SIZE - 1;
 	printf("%*s", HOST_COLUMN_SIZE - plen, "");
 }
+
+#ifdef SO_EE_RFC4884_FLAG_INVALID
+/*
+ * Convert an RFC5837 "role" field to a printable string.
+ */
+static char const *print_role(const uint8_t role)
+{
+	switch (role) {
+	case 0:
+		return _("Arrival interface");
+	case 1:
+		return _("Arrival interface sub-IP component");
+	case 2:
+		return _("Forwarding interface");
+	case 3:
+		return _("IP next hop");
+	default:
+		return _("Unkown role");
+	}
+}
+
+static void print_interface_identification(char *pkt, unsigned pkt_len, unsigned offset)
+{
+	char if_addr[INET_ADDRSTRLEN] = "";
+	uint8_t if_index_flag, ipaddr_flag, name_flag, mtu_flag, name_len, role;
+	uint32_t if_index, mtu;
+
+	offset += 4;
+	while (offset + sizeof(struct icmp_extobj_hdr) <= pkt_len) {
+		struct icmp_extobj_hdr *obj_hdr = (struct icmp_extobj_hdr *) &pkt[offset];
+		offset += sizeof(struct icmp_extobj_hdr);
+		if (obj_hdr->class_num == 2) {
+			/* This is an Interface Identification object.*/
+			role = obj_hdr->class_type >> 6;
+			if_index_flag = (obj_hdr->class_type >> 3) & 1;
+			ipaddr_flag = (obj_hdr->class_type >> 2) & 1;
+			name_flag = (obj_hdr->class_type >> 1) & 1;
+			mtu_flag = (obj_hdr->class_type >> 0) & 1;
+			printf("\t%s:", print_role(role));
+
+			if (if_index_flag) {
+				if (offset + sizeof(uint32_t) > pkt_len)
+					goto err;
+				if_index = ntohl(*((uint32_t *) &pkt[offset]));
+				printf(" index=%d;", if_index);
+				offset += 4;
+			}
+			if (ipaddr_flag) {
+				if (offset + 8 > pkt_len || ntohs(*(uint16_t *)(pkt + offset)) != 1)
+					goto err;
+				printf(" address=%s;", inet_ntop(AF_INET, &pkt[offset + 4], if_addr, sizeof(if_addr)));
+				offset += 8;
+			}
+			if (name_flag) {
+				if (offset + sizeof(name_len) > pkt_len)
+					goto err;
+				name_len = pkt[offset];
+				if (offset + name_len > pkt_len)
+					goto err;
+				printf(" name=%.*s;", name_len - 1, &pkt[offset + 1]);
+				offset += name_len;
+			}
+			if (mtu_flag) {
+				if (offset + sizeof(uint32_t) > pkt_len)
+					goto err;
+				mtu = ntohl(*((uint32_t *) &pkt[offset]));
+				printf(" mtu=%d;", mtu);
+				offset += 4;
+			}
+			printf("\n");
+		}
+		offset += obj_hdr->length;
+	}
+	return;
+
+	err:
+		printf("\tMalformed interface identification extension\n");
+}
+#endif
 
 static int recverr(struct run_state *const ctl)
 {
@@ -190,11 +275,11 @@ static int recverr(struct run_state *const ctl)
 		ctl->his[slot].hops = 0;
 	}
 	if (recv_size == sizeof(rcvbuf)) {
-		if (rcvbuf.ttl == 0 || rcvbuf.ts.tv_sec == 0)
+		if (rcvbuf.un.probedata.ttl == 0 || rcvbuf.un.probedata.ts.tv_sec == 0)
 			broken_router = 1;
 		else {
-			sndhops = rcvbuf.ttl;
-			retts = &rcvbuf.ts;
+			sndhops = rcvbuf.un.probedata.ttl;
+			retts = &rcvbuf.un.probedata.ts;
 		}
 	}
 
@@ -297,20 +382,20 @@ static int recverr(struct run_state *const ctl)
 	switch (e->ee_errno) {
 	case ETIMEDOUT:
 		printf("\n");
-		break;
+		goto identify_interface_and_restart;
 	case EMSGSIZE:
 		printf(_("pmtu %d\n"), e->ee_info);
 		ctl->mtu = e->ee_info;
 		progress = ctl->mtu;
-		break;
+		goto identify_interface_and_restart;
 	case ECONNREFUSED:
 		printf(_("reached\n"));
 		ctl->hops_to = sndhops < 0 ? ctl->ttl : sndhops;
 		ctl->hops_from = rethops;
-		return 0;
+		goto identify_interface_and_exit;
 	case EPROTO:
 		printf("!P\n");
-		return 0;
+		goto identify_interface_and_exit;
 	case EHOSTUNREACH:
 		if ((e->ee_origin == SO_EE_ORIGIN_ICMP &&
 		     e->ee_type == ICMP_TIME_EXCEEDED &&
@@ -326,22 +411,36 @@ static int recverr(struct run_state *const ctl)
 					printf(_("asymm %2d "), rethops);
 			}
 			printf("\n");
-			break;
+			goto identify_interface_and_restart;
 		}
 		printf("!H\n");
-		return 0;
+		goto identify_interface_and_exit;
 	case ENETUNREACH:
 		printf("!N\n");
-		return 0;
+		goto identify_interface_and_exit;
 	case EACCES:
 		printf("!A\n");
-		return 0;
+		goto identify_interface_and_exit;
 	default:
 		printf("\n");
 		error(0, e->ee_errno, _("NET ERROR"));
-		return 0;
+		goto identify_interface_and_exit;
 	}
-	goto restart;
+	identify_interface_and_exit:
+#ifdef SO_EE_RFC4884_FLAG_INVALID
+		if (e->ee_rfc4884.len) {
+			print_interface_identification(rcvbuf.un.bytes, recv_size, e->ee_rfc4884.len);
+		}
+#endif
+		return 0;
+
+	identify_interface_and_restart:
+#ifdef SO_EE_RFC4884_FLAG_INVALID
+		if (e->ee_rfc4884.len) {
+			print_interface_identification(rcvbuf.un.bytes, recv_size, e->ee_rfc4884.len);
+		}
+#endif
+		goto restart;
 }
 
 static int probe_ttl(struct run_state *const ctl)
@@ -354,7 +453,7 @@ static int probe_ttl(struct run_state *const ctl)
 	for (i = 0; i < MAX_PROBES; i++) {
 		int res;
 
-		hdr->ttl = ctl->ttl;
+		hdr->un.probedata.ttl = ctl->ttl;
 		switch (ctl->ai->ai_family) {
 		case AF_INET6:
 			((struct sockaddr_in6 *)&ctl->target)->sin6_port =
@@ -365,9 +464,9 @@ static int probe_ttl(struct run_state *const ctl)
 			    htons(ctl->base_port + ctl->hisptr);
 			break;
 		}
-		clock_gettime(CLOCK_MONOTONIC, &hdr->ts);
+		clock_gettime(CLOCK_MONOTONIC, &hdr->un.probedata.ts);
 		ctl->his[ctl->hisptr].hops = ctl->ttl;
-		ctl->his[ctl->hisptr].sendtime = hdr->ts;
+		ctl->his[ctl->hisptr].sendtime = hdr->un.probedata.ts;
 		if (sendto(ctl->socket_fd, ctl->pktbuf, ctl->mtu - ctl->overhead, 0,
 			   (struct sockaddr *)&ctl->target, ctl->targetlen) > 0)
 			break;
@@ -558,6 +657,10 @@ int main(int argc, char **argv)
 		if (setsockopt(ctl.socket_fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on)))
 			error(1, errno, "IP_MTU_DISCOVER");
 		on = 1;
+#ifdef SO_EE_RFC4884_FLAG_INVALID
+		if (setsockopt(ctl.socket_fd, SOL_IP, IP_RECVERR_RFC4884, &on, sizeof(on)))
+			error(1, errno, "IP_RECVERR_RFC4884");
+#endif
 		if (setsockopt(ctl.socket_fd, SOL_IP, IP_RECVERR, &on, sizeof(on)))
 			error(1, errno, "IP_RECVERR");
 		if (setsockopt(ctl.socket_fd, SOL_IP, IP_RECVTTL, &on, sizeof(on)))
