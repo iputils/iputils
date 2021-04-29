@@ -53,6 +53,8 @@ void usage(void)
 		"  -c <count>         stop after <count> replies\n"
 		"  -D                 print timestamps\n"
 		"  -d                 use SO_DEBUG socket option\n"
+		"  -e <interface>     send extended echo request\n"
+		"		      requires -4 option, incompatible with all other options\n"
 		"  -f                 flood ping\n"
 		"  -h                 print help and exit\n"
 		"  -I <interface>     either interface name or address\n"
@@ -250,6 +252,8 @@ int __schedule_exit(int next)
 	static unsigned long waittime;
 	struct itimerval it;
 
+	printf("\nidkmak\n");
+
 	if (waittime)
 		return next;
 
@@ -349,7 +353,6 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 
 resend:
 	i = fset->send_probe(rts, sock, rts->outpack, sizeof(rts->outpack));
-
 	if (i == 0) {
 		oom_count = 0;
 		advance_ntransmitted(rts);
@@ -599,8 +602,8 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 
 		/* Send probes scheduled to this time. */
 		do {
-			next = pinger(rts, fset, sock);
-			next = schedule_exit(rts, next);
+			next = pinger(rts, fset, sock); // this does the seending
+			next = schedule_exit(rts, next); // this just counts the packets to make sure it doesnt go over the number of packets its supposed to send
 		} while (next <= 0);
 
 		/* "next" is time to send next probe, if positive.
@@ -664,7 +667,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 			msg.msg_iovlen = 1;
 			msg.msg_control = ans_data;
 			msg.msg_controllen = sizeof(ans_data);
-
+			
 			cc = recvmsg(sock->fd, &msg, polling);
 			polling = MSG_DONTWAIT;
 
@@ -705,13 +708,14 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 						gettimeofday(&recv_time, NULL);
 					recv_timep = &recv_time;
 				}
-
-				not_ours = fset->parse_reply(rts, sock, &msg, cc, addrbuf, recv_timep);
+			not_ours = fset->parse_reply(rts, sock, &msg, cc, addrbuf, recv_timep);
 			}
 
 			/* See? ... someone runs another ping on this host. */
-			if (not_ours && sock->socktype == SOCK_RAW)
+			if (not_ours && sock->socktype == SOCK_RAW && rts->probe == 0)
 				fset->install_filter(rts, sock);
+			else if(not_ours && sock->socktype == SOCK_RAW && rts->probe == 1) 
+				fset->install_probe_filter(rts, sock);
 
 			/* If nothing is in flight, "break" returns us to pinger. */
 			if (in_flight(rts) == 0)
@@ -746,13 +750,15 @@ int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 restamp:
 		tvsub(tv, &tmp_tv);
 		triptime = tv->tv_sec * 1000000 + tv->tv_usec;
-		if (triptime < 0) {
-			error(0, 0, _("Warning: time of day goes back (%ldus), taking countermeasures"), triptime);
-			triptime = 0;
-			if (!rts->opt_latency) {
-				gettimeofday(tv, NULL);
-				rts->opt_latency = 1;
-				goto restamp;
+		if (!rts->probe) {
+			if (triptime < 0) {
+				error(0, 0, _("Warning: time of day goes back (%ldus), taking countermeasures"), triptime);
+				triptime = 0;
+				if (!rts->opt_latency) {
+					gettimeofday(tv, NULL);
+					rts->opt_latency = 1;
+					goto restamp;
+				}
 			}
 		}
 		if (!csfailed) {
@@ -809,18 +815,20 @@ restamp:
 			printf(_(" (truncated)\n"));
 			return 1;
 		}
-		if (rts->timing) {
-			if (triptime >= 100000 - 50)
-				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
-			else if (triptime >= 10000 - 5)
-				printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,
-				       ((triptime + 50) % 1000) / 100);
-			else if (triptime >= 1000)
-				printf(_(" time=%ld.%02ld ms"), (triptime + 5) / 1000,
-				       ((triptime + 5) % 1000) / 10);
-			else
-				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
-				       triptime % 1000);
+		if (!rts->probe) {
+			if (rts->timing) {
+				if (triptime >= 100000 - 50)
+					printf(_(" time=%ld ms"), (triptime + 500) / 1000);
+				else if (triptime >= 10000 - 5)
+					printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,
+						((triptime + 50) % 1000) / 100);
+				else if (triptime >= 1000)
+					printf(_(" time=%ld.%02ld ms"), (triptime + 5) / 1000,
+						((triptime + 5) % 1000) / 10);
+				else
+					printf(_(" time=%ld.%03ld ms"), triptime / 1000,
+						triptime % 1000);
+			}
 		}
 		if (dupflag && (!multicast || rts->opt_verbose))
 			printf(_(" (DUP!)"));
@@ -891,7 +899,8 @@ int finish(struct ping_rts *rts)
 #endif
 		printf(_(", %g%% packet loss"),
 		       (float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
-		printf(_(", time %ldms"), 1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000);
+		if(!rts->probe)
+			printf(_(", time %ldms"), 1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000);
 	}
 
 	putchar('\n');
@@ -911,11 +920,12 @@ int finish(struct ping_rts *rts)
 
 		tmdev = llsqrt(tmvar);
 
-		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
-		       (long)rts->tmin / 1000, (long)rts->tmin % 1000,
-		       (unsigned long)(tmavg / 1000), (long)(tmavg % 1000),
-		       (long)rts->tmax / 1000, (long)rts->tmax % 1000,
-		       (long)tmdev / 1000, (long)tmdev % 1000);
+		if(!rts->probe)
+			printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
+				(long)rts->tmin / 1000, (long)rts->tmin % 1000,
+				(unsigned long)(tmavg / 1000), (long)(tmavg % 1000),
+				(long)rts->tmax / 1000, (long)rts->tmax % 1000,
+				(long)tmdev / 1000, (long)tmdev % 1000);
 		comma = ", ";
 	}
 	if (rts->pipesize > 1) {
