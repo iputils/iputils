@@ -43,7 +43,7 @@ option('BUILD_MANS', type : 'boolean', value : true,
 option('BUILD_HTML_MANS', type : 'boolean', value : false,
 	description : 'Build html manuals')
 
-option('NO_SETCAP_OR_SUID', type : 'boolean', value : false,
+option('NO_SETCAP_OR_SUID', type : 'boolean', value : true,
        description : 'Disable setting setcap or setuid with build-aux/setcap-setuid.sh')
 
 option('SETCAP_OR_SUID_ARPING', type : 'boolean', value : false,
