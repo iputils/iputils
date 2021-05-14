@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-09 19:20+0000\n"
-"PO-Revision-Date: 2020-07-29 07:29+0000\n"
-"Last-Translator: Qiyu Yan <yanqiyu01@gmail.com>\n"
-"Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/projects/iputils/iputils/zh_CN/>\n"
+"PO-Revision-Date: 2021-05-04 11:34+0000\n"
+"Last-Translator: Zhang Boyang <zhangboyang.id@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
+"projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.6.1\n"
 
 #: ping/ping.c:1081
 #, c-format
@@ -59,20 +60,26 @@ msgid ""
 "\n"
 "%cSRR: "
 msgstr ""
+"\n"
+"%cSRR: "
 
 #: ping/ping.c:953
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "\n"
 "NOP"
 msgstr ""
+"\n"
+"NOP"
 
 #: ping/ping.c:1007
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "\n"
 "RR: "
 msgstr ""
+"\n"
+"RR: "
 
 #: ping/ping.c:1043
 #, c-format
@@ -80,6 +87,8 @@ msgid ""
 "\n"
 "TS: "
 msgstr ""
+"\n"
+"TS: "
 
 #: tracepath.c:398
 #, c-format
@@ -148,7 +157,7 @@ msgstr ""
 "  -b            始终使用广播而不是单拨\n"
 "  -D            重复地址检测模式\n"
 "  -U           主动 ARP 模式, 更新邻居 ARP 表\n"
-"  -A            主动 ARP 模式, 更新邻居 ARP 表\n"
+"  -A            ARP 应答模式, 更新邻居 ARP 表\n"
 "  -V            显示版本号然后退出\n"
 "  -c <count>    指定发送多少个包\n"
 "  -w <timeout>  指定等待超时时间\n"
@@ -156,7 +165,7 @@ msgstr ""
 "  -I <device>   指定使用的设备"
 
 #: clockdiff.c:451
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -190,7 +199,7 @@ msgstr ""
 "  -V, --version 显示版本信息并退出\n"
 "  <destination> dns 名称或 ip 地址\n"
 "\n"
-"For more details see clockdiff(8).\n"
+"需要更多信息请查看 clockdiff(8).\n"
 
 #: traceroute6.c:600
 #, c-format
@@ -256,7 +265,7 @@ msgid ""
 "wrong data byte #%zu should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"错误的数据比特数 #%zu 预期为 0x%x 但实际接收到 0x%x"
+"错误的数据字节 #%zu 预期为 0x%x 但实际接收到 0x%x"
 
 #: tracepath.c:609
 #, c-format
@@ -296,7 +305,7 @@ msgstr " (CHECKSUM 错误)"
 #: ping/ping_common.c:826
 #, c-format
 msgid " (DUP!)"
-msgstr ""
+msgstr " (重复!)"
 
 #: ping/ping6_common.c:742
 #, c-format
@@ -406,7 +415,7 @@ msgstr "%3ld.%03ld 毫秒 "
 #: ping/ping_common.c:800
 #, c-format
 msgid "%d bytes from %s:"
-msgstr "%d 比特，来自 %s:"
+msgstr "%d 字节，来自 %s:"
 
 #: arping.c:290
 #, c-format
@@ -431,12 +440,12 @@ msgstr "%ld/%ld 个包，%d%% 丢失"
 #: arping.c:388
 #, c-format
 msgid "%s from "
-msgstr ""
+msgstr "%s 来自 "
 
 #: clockdiff.c:594
 #, c-format
 msgid "%s is down"
-msgstr ""
+msgstr "%s 已关闭"
 
 #: clockdiff.c:600
 #, c-format
@@ -466,12 +475,12 @@ msgstr "%s 管道 %d"
 #: ping/ping6_common.c:374
 #, c-format
 msgid "%zu data bytes\n"
-msgstr "%zu 比特的数据\n"
+msgstr "%zu 字节的数据\n"
 
 #: ping/ping.c:927
 #, c-format
 msgid "%zu(%zu) bytes of data.\n"
-msgstr "%zu(%zu) 比特的数据。\n"
+msgstr "%zu(%zu) 字节的数据。\n"
 
 #: ping/ping.c:1588
 #, c-format
@@ -496,7 +505,7 @@ msgstr "(这条损坏的路由返回了错误的数据) "
 #: traceroute6.c:849
 #, c-format
 msgid ", %d hops max, %d byte packets\n"
-msgstr ", 最大 %d 跃点， %d 比特的包\n"
+msgstr ", 最大 %d 跃点， %d 字节的包\n"
 
 #: ping/ping_common.c:892
 #, c-format
@@ -524,9 +533,9 @@ msgid ", code=%d"
 msgstr ", 代码=%d"
 
 #: ping/ping6_common.c:366
-#, c-format
+#, c-format, fuzzy
 msgid ", flow 0x%05x, "
-msgstr ""
+msgstr ", flow 0x%05x, "
 
 #: ping/ping_common.c:952
 #, c-format
@@ -546,22 +555,22 @@ msgstr "--- %s ping 统计 ---\n"
 #: ping/ping6_common.c:773
 #, c-format
 msgid "; seq=%u;"
-msgstr ""
+msgstr "; seq=%u;"
 
 #: arping.c:1015
 #, c-format
 msgid "ARPING %s "
-msgstr ""
+msgstr "ARPING %s "
 
 #: ping/ping.c:1281
 #, c-format
 msgid "Address Mask Reply\n"
-msgstr ""
+msgstr "地址掩码应答\n"
 
 #: ping/ping.c:1276
 #, c-format
 msgid "Address Mask Request\n"
-msgstr ""
+msgstr "地址掩码请求\n"
 
 #: ping/ping6_common.c:401
 #, c-format
@@ -728,11 +737,11 @@ msgstr "来自 %s: icmp_seq=%u "
 
 #: traceroute6.c:504
 msgid "Home Agent Address Discovery Reply message"
-msgstr ""
+msgstr "Home Agent 地址发现应答信息"
 
 #: traceroute6.c:502
 msgid "Home Agent Address Discovery Request Message"
-msgstr ""
+msgstr "Home Agent 地址发现请求消息"
 
 #: ping/ping6_common.c:419
 #, c-format
@@ -747,12 +756,12 @@ msgstr "IDN 编码错误：%s"
 #: ping/ping.c:1271
 #, c-format
 msgid "Information Reply\n"
-msgstr ""
+msgstr "应答信息\n"
 
 #: ping/ping.c:1267
 #, c-format
 msgid "Information Request\n"
-msgstr ""
+msgstr "信息请求\n"
 
 #: arping.c:561
 #, c-format
@@ -770,35 +779,35 @@ msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr "网络接口 “%s” 不适用 ARP（没有 ll 地址）\n"
 
 #: ping/ping6_common.c:444
-#, c-format, fuzzy
+#, c-format
 msgid "MLD Query"
-msgstr "MLD 查询"
+msgstr "组播组查询"
 
 #: ping/ping6_common.c:450
 #, c-format
 msgid "MLD Reduction"
-msgstr ""
+msgstr "组播组退出"
 
 #: ping/ping6_common.c:447
 #, c-format
 msgid "MLD Report"
-msgstr ""
+msgstr "组播组报告"
 
 #: traceroute6.c:480
 msgid "Membership Query"
-msgstr ""
+msgstr "成员信息查询"
 
 #: traceroute6.c:484
 msgid "Membership Reduction"
-msgstr ""
+msgstr "成员信息退出"
 
 #: traceroute6.c:482
 msgid "Membership Report"
-msgstr ""
+msgstr "成员信息报告"
 
 #: traceroute6.c:508
 msgid "Mobile Prefix Solicitation Advertisement"
-msgstr ""
+msgstr "移动前缀征求通告"
 
 #: traceroute6.c:506
 msgid "Mobile Prefix Solicitation Message"
@@ -1391,12 +1400,12 @@ msgstr ""
 #: ping/ping.c:1508
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr ""
+msgstr "过短的包 (%d 字节) 来自 %s"
 
 #: ping/ping6_common.c:813
 #, c-format
 msgid "packet too short: %d bytes"
-msgstr ""
+msgstr "过短的包: %d 字节"
 
 #: ping/ping_common.c:208
 #, c-format

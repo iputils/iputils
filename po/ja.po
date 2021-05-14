@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils 20161105\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-11-16 03:31+0900\n"
-"PO-Revision-Date: 2021-01-26 05:47+0000\n"
+"PO-Revision-Date: 2021-05-04 11:34+0000\n"
 "Last-Translator: Tomohiro KATO <tomop@teamgedoh.net>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ja/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.4.2\n"
+"X-Generator: Weblate 4.6.1\n"
 
 #: arping.c:191
 #, c-format
@@ -160,8 +160,7 @@ msgstr "arping: デバイス %s は使用不能です。\n"
 #, c-format
 msgid ""
 "arping: Suitable device could not be determined. Please, use option -I.\n"
-msgstr ""
-"arping: 適切なデバイスを検出できませんでした。-I オプションを使用してください。\n"
+msgstr "arping: 適切なデバイスを検出できませんでした。-I オプションを使用してください。\n"
 
 #: arping.c:1193
 #, c-format
@@ -179,8 +178,7 @@ msgstr "警告: setsockopt(SO_DONTROUTE)"
 #: arping.c:1265
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
-"インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)。\n"
+msgstr "インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)。\n"
 
 #: arping.c:1274
 #, c-format
@@ -955,8 +953,7 @@ msgstr ", 時間 %ldミリ秒"
 #: ping_common.c:964
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
-"rtt 最小/平均/最大/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ldミリ秒"
+msgstr "rtt 最小/平均/最大/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ldミリ秒"
 
 #: ping_common.c:973
 #, c-format
@@ -1638,8 +1635,7 @@ msgstr ""
 #: traceroute6.c:809
 #, c-format
 msgid "traceroute: packet size must be %d <= s < %d.\n"
-msgstr ""
-"traceroute: パケットサイズは %d <= s < %d の範囲内でなければいけません。\n"
+msgstr "traceroute: パケットサイズは %d <= s < %d の範囲内でなければいけません。\n"
 
 #: traceroute6.c:819
 #, c-format
