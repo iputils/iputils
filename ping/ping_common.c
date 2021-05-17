@@ -902,12 +902,16 @@ int finish(struct ping_rts *rts)
 		long tmavg = rts->tsum / total;
 		long long tmvar;
 
-		if (rts->tsum < INT_MAX)
-			/* This slightly clumsy computation order is important to avoid
-			 * integer rounding errors for small ping times. */
-			tmvar = (rts->tsum2 - ((rts->tsum * rts->tsum) / total)) / total;
+		// Add check for more than one to calculate std. dev. Will be zero otherwise.
+		if (total <= 1)
+			tmvar = 0;
 		else
-			tmvar = (rts->tsum2 / total) - (tmavg * tmavg);
+			if (rts->tsum < INT_MAX)
+				/* This slightly clumsy computation order is important to avoid
+			 	* integer rounding errors for small ping times. */
+				tmvar = (rts->tsum2 - ((rts->tsum * rts->tsum) / total)) / (total - 1);
+			else
+				tmvar = (rts->tsum2 / (total - 1)) - (tmavg * tmavg)*(total / (total - 1);
 
 		tmdev = llsqrt(tmvar);
 
