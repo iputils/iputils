@@ -903,16 +903,16 @@ int finish(struct ping_rts *rts)
 		long long tmvar;
 
 		// Add check for more than one to calculate std. dev. Will be zero otherwise.
-		if (total <= 1)
+		if (total <= 1) {
 			tmvar = 0;
-		else
+		} else {
 			if (rts->tsum < INT_MAX)
 				/* This slightly clumsy computation order is important to avoid
 			 	* integer rounding errors for small ping times. */
 				tmvar = (rts->tsum2 - ((rts->tsum * rts->tsum) / total)) / (total - 1);
 			else
-				tmvar = (rts->tsum2 / (total - 1)) - (tmavg * tmavg)*(total / (total - 1);
-
+				tmvar = (rts->tsum2 / (total - 1)) - (tmavg * tmavg) * (total / (total - 1));
+		}
 		tmdev = llsqrt(tmvar);
 
 		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
