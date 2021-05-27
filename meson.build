@@ -371,7 +371,3 @@ output += 'sbindir: ' + sbindir + '\n'
 output += 'systemdunitdir: ' + systemdunitdir + '\n'
 
 message(output)
-
-############################################################
-# FIXME: write tests
-#test('ping to 127.0.0.1', p, args : ['-p 1', '127.0.0.1'])
