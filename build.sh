@@ -50,7 +50,7 @@ END OF BUILD
 EOF
 
 if [ $ret -ne 0 ]; then
-	log="$DIR/meson-logs/meson-log.txt"
+	log="$BUILD_DIR/meson-logs/meson-log.txt"
 	if [ -f "$log" ]; then
 		echo "=== START $log ==="
 		cat $log
