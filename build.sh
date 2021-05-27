@@ -4,6 +4,19 @@ CFLAGS="${CFLAGS:--Wformat -Werror=format-security -Werror=implicit-function-dec
 CC="${CC:-gcc}"
 BUILD_DIR="${BUILD_DIR:-builddir}"
 PREFIX="${PREFIX:-$HOME/iputils-install}"
+LOG_DIR="$(readlink -f $(dirname $0))/$BUILD_DIR/meson-logs"
+
+print_logs()
+{
+	local log
+
+	for log in $LOG_DIR/*.txt; do
+		[ -f "$log" ] || continue
+		echo "=== $log ==="
+		cat $log
+		echo
+	done
+}
 
 # ninja-build is not detected causes build failing => symlink to ninja
 # needed for CentOS 7 but maybe for others
@@ -42,20 +55,26 @@ meson $BUILD_DIR $BUILD_OPTS && \
 make -j$(getconf _NPROCESSORS_ONLN) && make install
 ret=$?
 
-cat << EOF
-============
-END OF BUILD
-============
-
-EOF
-
 if [ $ret -ne 0 ]; then
-	log="$BUILD_DIR/meson-logs/meson-log.txt"
-	if [ -f "$log" ]; then
-		echo "=== START $log ==="
-		cat $log
-		echo "=== END $log ==="
-	fi
+	print_logs
+	echo "BUILD FAILED"
+	exit $ret
 fi
 
+cat << EOF
+=======
+TESTING
+=======
+EOF
+
+cd $BUILD_DIR
+meson test
+ret=$?
+
+if [ $ret -ne 0 ]; then
+	print_logs
+	echo "TESTING FAILED"
+fi
+
+echo "BUILD AND TESTING PASSED"
 exit $ret
