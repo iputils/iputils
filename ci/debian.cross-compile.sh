@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2019-2020 Petr Vorel <pvorel@suse.cz>
+# Copyright (c) 2019-2021 Petr Vorel <pvorel@suse.cz>
 set -ex
 
 if [ -z "$ARCH" ]; then

@@ -1,6 +1,6 @@
 #!/bin/sh
-# Copyright (c) 2019 Petr Vorel <petr.vorel@gmail.com>
-set -e
+# Copyright (c) 2019-2021 Petr Vorel <petr.vorel@gmail.com>
+set -ex
 
 yum -y install \
 	clang \
