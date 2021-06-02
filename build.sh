@@ -59,8 +59,15 @@ build()
 install()
 {
 	echo "=== install ==="
-
 	make install
+}
+
+run_tests()
+{
+	echo "=== tests ==="
+	cd $BUILD_DIR
+	meson tests
+	cd -
 }
 
 print_logs()
@@ -98,5 +105,10 @@ fi
 
 if [ -z "$1" -o "$1" = "install" ]; then
 	install
+	print_logs $?
+fi
+
+if [ -z "$1" -o "$1" = "test" ]; then
+	run_tests
 	print_logs $?
 fi
