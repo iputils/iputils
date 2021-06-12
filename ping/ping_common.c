@@ -446,6 +446,28 @@ void sock_setbufs(struct ping_rts *rts, socket_st *sock, int alloc)
 	}
 }
 
+/* Set SO_MARK socket option. */
+
+void sock_setmark(struct ping_rts *rts, int sock_fd)
+{
+#ifdef SO_MARK
+	if (rts->opt_mark) {
+		int ret;
+		int errno_save;
+
+		enable_capability_admin();
+		ret = setsockopt(sock_fd, SOL_SOCKET, SO_MARK, &rts->mark, sizeof(rts->mark));
+		errno_save = errno;
+		disable_capability_admin();
+
+		if (ret == -1) {
+			/* Do not exit, old kernels do not support mark. */
+			error(0, errno_save, _("Warning: Failed to set mark: %d"), rts->mark);
+		}
+	}
+#endif
+}
+
 /* Protocol independent setup and parameter checks. */
 
 void setup(struct ping_rts *rts, socket_st *sock)
@@ -476,22 +498,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 			error(0, 0, _("Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"));
 	}
 #endif
-#ifdef SO_MARK
-	if (rts->opt_mark) {
-		int ret;
-		int errno_save;
-
-		enable_capability_admin();
-		ret = setsockopt(sock->fd, SOL_SOCKET, SO_MARK, &rts->mark, sizeof(rts->mark));
-		errno_save = errno;
-		disable_capability_admin();
-
-		if (ret == -1) {
-			/* Do not exit, old kernels do not support mark. */
-			error(0, errno_save, _("Warning: Failed to set mark: %d"), rts->mark);
-		}
-	}
-#endif
+	sock_setmark(rts, sock->fd);
 
 	/* Set some SNDTIMEO to prevent blocking forever
 	 * on sends, when device is too slow or stalls. Just put limit
