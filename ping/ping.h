@@ -380,6 +380,7 @@ char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen);
 int is_ours(struct ping_rts *rts, socket_st *sock, uint16_t id);
 extern int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock);
 extern void sock_setbufs(struct ping_rts *rts, socket_st *, int alloc);
+extern void sock_setmark(unsigned int mark, int fd);
 extern void setup(struct ping_rts *rts, socket_st *);
 extern int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st*,
 		     uint8_t *packet, int packlen);
