@@ -182,6 +182,8 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		    !IN6_IS_ADDR_MC_LINKLOCAL(&rts->firsthop.sin6_addr))
 			rts->firsthop.sin6_family = AF_INET6;
 
+		sock_setmark(rts, probe_fd);
+
 		rts->firsthop.sin6_port = htons(1025);
 		if (connect(probe_fd, (struct sockaddr *)&rts->firsthop, sizeof(rts->firsthop)) == -1) {
 			if ((errno == EHOSTUNREACH || errno == ENETUNREACH) && ai->ai_next) {
