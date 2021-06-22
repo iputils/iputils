@@ -90,6 +90,10 @@ xml:id="man.ping">
         <option>-T
         <replaceable>timestamp option</replaceable></option>
       </arg>
+      <arg choice="opt" rep="norepeat">
+	<option>-e
+	<replaceable>interface</replaceable></option>
+      </arg>
       <arg choice="opt" rep="norepeat">hop...</arg>
       <arg choice="req" rep="norepeat">destination</arg>
     </cmdsynopsis>
@@ -211,6 +215,26 @@ xml:id="man.ping">
         <listitem>
           <para>Print timestamp (unix time + microseconds as in
           gettimeofday) before each line.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-e</option>
+	  <emphasis remap="I">interface</emphasis>
+        </term>
+        <listitem>
+	<para>Send ICMP Extended Echo (PROBE) request (RFC 8335),
+	instead of Echo Request. The PROBE request queries the node for
+	information about
+	<emphasis remap="I">interface</emphasis>
+	and prints the status of the interface, as well as if
+	<emphasis remap="I">interface</emphasis>
+	supports IPv4 and IPv6 addresses.</para>
+	<para><emphasis remap="I">interface</emphasis> can be a valid
+	interface name, interface index (ifindex), IPv4, or IPv6 address.
+	</para>
+	<para>This functionality requires Linux 5.13 or newer
+	</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -749,6 +773,11 @@ xml:id="man.ping">
     to include a timestamp which it uses in the computation of
     round trip times. If the data space is shorter, no round trip
     times are given.</para>
+    <para>If the <option>-e</option> option is selected, the ICMP
+    EXTENDED_ECHO_REQUEST packet mirrors the ICMP ECHO_REQUEST packet,
+    with an additional 4 bytes of ICMP EXTENTION header and up to
+    20 bytes of interface identifying information.
+    </para>
   </refsection>
 
   <refsection xml:id="duplicate_and_damaged_packets">

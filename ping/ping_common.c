@@ -53,6 +53,7 @@ void usage(void)
 		"  -c <count>         stop after <count> replies\n"
 		"  -D                 print timestamps\n"
 		"  -d                 use SO_DEBUG socket option\n"
+		"  -e <interface>     send extended echo request querying <interface>\n"
 		"  -f                 flood ping\n"
 		"  -h                 print help and exit\n"
 		"  -I <interface>     either interface name or address\n"
@@ -291,6 +292,48 @@ void print_timestamp(struct ping_rts *rts)
 		printf("[%lu.%06lu] ",
 		       (unsigned long)tv.tv_sec, (unsigned long)tv.tv_usec);
 	}
+}
+
+/* Helper functions for constructing RFC 8335 PROBE messages */
+/* Verifies name is a valid linux interface name
+ * Copied from iproute2's if name check
+ */
+int check_ifname(const char *name)
+{
+	/* These checks mimic kernel checks in dev_valid_name */
+	if (*name == '\0')
+		return -1;
+	if (strlen(name) >= IFNAMSIZ)
+		return -1;
+
+	while (*name) {
+		if (*name == '/' || isspace(*name))
+			return -1;
+		++name;
+	}
+	return 0;
+}
+
+/* Determine c_type of interface */
+int get_c_type(const char *interface) {
+	struct in_addr inaddr;
+	struct in6_addr in6addr;
+
+	if(inet_pton(AF_INET, interface, &inaddr) == 1 || inet_pton(AF_INET6, interface, &in6addr) == 1)
+		return ICMP_EXT_ECHO_CTYPE_ADDR;
+	if(isalpha(interface[0])) {
+		if (check_ifname(interface) == 0)
+			return ICMP_EXT_ECHO_CTYPE_NAME;
+		else {
+			error(2, 0, "invalid interface name");
+		}
+	}
+	while (*interface) {
+		if (isalpha(*interface) || isspace(*interface))
+			return -1;
+		++interface;
+	}
+	return ICMP_EXT_ECHO_CTYPE_INDEX;
 }
 
 /*
@@ -723,7 +766,10 @@ int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 
 	if (rts->timing && cc >= (int)(8 + sizeof(struct timeval))) {
 		struct timeval tmp_tv;
-		memcpy(&tmp_tv, ptr, sizeof(tmp_tv));
+		if (!rts->probe)
+			memcpy(&tmp_tv, ptr, sizeof(tmp_tv));
+		else
+			memcpy(&tmp_tv, icmph + rts->timestamp_offset, sizeof(tmp_tv)); 
 
 restamp:
 		tvsub(tv, &tmp_tv);
