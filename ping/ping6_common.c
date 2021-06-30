@@ -224,6 +224,8 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	if (rts->device) {
 		struct cmsghdr *cmsg;
 		struct in6_pktinfo *ipi;
+		int rc;
+		int errno_save;
 
 		cmsg = (struct cmsghdr *)(rts->cmsgbuf + rts->cmsglen);
 		rts->cmsglen += CMSG_SPACE(sizeof(*ipi));
@@ -234,6 +236,15 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		ipi = (struct in6_pktinfo *)CMSG_DATA(cmsg);
 		memset(ipi, 0, sizeof(*ipi));
 		ipi->ipi6_ifindex = if_name2index(rts->device);
+
+		enable_capability_raw();
+		rc = setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE,
+				rts->device, strlen(rts->device) + 1);
+		errno_save = errno;
+		disable_capability_raw();
+
+		if (rc == -1)
+			error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
 	}
 
 	if (IN6_IS_ADDR_MULTICAST(&rts->whereto6.sin6_addr)) {
