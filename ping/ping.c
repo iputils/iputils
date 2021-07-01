@@ -420,7 +420,7 @@ main(int argc, char **argv)
 			rts.opt_noloop = 1;
 			break;
 		case 'm':
-			rts.mark = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
+			rts.mark = strtol_or_err(optarg, _("invalid argument"), 0, UINT_MAX);
 			rts.opt_mark = 1;
 			break;
 		case 'M':
