@@ -140,7 +140,7 @@ struct ping_ni {
 
 /*ping runtime state */
 struct ping_rts {
-	int mark;
+	unsigned int mark;
 	unsigned char *outpack;
 
 	struct rcvd_table rcvd_tbl;
