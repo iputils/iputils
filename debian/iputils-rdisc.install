@@ -1,0 +1,3 @@
+usr/sbin/rdisc
+usr/share/man/man8/rdisc.8
+lib/systemd/system/rdisc.service

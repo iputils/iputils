@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e
+
+PROGRAM=$(dpkg-divert --truename /usr/bin/clockdiff)
+
+if [ "$1" = configure ]; then
+	if command -v setcap > /dev/null; then
+		if setcap cap_net_raw+ep $PROGRAM; then
+            chmod u-s $PROGRAM
+		else
+			echo "Setcap failed on $PROGRAM, falling back to setuid" >&2
+			chmod u+s $PROGRAM
+		fi
+	else
+		echo "Setcap is not installed, falling back to setuid" >&2
+		chmod u+s $PROGRAM
+	fi
+fi
+
+#DEBHELPER#
+
+exit 0
+
+# Local variables:
+# mode: shell-script
+# tab-width: 4
+# indent-tabs-mode: nil
+# end:

@@ -1,0 +1,4 @@
+bin/ping bin/ping4
+bin/ping bin/ping6
+usr/share/man/man8/ping.8.gz /usr/share/man/man8/ping4.8.gz
+usr/share/man/man8/ping.8.gz /usr/share/man/man8/ping6.8.gz

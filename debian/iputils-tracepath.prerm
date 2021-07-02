@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = remove ] || [ "$1" = deconfigure ]; then
+	update-alternatives --remove traceroute6 /usr/bin/traceroute6.iputils
+fi
+
+#DEBHELPER#
+
+exit 0

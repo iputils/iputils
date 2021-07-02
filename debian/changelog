@@ -1,0 +1,493 @@
+iputils (20210701-1) unstable; urgency=medium
+
+  * Fixed rdisc capabilities
+  * Fixed rdisc systemd unit file parameters
+  * Added rdisc DEB package build 
+
+ -- IBeholderI <ras_atari@mail.ru>  Fri, 02 Jul 2021 10:04:44 +0000
+
+iputils (3:20210202-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Noah Meyerhans <noahm@debian.org>  Tue, 02 Feb 2021 09:49:16 -0800
+
+iputils (3:20200821-2) unstable; urgency=medium
+
+  * Add pkg-config to build-depends to actually enable IDN support
+    (Closes: #932700)
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 23 Aug 2020 12:08:50 -0700
+
+iputils (3:20200821-1) unstable; urgency=medium
+
+  * New upstream version (Closes: #498429, #935946)
+  * Fix IDN build dependency. (Closes: #959868)
+  * Update standards compliance to 4.5.0 (no changes needed)
+  * Switch to debhelper compat level 13
+  * Install upstream's CHANGES file in binary packages
+  * Let dh_auto_configure pass a crossfile to meson (Closes: #962080)
+  * Package metadata updates:
+    - Add repository and bug tracker details to debian/upstream/metadata
+    - Add Homepage field to debian/control
+
+ -- Noah Meyerhans <noahm@debian.org>  Sat, 22 Aug 2020 14:13:21 -0700
+
+iputils (3:20190709-3) unstable; urgency=medium
+
+  * Incorporate upstream fix for getaddrinfo handling. Thanks to Benjamin
+  * Poirier <benjamin.poirier@gmail.com>
+    (Closes: #947921)
+
+ -- Noah Meyerhans <noahm@debian.org>  Thu, 30 Jan 2020 15:11:23 -0800
+
+iputils (3:20190709-2) unstable; urgency=medium
+
+  * Incorporate upstream fix for arping exit code regression
+    (Closes: #936080)
+  * Follow local file diversions when manipulating ACLs and file modes on
+    installed binaries.
+
+ -- Noah Meyerhans <noahm@debian.org>  Sat, 05 Oct 2019 07:34:12 -0700
+
+iputils (3:20190709-1) unstable; urgency=medium
+
+  * New upstream release
+  * Update to standards version 4.4.0 (no changes needed)
+
+ -- Noah Meyerhans <noahm@debian.org>  Tue, 09 Jul 2019 21:06:58 -0700
+
+iputils (3:20190515-2) unstable; urgency=medium
+
+  * Import upstream fix for FTBFS issue when setcap is not
+    installed. (Closes: #931491)
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 07 Jul 2019 11:21:17 -0700
+
+iputils (3:20190515-1) sid; urgency=medium
+
+  * New upstream snapshot (Closes: #907327, #869202, #869202)
+  * Refresh and modernize debian/rules using dh (Closes: #648033, #928334)
+  * Set Multi-Arch: foreign on all binary packages (Closes: #878100)
+  * Raise libcap2-bin from Recommends to Depends (Closes: #780721)
+  * Update to standards version 4.3.0
+
+ -- Noah Meyerhans <noahm@debian.org>  Fri, 05 Jul 2019 15:49:21 -0700
+
+iputils (3:20180629-2) unstable; urgency=medium
+
+  * Upstream no longer maintains the RELNOTES or README files in a useful
+    way, so we won't install them. (Closes: #904912)
+
+ -- Noah Meyerhans <noahm@debian.org>  Fri, 03 Aug 2018 09:53:09 -0700
+
+iputils (3:20180629-1) unstable; urgency=medium
+
+  * New upstream snapshot. (Closes: #858272, #898978, #477569, #883982)
+  * Update build deps to reflect changes to documentation generation
+    process.
+  * Update Vcs links in debian/control to reflect the salsa migration.
+  * Update standards version to 4.1.4
+  * Change Priority: extra to Priority: optional per policy 4.0.1
+
+ -- Noah Meyerhans <noahm@debian.org>  Fri, 29 Jun 2018 22:03:19 -0700
+
+iputils (3:20161105-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #819204, #825754)
+  * Merge IPv6 support into tracepath, drop tracepath6 binary.
+  * Set debhelper compat level to 9
+  * Bump standards version to 3.9.8 (no changes needed).
+  * Switch to opensp for docbook processing (Closes: #837064)
+  * Fix issue with UDP destination port management in
+    traceroute6. (Closes: #843264)
+  * Explicitly build-depend on libidn11-dev
+
+ -- Noah Meyerhans <noahm@debian.org>  Wed, 09 Nov 2016 22:23:32 -0800
+
+iputils (3:20150815-2) unstable; urgency=medium
+
+  * Import upstream's fix to support systems with only one of IPv4 or
+    IPv6 enabled. (Closes: 816227)
+
+ -- Noah Meyerhans <noahm@debian.org>  Tue, 01 Mar 2016 06:47:28 -0800
+
+iputils (3:20150815-1) unstable; urgency=medium
+
+  * New upstream release (Closes: 146162, 219140, 815197, 732632)
+  * install ping6 and ping4 as symlinks to /bin/ping
+  * Bump standards version to 3.9.7 (no changes)
+  * Silence output during installation if setcap is successful
+    (Closes: 737577)
+  * Encode the debian/changelog date rather than the build date in
+    generated documentation in order to support reproducible builds.
+    (Closes: 783219)
+
+ -- Noah Meyerhans <noahm@debian.org>  Thu, 25 Feb 2016 09:55:01 -0800
+
+iputils (3:20121221-6) UNRELEASED; urgency=medium
+
+  * Remove setuid bits on binaries if setcap succeeds during
+    reconfigure. (Closes: 778500)
+
+ -- Noah Meyerhans <noahm@debian.org>  Wed, 18 Mar 2015 20:29:32 -0700
+
+iputils (3:20121221-5) unstable; urgency=low
+
+  * Improve management of capabilities.
+  * Set capabilities on all binaries.
+  * Invalidate ping's DNS cache when a response comes from a new host
+    (e.g.  when processing an error message) (Closes: 732186, 736470)
+  * Bump standards version to 3.9.5 (no changes)
+
+ -- Noah Meyerhans <noahm@debian.org>  Sat, 01 Feb 2014 13:15:39 -0800
+
+iputils (3:20121221-4) unstable; urgency=low
+
+  * Cache DNS lookup results. (Closes: 109709)
+  * Move the dependency on libcap2-bin to a Recommends instead, to avoid
+    depending on a lower priority package.
+  * Fix a typo in flood ping output. (Closes: 698287)
+  * arping: When using -c, exit immediately if the specified number of
+    queries are answered. (Closes: 686944)
+  * Fix return hops counting in tracepath and tracepath6. (Closes: 629075)
+
+ -- Noah Meyerhans <noahm@debian.org>  Thu, 12 Dec 2013 23:54:51 -0800
+
+iputils (3:20121221-3) unstable; urgency=low
+
+  * Add build-depends on libgnutls-openssl-dev (Closes: 731561)
+  * Fix arping and ping postinst scripts to better handle cases
+    where capabilities aren't supported. (Closes: 731764)
+  * Update debian/copyright to reflect the removal of the advertising
+    clause from the UC Berkeley copyright statements. (Closes: 725470)
+
+ -- Noah Meyerhans <noahm@debian.org>  Mon, 09 Dec 2013 08:14:40 -0800
+
+iputils (3:20121221-2) unstable; urgency=low
+
+  * Silence erroneous "kernel is not very fresh" warnings. (Closes: 709052)
+  * Cherry pick revision 608419a7 from upstream for traceroute
+    max-hops options
+  * Cherry pick revision cec404067 from upstream for tracepath, tracepath6
+    minor bugfixes
+  * Enable the CAP_NET_RAW capability and strip the setuid bit on ping and
+    ping6 binaries if possible.
+  * Bump standards version to 3.9.4.0 (No changes needed.)
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 08 Dec 2013 17:47:52 -0800
+
+iputils (3:20121221-1) unstable; urgency=low
+
+  * New upstream version
+  * Replace libsysfs-dev with libcap-dev in build-deps (Closes: 627650, 609853)
+  * Replace libssl-dev with gnutls-dev in build-deps
+  * Remove obsolete debian/patches/fix-dead-host-ping-stats.diff
+  * Remove obsolete debian/patches/add-icmp-return-codes.diff
+  * Remove obsolete patch cleanup-docbook-formatting.diff
+  * Remove obsolete patch fix_rfc4620_nodeinfo_queries
+
+ -- Noah Meyerhans <noahm@debian.org>  Tue, 14 May 2013 23:59:05 -0700
+
+iputils (3:20101006-3) unstable; urgency=low
+
+  * Fix CFLAGS, which never actually propagated from debian/rules
+    to the compiler in the previous release (Closes: 656023)
+
+ -- Noah Meyerhans <noahm@debian.org>  Wed, 29 Aug 2012 10:17:28 -0700
+
+iputils (3:20101006-2) unstable; urgency=low
+
+  * Fix RFC 4620 node info queries in ping6 (Closes: 683324)
+  * Fix regression in ping* causing audible notifications to always
+    be enabled when flood pinging (Closes: 601147)
+  * Flush stdout when processing truncated ping* replies
+    (Closes: 628893)
+  * Use dpkg-buildflags to set build flags.
+  * Add build-arch and build-indep rules in debian/rules
+  * Bump standards compliance to 3.9.3.1
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 19 Aug 2012 21:31:38 -0700
+
+iputils (3:20101006-1) unstable; urgency=low
+
+  * New upstream release.
+  * Remove patches that are now applied upstream.
+  * Update Vcs-* fields in debian/control to point to git repos.
+  * Update debian/copyright to include the BSD license text.
+  * Override lintian's possible-gpl-code-linked-with-openssl error on
+    iputils-ping.  ping6 links against libcrypto and is BSD licensed.
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 20 Feb 2011 21:28:54 -0800
+
+iputils (3:20100418-3) unstable; urgency=low
+
+  * Apply upstream's fix to a coding error that prevented the broadcast
+    address from being set correctly in arping (Closes: 585591)
+
+ -- Noah Meyerhans <noahm@debian.org>  Fri, 23 Jul 2010 21:44:24 -0700
+
+iputils (3:20100418-2) unstable; urgency=high
+
+  * Fix CVE-2010-2529 - resource consumption triggered by specially crafted
+    ICMP echo reply
+
+ -- Noah Meyerhans <noahm@debian.org>  Fri, 23 Jul 2010 21:30:40 -0700
+
+iputils (3:20100418-1) unstable; urgency=low
+
+  * New upstream release.
+  * Provide an iputils-clockdiff package (Closes: #199500)
+
+ -- Noah Meyerhans <noahm@debian.org>  Fri, 07 May 2010 23:58:53 -0700
+
+iputils (3:20100214-1) unstable; urgency=low
+
+  * New upstream release.
+  * Convert to source format 3.0 (quilt)
+  * Update standards version to 3.8.4.0.
+  * Switch to debhelper compatibility version 7
+  * Remove netkit-ping from debian/control; we don't built it anymore
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 04 Apr 2010 00:26:37 -0700
+
+iputils (3:20071127-1) unstable; urgency=low
+
+  * New upstream release.
+  * Add Vcs-Browser and Vcs-Svn to debian/control
+  * Update to standards version 3.7.3.0
+  * Stop ignoring the return value of "make clean" in debian/rules
+  * Switch from debrecated Source-Version to binary:Version in
+    netkit-ping dependencies.
+  * Move debconf compat setting from debian/rules to debian/compat
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 09 Dec 2007 22:47:52 -0500
+
+iputils (3:20070202-3) unstable; urgency=low
+
+  * Switch to quilt for managing patches.
+  * Back out custom warning for kernels missing CONFIG_FILTER, since
+    nobody is going to be missing that these days.
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 28 Oct 2007 17:54:30 -0400
+
+iputils (3:20070202-2) unstable; urgency=low
+
+  * Removed Build-Depends on linux-kernel-headers (Closes: #433279)
+
+ -- Noah Meyerhans <noahm@debian.org>  Mon, 16 Jul 2007 09:58:56 -0400
+
+iputils (3:20070202-1) unstable; urgency=low
+
+  * New upstream version (Closes: Bug#285420, Bug#391618, Bug#404199)
+  * Fix documentation for tracepath (Closes: Bug#185156)
+  * Use alternatives to manage traceroute6 so we can be installed
+    alongside ndisc6. Thanks to Rémi Denis-Courmont for the
+    patch. (Closes: Bug#380677)
+  * Bump standards version to 3.7.2.2 (no changes needed)
+
+ -- Noah Meyerhans <noahm@debian.org>  Thu, 12 Apr 2007 18:45:01 -0400
+
+iputils (3:20020927-6) unstable; urgency=medium
+
+  * Fix an error in the previous version that resulted in the offsets in
+    cmsgbuf still getting set wrong.  (basically I messed up my order of
+    operations and sent pointers flying off into who knows where.  Ooops.)
+  * Make sure my .svn directories don't make it into the .diff.gz.
+
+ -- Noah Meyerhans <noahm@debian.org>  Tue, 30 Jan 2007 18:07:02 -0500
+
+iputils (3:20020927-5) unstable; urgency=medium
+
+  * fix typo in debian/control entry for netkit-ping
+  * Fix error in pr_type where the index into the ttab2 array was off by
+    128.  (Closes: Bug#293985)
+  * Fix a bug in ping6.c where the cmsghdr struct associated with a device
+    provided via the -I command line flag would clobber any existing
+    cmsghdrs in cmsgbuf, which would exist of source routing information
+    was provided.
+
+ -- Noah Meyerhans <noahm@debian.org>  Sat, 27 Jan 2007 11:45:34 -0500
+
+iputils (3:20020927-4) unstable; urgency=medium
+
+  * Acknowledge NMU
+  * Apply patch from Loïc Minier <lool@dooz.org> to fix arping behavior
+    when -w and -c command line flags are given and the target host
+    does not reply.  (Closes: Bug#233125)
+  * Provide a netkit-ping package so there's a smooth upgrade path for
+    people who had the old netkit ping implementation installed.
+    (Closes: Bug#384012)
+  * Apply patch from Rémi Denis-Courmont <rdenis@simphalempin.com> to
+    fix incompatibilities with 2.4 and older 2.6 kernels in ping6 and
+    tracepath6.  (Closes: Bug#402121, Bug#397935)
+
+ -- Noah Meyerhans <noahm@debian.org>  Tue, 19 Dec 2006 17:05:27 -0500
+
+iputils (3:20020927-3.1) unstable; urgency=low
+
+  * NMU
+  * Use IPV6_RECVHOPLIMIT instead of IPV6_HOPLIMIT in ping6 to build
+    with current kernel headers. Closes: #391601
+  * Explicitly build-depend on the current version of linux-kernel-headers
+    since older ones don't have IPV6_RECVHOPLIMIT.
+
+ -- Joey Hess <joeyh@debian.org>  Sat, 14 Oct 2006 23:48:44 -0400
+
+iputils (3:20020927-3) unstable; urgency=low
+
+  * only requst AF_INET address in ping and tracepath, since these
+    tools only deal with IPv4 addresses.  (Closes: Bug#305062)
+  * SO_TIMESTAMP is no longer broken on SPARC so its use is no longer
+    disabled.  (Closes: Bug#330909)
+  * Report all valid ICMP response types in ping (Closes: Bug#186745)
+  * Don't print out a bogus and broken statistics line upon exit
+    if using -A and pinging an unresponsive host.  (Closes: Bug#180903)
+  * Provide a somewhat more descriptive warning if CONFIG_FILTER is
+    not supported in the kernel.  This shouldn't matter anymore, since
+    it's always enabled on modern kernels.  (Closes: Bug#139151)
+  * Use debhelper compat level 4.
+  * Move binaries to /usr/bin (Closes: Bug#141799)
+
+ -- Noah Meyerhans <noahm@debian.org>  Sat, 22 Oct 2005 10:54:50 -0400
+
+iputils (3:20020927-2) unstable; urgency=low
+
+  * Build system cleanup.  Stop including anything from /usr/src/linux.
+    We still define our own versions of things that should be included
+    from /usr/src/sys, and this needs to be fixed, but I will wait until
+    post sarge to do so.  (Closes: Bug#223164)
+  * Install symlink for tracepath6 man page.
+
+ -- Noah Meyerhans <noahm@debian.org>  Mon, 22 Dec 2003 15:26:54 -0500
+
+iputils (3:20020927-1) unstable; urgency=medium
+
+  * New upstream version.  (Closes: Bug#151980)
+  * Changed iputils-ping to Priority: important
+  * Changed iputils-tracepath to Priority: optional
+  * Added RELNOTES to /usr/share/doc/iputils-* as the upstream changelog.
+  * Bumped standards version to 3.5.7.0
+  * Changed the sparc kludge (see prev. version's changes) to avoid
+    using the SO_TIMESTAMP sockopt, since that seems to be where the
+    problem is.  -U is no longer forced.
+  * Fixed '==' typo on line 444 of traceroute6.c.  The patch has been
+    sent upstream and will be in future releases.
+
+ -- Noah Meyerhans <noahm@debian.org>  Wed,  2 Oct 2002 23:49:21 -0400
+
+iputils (3:20020124-3) unstable; urgency=medium
+
+  * Added kludge to force -U on ping and ping6 on SPARC, since neither
+    program will report correct times at all otherwise.  This will be fixed
+    correctly at some point in the future, but possibly not before
+    woody's release.  (Closes: Bug#122379)
+  * Fixed a printf error in tracepath6.c that caused some slightly
+    ugly (non zero-padded) output. (Closes: Bug#141300)
+  * Fixed a typo in tracepath.8 (Closes: Bug#135274)
+  * Removed reference to clockdiff(8) from arping.8 since clockdiff
+    is not packaged.
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun, 21 Apr 2002 02:07:55 -0400
+
+iputils (3:20020124-2) unstable; urgency=low
+
+  * Added newlines to network error indicators in ping6
+    (Closes: Bug#140254, Bug#119651)
+
+ -- Noah Meyerhans <noahm@debian.org>  Wed, 17 Apr 2002 00:32:03 -0400
+
+iputils (3:20020124-1) unstable; urgency=low
+
+  * New upstream release. (Closes: Bug#119651, Bug#120166)
+  * Improved the build process.  Uses new debhelper scripts.
+  * Added new build deps for manpage auto-generation from SGML source.
+
+ -- Noah Meyerhans <noahm@debian.org>  Tue, 29 Jan 2002 16:32:58 -0500
+
+iputils (3:0ss010824-1) unstable; urgency=low
+
+  * New upstream release (Closes: Bug#113306)
+
+ -- Noah Meyerhans <noahm@gnat.lcs.mit.edu>  Wed, 26 Sep 2001 17:09:51 -0400
+
+iputils (20001110-7) unstable; urgency=low
+
+  * Fixed the Conflicts line for iputils-arping.  (Closes: Bug#100287)
+  * Removed an obsolete call to dh_testversion in debian/rules
+
+ -- Noah Meyerhans <noahm@debian.org>  Wed, 13 Jun 2001 22:11:30 -0400
+
+iputils (20001110-6) unstable; urgency=low
+
+  * Split arping out into its own separate package (iputils-arping)
+  * Made iputils-arping conflict with arping, another package which
+    provided the arping binary (Closes: Bug#99295)
+  * Bumped the package standards version up to 3.5.4.0
+
+ -- Noah Meyerhans <noahm@debian.org>  Sun,  3 Jun 2001 14:21:35 -0400
+
+iputils (20001110-5) unstable; urgency=low
+
+  * Documented all previously undocumented programs.
+    (Closes: Bug#43812)
+
+ -- Noah Meyerhans <noahm@debian.org>  Mon, 23 Apr 2001 16:06:58 -0400
+
+iputils (20001110-4) unstable; urgency=low
+
+  * New maintainer (Closes: Bug#84024)
+  * Fixed a typo in the control file (2 Conflicts line, added in -3).
+    (Closes: Bug#85115)
+  * Created man pages for ping and ping6 based on netkit ping man pages.
+    (Closes: Bug#74375, Bug#46876)
+
+ -- Noah Meyerhans <frodo@morgul.net>  Tue,  6 Feb 2001 16:44:22 -0500
+
+iputils (20001110-3) unstable; urgency=low
+
+  * debian/rules: Removed call to dh_suidregister (closes: #84130, #84709).
+  * debian/control: Added Conflict with suidmanager << 0.50 as mentioned
+    in the dh_suidregister manpage.
+
+ -- Torsten Landschoff <torsten@debian.org>  Sun,  4 Feb 2001 00:33:52 +0100
+
+iputils (20001110-2) unstable; urgency=low
+
+  * ping6.c: Add #defines for those stupid clear_bit, test_bit, set_bit
+    functions.
+
+ -- Anthony Towns <aj@azure.humbug.org.au>  Mon, 29 Jan 2001 23:39:31 +1000
+
+iputils (20001110-1) unstable; urgency=low
+
+  * New upstream version. (Closes: Bug#80250, Bug#80251)
+  * Removed most of the Debian patches: too much has changed upstream to
+    reasonably forward port them. Maxwait argument thus
+    disappeared. (Closes: Bug#65597)
+  * Shouldn't have any security problems, theoretically. (Closes: Bug#69472)
+  * Descriptions have been updated a while ago. (Closes: Bug#68973)
+
+  * Orphaned, maintainer set to debian-qa.
+
+ -- Anthony Towns <ajt@debian.org>  Tue, 26 Dec 2000 15:03:20 +1000
+
+iputils (990107-3) unstable; urgency=low
+
+  * Got sick of the tiresome traceroute flame wars, and moved the
+    tracepath, tracepath6 and traceroute6 binaries to /usr/sbin.
+
+ -- Anthony Towns <ajt@debian.org>  Wed, 16 Aug 2000 20:25:21 +1000
+
+iputils (990107-2) unstable; urgency=low
+
+  * Drop priority to extra (it conflicts: with a standard package so
+    shouldn't be optional anway), and add a note to the description.
+
+ -- Anthony Towns <ajt@debian.org>  Sat, 12 Aug 2000 23:49:58 +1000
+
+iputils (990107-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Anthony Towns <ajt@debian.org>  Sat,  5 Aug 2000 19:51:36 +1000

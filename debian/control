@@ -1,0 +1,71 @@
+Source: iputils
+Section: net
+Priority: optional
+Maintainer: Noah Meyerhans <noahm@debian.org>
+Standards-Version: 4.5.1
+Build-Depends: debhelper-compat (= 13), xsltproc, docbook-xsl,
+ docbook-xsl-ns, libcap-dev,
+ libgcrypt-dev, libidn2-dev, bash (>= 3), meson, pkg-config
+Vcs-Git: https://salsa.debian.org/debian/iputils.git
+Vcs-Browser: https://salsa.debian.org/debian/iputils
+Homepage: https://github.com/iputils/iputils/
+
+Package: iputils-ping
+Architecture: any
+Provides: ping
+Priority: important
+Depends: libcap2-bin, ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: foreign
+Description: Tools to test the reachability of network hosts
+ The ping command sends ICMP ECHO_REQUEST packets to a host in order to
+ test if the host is reachable via the network.
+ .
+ This package includes a ping6 utility which supports IPv6 network
+ connections.
+
+Package: iputils-tracepath
+Architecture: any
+Suggests: traceroute
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: foreign
+Description: Tools to trace the network path to a remote host
+ The tracepath utility is similar to the traceroute utility, but also
+ attempts to discover the MTU of the path. Supports IPv4 and IPv6.
+
+Package: iputils-arping
+Architecture: any
+Depends: libcap2-bin, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: arping
+Multi-Arch: foreign
+Description: Tool to send ICMP echo requests to an ARP address
+ The arping command acts like the standard ping command except it pings
+ a machine by its ARP address instead of its IP address.  It is typically
+ used to locate a machine if its hardware address is known but its IP
+ address is unknown
+
+Package: iputils-clockdiff
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: foreign
+Description: Measure the time difference between networked computers
+ Clockdiff computes the difference between the time of the machine on
+ which it is called and the time of other network-accessible machines.
+ The time differences measured by clockdiff are obtained using a
+ sequence of ICMP TSTAMP messages which are returned to the sender by
+ the IP module in the remote machine.
+
+Package: iputils-rdisc
+Architecture: any
+Depends: libcap2-bin, ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: foreign
+Description: Network router discovery protocol
+ rdisc  implements  client  side of the ICMP router discover protocol.
+ rdisc is invoked at boot time to populate the network routing tables
+ with default routes. rdisc listens on the ALL_HOSTS (224.0.0.1) multicast
+ address (or receive_address provided it is given) for ROUTER_ADVERTISE
+ messages from routers. The received messages are handled by first
+ ignoring those listed router addresses with which the host does not share
+ a network. Among the remaining addresses the ones with the highest
+ preference are selected as default routers and a default route is entered
+ in the kernel routing table for each one of them.
+

@@ -1,0 +1,4 @@
+usr/bin/tracepath
+usr/bin/traceroute6
+usr/share/man/man8/tracepath.8
+usr/share/man/man8/traceroute6.8

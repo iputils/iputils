@@ -1,0 +1,11 @@
+iputils-arping-dbgsym_20210701-1_amd64.ddeb debug optional automatic=yes
+iputils-arping_20210701-1_amd64.deb net optional
+iputils-clockdiff-dbgsym_20210701-1_amd64.ddeb debug optional automatic=yes
+iputils-clockdiff_20210701-1_amd64.deb net optional
+iputils-ping-dbgsym_20210701-1_amd64.ddeb debug optional automatic=yes
+iputils-ping_20210701-1_amd64.deb net important
+iputils-rdisc-dbgsym_20210701-1_amd64.ddeb debug optional automatic=yes
+iputils-rdisc_20210701-1_amd64.deb net optional
+iputils-tracepath-dbgsym_20210701-1_amd64.ddeb debug optional automatic=yes
+iputils-tracepath_20210701-1_amd64.deb net optional
+iputils_20210701-1_amd64.buildinfo net optional
