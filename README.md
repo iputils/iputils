@@ -1,3 +1,7 @@
+Fork of https://github.com/iputils/iputils with rdisc fixes and all needed for DEB packages build
+
+Original README:
+
 [![Build Status](https://travis-ci.org/iputils/iputils.svg?branch=master)](https://travis-ci.org/iputils/iputils)
 [![Coverity Status](https://scan.coverity.com/projects/1944/badge.svg?flat=1)](https://scan.coverity.com/projects/1944)
 
