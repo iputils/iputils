@@ -286,7 +286,7 @@ if build_rdisc == true
 		install: true)
 	if (setcap_rdisc)
 		meson.add_install_script('build-aux/setcap-setuid.sh',
-			bindir,
+			sbindir,
 			'rdisc',
 			perm_type,
 			setcap_path
