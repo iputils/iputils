@@ -32,10 +32,17 @@ what was said in previous release message.  Draft release message - remember
 if you have nothing to say then you don't have good enough reason to publish
 release.
 
+Update iputils.pot:
+
+    meson . builddir && ninja iputils-pot -C builddir
+
+and push this change and ask translators to update translations.
+
+
 Update CHANGES file. It should list the most notable changes and important or
 security related fixes. Create pull request with these changes to give people
 chance to review and test upcoming release. Notify distro maintainers, ask
-translators to update translations.
+community for testing.
 
 Create release commit and tag.
 
