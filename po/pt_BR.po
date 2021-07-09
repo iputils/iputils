@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-09 19:20+0000\n"
-"PO-Revision-Date: 2021-01-29 19:40+0000\n"
+"PO-Revision-Date: 2021-07-13 21:28+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.4.2\n"
+"X-Generator: Weblate 4.7.1\n"
 
 #: ping/ping.c:1081
 #, c-format
@@ -1204,7 +1204,7 @@ msgstr ""
 #: ping/ping.c:391
 #, c-format
 msgid "cannot copy: %s"
-msgstr ""
+msgstr "nãofoipossível copiar: %s"
 
 #: ping/ping.c:908
 msgid "cannot disable multicast loopback"
@@ -1319,14 +1319,14 @@ msgstr ""
 #: ping/ping.c:431
 #, c-format
 msgid "invalid -M argument: %s"
-msgstr ""
+msgstr "argumento -M inválido: %s"
 
 #: traceroute6.c:688 traceroute6.c:694 traceroute6.c:697 ping/ping.c:366
 #: ping/ping.c:412 ping/ping.c:420 ping/ping.c:462 ping/ping.c:465
 #: ping/ping.c:468 ping/ping.c:481 tracepath.c:471 tracepath.c:474
 #: tracepath.c:477 tracepath.c:498 arping.c:872 arping.c:875 arping.c:878
 msgid "invalid argument"
-msgstr ""
+msgstr "argumento inválido"
 
 #: ping/ping.c:400
 #, c-format
