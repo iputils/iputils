@@ -1,3 +1,48 @@
+===== 20210722 =====
+released July 22, 2021
+
+* Meson build system
+- enable NO_SETCAP_OR_SUID by default
+
+* clockdiff
+- fix missing new line
+
+* ping
+- lower minimal interval for flooding to 2 (issue: #317)
+- revert f7710a1 ("Add strict pattern matching on response when pattern was
+  provided") to fix broken report of truncated packets (issue: #320, PR: #331)
+
+* rdisc
+- systemd unit: remove PrivateUsers=yes from systemd service file (issue: #314)
+- systemd unit: support /etc/default/rdisc environment file (for Debian, PR: #356)
+- systemd unit: Add DynamicUser=yes (PR: #358)
+- systemd unit: add CAP_NET_ADMIN capability (PR: #351)
+- Add support for capability/setuid (PR: #347, #348) NOTE: This is strongly
+  discouraged as normal uses could possibly modify routing tables, recommended
+  way is to run it as systemd service which does not require it to be enabled.
+  It's added just for non-systemd users, which should run allow it to run just
+  for dedicated user.
+- set correct caps in setcap-setuid.sh
+
+* traceroute6
+- mention -V in usage() (PR: #323)
+
+* localization
+- new translation: Czech (100%), Indonesian (94%)
+- updated translations: Portuguese (Brazil, 95%), Indonesian (94%), French:
+  (58%), Chinese (Simplified, 53%)
+- fully translated languages in this release: Czech, Turkish, Ukrainian
+
+* CI
+- migrate from Travis CI to GitHub Actions (PR: #336)
+- add very basic ping testing (issue: #338, PR: #243)
+- skip tests on Ubuntu Xenial (commit: 9833cae)
+- various build.sh improvements
+
+* tests
+- skip tests on disabled IPv6 (commit: f10bfd8)
+- fix: flood ping test should pass on root (commit: 3dff080)
+
 ===== 20210202 =====
 released February 2, 2021
 
