@@ -16,6 +16,7 @@ _log() {
 case "$perm_type" in
 	caps)
 		params="cap_net_raw+p"
+		[ "$2" = "rdisc" ] && params="cap_net_raw,cap_net_admin+ep"
 		_log "calling: $setcap $params $exec_path"
 		"$setcap" $params "$exec_path"
 	;;
