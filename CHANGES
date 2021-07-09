@@ -1,3 +1,35 @@
+===== 202107XX =====
+released July X, 2021
+
+* Meson build system
+- enable NO_SETCAP_OR_SUID by default
+
+* clockdiff
+- fix missing new line
+
+* ping
+- lower minimal interval for flooding to 2 (issue: #317)
+- revert f7710a1 ("Add strict pattern matching on response when pattern was
+  provided") to fix broken report of truncated packets (issue: #320, PR: #331)
+
+* rdisc
+- remove PrivateUsers=yes from systemd service file (issue: #314)
+- add CAP_NET_ADMIN capability (PR: #351)
+- support /etc/default/rdisc environment file (for Debian, PR: #356)
+
+* traceroute6
+- mention -V in usage() (PR: #323)
+
+* localization
+- new translation: Czech (100%), Indonesian (94%)
+- updated translations: Portuguese (Brazil, 95%), Indonesian (94%), French:
+  (58%), Chinese (Simplified, 53%)
+- fully translated languages in this release: Czech, Turkish, Ukrainian
+
+* CI
+- migrate from Travis CI to GitHub Actions (PR: #336)
+- add very basic ping testing (issue: #338, PR: #243)
+
 ===== 20210202 =====
 released February 2, 2021
 
