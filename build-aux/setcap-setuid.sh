@@ -15,9 +15,15 @@ _log() {
 
 case "$perm_type" in
 	caps)
-		params="cap_net_raw+p"
-		_log "calling: $setcap $params $exec_path"
-		"$setcap" $params "$exec_path"
+		if [ "$2" = "rdisc" ]; then
+			params="cap_net_raw,cap_net_admin+ep"
+			_log "calling: $setcap $params $exec_path"
+			"$setcap" $params "$exec_path"
+		else
+			params="cap_net_raw+p"
+			_log "calling: $setcap $params $exec_path"
+			"$setcap" $params "$exec_path"
+		fi
 	;;
 	setuid)
 		_log "changing '$exec_path' to be setuid root executable"
