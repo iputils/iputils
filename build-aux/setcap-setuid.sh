@@ -16,7 +16,7 @@ _log() {
 case "$perm_type" in
 	caps)
 		if [ "$2" = "rdisc" ]; then
-			params="cap_net_raw,cap_net_admin+p"
+			params="cap_net_raw,cap_net_admin+ep"
 			_log "calling: $setcap $params $exec_path"
 			"$setcap" $params "$exec_path"
 		else
