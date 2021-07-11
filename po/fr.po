@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-09 19:20+0000\n"
-"PO-Revision-Date: 2021-07-11 06:10+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2021-07-13 21:28+0000\n"
+"Last-Translator: Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/fr/>\n"
 "Language: fr\n"
@@ -713,12 +713,12 @@ msgstr "Erreur"
 #: ping/ping.c:1155
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr ""
+msgstr "Fragmentation nécessaire et DF est défini (mtu = %u)\n"
 
 #: ping/ping.c:1243
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr ""
+msgstr "Temps de réassemblage des fragments dépassé\n"
 
 #: ping/ping6_common.c:528 ping/ping.c:1370
 #, c-format
@@ -737,11 +737,11 @@ msgstr "De %s : icmp_seq=%u "
 
 #: traceroute6.c:504
 msgid "Home Agent Address Discovery Reply message"
-msgstr ""
+msgstr "Message de réponse de découverte de l'adresse de l'agent d'origine"
 
 #: traceroute6.c:502
 msgid "Home Agent Address Discovery Request Message"
-msgstr ""
+msgstr "Message de demande de découverte de l'adresse de l'agent d'origine"
 
 #: ping/ping6_common.c:419
 #, c-format
@@ -756,12 +756,12 @@ msgstr "Erreur d’encodage IDN : %s"
 #: ping/ping.c:1271
 #, c-format
 msgid "Information Reply\n"
-msgstr ""
+msgstr "Réponse d'information\n"
 
 #: ping/ping.c:1267
 #, c-format
 msgid "Information Request\n"
-msgstr ""
+msgstr "Demande d'information\n"
 
 #: arping.c:561
 #, c-format
@@ -795,15 +795,15 @@ msgstr "Rapport MLD"
 
 #: traceroute6.c:480
 msgid "Membership Query"
-msgstr ""
+msgstr "Requête d'appartenance"
 
 #: traceroute6.c:484
 msgid "Membership Reduction"
-msgstr ""
+msgstr "Réduction d'appartenance"
 
 #: traceroute6.c:482
 msgid "Membership Report"
-msgstr ""
+msgstr "Rapport d'appartenance"
 
 #: traceroute6.c:508
 msgid "Mobile Prefix Solicitation Advertisement"
@@ -1388,7 +1388,7 @@ msgstr ""
 
 #: ping/ping.c:316 ping/ping.c:343
 msgid "only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "une seule option -4 ou -6 peut être renseignée"
 
 #: ping/ping.c:324 ping/ping.c:329
 msgid "only one of -T or -R may be used"
@@ -1463,7 +1463,7 @@ msgstr "requête"
 #: ping/ping_common.c:914
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
+msgstr "rtt min/moy/max/mdev = %ld,%03ld/%lu,%03ld/%ld,%03ld/%ld,%03ld ms"
 
 #: ping/ping6_common.c:133
 msgid "scope discrepancy among the nodes"
