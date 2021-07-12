@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2021-07-12 19:25+0000\n"
+"PO-Revision-Date: 2021-12-14 20:38+0000\n"
 "Last-Translator: Petr Pisar <ppisar@redhat.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.7.1\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: arping.c:121
 #, c-format
@@ -1105,8 +1105,7 @@ msgstr "žádná odpověď pro pořadí=%lu\n"
 
 #: ping/ping_common.c:445
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr ""
-"POZOR: přijímací paměť pravděpodobně není dost velká pro udržení zátěže"
+msgstr "POZOR: přijímací paměť pravděpodobně není dost velká pro udržení zátěže"
 
 #: ping/ping_common.c:462
 #, fuzzy, c-format
