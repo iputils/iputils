@@ -1224,7 +1224,7 @@ static void pr_icmph(struct ping_rts *rts, uint8_t type, uint8_t code,
 			struct sockaddr_in sin = {
 				.sin_family = AF_INET,
 				.sin_addr =  {
-					icp ? icp->un.gateway : htonl(info)
+					icp ? icp->un.gateway : ntohl(info)
 				}
 			};
 
