@@ -75,6 +75,9 @@ ping_func_set_st ping4_func_set = {
 	.install_filter = ping4_install_filter
 };
 
+static unsigned char cmsgbuf[4096];
+static size_t cmsglen = 0;
+
 #define	MAXIPLEN	60
 #define	MAXICMPLEN	76
 #define	NROUTES		9		/* number of record route slots */
@@ -667,36 +670,30 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, "socket");
 		if (rts->device) {
 			struct ifreq ifr;
-			int i;
-			int fds[2] = {probe_fd, sock->fd};
+			int rc;
+			int errno_save;
 
 			memset(&ifr, 0, sizeof(ifr));
 			strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
 
-			for (i = 0; i < 2; i++) {
-				int fd = fds[i];
-				int rc;
-				int errno_save;
+			enable_capability_raw();
+			rc = setsockopt(probe_fd, SOL_SOCKET, SO_BINDTODEVICE,
+					rts->device, strlen(rts->device) + 1);
+			errno_save = errno;
+			disable_capability_raw();
 
-				enable_capability_raw();
-				rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
-						rts->device, strlen(rts->device) + 1);
-				errno_save = errno;
-				disable_capability_raw();
-
-				if (rc == -1) {
-					if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
-						struct ip_mreqn imr;
-						if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
-							error(2, 0, _("unknown iface: %s"), rts->device);
-						memset(&imr, 0, sizeof(imr));
-						imr.imr_ifindex = ifr.ifr_ifindex;
-						if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
-							       &imr, sizeof(imr)) == -1)
-							error(2, errno, "IP_MULTICAST_IF");
-					} else
-						error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
-				}
+			if (rc == -1) {
+				if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
+					struct ip_mreqn imr;
+					if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
+						error(2, 0, _("unknown iface: %s"), rts->device);
+					memset(&imr, 0, sizeof(imr));
+					imr.imr_ifindex = ifr.ifr_ifindex;
+					if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
+						       &imr, sizeof(imr)) == -1)
+						error(2, errno, "IP_MULTICAST_IF");
+				} else
+					error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
 			}
 		}
 
@@ -745,12 +742,6 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 					    &rts->source.sin_addr, sizeof(rts->source.sin_addr)))
 					break;
 			}
-			if (ifa && !memcmp(&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
-			    &dst.sin_addr, sizeof(rts->source.sin_addr))) {
-				enable_capability_raw();
-				setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE, "", 0);
-				disable_capability_raw();
-			}
 			freeifaddrs(ifa0);
 			if (!ifa)
 				error(0, 0, _("Warning: source address might be selected on device other than: %s"), rts->device);
@@ -798,6 +789,19 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
 		if (ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0)
 			error(2, 0, _("unknown iface: %s"), rts->device);
+
+		struct cmsghdr *cmsg;
+		struct in_pktinfo *ipi;
+
+		cmsg = (struct cmsghdr *)(cmsgbuf + cmsglen);
+		cmsglen += CMSG_SPACE(sizeof(*ipi));
+		cmsg->cmsg_len = CMSG_LEN(sizeof(*ipi));
+		cmsg->cmsg_level = IPPROTO_IP;
+		cmsg->cmsg_type = IP_PKTINFO;
+
+		ipi = (struct in_pktinfo *)CMSG_DATA(cmsg);
+		memset(ipi, 0, sizeof(*ipi));
+		ipi->ipi_ifindex = if_name2index(rts->device);
 	}
 
 	if (rts->broadcast_pings || IN_MULTICAST(ntohl(rts->whereto.sin_addr.s_addr))) {
@@ -1470,7 +1474,29 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
 		icp->checksum = in_cksum((unsigned short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
 	}
 
-	i = sendto(sock->fd, icp, cc, 0, (struct sockaddr *)&rts->whereto, sizeof(rts->whereto));
+	if (cmsglen == 0)
+	{
+		i = sendto(sock->fd, icp, cc, confirm, (struct sockaddr *)&rts->whereto, sizeof(rts->whereto));
+	}
+	else
+	{
+		struct msghdr mhdr;
+		struct iovec iov;
+
+		iov.iov_len = cc;
+		iov.iov_base = packet;
+
+		memset(&mhdr, 0, sizeof(mhdr));
+		mhdr.msg_name = &rts->whereto;
+		mhdr.msg_namelen = sizeof(struct sockaddr_in);
+		mhdr.msg_iov = &iov;
+		mhdr.msg_iovlen = 1;
+		mhdr.msg_control = cmsgbuf;
+		mhdr.msg_controllen = cmsglen;
+
+		i = sendmsg(sock->fd, &mhdr, confirm);
+	}
+	confirm = 0;
 
 	return (cc == i ? 0 : i);
 }
