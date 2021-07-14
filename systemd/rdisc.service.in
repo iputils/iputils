@@ -5,11 +5,11 @@ Requires=network.target
 After=network.target
 
 [Service]
+Type=forking
 EnvironmentFile=-/etc/sysconfig/rdisc
-ExecStart=@sbindir@/rdisc -f -t $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
-
-AmbientCapabilities=CAP_NET_RAW
-CapabilityBoundingSet=CAP_NET_RAW
+ExecStart=@sbindir@/rdisc -f -v $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
+AmbientCapabilities=CAP_NET_RAW CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_RAW CAP_NET_ADMIN
 PrivateTmp=yes
 ProtectSystem=strict
 ProtectHome=yes
