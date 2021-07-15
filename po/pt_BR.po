@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-09 19:20+0000\n"
-"PO-Revision-Date: 2021-07-13 21:28+0000\n"
+"PO-Revision-Date: 2021-07-16 13:31+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -469,7 +469,7 @@ msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 #: ping/ping_common.c:922
 #, c-format
 msgid "%spipe %d"
-msgstr ""
+msgstr "%spipe %d"
 
 #: ping/ping6_common.c:374
 #, c-format
@@ -814,7 +814,7 @@ msgstr ""
 
 #: traceroute6.c:500
 msgid "Multicast Listener Report packet"
-msgstr ""
+msgstr "pacote de Multicast Listener Report"
 
 #: tracepath.c:340
 msgid "NET ERROR"
@@ -1016,7 +1016,7 @@ msgstr "Marca de tempo\n"
 #: ping/ping.c:1263
 #, c-format
 msgid "Timestamp Reply\n"
-msgstr ""
+msgstr "Resposta de marca de tempo\n"
 
 #: arping.c:387
 msgid "Unicast"
@@ -1123,7 +1123,7 @@ msgstr "Marca de tempo incorreta %d\n"
 
 #: tracepath.c:236
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[LOCALHOST]"
 
 #: tracepath.c:323 tracepath.c:325
 #, c-format
@@ -1138,7 +1138,7 @@ msgstr "em %u"
 #: tracepath.c:613
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "retornado(s) %d "
 
 #: ping/ping.c:244
 #, c-format
@@ -1183,54 +1183,56 @@ msgstr "não é possível desativar o loopback de multicast"
 
 #: ping/ping6_common.c:326
 msgid "can't receive hop limit"
-msgstr ""
+msgstr "não foi possível receber limite de saltos"
 
 #: ping/ping6_common.c:358
 msgid "can't send flowinfo"
-msgstr ""
+msgstr "não foi possível enviar flowinfo (informações de fluxo)"
 
 #: ping/ping6_common.c:349
 msgid "can't set flowlabel"
-msgstr ""
+msgstr "não foi possível definir flowlabel (rótulo de fluxo)"
 
 #: ping/ping6_common.c:311
 msgid "can't set multicast hop limit"
-msgstr ""
+msgstr "não foi possível definir limite de saltos multicast"
 
 #: ping/ping6_common.c:314
 msgid "can't set unicast hop limit"
-msgstr ""
+msgstr "não foi possível definir limite de saltos unicast"
 
 #: ping/ping.c:391
 #, c-format
 msgid "cannot copy: %s"
-msgstr "nãofoipossível copiar: %s"
+msgstr "não foi possível copiar: %s"
 
 #: ping/ping.c:908
 msgid "cannot disable multicast loopback"
-msgstr ""
+msgstr "não foi possível desabilitar loopback em multicast"
 
 #: ping/ping_common.c:461
 #, c-format
 msgid "cannot flood; minimal interval allowed for user is %dms"
 msgstr ""
+"não foi possível fazer flood; o intervalo mínimo permitido para o usuário é "
+"%dms"
 
 #: ping/ping.c:715 ping/ping.c:902
 msgid "cannot set broadcasting"
-msgstr ""
+msgstr "não foi possível definir uso de broadcast"
 
 #: ping/ping.c:913
 msgid "cannot set multicast time-to-live"
-msgstr ""
+msgstr "não foi possível definir tempo de vida multicast"
 
 #: ping/ping.c:414
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
-msgstr ""
+msgstr "não foi possível pré-carregar para um valor maior que 3: %d"
 
 #: ping/ping.c:915
 msgid "cannot set unicast time-to-live"
-msgstr ""
+msgstr "não foi possível definir tempo de vida unicast"
 
 #: tracepath.c:227
 #, c-format
@@ -1266,12 +1268,12 @@ msgstr "dn_comp() retornou um resultado longo demais"
 
 #: ping/ping6_common.c:352
 msgid "flow labels are not supported"
-msgstr ""
+msgstr "sem suporte a rótulos de fluxo"
 
 #: ping/ping.c:224
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
-msgstr ""
+msgstr "valor de fluxo é maior que 20 bits: %s"
 
 #: ping/ping6_common.c:360
 msgid "flowinfo is not supported"
@@ -1309,12 +1311,12 @@ msgstr "saltos %d "
 #: ping/ping_common.c:464
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr ""
+msgstr "pré-carregamento e/ou intervalo ilegal: %d"
 
 #: ping/node_info.c:355
 #, c-format
 msgid "inappropriate subject name: %s"
-msgstr ""
+msgstr "nome de assunto inapropriado: %s"
 
 #: ping/ping.c:431
 #, c-format
@@ -1331,12 +1333,12 @@ msgstr "argumento inválido"
 #: ping/ping.c:400
 #, c-format
 msgid "invalid source address: %s"
-msgstr ""
+msgstr "endereço de origem inválido: %s"
 
 #: ping/ping.c:338
 #, c-format
 msgid "invalid timestamp type: %s"
-msgstr ""
+msgstr "tipo de marca de tempo inválido: %s"
 
 #: ping/ping6_common.c:504
 msgid "local error"
@@ -1484,7 +1486,7 @@ msgstr "solicitação"
 #: ping/ping_common.c:914
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
+msgstr "rtt mín/méd/máx/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping6_common.c:133
 msgid "scope discrepancy among the nodes"
@@ -1572,4 +1574,4 @@ msgstr "aviso: sockopts de QOS"
 #: clockdiff.c:270
 #, c-format
 msgid "wrong timestamps\n"
-msgstr ""
+msgstr "marcas de tempo incorretas\n"
