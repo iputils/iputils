@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-09 10:36+0200\n"
-"PO-Revision-Date: 2021-07-13 21:28+0000\n"
+"PO-Revision-Date: 2021-07-15 07:03+0000\n"
 "Last-Translator: Didik Supriadi <didiksupriadi41@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/id/>\n"
@@ -74,7 +74,7 @@ msgstr ""
 #: arping.c:285
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr ""
+msgstr "Dikirim %d probe (%d broadcast)\n"
 
 #: arping.c:286
 #, c-format
@@ -84,7 +84,7 @@ msgstr "Diterima %d respons"
 #: arping.c:290
 #, c-format
 msgid "%d request(s)"
-msgstr ""
+msgstr "%d permintaan"
 
 #: arping.c:292
 #, c-format
@@ -93,7 +93,7 @@ msgstr "%s%d broadcast"
 
 #: arping.c:387
 msgid "Unicast"
-msgstr ""
+msgstr "Unicast"
 
 #: arping.c:387
 msgid "Broadcast"
@@ -106,11 +106,11 @@ msgstr "%s dari "
 
 #: arping.c:388
 msgid "reply"
-msgstr ""
+msgstr "balasan"
 
 #: arping.c:388
 msgid "request"
-msgstr ""
+msgstr "permintaan"
 
 #: arping.c:393
 #, c-format
@@ -125,7 +125,7 @@ msgstr "untuk "
 #: arping.c:408
 #, c-format
 msgid " %ld.%03ldms\n"
-msgstr ""
+msgstr " %ld.%03ldms\n"
 
 #: arping.c:410
 #, c-format
@@ -135,7 +135,7 @@ msgstr ""
 #: arping.c:561
 #, c-format
 msgid "Interface \"%s\" is down\n"
-msgstr ""
+msgstr "Interface \"%s\" mati\n"
 
 #: arping.c:569
 #, c-format
@@ -169,17 +169,17 @@ msgstr "WARNING: interface diabaikan"
 
 #: arping.c:984
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr ""
+msgstr "WARNING: setsockopt(SO_DONTROUTE)"
 
 #: arping.c:1008
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
+msgstr "Interface \"%s\" tidak ARPable (tidak ada alamat ll)\n"
 
 #: arping.c:1017
 #, c-format
 msgid "ARPING %s "
-msgstr ""
+msgstr "ARPING %s "
 
 #: arping.c:1018
 #, c-format
@@ -188,7 +188,7 @@ msgstr "dari %s %s\n"
 
 #: arping.c:1022
 msgid "no source address in not-DAD mode"
-msgstr ""
+msgstr "tidak ada alamat asal dalam mode not-DAD"
 
 #: clockdiff.c:240
 #, c-format
@@ -198,7 +198,7 @@ msgstr "Kesalahan timestamp %d\n"
 #: clockdiff.c:245
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr ""
+msgstr "Overflow %d hop\n"
 
 #: clockdiff.c:270
 #, c-format
@@ -245,12 +245,12 @@ msgstr ""
 
 #: clockdiff.c:589
 msgid "measure: unknown failure"
-msgstr ""
+msgstr "ukuran: kegagalan tidak diketahui"
 
 #: clockdiff.c:594
 #, c-format
 msgid "%s is down"
-msgstr ""
+msgstr "%s mati"
 
 #: clockdiff.c:597
 #, c-format
@@ -268,6 +268,8 @@ msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"
 msgstr ""
+"\n"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"
 
 #: ping/node_info.c:166
 #, c-format
@@ -277,16 +279,16 @@ msgstr "Konflik Qtype\n"
 #: ping/node_info.c:218
 #, c-format
 msgid "Subject type conflict\n"
-msgstr ""
+msgstr "Konflik tipe subjek\n"
 
 #: ping/node_info.c:309
 #, c-format
 msgid "IDN encoding error: %s"
-msgstr ""
+msgstr "Kesalahan pengkodean IDN: %s"
 
 #: ping/node_info.c:320
 msgid "too long scope name"
-msgstr ""
+msgstr "nama scope terlalu panjang"
 
 #: ping/node_info.c:344 ping/node_info.c:386 ping/ping6_common.c:267
 #: ping/ping.c:452 ping/ping.c:515 ping/ping.c:925
@@ -296,7 +298,7 @@ msgstr "alokasi memori gagal"
 #: ping/node_info.c:356
 #, c-format
 msgid "inappropriate subject name: %s"
-msgstr ""
+msgstr "nama subjek tidak tepat: %s"
 
 #: ping/node_info.c:359
 msgid "dn_comp() returned too long result"
@@ -324,6 +326,24 @@ msgid ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 msgstr ""
+"ping -6 -N <nodeinfo opt>\n"
+"Bantuan:\n"
+"  help\n"
+"Pertanyaan:\n"
+"  name\n"
+"  ipv6\n"
+"  ipv6-all\n"
+"  ipv6-compatible\n"
+"  ipv6-global\n"
+"  ipv6-linklocal\n"
+"  ipv6-sitelocal\n"
+"  ipv4\n"
+"  ipv4-all\n"
+"Subjek:\n"
+"  subject-ipv6=addr\n"
+"  subject-ipv4=addr\n"
+"  subject-name=name\n"
+"  subject-fqdn=name\n"
 
 #: ping/ping6_common.c:96 ping/ping.c:691 ping/ping.c:800
 #, c-format
@@ -332,12 +352,12 @@ msgstr "iface tidak diketahui: %s"
 
 #: ping/ping6_common.c:142
 msgid "scope discrepancy among the nodes"
-msgstr ""
+msgstr "perbedaan scope antar node"
 
 #: ping/ping6_common.c:215 ping/ping.c:756
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
-msgstr ""
+msgstr "Warning: alamat asal mungkin dipilih pada perangkat selain: %s"
 
 #: ping/ping6_common.c:242
 #, c-format
@@ -346,15 +366,15 @@ msgstr "ping multicast dengan interval terlalu pendek: %d"
 
 #: ping/ping6_common.c:245
 msgid "multicast ping does not fragment"
-msgstr ""
+msgstr "ping multicast tidak terfragmentasi"
 
 #: ping/ping6_common.c:289
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr ""
+msgstr "setsockopt(RAW_CHECKSUM) gagal - coba lanjutkan"
 
 #: ping/ping6_common.c:315
 msgid "can't disable multicast loopback"
-msgstr ""
+msgstr "tidak dapat menonaktifkan loopback multicast"
 
 #: ping/ping6_common.c:320
 msgid "can't set multicast hop limit"
@@ -370,11 +390,11 @@ msgstr "tidak dapat menerima batas hop"
 
 #: ping/ping6_common.c:340
 msgid "setsockopt(IPV6_TCLASS)"
-msgstr ""
+msgstr "setsockopt(IPV6_TCLASS)"
 
 #: ping/ping6_common.c:342
 msgid "traffic class is not supported"
-msgstr ""
+msgstr "kelas traffic tidak didukung"
 
 #: ping/ping6_common.c:358
 msgid "can't set flowlabel"
@@ -387,12 +407,12 @@ msgstr "tidak bisa mengirim flowinfo"
 #: ping/ping6_common.c:365
 #, c-format
 msgid "PING %s(%s) "
-msgstr ""
+msgstr "PING %s(%s) "
 
 #: ping/ping6_common.c:367
 #, c-format
 msgid ", flow 0x%05x, "
-msgstr ""
+msgstr ", flow 0x%05x, "
 
 #: ping/ping6_common.c:372 ping/ping.c:929
 #, c-format
@@ -502,27 +522,27 @@ msgstr ""
 #: ping/ping6_common.c:439
 #, c-format
 msgid "Echo request"
-msgstr ""
+msgstr "Echo permintaan"
 
 #: ping/ping6_common.c:442
 #, c-format
 msgid "Echo reply"
-msgstr ""
+msgstr "Echo balasan"
 
 #: ping/ping6_common.c:445
 #, c-format
 msgid "MLD Query"
-msgstr ""
+msgstr "Query MLD"
 
 #: ping/ping6_common.c:448
 #, c-format
 msgid "MLD Report"
-msgstr ""
+msgstr "Laporan MLD"
 
 #: ping/ping6_common.c:451
 #, c-format
 msgid "MLD Reduction"
-msgstr ""
+msgstr "Reduksi MLD"
 
 #: ping/ping6_common.c:454
 #, c-format
@@ -531,12 +551,12 @@ msgstr "tipe icmp tidak diketahui: %u"
 
 #: ping/ping6_common.c:508
 msgid "local error"
-msgstr ""
+msgstr "kesalahan lokal"
 
 #: ping/ping6_common.c:510
 #, c-format
 msgid "local error: message too long, mtu: %u"
-msgstr ""
+msgstr "kesalahan lokal: pesan terlalu panjang, mtu: %u"
 
 #: ping/ping6_common.c:532 ping/ping.c:1376
 #, c-format
@@ -546,22 +566,22 @@ msgstr "Dari %s icmp_seq=%u "
 #: ping/ping6_common.c:639 ping/ping.c:1490
 #, c-format
 msgid " icmp_seq=%u"
-msgstr ""
+msgstr " icmp_seq=%u"
 
 #: ping/ping6_common.c:663 ping/ping6_common.c:724
 #, c-format
 msgid " parse error (too short)"
-msgstr ""
+msgstr " kesalahan parse (terlalu pendek)"
 
 #: ping/ping6_common.c:677 ping/ping6_common.c:733
 #, c-format
 msgid " parse error (truncated)"
-msgstr ""
+msgstr " kesalahan parse (terpotong)"
 
 #: ping/ping6_common.c:737
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
-msgstr ""
+msgstr " kesalahan tidak terduga di inet_ntop(%s)"
 
 #: ping/ping6_common.c:746
 #, c-format
