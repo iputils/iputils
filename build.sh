@@ -89,26 +89,32 @@ print_logs()
 
 cd `dirname $0`
 
-[ -z "$1" -o "$1" = "dependencies" ] && check_build_dependencies
+cmd=
+case "$1" in
+	dependencies|info|configure|build|install|test|"") cmd="$1";;
+	*) echo "ERROR: wrong command '$1'" >&2; exit 1;;
+esac
 
-[ -z "$1" -o "$1" = "info" ] && print_versions
+[ -z "$cmd" -o "$cmd" = "dependencies" ] && check_build_dependencies
 
-if [ -z "$1" -o "$1" = "configure" ]; then
+[ -z "$cmd" -o "$cmd" = "info" ] && print_versions
+
+if [ -z "$cmd" -o "$cmd" = "configure" ]; then
 	configure
 	print_logs $?
 fi
 
-if [ -z "$1" -o "$1" = "build" ]; then
+if [ -z "$cmd" -o "$cmd" = "build" ]; then
 	build
 	print_logs $?
 fi
 
-if [ -z "$1" -o "$1" = "install" ]; then
+if [ -z "$cmd" -o "$cmd" = "install" ]; then
 	install
 	print_logs $?
 fi
 
-if [ -z "$1" -o "$1" = "test" ]; then
+if [ -z "$cmd" -o "$cmd" = "test" ]; then
 	run_tests
 	print_logs $?
 fi
