@@ -51,11 +51,13 @@ setcap_arping = false
 setcap_clockdiff = false
 setcap_ping = false
 setcap_traceroute6 = false
+setcap_rdisc = false
 if (not get_option('NO_SETCAP_OR_SUID'))
   setcap_arping = get_option('SETCAP_OR_SUID_ARPING')
   setcap_clockdiff = get_option('SETCAP_OR_SUID_CLOCKDIFF')
   setcap_ping = get_option('SETCAP_OR_SUID_PING')
   setcap_traceroute6 = get_option('SETCAP_OR_SUID_TRACEROUTE6')
+  setcap_rdisc = get_option('SETCAP_OR_SUID_RDISC')
 endif
 
 # Check functions.
@@ -282,6 +284,14 @@ if build_rdisc == true
 		install_dir: sbindir,
 		link_with : [libcommon],
 		install: true)
+	if (setcap_rdisc)
+		meson.add_install_script('build-aux/setcap-setuid.sh',
+			sbindir,
+			'rdisc',
+			perm_type,
+			setcap_path
+		)
+	endif
 	if install_systemd_units
 		subs = configuration_data()
 		subs.set('sbindir', sbindir)
@@ -351,6 +361,7 @@ output += 'ping: ' + build_ping.to_string()
 output += ' (capability or suid: ' + setcap_ping.to_string() + ')\n'
 output += 'rarpd: ' + build_rarpd.to_string() + '\n'
 output += 'rdisc: ' + build_rdisc.to_string()
+output += ' (capability or suid: ' + setcap_rdisc.to_string() + ')\n'
 output += ' (server: ' + build_rdisc_server.to_string() + ')\n'
 output += 'tftpd: ' + build_tftpd.to_string() + '\n'
 output += 'tracepath: ' + build_tracepath.to_string() + '\n'
