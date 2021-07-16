@@ -66,8 +66,8 @@ run_tests()
 {
 	echo "=== tests ==="
 	cd $BUILD_DIR
-	meson tests
-	cd -
+	meson test
+	cd - > /dev/null
 }
 
 print_logs()
