@@ -6,6 +6,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/rdisc
+EnvironmentFile=-/etc/default/rdisc
 ExecStart=@sbindir@/rdisc -f -t $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
 
 AmbientCapabilities=CAP_NET_RAW
