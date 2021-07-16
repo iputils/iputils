@@ -115,6 +115,10 @@ if [ -z "$cmd" -o "$cmd" = "install" ]; then
 fi
 
 if [ -z "$cmd" -o "$cmd" = "test" ]; then
-	run_tests
-	print_logs $?
+	if [ -f "meson.cross" ]; then
+		echo "cross-compile build, skipping running tests" >&2
+	else
+		run_tests
+		print_logs $?
+	fi
 fi
