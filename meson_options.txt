@@ -57,6 +57,9 @@ option('SETCAP_OR_SUID_PING', type : 'boolean', value : true,
 
 option('SETCAP_OR_SUID_TRACEROUTE6', type : 'boolean', value : true,
 	description : 'Set setcap or setuid on traceroute6 with build-aux/setcap-setuid.sh')
+	
+option('SETCAP_OR_SUID_RDISC', type : 'boolean', value : true,
+	description : 'Set setcap or setuid on rdisc with build-aux/setcap-setuid.sh')
 
 option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 	description : 'Default device for arping')
