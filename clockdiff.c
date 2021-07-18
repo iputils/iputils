@@ -612,10 +612,10 @@ int main(int argc, char **argv)
 			localtime_r(&now, &tm);
 
 			if (ctl.time_format == time_format_iso) {
-				strftime(s, sizeof(s), "%Y-%m-%dT%H:%M:%S%z\n", &tm);
+				strftime(s, sizeof(s), "%Y-%m-%dT%H:%M:%S%z", &tm);
 			} else
 				strftime(s, sizeof(s), "%a %b %e %H:%M:%S %Y", &tm);
-			printf(_("\nhost=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"),
+			printf(_("\nhost=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"),
 				ctl.hisname, ctl.rtt, ctl.rtt_sigma, ctl.min_rtt,
 				ctl.measure_delta, ctl.measure_delta1, s);
 		} else
