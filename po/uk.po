@@ -245,14 +245,14 @@ msgstr ""
 "\n"
 "Докладніший опис можна знайти на сторінці підручника щодо traceroute6(8).\n"
 
-#: clockdiff.c:618
+#: clockdiff.c:619
 #, c-format
 msgid ""
 "\n"
-"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 "\n"
-"вузол=%s rtt=%ld(%ld)мс/%ldмс різниця=%dмс/%dмс %s"
+"вузол=%s rtt=%ld(%ld)мс/%ldмс різниця=%dмс/%dмс %s\n"
 
 #: ping/ping.c:1096
 #, c-format

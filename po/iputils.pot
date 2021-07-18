@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 10:36+0200\n"
+"POT-Creation-Date: 2021-07-18 21:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -222,11 +222,11 @@ msgstr ""
 msgid "%s is unreachable"
 msgstr ""
 
-#: clockdiff.c:618
+#: clockdiff.c:619
 #, c-format
 msgid ""
 "\n"
-"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 
 #: ping/node_info.c:166

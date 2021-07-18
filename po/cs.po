@@ -262,14 +262,14 @@ msgstr "Čas %s byl přenesen v nestandardním tvaru"
 msgid "%s is unreachable"
 msgstr "%s není dostupný"
 
-#: clockdiff.c:618
+#: clockdiff.c:619
 #, c-format
 msgid ""
 "\n"
-"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 "\n"
-"stroj=%s rtt=%ld (%ld) ms / %ld ms delta=%d ms / %d ms %s"
+"stroj=%s rtt=%ld (%ld) ms / %ld ms delta=%d ms / %d ms %s\n"
 
 #: ping/node_info.c:166
 #, c-format

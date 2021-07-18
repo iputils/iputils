@@ -239,14 +239,14 @@ msgstr ""
 "\n"
 "Para mais detalhes, consulte traceroute6(8).\n"
 
-#: clockdiff.c:618
+#: clockdiff.c:619
 #, c-format
 msgid ""
 "\n"
-"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 "\n"
-"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 
 #: ping/ping.c:1096
 #, c-format
