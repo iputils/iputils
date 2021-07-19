@@ -70,6 +70,12 @@
 #ifndef IPV6_FLOWINFO_SEND
 # define IPV6_FLOWINFO_SEND 33
 #endif
+#ifndef ICMPV6_EXT_ECHO_REQUEST
+#define ICMPV6_EXT_ECHO_REQUEST	160
+#endif
+#ifndef ICMPV6_EXT_ECHO_REPLY
+#define ICMPV6_EXT_ECHO_REPLY	161
+#endif
 
 ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,
@@ -571,6 +577,90 @@ int build_echo(struct ping_rts *rts, uint8_t *_icmph,
 	return cc;
 }
 
+int build_probe(struct ping_rts *rts, uint8_t *_icmph,
+	       unsigned packet_size __attribute__((__unused__)))
+{
+	struct exthdr *extbase, ext;
+	struct iiohdr *iiobase, iio;
+	struct icmp6_hdr *icmph;
+	uint32_t iio_ip_hdr = 0;
+	int cc;
+
+	icmph = (struct icmp6_hdr *)_icmph;
+	extbase = (struct exthdr *)(icmph + 1);
+	iiobase = (struct iiohdr *)((char *)extbase + sizeof(struct exthdr));
+	icmph->icmp6_type = ICMPV6_EXT_ECHO_REQUEST;
+	icmph->icmp6_code = 0;
+	icmph->icmp6_cksum = 0;
+	icmph->icmp6_id = rts->ident;
+	/* PROBE messages use only the first 8 bits as sequence number */
+	icmph->icmp6_dataun.icmp6_un_data8[2] = rts->ntransmitted + 1;
+	icmph->icmp6_dataun.icmp6_un_data8[3] = 1;	/* Set L-bit */
+	WRITE_VERSION(ext.v_rsvd , 2);
+	ext.v_rsvd = htons(ext.v_rsvd);
+	ext.checksum = 0;
+	iio.len = sizeof(struct iiohdr);
+	iio.class = 3;
+	iio.ctype = get_c_type(rts->interface);
+	/* 3 is highest valid ctype */
+	if (iio.ctype > 3)
+		/* MUST NOT */
+		error(2, 0, _("invalid ctype"));
+
+	rcvd_clear(rts, rts->ntransmitted + 1);
+
+	/* Create IIO addr info based on C-Type */
+	switch (iio.ctype) {
+	case ICMP_EXT_ECHO_CTYPE_NAME:
+		iio.len += strlen(rts->interface);
+		/* pad to 32-bit boundary */
+		memset(iiobase + 1 + ((strlen(rts->interface)-1)/4), 0, sizeof(uint32_t));
+		memcpy(iiobase + 1, rts->interface, strlen(rts->interface));
+		break;
+	case ICMP_EXT_ECHO_CTYPE_ADDR:
+		iio.len += sizeof(struct in_addr);
+		/* if we're sending an ipv4 address */
+		if(strchr(rts->interface, '.')) {
+			iio.len += sizeof(struct in_addr);
+			/* set up AFI and length */
+			iio_ip_hdr = (ICMP_AFI_IP << IIO_AFI_POS) | (sizeof(struct in_addr) << IIO_ADRLEN_POS);
+			iio_ip_hdr = htonl(iio_ip_hdr);
+			inet_pton(AF_INET, rts->interface, (iiobase+2));
+			memcpy(iiobase + 1, &iio_ip_hdr, sizeof(iio_ip_hdr));
+		}
+		else {
+			iio.len += sizeof(struct in6_addr);
+			/* set up AFI and length */
+			iio_ip_hdr = (ICMP_AFI_IP6 << IIO_AFI_POS) | (sizeof(struct in6_addr) << IIO_ADRLEN_POS);
+			iio_ip_hdr = htonl(iio_ip_hdr);
+			inet_pton(AF_INET6, rts->interface, (iiobase+2));
+			memcpy(iiobase + 1, &iio_ip_hdr, sizeof(iio_ip_hdr));
+		}
+		break;
+	case ICMP_EXT_ECHO_CTYPE_INDEX:
+		iio.len += sizeof(uint32_t);
+		/* Using iio_ip_hdr as a temp variable to store ifIndex */
+		iio_ip_hdr = htonl(atoi(rts->interface));
+		memcpy(iiobase + 1, &iio_ip_hdr, sizeof(uint32_t));
+		break;
+	default:
+		return -1;
+	}
+
+	iio.len = htons(iio.len);
+	memcpy(extbase, &ext, sizeof(ext));
+	memcpy(iiobase, &iio, sizeof(iio));
+
+	if (rts->timing) {
+		rts->timestamp_offset = sizeof(struct icmphdr) + sizeof(ext) + ntohs(iio.len);
+		gettimeofday((struct timeval *)&_icmph[rts->timestamp_offset],
+		    (struct timezone *)NULL);
+	}
+
+	cc = rts->datalen + 8;			/* skips ICMP portion */
+
+	return cc;
+}
 
 int build_niquery(struct ping_rts *rts, uint8_t *_nih,
 		  unsigned packet_size __attribute__((__unused__)))
@@ -603,8 +693,12 @@ int ping6_send_probe(struct ping_rts *rts, socket_st *sock, void *packet, unsign
 
 	if (niquery_is_enabled(&rts->ni))
 		len = build_niquery(rts, packet, packet_size);
-	else
-		len = build_echo(rts, packet, packet_size);
+	else {
+		if (rts->probe == 1)
+			len = build_probe(rts, packet, packet_size);
+		else
+			len = build_echo(rts, packet, packet_size);
+	}
 
 	if (rts->cmsglen == 0) {
 		cc = sendto(sock->fd, (char *)packet, len, rts->confirm,
@@ -636,7 +730,11 @@ void pr_echo_reply(uint8_t *_icmph, int cc __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *)_icmph;
 
-	printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq));
+	if (icmph->icmp6_type == ICMPV6_EXT_ECHO_REPLY)
+		/* PROBE messages use only the first 8 bits as sequence number */
+		printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq) >> 8);
+	else
+		printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq));
 }
 
 static void putchar_safe(char c)
@@ -793,6 +891,8 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	struct cmsghdr *c;
 	struct icmp6_hdr *icmph;
 	int hops = -1;
+	uint16_t sequence;
+	uint8_t state;
 
 	for (c = CMSG_FIRSTHDR(msg); c; c = CMSG_NXTHDR(msg, c)) {
 		if (c->cmsg_level != IPPROTO_IPV6)
@@ -829,6 +929,71 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
 				      pr_echo_reply,
 				      rts->multicast)) {
+			fflush(stdout);
+			return 0;
+		}
+	} else if (icmph->icmp6_type == ICMPV6_EXT_ECHO_REPLY) {
+		if (!rts->multicast &&
+		    memcmp(&from->sin6_addr.s6_addr, &rts->whereto6.sin6_addr.s6_addr, 16))
+			return 1;
+		if (!is_ours(rts, sock, icmph->icmp6_id))
+			return 1;
+
+		sequence = ntohs(icmph->icmp6_seq);
+		state = icmph->icmp6_seq & 0xe0;
+		printf("Interface: %s\n", rts->interface);
+		switch (icmph->icmp6_code) {
+			case 1:
+				printf("Error: Malformed Query\n");
+				break;
+			case 2:
+				printf("Error: No Such Interface\n");
+				break;
+			case 3:
+				printf("Error: No Such Table Entry\n");
+				break;
+			case 4:
+				printf("Error: Multiple Interfaces Satisfy Query\n");
+				break;
+			default:
+				break;
+		}
+		switch (state) {
+			case 1:
+				printf("State: Incomplete\n");
+				break;
+			case 2:
+				printf("State: Reachable\n");
+				break;
+			case 3:
+				printf("State: Stale\n");
+				break;
+			case 4:
+				printf("State: Delay\n");
+				break;
+			case 5:
+				printf("State: Probe\n");
+				break;
+			case 6:
+				printf("State: Failed\n");
+				break;
+			default:
+				break;
+		}
+		if (icmph->icmp6_code == 0) {
+			if ((sequence & ICMP_EXT_ECHOREPLY_ACTIVE) != 0) {
+				printf("Status: ACTIVE");
+				if (sequence & ICMP_EXT_ECHOREPLY_IPV4)
+					printf(" IPV4");
+				if (sequence & ICMP_EXT_ECHOREPLY_IPV6)
+					printf(" IPV6");
+			printf("\n");
+			}
+		}
+		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
+				      ntohs(icmph->icmp6_seq),
+				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
+				      pr_echo_reply, rts->multicast)) {
 			fflush(stdout);
 			return 0;
 		}
