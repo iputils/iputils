@@ -6,6 +6,7 @@ yum -y install \
 	clang \
 	gcc \
 	gettext \
+	iproute \
 	libcap-devel \
 	libxslt \
 	make \

@@ -24,6 +24,7 @@ apt install -y --no-install-recommends \
 	file \
 	gcc \
 	gettext \
+	iproute2 \
 	libcap-dev \
 	libidn2-0-dev \
 	libssl-dev \

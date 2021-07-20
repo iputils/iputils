@@ -30,8 +30,22 @@ endif
 ##### TESTS #####
 
 # TODO: ::1 generates DEPRECATION: ":" is not allowed in test name "ping -c1 ::1", it has been replaced with "_"
-foreach dst : [ 'localhost', '127.0.0.1', '::1' ]
-  foreach switch : [ '', '-4', '-6']
+
+# GitHub CI does not have working IPv6
+# https://github.com/actions/virtual-environments/issues/668
+ipv6_dst = []
+ipv6_switch = []
+r = run_command('ip', '-6', 'a')
+if r.stdout().strip().contains('::1')
+  message('IPv6 enabled')
+  ipv6_dst = [ '::1' ]
+  ipv6_switch = [ '-6' ]
+else
+  message('WARNING: IPv6 disabled')
+endif
+
+foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
+  foreach switch : [ '', '-4' ] + ipv6_switch
 	args = [ '-c1', dst ]
 	should_fail = false
 
@@ -55,7 +69,7 @@ ping_tests_opt = [
   [ '-c1', '-W1' ],
   [ '-c1', '-W1.1' ],
 ]
-foreach dst : [ '127.0.0.1', '::1' ]
+foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt
 	args += [ dst ]
 	name = 'ping ' + ' '.join(args)
@@ -70,7 +84,7 @@ ping_tests_opt_fail = [
   [ '-w0.1' ],
   [ '-w0,1' ],
 ]
-foreach dst : [ '127.0.0.1', '::1' ]
+foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt_fail
 	args += [ dst ]
 	name = 'ping ' + ' '.join(args)

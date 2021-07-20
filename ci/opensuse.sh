@@ -8,6 +8,7 @@ zypper --non-interactive install --no-recommends \
 	docbook5-xsl-stylesheets \
 	gcc \
 	gettext-tools \
+	iproute2 \
 	libcap-devel \
 	libcap-progs \
 	libidn2-devel \

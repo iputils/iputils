@@ -10,6 +10,7 @@ apk add \
 	docbook-xml \
 	docbook-xsl \
 	gcc \
+	iproute2 \
 	gettext-dev \
 	libcap-dev \
 	libxslt \
