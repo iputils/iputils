@@ -40,6 +40,19 @@ print_versions()
 	ninja --version
 }
 
+run()
+{
+	local ret
+
+	eval "$@"
+	ret=$?
+
+	if [ $ret -ne 0 ]; then
+		echo "ERROR: '$@' failed, exit code: $ret" >&2
+		exit $ret
+	fi
+}
+
 configure()
 {
 	echo "=== configure ==="
@@ -47,19 +60,20 @@ configure()
 	echo "CFLAGS: $CFLAGS"
 
 	export CFLAGS
-	meson $BUILD_DIR $BUILD_OPTS
+
+	run "meson $BUILD_DIR $BUILD_OPTS"
 }
 
 build()
 {
 	echo "=== build ==="
-	make -j$(getconf _NPROCESSORS_ONLN)
+	run "make -j$(getconf _NPROCESSORS_ONLN)"
 }
 
 install()
 {
 	echo "=== install ==="
-	make install
+	run "make install"
 }
 
 run_tests()
@@ -75,58 +89,67 @@ run_tests()
 
 	cd - > /dev/null
 
-	return $ret
+	exit $ret
 }
 
-print_logs()
+print_log()
 {
-	local ret=$1
-	local log
+	local log="$BUILD_DIR/meson-logs/$1"
 
-	[ $ret -eq 0 ] && return
-
-	log="$BUILD_DIR/meson-logs/meson-log.txt"
-	if [ -f "$log" ]; then
-		echo "=== START $log ==="
-		cat $log
-		echo "=== END $log ==="
+	if [ ! -f "$log" ]; then
+		echo "'$log' is missing"
+		return
 	fi
 
-	exit $ret
+	echo "=== START $log ==="
+	cat $log
+	echo "=== END $log ==="
 }
 
 cd `dirname $0`
 
 cmd=
 case "$1" in
-	dependencies|info|configure|build|install|test|"") cmd="$1";;
+	dependencies|info|configure|build|build-log|install|install-log|test|test-log|"") cmd="$1";;
 	*) echo "ERROR: wrong command '$1'" >&2; exit 1;;
 esac
 
-[ -z "$cmd" -o "$cmd" = "dependencies" ] && check_build_dependencies
+if [ -z "$cmd" -o "$cmd" = "dependencies" ]; then
+	check_build_dependencies
+fi
 
-[ -z "$cmd" -o "$cmd" = "info" ] && print_versions
+if [ -z "$cmd" -o "$cmd" = "info" ]; then
+	print_versions
+fi
 
 if [ -z "$cmd" -o "$cmd" = "configure" ]; then
 	configure
-	print_logs $?
 fi
 
 if [ -z "$cmd" -o "$cmd" = "build" ]; then
 	build
-	print_logs $?
+fi
+
+if [ "$cmd" = "build-log" ]; then
+	print_log meson-log.txt
 fi
 
 if [ -z "$cmd" -o "$cmd" = "install" ]; then
 	install
-	print_logs $?
+fi
+
+if [ "$cmd" = "install-log" ]; then
+	print_log install-log.txt
 fi
 
 if [ -z "$cmd" -o "$cmd" = "test" ]; then
 	if [ -f "meson.cross" ]; then
-		echo "cross-compile build, skipping running tests" >&2
+		echo "INFO: cross-compile build, skipping running tests" >&2
 	else
 		run_tests
-		print_logs $?
 	fi
+fi
+
+if [ "$cmd" = "test-log" ]; then
+	print_log testlog.txt
 fi
