@@ -44,6 +44,15 @@ else
   message('WARNING: IPv6 disabled')
 endif
 
+run_as_root = false
+r = run_command('id', '-u')
+if r.stdout().strip().to_int() == 0
+  message('running as root')
+  run_as_root = true
+else
+  message('running as normal user')
+endif
+
 foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
   foreach switch : [ '', '-4' ] + ipv6_switch
 	args = [ '-c1', dst ]
@@ -79,7 +88,6 @@ endforeach
 
 ping_tests_opt_fail = [
   [ '-c1.1' ],
-  [ '-c1', '-i0,1' ], # -c1 required to quit ping
   [ '-I', 'nonexisting' ],
   [ '-w0.1' ],
   [ '-w0,1' ],
@@ -89,5 +97,16 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
 	args += [ dst ]
 	name = 'ping ' + ' '.join(args)
 	test(name, ping, args : args, should_fail : true)
+  endforeach
+endforeach
+
+ping_tests_user_fail = [
+  [ '-c1', '-i0.001' ], # -c1 required to quit ping when running as root
+]
+foreach dst : [ '127.0.0.1' ] + ipv6_dst
+  foreach args : ping_tests_user_fail
+	args += [ dst ]
+	name = 'ping ' + ' '.join(args)
+	test(name, ping, args : args, should_fail : not run_as_root)
   endforeach
 endforeach
