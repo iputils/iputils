@@ -64,10 +64,18 @@ install()
 
 run_tests()
 {
+	local ret
+
 	echo "=== tests ==="
 	cd $BUILD_DIR
+
 	meson test
+	ret=$?
+	echo "$ret test failures"
+
 	cd - > /dev/null
+
+	return $ret
 }
 
 print_logs()
