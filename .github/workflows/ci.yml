@@ -106,8 +106,17 @@ jobs:
     - name: Compile
       run: ./build.sh build
 
+    - name: Show build log
+      run: ./build.sh build-log
+
     - name: Install
       run: ./build.sh install
 
+    - name: Show install log
+      run: ./build.sh install-log
+
     - name: Run tests
       run: if [ ! "$SKIP_TESTS" ]; then ./build.sh test; else echo "tests skipped"; fi
+
+    - name: Show test log
+      run: ./build.sh test-log
