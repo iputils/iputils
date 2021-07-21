@@ -10,6 +10,7 @@ EnvironmentFile=-/etc/default/rdisc
 ExecStart=@sbindir@/rdisc -f -t $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
 AmbientCapabilities=CAP_NET_RAW CAP_NET_ADMIN
 CapabilityBoundingSet=CAP_NET_RAW CAP_NET_ADMIN
+DynamicUser=yes
 PrivateTmp=yes
 ProtectSystem=strict
 ProtectHome=yes
