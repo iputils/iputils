@@ -72,3 +72,6 @@ option('INSTALL_SYSTEMD_UNITS', type: 'boolean', value: false,
 
 option('USE_GETTEXT', type: 'boolean', value: true,
 	description: 'Enable I18N')
+
+option('TEST', type: 'boolean', value: true,
+	description: 'Build the tests for ping')
