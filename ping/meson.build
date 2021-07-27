@@ -28,7 +28,3 @@ if (setcap_ping)
 		setcap_path
 	)
 endif
-
-if not get_option('SKIP_TESTS')
-	subdir('test')
-endif
