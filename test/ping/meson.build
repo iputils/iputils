@@ -23,6 +23,13 @@ else
   message('running as normal user')
 endif
 
+cmd = ping
+cmd_name = 'ping '
+args = ['-V']
+
+name = 'ping ' + ' '.join(args)
+test(name, ping, args : args)
+
 foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
   foreach switch : [ '', '-4' ] + ipv6_switch
 	args = [ '-c1', dst ]
@@ -35,8 +42,8 @@ foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
 	  endif
 	endif
 
-	name = 'ping ' + ' '.join(args)
-	test(name, ping, args : args, should_fail : should_fail)
+	name = cmd_name + ' '.join(args)
+	test(name, cmd, args : args, should_fail : should_fail)
   endforeach
 endforeach
 
@@ -51,8 +58,8 @@ ping_tests_opt = [
 foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt
 	args += [ dst ]
-	name = 'ping ' + ' '.join(args)
-	test(name, ping, args : args)
+	name = cmd_name + ' '.join(args)
+	test(name, cmd, args : args)
   endforeach
 endforeach
 
@@ -65,8 +72,8 @@ ping_tests_opt_fail = [
 foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt_fail
 	args += [ dst ]
-	name = 'ping ' + ' '.join(args)
-	test(name, ping, args : args, should_fail : true)
+	name = cmd_name + ' '.join(args)
+	test(name, cmd, args : args, should_fail : true)
   endforeach
 endforeach
 
@@ -76,7 +83,7 @@ ping_tests_user_fail = [
 foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_user_fail
 	args += [ dst ]
-	name = 'ping ' + ' '.join(args)
-	test(name, ping, args : args, should_fail : not run_as_root)
+	name = cmd_name + ' '.join(args)
+	test(name, cmd, args : args, should_fail : not run_as_root)
   endforeach
 endforeach
