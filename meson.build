@@ -34,6 +34,7 @@ build_tracepath = get_option('BUILD_TRACEPATH')
 
 build_mans = get_option('BUILD_MANS')
 build_html_mans = get_option('BUILD_HTML_MANS')
+run_tests = not get_option('SKIP_TESTS')
 
 prefix = get_option('prefix')
 bindir = join_paths(prefix, get_option('bindir'))
@@ -332,7 +333,7 @@ if build_mans == true or build_html_mans == true
 	subdir ('doc')
 endif
 
-if not get_option('SKIP_TESTS')
+if run_tests
 	subdir('test')
 endif
 
@@ -359,6 +360,7 @@ output += 'Capatiblity (with libcap): ' + cap.to_string() + '\n'
 output += 'IDN (with libidn2): ' + idn.to_string() + '\n'
 output += 'I18N (with gettext): ' + gettext.to_string() + '\n'
 output += 'systemd: ' + install_systemd_units.to_string() + '\n'
+output += 'run tests: ' + run_tests.to_string() + '\n'
 
 output += '\nSYSTEM PATHS\n'
 output += 'prefix: ' + prefix + '\n'
