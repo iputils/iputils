@@ -11,7 +11,7 @@ ninfod_sources = files('''
 	ninfod_core.c
 	ninfod_name.c
 '''.split())
-executable('ninfod', [ninfod_sources, git_version_h],
+ninfod = executable('ninfod', [ninfod_sources, git_version_h],
 	dependencies : [cap_dep, rt_dep, threads],
 	link_with : [libcommon],
 	include_directories : inc,
