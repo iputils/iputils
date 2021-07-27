@@ -332,6 +332,10 @@ if build_mans == true or build_html_mans == true
 	subdir ('doc')
 endif
 
+if not get_option('SKIP_TESTS')
+	subdir('test')
+endif
+
 output = '\n\nAPPLICATIONS (build)\n'
 output += 'man: ' + build_mans.to_string() + '\n'
 output += 'HTML man: ' + build_html_mans.to_string() + '\n'
