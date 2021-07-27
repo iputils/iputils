@@ -1,4 +1,5 @@
 #!/bin/sh
+# Copyright (c) 2019-2021 Petr Vorel <pvorel@suse.cz>
 
 CFLAGS="${CFLAGS:--Wformat -Werror=format-security -Werror=implicit-function-declaration -Werror=return-type -fno-common}"
 CC="${CC:-gcc}"

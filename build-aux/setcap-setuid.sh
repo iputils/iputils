@@ -1,4 +1,5 @@
 #!/bin/sh
+# Copyright (c) Iputils Project, 2018-2021
 # Meson install script to setcap or setuid to an executable.
 
 exec_path="$1/$2"

@@ -1,3 +1,4 @@
+# Copyright (c) Iputils Project, 2018-2020
 # Update iputils.pot with the following command:
 # find . -name '*.[hc]' | xargs xgettext --keyword=_ --language=C --add-comments --sort-output --package-name=iputils -o po/iputils.pot
 

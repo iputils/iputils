@@ -1,3 +1,5 @@
+# Copyright (c) Iputils Project, 2017-2021
+
 project('iputils', 'c',
 	default_options : [
 		'c_std=c99',

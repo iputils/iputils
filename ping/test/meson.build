@@ -1,3 +1,4 @@
+# Copyright (c) 2021 Petr Vorel <pvorel@suse.cz>
 # TODO: ::1 generates DEPRECATION: ":" is not allowed in test name "ping -c1 ::1", it has been replaced with "_"
 
 # GitHub CI does not have working IPv6

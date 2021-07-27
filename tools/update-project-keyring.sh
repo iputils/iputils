@@ -1,4 +1,5 @@
 #!/bin/sh
+# Copyright (c) 2019 Petr Vorel <petr.vorel@gmail.com>
 
 keys="4807F894E0620EEA" # YOSHIFUJI Hideaki
 keys="9FC5E7B74A45D0DE 4A8D0987698B0274 $keys" # David Heidelberg

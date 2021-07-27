@@ -1,3 +1,5 @@
+# Copyright (c) 2021 Petr Vorel <pvorel@suse.cz>
+
 name: "CI: docker based builds"
 on: [push, pull_request]
 

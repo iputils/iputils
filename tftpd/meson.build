@@ -1,3 +1,5 @@
+# Copyright (c) Iputils Project, 2017-2021
+
 inc = include_directories('..')
 
 executable('tftpd', ['tftpd.c', 'tftpsubs.c', git_version_h],

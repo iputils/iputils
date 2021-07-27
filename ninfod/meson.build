@@ -1,3 +1,5 @@
+# Copyright (c) Iputils Project, 2017-2020
+
 inc = include_directories('..')
 ninfod_sources = files('''
 	icmp6_nodeinfo.h
