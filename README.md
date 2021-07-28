@@ -12,7 +12,6 @@ These tools are included in iputils
 - rdisc
 - tftpd
 - tracepath
-- traceroute6
 
 If you still use [old version](http://www.skbuff.net/iputils/), please consider moving forward to new releases placed here.
 

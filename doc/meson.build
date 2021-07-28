@@ -32,10 +32,6 @@ if build_tracepath == true
 	manpages += ['tracepath']
 endif
 
-if build_traceroute6 == true
-	manpages += ['traceroute6']
-endif
-
 if build_ninfod == true
 	manpages += ['ninfod']
 endif
