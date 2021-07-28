@@ -1,8 +1,7 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Base po file for iputils translations
+# Copyright (c) Iputils Project, 2018-2021
 # This file is distributed under the same license as the iputils package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+
 #, fuzzy
 msgid ""
 msgstr ""

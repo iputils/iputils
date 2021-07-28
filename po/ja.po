@@ -1,7 +1,9 @@
-# Japanese messages for iputils
-#  Jun Nishii <jun@vinelinux.org>, 2000
-#  Daisuke SUZUKI <daisuke@linux.or.jp>, 2004
-#  Tomohiro "Tomo-p" KATO <tomop@teamgedoh.net>, 2018-2021
+# Japanese translation for iputils
+# Copyright (c) Jun Nishii <jun@vinelinux.org>, 2000
+# Copyright (c) Daisuke SUZUKI <daisuke@linux.or.jp>, 2004
+# Copyright (c) Tomohiro "Tomo-p" KATO <tomop@teamgedoh.net>, 2018-2021
+# Copyright (c) Iputils Project, 2020-2021
+
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils 20161105\n"

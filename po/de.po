@@ -1,8 +1,8 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# German translation for iputils
+# Copyright (c) Jens Maucher <de@li.org>, 2020
+# Copyright (c) Iputils Project, 2020-2021
 # This file is distributed under the same license as the iputils package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"

@@ -1,6 +1,8 @@
-# Copyright (C) Rafael Fontenelle <rafaelff@gnome.org>, 2020-2021
+# Portuguese (Brazil) translation for iputils
+# Copyright (c) Rafael Fontenelle <rafaelff@gnome.org>, 2020-2021
+# Copyright (c) Iputils Project, 2020-2021
 # This file is distributed under the same license as the iputils package.
-#
+
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"

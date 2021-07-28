@@ -1,8 +1,8 @@
 # Ukrainian translation for iputils
-# Copyright (c) 2020 iputils developers
+# Copyright (c) Yuri Chornoivan <yurchor@ukr.net>, 2020
+# Copyright (c) Iputils Project, 2020-2021
 # This file is distributed under the same license as the iputils package.
-#
-# Yuri Chornoivan <yurchor@ukr.net>, 2020.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
