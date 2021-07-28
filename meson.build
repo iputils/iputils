@@ -31,7 +31,6 @@ build_rdisc = get_option('BUILD_RDISC')
 build_rdisc_server = get_option('ENABLE_RDISC_SERVER')
 build_tftpd = get_option('BUILD_TFTPD')
 build_tracepath = get_option('BUILD_TRACEPATH')
-build_traceroute6 = get_option('BUILD_TRACEROUTE6')
 
 build_mans = get_option('BUILD_MANS')
 build_html_mans = get_option('BUILD_HTML_MANS')
@@ -52,13 +51,11 @@ endif
 setcap_arping = false
 setcap_clockdiff = false
 setcap_ping = false
-setcap_traceroute6 = false
 setcap_rdisc = false
 if (not get_option('NO_SETCAP_OR_SUID'))
   setcap_arping = get_option('SETCAP_OR_SUID_ARPING')
   setcap_clockdiff = get_option('SETCAP_OR_SUID_CLOCKDIFF')
   setcap_ping = get_option('SETCAP_OR_SUID_PING')
-  setcap_traceroute6 = get_option('SETCAP_OR_SUID_TRACEROUTE6')
   setcap_rdisc = get_option('SETCAP_OR_SUID_RDISC')
 endif
 
@@ -251,21 +248,6 @@ if build_tracepath == true
 		install: true)
 endif
 
-if build_traceroute6 == true
-	executable('traceroute6', ['traceroute6.c', git_version_h],
-		dependencies : [cap_dep, intl_dep, idn_dep],
-		link_with : [libcommon],
-		install: true)
-	if (setcap_traceroute6)
-		meson.add_install_script('build-aux/setcap-setuid.sh',
-			bindir,
-			'traceroute6',
-			perm_type,
-			setcap_path
-		)
-	endif
-endif
-
 if build_clockdiff == true
 	executable('clockdiff', ['clockdiff.c', git_version_h],
 		dependencies : [cap_dep, intl_dep],
@@ -367,8 +349,6 @@ output += ' (server: ' + build_rdisc_server.to_string() + ', '
 output += 'capability or suid: ' + setcap_rdisc.to_string() + ')\n'
 output += 'tftpd: ' + build_tftpd.to_string() + '\n'
 output += 'tracepath: ' + build_tracepath.to_string() + '\n'
-output += 'traceroute6: ' + build_traceroute6.to_string()
-output += ' (capability or suid: ' + setcap_traceroute6.to_string() + ')\n'
 
 output += '\nCONFIGURATION\n'
 output += 'Capatiblity (with libcap): ' + cap.to_string() + '\n'

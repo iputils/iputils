@@ -5,4 +5,3 @@ ping/ping6_common.c
 ping/ping.c
 ping/ping_common.c
 tracepath.c
-traceroute6.c

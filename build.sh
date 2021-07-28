@@ -6,7 +6,7 @@ CC="${CC:-gcc}"
 BUILD_DIR="${BUILD_DIR:-builddir}"
 PREFIX="${PREFIX:-$HOME/iputils-install}"
 
-BUILD_OPTS="-Dprefix=$PREFIX -DBUILD_RARPD=true -DBUILD_TFTPD=true -DBUILD_TRACEROUTE6=true $EXTRA_BUILD_OPTS"
+BUILD_OPTS="-Dprefix=$PREFIX -DBUILD_RARPD=true -DBUILD_TFTPD=true $EXTRA_BUILD_OPTS"
 [ -z "$EXTRA_BUILD_OPTS" ] && BUILD_OPTS="$BUILD_OPTS -DBUILD_HTML_MANS=true"
 [ -f "meson.cross" ] && BUILD_OPTS="--cross-file $PWD/meson.cross $BUILD_OPTS"
 
