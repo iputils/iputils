@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2021-12-11 06:16+0000\n"
+"PO-Revision-Date: 2021-12-14 20:38+0000\n"
 "Last-Translator: simmon <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -173,9 +173,7 @@ msgstr "경고: setsockopt(SO_DONTROUTE)"
 #: arping.c:1034
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
-"연결장치 \"%s\"는 ARP를 사용 할 수 없습니다(연결된 주소(linked local)가 없습"
-"니다).\n"
+msgstr "연결장치 \"%s\"는 ARP를 사용 할 수 없습니다(연결된 주소(linked local)가 없습니다).\n"
 
 #: arping.c:1043
 #, c-format
@@ -720,9 +718,7 @@ msgstr "경고: QOS 소켓옵션"
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
-msgstr ""
-"브로드캐스트 핑 할까요? 그런 다음 -b. 만약 그렇지 않으면, 로컬 방화벽 규칙을 "
-"점검하세요"
+msgstr "브로드캐스트 핑 할까요? 그런 다음 -b. 만약 그렇지 않으면, 로컬 방화벽 규칙을 점검하세요"
 
 #: ping/ping.c:729
 #, c-format
@@ -1120,9 +1116,7 @@ msgstr "경고: SO_MARK는 지원되지 않음"
 #: ping/ping_common.c:480
 #, c-format
 msgid "cannot flood; minimal interval allowed for user is %dms"
-msgstr ""
-"패킷이 넘쳐 흐르(ping flood)지 않습니다; 사용자를 위한 최소 허용 간격은 %dms"
-"입니다"
+msgstr "패킷이 넘쳐 흐르(ping flood)지 않습니다; 사용자를 위한 최소 허용 간격은 %dms입니다"
 
 #: ping/ping_common.c:483
 #, c-format
@@ -1240,8 +1234,7 @@ msgstr ", 시간 %ldms"
 #: ping/ping_common.c:906
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
-"rtt 최소/평균/최대/표준편차 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt 최소/평균/최대/표준편차 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:914
 #, c-format
@@ -1261,8 +1254,7 @@ msgstr "%ld/%ld 패킷, %d%% 손실"
 #: ping/ping_common.c:944
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
-", 최소/평균/지수가중평균/최대 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
+msgstr ", 최소/평균/지수가중평균/최대 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: tracepath.c:215
 #, c-format
