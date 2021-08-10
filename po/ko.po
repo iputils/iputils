@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2022-07-18 11:18+0000\n"
+"PO-Revision-Date: 2022-10-23 20:15+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: arping.c:123
 #, c-format
@@ -727,8 +727,7 @@ msgstr "경고: QOS sockopts"
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
-msgstr ""
-"ping 광역전송을 할까요? 그런 다음 -b. 만약 그렇지 않으면, 로컬 방화벽 규칙을 "
+msgstr "ping 광역전송을 할까요? 그런 다음 -b. 만약 그렇지 않으면, 로컬 방화벽 규칙을 "
 "점검하세요"
 
 #: ping/ping.c:741
@@ -1245,8 +1244,7 @@ msgstr ", 시간 %ldms"
 #: ping/ping_common.c:909
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
-"rtt 최소/평균/최대/표준편차 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt 최소/평균/최대/표준편차 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:917
 #, c-format
@@ -1266,8 +1264,7 @@ msgstr "%ld/%ld 패킷, %d%% 손실"
 #: ping/ping_common.c:947
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
-", 최소/평균/지수가중평균/최대 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
+msgstr ", 최소/평균/지수가중평균/최대 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: tracepath.c:217
 #, c-format
