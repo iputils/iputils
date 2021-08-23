@@ -12,10 +12,11 @@ These tools are included in iputils
 - rdisc
 - tftpd
 - tracepath
-- traceroute6
 
 If you still use [old version](http://www.skbuff.net/iputils/), please consider moving forward to new releases placed here.
 
 This version also fully supports glibc, uClibc and musl-libc.
+
+Localization is hosted on [Fedora Weblate](https://translate.fedoraproject.org/projects/iputils/iputils/).
 
 <!-- vim: set tw=80: -->

@@ -6,11 +6,12 @@ After=network.target
 
 [Service]
 EnvironmentFile=-/etc/sysconfig/rdisc
+EnvironmentFile=-/etc/default/rdisc
 ExecStart=@sbindir@/rdisc -f -t $OPTIONS $SEND_ADDRESS $RECEIVE_ADDRESS
-
-AmbientCapabilities=CAP_NET_RAW
+AmbientCapabilities=CAP_NET_RAW CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_RAW CAP_NET_ADMIN
+DynamicUser=yes
 PrivateTmp=yes
-PrivateUsers=yes
 ProtectSystem=strict
 ProtectHome=yes
 ProtectControlGroups=yes

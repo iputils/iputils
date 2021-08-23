@@ -1,6 +1,8 @@
+# Copyright (c) Iputils Project, 2017-2021
+
 inc = include_directories('..')
 
-executable('ping', [
+ping = executable('ping', [
 		'ping.c',
 		'ping_common.c',
 		'ping6_common.c',
@@ -25,4 +27,8 @@ if (setcap_ping)
 		perm_type,
 		setcap_path
 	)
+endif
+
+if not get_option('SKIP_TESTS')
+	subdir('test')
 endif

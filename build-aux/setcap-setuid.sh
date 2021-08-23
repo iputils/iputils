@@ -1,4 +1,5 @@
 #!/bin/sh
+# Copyright (c) Iputils Project, 2018-2021
 # Meson install script to setcap or setuid to an executable.
 
 exec_path="$1/$2"
@@ -16,6 +17,7 @@ _log() {
 case "$perm_type" in
 	caps)
 		params="cap_net_raw+p"
+		[ "$2" = "rdisc" ] && params="cap_net_raw,cap_net_admin+ep"
 		_log "calling: $setcap $params $exec_path"
 		"$setcap" $params "$exec_path"
 	;;

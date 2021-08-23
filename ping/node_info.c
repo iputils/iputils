@@ -46,11 +46,11 @@ struct niquery_option {
 
 #define NIQUERY_OPTION(_name, _has_arg, _data, _handler)	\
 	{							\
-		.name = _name,					\
+		.name = (_name),				\
 		.namelen = sizeof(_name) - 1,			\
-		.has_arg = _has_arg,				\
-		.data = _data,					\
-		.handler = _handler				\
+		.has_arg = (_has_arg),				\
+		.data = (_data),				\
+		.handler = (_handler)				\
 	}
 
 static int niquery_option_name_handler(struct ping_ni *ni, int index __attribute__((__unused__)), const char *arg __attribute__((__unused__)));
@@ -59,7 +59,7 @@ static int niquery_option_ipv6_flag_handler(struct ping_ni *ni, int index, const
 static int niquery_option_ipv4_handler(struct ping_ni *ni, int index, const char *arg);
 static int niquery_option_ipv4_flag_handler(struct ping_ni *ni, int index, const char *arg);
 static int niquery_option_subject_addr_handler(struct ping_ni *ni, int index, const char *arg);
-static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, const char *arg);
+static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, const char *name);
 static int niquery_option_help_handler(struct ping_ni *ni, int index, const char *arg);
 
 struct niquery_option niquery_options[] = {
@@ -121,11 +121,12 @@ static int niquery_nonce(struct ping_ni *ni, uint8_t *nonce, int fill)
 	if (fill) {
 		memcpy(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t));
 		return 0;
-	} else {
-		if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)))
-			return -1;
-		return ntohsp((uint16_t *)nonce);
 	}
+
+	if (memcmp(nonce + sizeof(uint16_t), digest, NI_NONCE_SIZE - sizeof(uint16_t)))
+		return -1;
+
+	return ntohsp((uint16_t *)nonce);
 }
 #endif
 
@@ -336,7 +337,7 @@ static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, co
 		fqdn = dots ? 1 : -1;
 	}
 
-	buflen = namelen + 3 + 1;	/* dn_comp() requrires strlen() + 3,
+	buflen = namelen + 3 + 1;	/* dn_comp() requires strlen() + 3,
 					   plus non-fqdn indicator. */
 	buf = malloc(buflen);
 	if (!buf) {

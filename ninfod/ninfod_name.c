@@ -201,10 +201,11 @@ static int compare_dnsname(const char *s, size_t slen,
 		if (*s == '\0') {
 			if (s == s0 + slen - 1)
 				break;	/* FQDN */
-			else if (s + 1 == s0 + slen - 1)
+
+			if (s + 1 == s0 + slen - 1)
 				return retcode;	/* truncated */
-			else
-				return -1;	/* more than one subject */
+
+			return -1;	/* more than one subject */
 		}
 		if (!done) {
 			if (*n == '\0') {
@@ -322,7 +323,6 @@ void init_nodeinfo_nodename(int forced)
 		}
 	}
 
-	return;
 }
 
 /* ---------- */

@@ -119,14 +119,21 @@ int filter_ipv6addr(const struct in6_addr *ifaddr, unsigned int flags)
 	if (IN6_IS_ADDR_UNSPECIFIED(ifaddr) ||
 	    IN6_IS_ADDR_LOOPBACK(ifaddr)) {
 		return 1;
-	} else if (IN6_IS_ADDR_V4COMPAT(ifaddr) ||
+	}
+
+	if (IN6_IS_ADDR_V4COMPAT(ifaddr) ||
 		   IN6_IS_ADDR_V4MAPPED(ifaddr)) {
 		return !(flags & IPUTILS_NI_IPV6_FLAG_COMPAT);
-	} else if (IN6_IS_ADDR_LINKLOCAL(ifaddr)) {
+	}
+
+	if (IN6_IS_ADDR_LINKLOCAL(ifaddr)) {
 		return !(flags & IPUTILS_NI_IPV6_FLAG_LINKLOCAL);
-	} else if (IN6_IS_ADDR_SITELOCAL(ifaddr)) {
+	}
+
+	if (IN6_IS_ADDR_SITELOCAL(ifaddr)) {
 		return !(flags & IPUTILS_NI_IPV6_FLAG_SITELOCAL);
 	}
+
 	return !(flags & IPUTILS_NI_IPV6_FLAG_GLOBAL);
 }
 
@@ -280,7 +287,6 @@ int pr_nodeinfo_ipv6addr(CHECKANDFILL_ARGS)
 void init_nodeinfo(INIT_ARGS __attribute__((__unused__)))
 {
 	DEBUG(LOG_DEBUG, "%s()\n", __func__);
-	return;
 }
 
 int pr_nodeinfo_ipv4addr(CHECKANDFILL_ARGS)

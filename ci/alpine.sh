@@ -1,6 +1,6 @@
 #!/bin/sh
-# Copyright (c) 2019 Petr Vorel <petr.vorel@gmail.com>
-set -e
+# Copyright (c) 2019-2021 Petr Vorel <petr.vorel@gmail.com>
+set -ex
 
 apk update
 
@@ -10,6 +10,7 @@ apk add \
 	docbook-xml \
 	docbook-xsl \
 	gcc \
+	iproute2 \
 	gettext-dev \
 	libcap-dev \
 	libxslt \

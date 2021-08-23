@@ -255,9 +255,11 @@ xml:id="man.ping">
         <listitem>
           <para>Wait
           <emphasis remap="I">interval</emphasis> seconds between
-          sending each packet. The default is to wait for one
-          second between each packet normally, or not to wait in
-          flood mode. Only super-user may set interval to values
+          sending each packet. Real number allowed with dot as
+          a decimal separator (regardless locale setup).
+          The default is to wait for one second between each packet
+          normally, or not to wait in flood mode.
+          Only super-user may set interval to values
           less than 0.2 seconds.</para>
         </listitem>
       </varlistentry>
@@ -681,7 +683,10 @@ xml:id="man.ping">
           <para>Time to wait for a response, in seconds. The option
           affects only timeout in absence of any responses,
           otherwise
-          <command>ping</command> waits for two RTTs.</para>
+          <command>ping</command> waits for two RTTs.
+          Real number allowed with dot as a decimal separator
+          (regardless locale setup).
+          0 means infinite timeout.</para>
         </listitem>
       </varlistentry>
     </variablelist>

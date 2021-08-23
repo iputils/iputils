@@ -1,3 +1,5 @@
+# Copyright (c) Iputils Project, 2017-2020
+
 inc = include_directories('..')
 ninfod_sources = files('''
 	icmp6_nodeinfo.h
@@ -18,7 +20,7 @@ executable('ninfod', [ninfod_sources, git_version_h],
 conf_data = configuration_data()
 conf_data.set('prefix', prefix)
 
-if systemd.found()
+if install_systemd_units
 	subs = configuration_data()
 	subs.set('sbindir', sbindir)
 	unit_file = configure_file(

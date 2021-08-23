@@ -56,6 +56,7 @@
 #include <netinet/ip_icmp.h>
 #include <ifaddrs.h>
 #include <math.h>
+#include <locale.h>
 
 /* FIXME: global_rts will be removed in future */
 struct ping_rts *global_rts;
@@ -168,7 +169,7 @@ static void set_socket_option(socket_st *sock, int level, int optname,
 		error(2, errno, "setsockopt");
 }
 
-/* Much like stdtod(3, but will fails if str is not valid number. */
+/* Much like strtod(3), but will fails if str is not valid number. */
 static double ping_strtod(const char *str, const char *err_msg)
 {
 	double num;
@@ -177,16 +178,18 @@ static double ping_strtod(const char *str, const char *err_msg)
 	if (str == NULL || *str == '\0')
 		goto err;
 	errno = 0;
-#ifdef USE_IDN
+
+	/*
+	 * Here we always want to use locale regardless USE_IDN or ENABLE_NLS,
+	 * because it handles decimal point of -i/-W input options.
+	 */
 	setlocale(LC_ALL, "C");
-#endif
 	num = strtod(str, &end);
-#ifdef USE_IDN
 	setlocale(LC_ALL, "");
-#endif
+
 	if (errno || str == end || (end && *end)) {
 		error(0, 0, _("option argument contains garbage: %s"), end);
-		error(0, 0, _("this will become fatal error in future"));
+		error(0, 0, _("this will become fatal error in the future"));
 	}
 	switch (fpclassify(num)) {
 	case FP_NORMAL:
@@ -360,7 +363,7 @@ main(int argc, char **argv)
 			rts.opt_adaptive = 1;
 			break;
 		case 'B':
-			rts.opt_sourceroute = 1;
+			rts.opt_strictsource = 1;
 			break;
 		case 'c':
 			rts.npackets = strtol_or_err(optarg, _("invalid argument"), 1, LONG_MAX);
@@ -376,7 +379,7 @@ main(int argc, char **argv)
 			double optval;
 
 			optval = ping_strtod(optarg, _("bad timing interval"));
-			if (isgreater(optval, (double)(INT_MAX / 1000)))
+			if (isgreater(optval, (double)INT_MAX / 1000))
 				error(2, 0, _("bad timing interval: %s"), optarg);
 			rts.interval = (int)(optval * 1000);
 			rts.opt_interval = 1;
@@ -485,7 +488,7 @@ main(int argc, char **argv)
 			double optval;
 
 			optval = ping_strtod(optarg, _("bad linger time"));
-			if (isless(optval, 0.001) || isgreater(optval, (double)(INT_MAX / 1000)))
+			if (isless(optval, 0) || isgreater(optval, (double)INT_MAX / 1000))
 				error(2, 0, _("bad linger time: %s"), optarg);
 			/* lingertime will be converted to usec later */
 			rts.lingertime = (int)(optval * 1000);
@@ -1311,8 +1314,11 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 	msg.msg_controllen = sizeof(cbuf);
 
 	res = recvmsg(sock->fd, &msg, MSG_ERRQUEUE | MSG_DONTWAIT);
-	if (res < 0)
+	if (res < 0) {
+		if (errno == EAGAIN || errno == EINTR)
+			local_errors++;
 		goto out;
+	}
 
 	e = NULL;
 	for (cmsgh = CMSG_FIRSTHDR(&msg); cmsgh; cmsgh = CMSG_NXTHDR(&msg, cmsgh)) {
@@ -1538,10 +1544,11 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 	csfailed = in_cksum((unsigned short *)icp, cc, 0);
 
 	if (icp->type == ICMP_ECHOREPLY) {
+		if (!rts->broadcast_pings && !rts->multicast &&
+		    from->sin_addr.s_addr != rts->whereto.sin_addr.s_addr)
+			return 1;
 		if (!is_ours(rts, sock, icp->un.echo.id))
 			return 1;			/* 'Twas not our ECHO */
-		if (!contains_pattern_in_payload(rts, (uint8_t *)(icp + 1)))
-			return 1;			/* 'Twas really not our ECHO */
 		if (gather_statistics(rts, (uint8_t *)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
 				      reply_ttl, 0, tv, pr_addr(rts, from, sizeof *from),

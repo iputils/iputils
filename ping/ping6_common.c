@@ -58,9 +58,18 @@
  *	with net_cap_raw enabled.
  */
 #include <stddef.h>
+
 #include "iputils_common.h"
 #include "iputils_ni.h"
+#include "ipv6.h"
 #include "ping.h"
+
+#ifndef IPV6_FLOWLABEL_MGR
+# define IPV6_FLOWLABEL_MGR 32
+#endif
+#ifndef IPV6_FLOWINFO_SEND
+# define IPV6_FLOWINFO_SEND 33
+#endif
 
 ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,
@@ -335,10 +344,10 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	}
 
 	if (rts->opt_flowinfo) {
-#ifdef IPV6_FLOWLABEL_MGR
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + rts->cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
 		int freq_len = sizeof(*freq);
+
 		memset(freq, 0, sizeof(*freq));
 		freq->flr_label = htonl(rts->flowlabel & IPV6_FLOWINFO_FLOWLABEL);
 		freq->flr_action = IPV6_FL_A_GET;
@@ -348,17 +357,9 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWLABEL_MGR, freq, freq_len) == -1)
 			error(2, errno, _("can't set flowlabel"));
 		rts->flowlabel = freq->flr_label;
-#else
-		error(2, 0, _("flow labels are not supported"));
-#endif
-
-#ifdef IPV6_FLOWINFO_SEND
 		rts->whereto6.sin6_flowinfo = rts->flowlabel;
 		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_FLOWINFO_SEND, &on, sizeof on) == -1)
 			error(2, errno, _("can't send flowinfo"));
-#else
-		error(2, 0, _("flowinfo is not supported"));
-#endif
 	}
 
 	printf(_("PING %s(%s) "), rts->hostname, pr_addr(rts, &rts->whereto6, sizeof rts->whereto6));
@@ -481,8 +482,11 @@ int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 	msg.msg_controllen = sizeof(cbuf);
 
 	res = recvmsg(sock->fd, &msg, MSG_ERRQUEUE | MSG_DONTWAIT);
-	if (res < 0)
+	if (res < 0) {
+		if (errno == EAGAIN || errno == EINTR)
+			local_errors++;
 		goto out;
+	}
 
 	e = NULL;
 	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
@@ -730,7 +734,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 			break;
 		}
 		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf)))
-			printf(_(" unexpeced error in inet_ntop(%s)"),
+			printf(_(" unexpected error in inet_ntop(%s)"),
 			       strerror(errno));
 		else
 			printf(" %s", buf);
@@ -815,10 +819,11 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
+		if (!rts->multicast &&
+		    memcmp(&from->sin6_addr.s6_addr, &rts->whereto6.sin6_addr.s6_addr, 16))
+			return 1;
 		if (!is_ours(rts, sock, icmph->icmp6_id))
 			return 1;
-	       if (!contains_pattern_in_payload(rts, (uint8_t *)(icmph + 1)))
-			return 1;	/* 'Twas really not our ECHO */
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
@@ -858,7 +863,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 
 		nexthdr = iph1->ip6_nxt;
 
-		if (nexthdr == 44) {
+		if (nexthdr == NEXTHDR_FRAGMENT) {
 			nexthdr = *(uint8_t *)icmph1;
 			icmph1++;
 		}
@@ -868,13 +873,13 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 				return 1;
 			acknowledge(rts, ntohs(icmph1->icmp6_seq));
 			return 0;
-		} else {
-			/* We've got something other than an ECHOREPLY */
-			if (!rts->opt_verbose || rts->uid)
-				return 1;
-			print_timestamp(rts);
-			printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		}
+
+		/* We've got something other than an ECHOREPLY */
+		if (!rts->opt_verbose || rts->uid)
+			return 1;
+		print_timestamp(rts);
+		printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
 		print_icmp(icmph->icmp6_type, icmph->icmp6_code, ntohl(icmph->icmp6_mtu));
 	}
 

@@ -1,9 +1,12 @@
+# Copyright (c) Iputils Project, 2017-2021
+
 inc = include_directories('..')
 
 executable('tftpd', ['tftpd.c', 'tftpsubs.c', git_version_h],
 	include_directories : inc,
 	link_with : [libcommon],
-	install: true)
+	install: true,
+	install_dir: sbindir)
 
 subs = configuration_data()
 subs.set('sbindir', sbindir)

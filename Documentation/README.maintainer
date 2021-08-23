@@ -32,17 +32,29 @@ what was said in previous release message.  Draft release message - remember
 if you have nothing to say then you don't have good enough reason to publish
 release.
 
+Update iputils.pot:
+
+    meson . builddir && ninja iputils-pot -C builddir
+
+and push this change and ask translators to update translations.
+
+
+Update CHANGES file. It should list the most notable changes and important or
+security related fixes. Create pull request with these changes to give people
+chance to review and test upcoming release. Notify distro maintainers, ask
+community for testing.
+
 Create release commit and tag.
 
-    date="$(date +s%Y%m%d)"
-    sed --in-place "s/version : '.*')/version : '$date')/" meson.build
-    git add meson.build
-    git commit --signoff --message "release: iputils-$date"
-    git tag --sign --annotate $date --message iputils-$date
+    tag="$(date +%Y%m%d)"
+    sed --in-place "s/version : '.*')/version : '$tag')/" meson.build
+    git add meson.build CHANGES
+    git commit -S --signoff --message "release: iputils-$tag"
+    git tag --sign --annotate $tag --message iputils-$tag
 
 Check that the commit and tag looks ok.
 
-    git show $date --show-signature
+    git show $tag --show-signature
 
 Assuming things are great push to github.
 
@@ -50,16 +62,37 @@ Assuming things are great push to github.
     git push origin --tags
 
 Go to github https://github.com/iputils/iputils/releases and paste the
-release message you drafted earlier to text box.  Choose the tag you just
-created.  Download the release files and sign them.
+the content of CHANGES file for upcoming release to the text box.
+Add there also credit for all contributors:
 
-    for file in iputils-$date.{zip,tar.gz}; do gpg --sign --armor --detach-sign $file; done
+    Many thanks to the people contributing to this release:
 
-	out="sha256sum"
-	for file in iputils-$date.{zip,tar.gz}; do $out $file >> $out; done
-	gpg --clearsign $out
+    git shortlog -s -n $tag..
 
-Upload these three .asc files to release as additional files.
+    Also thanks to patch reviewers:
+
+    git log $tag.. | grep -Ei '(reviewed|acked)-by:' | \
+        sed 's/.*by: //' | sort | uniq -c | sort -n -r
+
+    and testers:
+
+    git log $tag.. | grep -Ei 'tested-by:' | \
+        sed 's/.*by: //' | sort | uniq -c | sort -n -r
+
+Choose the tag you just created.  Download the release files, compute sha256 hash:
+
+    wget -c https://github.com/iputils/iputils/archive/$tag.zip \
+        https://github.com/iputils/iputils/archive/$tag.tar.gz
+
+    out="sha256sum"
+    for file in $tag.{zip,tar.gz}; do $out $file >> $out; done
+
+Sign tarballs and sha256 hash:
+
+    for file in $tag.{zip,tar.gz}; do gpg --sign --armor --detach-sign $file; done
+    gpg --clearsign $out
+
+and upload all these four files to the release as additional files.
 
 The release should be ready.  People tend to react to releases, so expect bug
 reports and pull requests after release.  Assuming release has fatal flaw(s)

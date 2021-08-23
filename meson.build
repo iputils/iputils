@@ -1,3 +1,5 @@
+# Copyright (c) Iputils Project, 2017-2021
+
 project('iputils', 'c',
 	default_options : [
 		'c_std=c99',
@@ -5,7 +7,7 @@ project('iputils', 'c',
 		'localstatedir=var',
 	],
 	meson_version : '>=0.39',
-	version : 's20190709') # keep in sync with: git describe | awk -F- '{print $1}'
+	version : '20210722') # keep in sync with: git describe | awk -F- '{print $1}'
 
 cc = meson.get_compiler('c')
 
@@ -29,7 +31,6 @@ build_rdisc = get_option('BUILD_RDISC')
 build_rdisc_server = get_option('ENABLE_RDISC_SERVER')
 build_tftpd = get_option('BUILD_TFTPD')
 build_tracepath = get_option('BUILD_TRACEPATH')
-build_traceroute6 = get_option('BUILD_TRACEROUTE6')
 
 build_mans = get_option('BUILD_MANS')
 build_html_mans = get_option('BUILD_HTML_MANS')
@@ -40,20 +41,22 @@ localedir = join_paths(prefix, get_option('localedir'))
 sbindir = join_paths(prefix, get_option('sbindir'))
 
 systemd = dependency('systemd', required : false)
+install_systemd_units = systemd.found() or get_option('INSTALL_SYSTEMD_UNITS')
+
 systemdunitdir = get_option('systemdunitdir')
-if systemdunitdir == '' and systemd.found()
+if systemdunitdir == '' and install_systemd_units
 	systemdunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 endif
 
 setcap_arping = false
 setcap_clockdiff = false
 setcap_ping = false
-setcap_traceroute6 = false
+setcap_rdisc = false
 if (not get_option('NO_SETCAP_OR_SUID'))
   setcap_arping = get_option('SETCAP_OR_SUID_ARPING')
   setcap_clockdiff = get_option('SETCAP_OR_SUID_CLOCKDIFF')
   setcap_ping = get_option('SETCAP_OR_SUID_PING')
-  setcap_traceroute6 = get_option('SETCAP_OR_SUID_TRACEROUTE6')
+  setcap_rdisc = get_option('SETCAP_OR_SUID_RDISC')
 endif
 
 # Check functions.
@@ -151,9 +154,6 @@ if build_rdisc == true
 endif
 
 if build_ninfod == true
-	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h')
-		conf.set('STDC_HEADERS', 1, description : 'Defined if we have standard c headers.')
-	endif
 	foreach h : [
 		'inttypes.h',
 		'limits.h',
@@ -248,21 +248,6 @@ if build_tracepath == true
 		install: true)
 endif
 
-if build_traceroute6 == true
-	executable('traceroute6', ['traceroute6.c', git_version_h],
-		dependencies : [cap_dep, intl_dep, idn_dep],
-		link_with : [libcommon],
-		install: true)
-	if (setcap_traceroute6)
-		meson.add_install_script('build-aux/setcap-setuid.sh',
-			bindir,
-			'traceroute6',
-			perm_type,
-			setcap_path
-		)
-	endif
-endif
-
 if build_clockdiff == true
 	executable('clockdiff', ['clockdiff.c', git_version_h],
 		dependencies : [cap_dep, intl_dep],
@@ -283,7 +268,15 @@ if build_rdisc == true
 		install_dir: sbindir,
 		link_with : [libcommon],
 		install: true)
-	if systemd.found()
+	if (setcap_rdisc)
+		meson.add_install_script('build-aux/setcap-setuid.sh',
+			sbindir,
+			'rdisc',
+			perm_type,
+			setcap_path
+		)
+	endif
+	if install_systemd_units
 		subs = configuration_data()
 		subs.set('sbindir', sbindir)
 		unit_file = configure_file(
@@ -319,7 +312,7 @@ if build_rarpd == true
 		install_dir: sbindir,
 		link_with : [libcommon],
 		install: true)
-	if systemd.found()
+	if install_systemd_units
 		subs = configuration_data()
 		subs.set('sbindir', sbindir)
 		unit_file = configure_file(
@@ -352,17 +345,16 @@ output += 'ping: ' + build_ping.to_string()
 output += ' (capability or suid: ' + setcap_ping.to_string() + ')\n'
 output += 'rarpd: ' + build_rarpd.to_string() + '\n'
 output += 'rdisc: ' + build_rdisc.to_string()
-output += ' (server: ' + build_rdisc_server.to_string() + ')\n'
+output += ' (server: ' + build_rdisc_server.to_string() + ', '
+output += 'capability or suid: ' + setcap_rdisc.to_string() + ')\n'
 output += 'tftpd: ' + build_tftpd.to_string() + '\n'
 output += 'tracepath: ' + build_tracepath.to_string() + '\n'
-output += 'traceroute6: ' + build_traceroute6.to_string()
-output += ' (capability or suid: ' + setcap_traceroute6.to_string() + ')\n'
 
 output += '\nCONFIGURATION\n'
 output += 'Capatiblity (with libcap): ' + cap.to_string() + '\n'
 output += 'IDN (with libidn2): ' + idn.to_string() + '\n'
 output += 'I18N (with gettext): ' + gettext.to_string() + '\n'
-output += 'systemd: ' + systemd.found().to_string() + '\n'
+output += 'systemd: ' + install_systemd_units.to_string() + '\n'
 
 output += '\nSYSTEM PATHS\n'
 output += 'prefix: ' + prefix + '\n'
@@ -372,7 +364,3 @@ output += 'sbindir: ' + sbindir + '\n'
 output += 'systemdunitdir: ' + systemdunitdir + '\n'
 
 message(output)
-
-############################################################
-# FIXME: write tests
-#test('ping to 127.0.0.1', p, args : ['-p 1', '127.0.0.1'])

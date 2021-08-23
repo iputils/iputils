@@ -321,7 +321,8 @@ static int recverr(struct run_state *const ctl)
 			if (rethops >= 0) {
 				if (sndhops >= 0 && rethops != sndhops)
 					printf(_("asymm %2d "), rethops);
-				else if (sndhops < 0 && rethops != ctl->ttl)
+
+				if (sndhops < 0 && rethops != ctl->ttl)
 					printf(_("asymm %2d "), rethops);
 			}
 			printf("\n");

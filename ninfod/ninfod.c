@@ -349,7 +349,7 @@ int ni_send(struct packetcontext *p)
 static void sig_handler(int sig)
 {
 	if (!got_signal && sig)
-		DEBUG(LOG_INFO, "singnal(%d) received, quitting.\n", sig);
+		DEBUG(LOG_INFO, "signal(%d) received, quitting.\n", sig);
 	got_signal = 1;
 }
 

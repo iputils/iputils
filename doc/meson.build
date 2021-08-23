@@ -1,3 +1,5 @@
+# Copyright (c) Iputils Project, 2017-2019
+
 manpages = []
 custom_man_xsl = files('custom-man.xsl')
 custom_html_xsl = files('custom-html.xsl')
@@ -28,10 +30,6 @@ endif
 
 if build_tracepath == true
 	manpages += ['tracepath']
-endif
-
-if build_traceroute6 == true
-	manpages += ['traceroute6']
 endif
 
 if build_ninfod == true

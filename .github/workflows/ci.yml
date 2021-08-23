@@ -1,0 +1,124 @@
+# Copyright (c) 2021 Petr Vorel <pvorel@suse.cz>
+
+name: "CI: docker based builds"
+on: [push, pull_request]
+
+jobs:
+  job:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # cross compilation builds
+          - container: "debian:unstable"
+            env:
+              ARCH: arm64
+              CC: aarch64-linux-gnu-gcc
+              VARIANT: cross-compile
+
+          - container: "debian:testing"
+            env:
+              ARCH: ppc64el
+              CC: powerpc64le-linux-gnu-gcc
+              VARIANT: cross-compile
+
+          - container: "debian:testing"
+            env:
+              ARCH: s390x
+              CC: s390x-linux-gnu-gcc
+              VARIANT: cross-compile
+
+          # musl (native)
+          - container: "alpine:latest"
+            env:
+              CC: gcc
+              EXTRA_BUILD_OPTS: "-DBUILD_HTML_MANS=false -DBUILD_MANS=false"
+
+          # other builds
+          - container: "opensuse/tumbleweed"
+            env:
+              CC: gcc
+
+          - container: "opensuse/leap"
+            env:
+              CC: clang
+
+          - container: "ubuntu:xenial"
+            env:
+              CC: clang
+              EXTRA_BUILD_OPTS: "-DUSE_GETTEXT=false"
+              # meson error: not using Unicode-compatible locale (ANSI_X3.4-1968)
+              SKIP_TESTS: true
+
+          - container: "ubuntu:groovy"
+            env:
+              CC: gcc
+
+          - container: "fedora:latest"
+            env:
+              CC: clang
+
+          - container: "centos:7"
+            env:
+              CC: gcc
+
+          - container: "debian:testing"
+            env:
+              CC: gcc
+
+          - container: "debian:stable"
+            env:
+              CC: gcc
+
+          - container: "debian:oldstable"
+            env:
+              CC: clang
+
+    container:
+      image: ${{ matrix.container }}
+      env: ${{ matrix.env }}
+
+    steps:
+    - name: Show OS
+      run: cat /etc/os-release
+
+    - name: Git checkout
+      uses: actions/checkout@v1
+
+    - name: Install additional packages
+      run: |
+        export INSTALL=${{ matrix.container }}
+        export DISTRO_VERSION="${INSTALL#*:}"
+        INSTALL="${INSTALL%%:*}"
+        INSTALL="${INSTALL%%/*}"
+        ./ci/$INSTALL.sh
+        if [ "$VARIANT" ]; then ./ci/$INSTALL.$VARIANT.sh; fi
+
+    - name: Check dependencies
+      run: ./build.sh dependencies
+
+    - name: Check info
+      run: ./build.sh info
+
+    - name: Configure
+      run: ./build.sh configure
+
+    - name: Compile
+      run: ./build.sh build
+
+    - name: Show build log
+      run: ./build.sh build-log
+
+    - name: Install
+      run: ./build.sh install
+
+    - name: Show install log
+      run: ./build.sh install-log
+
+    - name: Run tests
+      run: if [ ! "$SKIP_TESTS" ]; then ./build.sh test; else echo "tests skipped"; fi
+
+    - name: Show test log
+      run: ./build.sh test-log

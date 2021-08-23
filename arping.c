@@ -37,6 +37,14 @@
 
 #include "iputils_common.h"
 
+/*
+ * As of July 2021 AX.25 PID values are not currently defined in any
+ * userspace headers.
+ */
+#ifndef AX25_P_IP
+# define AX25_P_IP		0xcc	/* ARPA Internet Protocol     */
+#endif
+
 #ifdef DEFAULT_DEVICE
 # define DEFAULT_DEVICE_STR	DEFAULT_DEVICE
 #else
@@ -248,7 +256,17 @@ static int send_pack(struct run_state *ctl)
 	ah->ar_hrd = htons(ME->sll_hatype);
 	if (ah->ar_hrd == htons(ARPHRD_FDDI))
 		ah->ar_hrd = htons(ARPHRD_ETHER);
-	ah->ar_pro = htons(ETH_P_IP);
+
+	/*
+	 * Exceptions everywhere. AX.25 uses the AX.25 PID value not the
+	 * DIX code for the protocol. Make these device structure fields.
+	 */
+	if (ah->ar_hrd == htons(ARPHRD_AX25) ||
+	    ah->ar_hrd == htons(ARPHRD_NETROM))
+		ah->ar_pro = htons(AX25_P_IP);
+	else
+		ah->ar_pro = htons(ETH_P_IP);
+
 	ah->ar_hln = ME->sll_halen;
 	ah->ar_pln = 4;
 	ah->ar_op  = ctl->advert ? htons(ARPOP_REPLY) : htons(ARPOP_REQUEST);
@@ -341,9 +359,17 @@ static int recv_pack(struct run_state *ctl, unsigned char *buf, ssize_t len,
 	    (FROM->sll_hatype != ARPHRD_FDDI || ah->ar_hrd != htons(ARPHRD_ETHER)))
 		return 0;
 
-	/* Protocol must be IP. */
-	if (ah->ar_pro != htons(ETH_P_IP))
+	/*
+	 * Protocol must be IP - but exceptions everywhere. AX.25 and NETROM
+	 * use the AX.25 PID value not the DIX code for the protocol.
+	 */
+	if (ah->ar_hrd == htons(ARPHRD_AX25) ||
+	    ah->ar_hrd == htons(ARPHRD_NETROM)) {
+		if (ah->ar_pro != htons(AX25_P_IP))
+			return 0;
+	} else if (ah->ar_pro != htons(ETH_P_IP))
 		return 0;
+
 	if (ah->ar_pln != 4)
 		return 0;
 	if (ah->ar_hln != ((struct sockaddr_ll *)&ctl->me)->sll_halen)
@@ -583,7 +609,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
  * Return value:
  *	>0	: Succeeded, and appropriate device not found.
  *		  device.ifindex remains 0.
- *	0	: Succeeded, and approptiate device found.
+ *	0	: Succeeded, and appropriate device found.
  *		  device.ifindex is set.
  *	<0	: Failed.  Support not found, or other
  *		: system error.
@@ -670,6 +696,7 @@ static int event_loop(struct run_state *ctl)
 	enum {
 		POLLFD_SIGNAL = 0,
 		POLLFD_TIMER,
+		POLLFD_TIMEOUT,
 		POLLFD_SOCKET,
 		POLLFD_COUNT
 	};
@@ -684,6 +711,13 @@ static int event_loop(struct run_state *ctl)
 		.it_interval.tv_sec = ctl->interval,
 		.it_interval.tv_nsec = 0,
 		.it_value.tv_sec = ctl->interval,
+		.it_value.tv_nsec = 0
+	};
+	int timeoutfd;
+	struct itimerspec timeoutfd_vals = {
+		.it_interval.tv_sec = ctl->timeout,
+		.it_interval.tv_nsec = 0,
+		.it_value.tv_sec = ctl->timeout,
 		.it_value.tv_nsec = 0
 	};
 	uint64_t exp, total_expires = 1;
@@ -710,7 +744,7 @@ static int event_loop(struct run_state *ctl)
 	pfds[POLLFD_SIGNAL].fd = sfd;
 	pfds[POLLFD_SIGNAL].events = POLLIN | POLLERR | POLLHUP;
 
-	/* timerfd */
+	/* interval timerfd */
 	tfd = timerfd_create(CLOCK_MONOTONIC, 0);
 	if (tfd == -1) {
 		error(0, errno, "timerfd_create failed");
@@ -722,6 +756,19 @@ static int event_loop(struct run_state *ctl)
 	}
 	pfds[POLLFD_TIMER].fd = tfd;
 	pfds[POLLFD_TIMER].events = POLLIN | POLLERR | POLLHUP;
+
+	/* timeout timerfd */
+	timeoutfd = timerfd_create(CLOCK_MONOTONIC, 0);
+	if (tfd == -1) {
+		error(0, errno, "timerfd_create failed");
+		return 1;
+	}
+	if (timerfd_settime(timeoutfd, 0, &timeoutfd_vals, NULL)) {
+		error(0, errno, "timerfd_settime failed");
+		return 1;
+	}
+	pfds[POLLFD_TIMEOUT].fd = timeoutfd;
+	pfds[POLLFD_TIMEOUT].events = POLLIN | POLLERR | POLLHUP;
 
 	/* socket */
 	pfds[POLLFD_SOCKET].fd = ctl->socketfd;
@@ -765,12 +812,14 @@ static int event_loop(struct run_state *ctl)
 					continue;
 				}
 				total_expires += exp;
-				if ((0 < ctl->count && (uint64_t)ctl->count < total_expires) ||
-				    (ctl->quit_on_reply && ctl->timeout < (long)total_expires)) {
+				if (0 < ctl->count && (uint64_t)ctl->count < total_expires) {
 					exit_loop = 1;
 					continue;
 				}
 				send_pack(ctl);
+				break;
+			case POLLFD_TIMEOUT:
+				exit_loop = 1;
 				break;
 			case POLLFD_SOCKET:
 				if ((s =
@@ -945,7 +994,7 @@ int main(int argc, char **argv)
 		}
 		memset(&saddr, 0, sizeof(saddr));
 		saddr.sin_family = AF_INET;
-		if (!ctl.unsolicited && (ctl.source || ctl.gsrc.s_addr)) {
+		if (ctl.source || ctl.gsrc.s_addr) {
 			saddr.sin_addr = ctl.gsrc;
 			if (bind(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1)
 				error(2, errno, "bind");
@@ -956,12 +1005,14 @@ int main(int argc, char **argv)
 			saddr.sin_port = htons(1025);
 			saddr.sin_addr = ctl.gdst;
 
-			if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on)) == -1)
-				error(0, errno, _("WARNING: setsockopt(SO_DONTROUTE)"));
-			if (connect(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1)
-				error(2, errno, "connect");
-			if (getsockname(probe_fd, (struct sockaddr *)&saddr, &alen) == -1)
-				error(2, errno, "getsockname");
+			if (!ctl.unsolicited) {
+				if (setsockopt(probe_fd, SOL_SOCKET, SO_DONTROUTE, (char *)&on, sizeof(on)) == -1)
+					error(0, errno, _("WARNING: setsockopt(SO_DONTROUTE)"));
+				if (connect(probe_fd, (struct sockaddr *)&saddr, sizeof(saddr)) == -1)
+					error(2, errno, "connect");
+				if (getsockname(probe_fd, (struct sockaddr *)&saddr, &alen) == -1)
+					error(2, errno, "getsockname");
+			}
 			ctl.gsrc = saddr.sin_addr;
 		}
 		close(probe_fd);
