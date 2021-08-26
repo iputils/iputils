@@ -36,6 +36,12 @@ jobs:
               CC: gcc
               EXTRA_BUILD_OPTS: "-DBUILD_HTML_MANS=false -DBUILD_MANS=false"
 
+          # some non-default options
+          - container: "debian:stable"
+            env:
+              CC: gcc
+              EXTRA_BUILD_OPTS: "-DUSE_CAP=false -DUSE_IDN=false -DBUILD_ARPING=false -DBUILD_CLOCKDIFF=false -DENABLE_RDISC_SERVER=false -DNINFOD_MESSAGES=false -DNO_SETCAP_OR_SUID=true -DUSE_GETTEXT=false"
+
           # other builds
           - container: "opensuse/tumbleweed"
             env:
