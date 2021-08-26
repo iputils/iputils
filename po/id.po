@@ -2,12 +2,11 @@
 # Copyright (c) Didik Supriadi <didiksupriadi41@gmail.com>, 2021
 # Copyright (c) Iputils Project, 2021
 # This file is distributed under the same license as the iputils package.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 10:36+0200\n"
+"POT-Creation-Date: 2021-08-27 01:23+0200\n"
 "PO-Revision-Date: 2021-07-16 13:31+0000\n"
 "Last-Translator: Didik Supriadi <didiksupriadi41@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
@@ -19,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.7.1\n"
 
-#: arping.c:113
+#: arping.c:121
 #, c-format
 msgid ""
 "\n"
@@ -56,7 +55,7 @@ msgstr ""
 "  -i <interval> atur interval antar paket (bawaan: 1 detik)\n"
 "  -I <device>   perangkat ethernet"
 
-#: arping.c:132
+#: arping.c:140
 #, c-format
 msgid ""
 "\n"
@@ -71,122 +70,122 @@ msgstr ""
 "\n"
 "Untuk lebih jelasnya lihat arping(8).\n"
 
-#: arping.c:285
+#: arping.c:303
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
 msgstr "Dikirim %d probe (%d broadcast)\n"
 
-#: arping.c:286
+#: arping.c:304
 #, c-format
 msgid "Received %d response(s)"
 msgstr "Diterima %d respons"
 
-#: arping.c:290
+#: arping.c:308
 #, c-format
 msgid "%d request(s)"
 msgstr "%d permintaan"
 
-#: arping.c:292
+#: arping.c:310
 #, c-format
 msgid "%s%d broadcast(s)"
 msgstr "%s%d broadcast"
 
-#: arping.c:387
+#: arping.c:413
 msgid "Unicast"
 msgstr "Unicast"
 
-#: arping.c:387
+#: arping.c:413
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: arping.c:388
+#: arping.c:414
 #, c-format
 msgid "%s from "
 msgstr "%s dari "
 
-#: arping.c:388
+#: arping.c:414
 msgid "reply"
 msgstr "balasan"
 
-#: arping.c:388
+#: arping.c:414
 msgid "request"
 msgstr "permintaan"
 
-#: arping.c:393
+#: arping.c:419
 #, c-format
 msgid "for %s "
 msgstr "untuk %s "
 
-#: arping.c:398
+#: arping.c:424
 #, c-format
 msgid "for "
 msgstr "untuk "
 
-#: arping.c:408
+#: arping.c:434
 #, c-format
 msgid " %ld.%03ldms\n"
 msgstr " %ld.%03ldms\n"
 
-#: arping.c:410
+#: arping.c:436
 #, c-format
 msgid " UNSOLICITED?\n"
 msgstr ""
 
-#: arping.c:561
+#: arping.c:587
 #, c-format
 msgid "Interface \"%s\" is down\n"
 msgstr "Interface \"%s\" mati\n"
 
-#: arping.c:569
+#: arping.c:595
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
 msgstr "Interface \"%s\" tidak ARPable\n"
 
-#: arping.c:662
+#: arping.c:688
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
 msgstr "WARNING: menggunakan alamat broadcast bawaan.\n"
 
-#: arping.c:872 arping.c:875 arping.c:878 ping/ping.c:369 ping/ping.c:415
+#: arping.c:898 arping.c:901 arping.c:904 ping/ping.c:369 ping/ping.c:415
 #: ping/ping.c:423 ping/ping.c:465 ping/ping.c:468 ping/ping.c:471
 #: ping/ping.c:484 tracepath.c:472 tracepath.c:475 tracepath.c:478
-#: tracepath.c:499 traceroute6.c:690 traceroute6.c:696 traceroute6.c:699
+#: tracepath.c:499
 msgid "invalid argument"
 msgstr "argumen tidak valid"
 
-#: arping.c:944
+#: arping.c:970
 #, c-format
 msgid "Device %s not available."
 msgstr "Perangkat %s tidak tersedia."
 
-#: arping.c:945
+#: arping.c:971
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr "Perangkat yang cocok tidak dapat ditentukan. Tolong, gunakan opsi -I."
 
-#: arping.c:965 traceroute6.c:824
+#: arping.c:991
 msgid "WARNING: interface is ignored"
 msgstr "WARNING: interface diabaikan"
 
-#: arping.c:984
+#: arping.c:1010
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
 msgstr "WARNING: setsockopt(SO_DONTROUTE)"
 
-#: arping.c:1008
+#: arping.c:1034
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr "Interface \"%s\" tidak ARPable (tidak ada alamat ll)\n"
 
-#: arping.c:1017
+#: arping.c:1043
 #, c-format
 msgid "ARPING %s "
 msgstr "ARPING %s "
 
-#: arping.c:1018
+#: arping.c:1044
 #, c-format
 msgid "from %s %s\n"
 msgstr "dari %s %s\n"
 
-#: arping.c:1022
+#: arping.c:1048
 msgid "no source address in not-DAD mode"
 msgstr "tidak ada alamat asal dalam mode not-DAD"
 
@@ -1389,174 +1388,112 @@ msgstr "kembali %d "
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "panjang paket harus dalam: %d < nilai <= %d"
 
-#: traceroute6.c:438
 #, c-format
-msgid "traceroute: wrote %s %d chars, ret=%d\n"
-msgstr "traceroute: ditulis %s %d karakter, ret=%d\n"
+#~ msgid "traceroute: wrote %s %d chars, ret=%d\n"
+#~ msgstr "traceroute: ditulis %s %d karakter, ret=%d\n"
 
-#: traceroute6.c:467
-msgid "Error"
-msgstr "Kesalahan"
+#~ msgid "Error"
+#~ msgstr "Kesalahan"
 
-#: traceroute6.c:469
-msgid "Destination Unreachable"
-msgstr "Tujuan Tidak Dapat Dijangkau"
+#~ msgid "Destination Unreachable"
+#~ msgstr "Tujuan Tidak Dapat Dijangkau"
 
-#: traceroute6.c:471
-msgid "Packet Too Big"
-msgstr "Paket Terlalu Besar"
+#~ msgid "Packet Too Big"
+#~ msgstr "Paket Terlalu Besar"
 
-#: traceroute6.c:473
-msgid "Time Exceeded in Transit"
-msgstr "Waktu Terlampaui dalam Pengiriman"
+#~ msgid "Time Exceeded in Transit"
+#~ msgstr "Waktu Terlampaui dalam Pengiriman"
 
-#: traceroute6.c:475
-msgid "Parameter Problem"
-msgstr "Masalah Parameter"
+#~ msgid "Parameter Problem"
+#~ msgstr "Masalah Parameter"
 
-#: traceroute6.c:477
-msgid "Echo Request"
-msgstr "Echo permintaan"
+#~ msgid "Echo Request"
+#~ msgstr "Echo permintaan"
 
-#: traceroute6.c:479
-msgid "Echo Reply"
-msgstr "Echo Balasan"
+#~ msgid "Echo Reply"
+#~ msgstr "Echo Balasan"
 
-#: traceroute6.c:481
-msgid "Membership Query"
-msgstr "Query Membership"
+#~ msgid "Membership Query"
+#~ msgstr "Query Membership"
 
-#: traceroute6.c:483
-msgid "Membership Report"
-msgstr "Laporan Membership"
+#~ msgid "Membership Report"
+#~ msgstr "Laporan Membership"
 
-#: traceroute6.c:485
-msgid "Membership Reduction"
-msgstr "Reduksi Membership"
+#~ msgid "Membership Reduction"
+#~ msgstr "Reduksi Membership"
 
-#: traceroute6.c:487
-msgid "Router Solicitation"
-msgstr ""
+#~ msgid "Neighbor Query"
+#~ msgstr "Query Neighbor"
 
-#: traceroute6.c:489
-msgid "Router Advertisement"
-msgstr ""
+#~ msgid "Neighbor Reply"
+#~ msgstr "Balasan Neighbor"
 
-#: traceroute6.c:491
-msgid "Neighbor Solicitation"
-msgstr ""
+#~ msgid "OUT-OF-RANGE"
+#~ msgstr "DILUAR-JANGKAUAN"
 
-#: traceroute6.c:493
-msgid "Neighbor Advertisement"
-msgstr ""
-
-#: traceroute6.c:495
-msgid "Redirect"
-msgstr ""
-
-#: traceroute6.c:497
-msgid "Neighbor Query"
-msgstr "Query Neighbor"
-
-#: traceroute6.c:499
-msgid "Neighbor Reply"
-msgstr "Balasan Neighbor"
-
-#: traceroute6.c:501
-msgid "Multicast Listener Report packet"
-msgstr ""
-
-#: traceroute6.c:503
-msgid "Home Agent Address Discovery Request Message"
-msgstr ""
-
-#: traceroute6.c:505
-msgid "Home Agent Address Discovery Reply message"
-msgstr ""
-
-#: traceroute6.c:507
-msgid "Mobile Prefix Solicitation Message"
-msgstr ""
-
-#: traceroute6.c:509
-msgid "Mobile Prefix Solicitation Advertisement"
-msgstr ""
-
-#: traceroute6.c:511
-msgid "OUT-OF-RANGE"
-msgstr "DILUAR-JANGKAUAN"
-
-#: traceroute6.c:601
 #, c-format
-msgid ""
-"\n"
-"Usage:\n"
-"  traceroute6 [options] <destination>\n"
-"\n"
-"Options:\n"
-"  -d            use SO_DEBUG socket option\n"
-"  -i <device>   bind to <device>\n"
-"  -m <hops>     use maximum <hops>\n"
-"  -n            no dns name resolution\n"
-"  -p <port>     use destination <port>\n"
-"  -q <nprobes>  number of probes\n"
-"  -r            use SO_DONTROUTE socket option\n"
-"  -s <address>  use source <address>\n"
-"  -v            verbose output\n"
-"  -V            print version and exit\n"
-"  -w <timeout>  time to wait for response\n"
-"\n"
-"For more details see traceroute6(8).\n"
-msgstr ""
-"\n"
-"Penggunaan:\n"
-"  traceroute6 [opsi] <tujuan>\n"
-"\n"
-"Opsi:\n"
-"  -d            menggunakan opsi socket SO_DEBUG\n"
-"  -i <device>   bind ke <perangkat>\n"
-"  -m <hops>     gunakan <hop> maksimum\n"
-"  -n            tidak ada resolusi nama dns\n"
-"  -p <port>     gunakan <port> tujuan\n"
-"  -q <nprobes>  jumlah probe\n"
-"  -r            gunakan opsi socket SO_DONTROUTE\n"
-"  -s <address>  gunakan <alamat> asal\n"
-"  -v            lebih detail\n"
-"  -V            tampilkan versi\n"
-"  -w <timeout>  waktu untuk menunggu respons\n"
-"\n"
-"Untuk lebih detail lihat traceroute6(8).\n"
+#~ msgid ""
+#~ "\n"
+#~ "Usage:\n"
+#~ "  traceroute6 [options] <destination>\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -d            use SO_DEBUG socket option\n"
+#~ "  -i <device>   bind to <device>\n"
+#~ "  -m <hops>     use maximum <hops>\n"
+#~ "  -n            no dns name resolution\n"
+#~ "  -p <port>     use destination <port>\n"
+#~ "  -q <nprobes>  number of probes\n"
+#~ "  -r            use SO_DONTROUTE socket option\n"
+#~ "  -s <address>  use source <address>\n"
+#~ "  -v            verbose output\n"
+#~ "  -V            print version and exit\n"
+#~ "  -w <timeout>  time to wait for response\n"
+#~ "\n"
+#~ "For more details see traceroute6(8).\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Penggunaan:\n"
+#~ "  traceroute6 [opsi] <tujuan>\n"
+#~ "\n"
+#~ "Opsi:\n"
+#~ "  -d            menggunakan opsi socket SO_DEBUG\n"
+#~ "  -i <device>   bind ke <perangkat>\n"
+#~ "  -m <hops>     gunakan <hop> maksimum\n"
+#~ "  -n            tidak ada resolusi nama dns\n"
+#~ "  -p <port>     gunakan <port> tujuan\n"
+#~ "  -q <nprobes>  jumlah probe\n"
+#~ "  -r            gunakan opsi socket SO_DONTROUTE\n"
+#~ "  -s <address>  gunakan <alamat> asal\n"
+#~ "  -v            lebih detail\n"
+#~ "  -V            tampilkan versi\n"
+#~ "  -w <timeout>  waktu untuk menunggu respons\n"
+#~ "\n"
+#~ "Untuk lebih detail lihat traceroute6(8).\n"
 
-#: traceroute6.c:720
-msgid "wait must be >1 sec"
-msgstr "'wait' harus >1 detik"
+#~ msgid "wait must be >1 sec"
+#~ msgstr "'wait' harus >1 detik"
 
-#: traceroute6.c:797
 #, c-format
-msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
-msgstr "setsockopt(RAW_CHECKSUM) gagal - coba lanjutkan."
+#~ msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
+#~ msgstr "setsockopt(RAW_CHECKSUM) gagal - coba lanjutkan."
 
-#: traceroute6.c:839
 #, c-format
-msgid "unknown addr %s"
-msgstr "alamat tidak diketahui %s"
+#~ msgid "unknown addr %s"
+#~ msgstr "alamat tidak diketahui %s"
 
-#: traceroute6.c:847
 #, c-format
-msgid "traceroute to %s (%s)"
-msgstr "traceroute ke %s (%s)"
+#~ msgid "traceroute to %s (%s)"
+#~ msgstr "traceroute ke %s (%s)"
 
-#: traceroute6.c:850
 #, c-format
-msgid " from %s"
-msgstr " dari %s"
+#~ msgid " from %s"
+#~ msgstr " dari %s"
 
-#: traceroute6.c:851
 #, c-format
-msgid ", %d hops max, %d byte packets\n"
-msgstr ", %d hop maks, %d byte paket\n"
+#~ msgid ", %d hops max, %d byte packets\n"
+#~ msgstr ", %d hop maks, %d byte paket\n"
 
-#: traceroute6.c:877
 #, c-format
-msgid "  %.4f ms"
-msgstr "  %.4f ms"
+#~ msgid "  %.4f ms"
+#~ msgstr "  %.4f ms"

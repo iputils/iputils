@@ -2,12 +2,11 @@
 # Copyright (c) Petr Pisar <ppisar@redhat.com>, 2021
 # Copyright (c) Iputils Project, 2021
 # This file is distributed under the same license as the iputils package.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-09 10:36+0200\n"
+"POT-Creation-Date: 2021-08-27 01:23+0200\n"
 "PO-Revision-Date: 2021-07-12 19:25+0000\n"
 "Last-Translator: Petr Pisar <ppisar@redhat.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
@@ -19,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Weblate 4.7.1\n"
 
-#: arping.c:113
+#: arping.c:121
 #, c-format
 msgid ""
 "\n"
@@ -56,7 +55,7 @@ msgstr ""
 "  -i <interval> nastaví interval mezi pakety (výchozí: 1 sekunda)\n"
 "  -I <zařízení> které ethernetové zařízení se použije"
 
-#: arping.c:132
+#: arping.c:140
 #, c-format
 msgid ""
 "\n"
@@ -71,122 +70,122 @@ msgstr ""
 "\n"
 "Podrobnosti naleznete v arping(8).\n"
 
-#: arping.c:285
+#: arping.c:303
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
 msgstr "Odesláno dotazů: %d (%d všesměrem)\n"
 
-#: arping.c:286
+#: arping.c:304
 #, c-format
 msgid "Received %d response(s)"
 msgstr "Přijato odpovědí: %d"
 
-#: arping.c:290
+#: arping.c:308
 #, c-format
 msgid "%d request(s)"
 msgstr "%d požadavek(ů)"
 
-#: arping.c:292
+#: arping.c:310
 #, c-format
 msgid "%s%d broadcast(s)"
 msgstr "%s%d všesměrem"
 
-#: arping.c:387
+#: arping.c:413
 msgid "Unicast"
 msgstr "Unicast"
 
-#: arping.c:387
+#: arping.c:413
 msgid "Broadcast"
 msgstr "Všesměr"
 
-#: arping.c:388
+#: arping.c:414
 #, c-format
 msgid "%s from "
 msgstr "%s od "
 
-#: arping.c:388
+#: arping.c:414
 msgid "reply"
 msgstr "odpověď"
 
-#: arping.c:388
+#: arping.c:414
 msgid "request"
 msgstr "požadavek"
 
-#: arping.c:393
+#: arping.c:419
 #, c-format
 msgid "for %s "
 msgstr "pro %s "
 
-#: arping.c:398
+#: arping.c:424
 #, c-format
 msgid "for "
 msgstr "pro "
 
-#: arping.c:408
+#: arping.c:434
 #, c-format
 msgid " %ld.%03ldms\n"
 msgstr " %ld,%03ld ms\n"
 
-#: arping.c:410
+#: arping.c:436
 #, c-format
 msgid " UNSOLICITED?\n"
 msgstr " NEVYŽÁDANÝ?\n"
 
-#: arping.c:561
+#: arping.c:587
 #, c-format
 msgid "Interface \"%s\" is down\n"
 msgstr "Rozhraní „%s“ je vypnuté\n"
 
-#: arping.c:569
+#: arping.c:595
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
 msgstr "Rozhraní „%s“ nepodporuje protokol ARP\n"
 
-#: arping.c:662
+#: arping.c:688
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
 msgstr "POZOR: používá se výchozí všesměrová adresa.\n"
 
-#: arping.c:872 arping.c:875 arping.c:878 ping/ping.c:369 ping/ping.c:415
+#: arping.c:898 arping.c:901 arping.c:904 ping/ping.c:369 ping/ping.c:415
 #: ping/ping.c:423 ping/ping.c:465 ping/ping.c:468 ping/ping.c:471
 #: ping/ping.c:484 tracepath.c:472 tracepath.c:475 tracepath.c:478
-#: tracepath.c:499 traceroute6.c:690 traceroute6.c:696 traceroute6.c:699
+#: tracepath.c:499
 msgid "invalid argument"
 msgstr "neplatný argument"
 
-#: arping.c:944
+#: arping.c:970
 #, c-format
 msgid "Device %s not available."
 msgstr "Zařízení %s není dostupné."
 
-#: arping.c:945
+#: arping.c:971
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr "Vhodné zařízení nebylo možné určit. Prosím, použijte přepínač -I."
 
-#: arping.c:965 traceroute6.c:824
+#: arping.c:991
 msgid "WARNING: interface is ignored"
 msgstr "POZOR: zařízení se ignoruje"
 
-#: arping.c:984
+#: arping.c:1010
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
 msgstr "POZOR: setsockopt(SO_DONTROUTE)"
 
-#: arping.c:1008
+#: arping.c:1034
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr "Zařízení „%s“ nepodporuje protokol ARP (chybí linková adresa)\n"
 
-#: arping.c:1017
+#: arping.c:1043
 #, c-format
 msgid "ARPING %s "
 msgstr "ARPinká se %s "
 
-#: arping.c:1018
+#: arping.c:1044
 #, c-format
 msgid "from %s %s\n"
 msgstr "od %s %s\n"
 
-#: arping.c:1022
+#: arping.c:1048
 msgid "no source address in not-DAD mode"
 msgstr "žádná zdrojová adresa v režimu ne-DAD"
 
@@ -1110,7 +1109,8 @@ msgstr "žádná odpověď pro pořadí=%lu\n"
 
 #: ping/ping_common.c:445
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr "POZOR: přijímací paměť pravděpodobně není dost velká pro udržení zátěže"
+msgstr ""
+"POZOR: přijímací paměť pravděpodobně není dost velká pro udržení zátěže"
 
 #: ping/ping_common.c:461
 #, c-format
@@ -1387,174 +1387,142 @@ msgstr "zpět %d "
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "délka paketu musí být mezi: %d < hodnota <= %d"
 
-#: traceroute6.c:438
 #, c-format
-msgid "traceroute: wrote %s %d chars, ret=%d\n"
-msgstr "traceroute: zapsáno %s %d znaků, vráceno=%d\n"
+#~ msgid "traceroute: wrote %s %d chars, ret=%d\n"
+#~ msgstr "traceroute: zapsáno %s %d znaků, vráceno=%d\n"
 
-#: traceroute6.c:467
-msgid "Error"
-msgstr "Chyba"
+#~ msgid "Error"
+#~ msgstr "Chyba"
 
-#: traceroute6.c:469
-msgid "Destination Unreachable"
-msgstr "Cíl není dostupný"
+#~ msgid "Destination Unreachable"
+#~ msgstr "Cíl není dostupný"
 
-#: traceroute6.c:471
-msgid "Packet Too Big"
-msgstr "Paket je příliš velký"
+#~ msgid "Packet Too Big"
+#~ msgstr "Paket je příliš velký"
 
-#: traceroute6.c:473
-msgid "Time Exceeded in Transit"
-msgstr "Překročen čas přenosu"
+#~ msgid "Time Exceeded in Transit"
+#~ msgstr "Překročen čas přenosu"
 
-#: traceroute6.c:475
-msgid "Parameter Problem"
-msgstr "Problém s parametrem"
+#~ msgid "Parameter Problem"
+#~ msgstr "Problém s parametrem"
 
-#: traceroute6.c:477
-msgid "Echo Request"
-msgstr "Požadavek na echo"
+#~ msgid "Echo Request"
+#~ msgstr "Požadavek na echo"
 
-#: traceroute6.c:479
-msgid "Echo Reply"
-msgstr "Odpověď echa"
+#~ msgid "Echo Reply"
+#~ msgstr "Odpověď echa"
 
-#: traceroute6.c:481
-msgid "Membership Query"
-msgstr "Dotaz na členství"
+#~ msgid "Membership Query"
+#~ msgstr "Dotaz na členství"
 
-#: traceroute6.c:483
-msgid "Membership Report"
-msgstr "Hlášeno o členství"
+#~ msgid "Membership Report"
+#~ msgstr "Hlášeno o členství"
 
-#: traceroute6.c:485
-msgid "Membership Reduction"
-msgstr "Snížení členství"
+#~ msgid "Membership Reduction"
+#~ msgstr "Snížení členství"
 
-#: traceroute6.c:487
-msgid "Router Solicitation"
-msgstr "Vyžádání směrovače"
+#~ msgid "Router Solicitation"
+#~ msgstr "Vyžádání směrovače"
 
-#: traceroute6.c:489
-msgid "Router Advertisement"
-msgstr "Ohlášení směrovače"
+#~ msgid "Router Advertisement"
+#~ msgstr "Ohlášení směrovače"
 
-#: traceroute6.c:491
-msgid "Neighbor Solicitation"
-msgstr "Vyžádání souseda"
+#~ msgid "Neighbor Solicitation"
+#~ msgstr "Vyžádání souseda"
 
-#: traceroute6.c:493
-msgid "Neighbor Advertisement"
-msgstr "Ohlášení souseda"
+#~ msgid "Neighbor Advertisement"
+#~ msgstr "Ohlášení souseda"
 
-#: traceroute6.c:495
-msgid "Redirect"
-msgstr "Přesměrování"
+#~ msgid "Redirect"
+#~ msgstr "Přesměrování"
 
-#: traceroute6.c:497
-msgid "Neighbor Query"
-msgstr "Dotaz na souseda"
+#~ msgid "Neighbor Query"
+#~ msgstr "Dotaz na souseda"
 
-#: traceroute6.c:499
-msgid "Neighbor Reply"
-msgstr "Odpověď souseda"
+#~ msgid "Neighbor Reply"
+#~ msgstr "Odpověď souseda"
 
-#: traceroute6.c:501
-msgid "Multicast Listener Report packet"
-msgstr "Paket s hlášením posluchače multicastu"
+#~ msgid "Multicast Listener Report packet"
+#~ msgstr "Paket s hlášením posluchače multicastu"
 
-#: traceroute6.c:503
-msgid "Home Agent Address Discovery Request Message"
-msgstr "Zpráva s požadavkem na objevení adresy domácího agenta"
+#~ msgid "Home Agent Address Discovery Request Message"
+#~ msgstr "Zpráva s požadavkem na objevení adresy domácího agenta"
 
-#: traceroute6.c:505
-msgid "Home Agent Address Discovery Reply message"
-msgstr "Zpráva s odpovědí na objevení adresy domácího agenta"
+#~ msgid "Home Agent Address Discovery Reply message"
+#~ msgstr "Zpráva s odpovědí na objevení adresy domácího agenta"
 
-#: traceroute6.c:507
-msgid "Mobile Prefix Solicitation Message"
-msgstr "Zpráva s vyžádáním mobilního prefixu"
+#~ msgid "Mobile Prefix Solicitation Message"
+#~ msgstr "Zpráva s vyžádáním mobilního prefixu"
 
-#: traceroute6.c:509
-msgid "Mobile Prefix Solicitation Advertisement"
-msgstr "Ohlášení mobilního prefixu"
+#~ msgid "Mobile Prefix Solicitation Advertisement"
+#~ msgstr "Ohlášení mobilního prefixu"
 
-#: traceroute6.c:511
-msgid "OUT-OF-RANGE"
-msgstr "MIMO ROZSAH"
+#~ msgid "OUT-OF-RANGE"
+#~ msgstr "MIMO ROZSAH"
 
-#: traceroute6.c:601
 #, c-format
-msgid ""
-"\n"
-"Usage:\n"
-"  traceroute6 [options] <destination>\n"
-"\n"
-"Options:\n"
-"  -d            use SO_DEBUG socket option\n"
-"  -i <device>   bind to <device>\n"
-"  -m <hops>     use maximum <hops>\n"
-"  -n            no dns name resolution\n"
-"  -p <port>     use destination <port>\n"
-"  -q <nprobes>  number of probes\n"
-"  -r            use SO_DONTROUTE socket option\n"
-"  -s <address>  use source <address>\n"
-"  -v            verbose output\n"
-"  -V            print version and exit\n"
-"  -w <timeout>  time to wait for response\n"
-"\n"
-"For more details see traceroute6(8).\n"
-msgstr ""
-"\n"
-"Použití:\n"
-"  traceroute6 [přepínače] <cíl>\n"
-"\n"
-"Přepínače:\n"
-"  -d            použije volbu socketu SO_DEBUG\n"
-"  -i <zařízení> přilepí se na <zařízení>\n"
-"  -m <skoky>    použije nejvýše <skoků>\n"
-"  -n            žádný překlad doménových jmen\n"
-"  -p <port>     použije cílový <port>\n"
-"  -q <počet>    počet pokusů\n"
-"  -r            použije volbu socketu SO_DONTROUTE\n"
-"  -s <adresa>   použije zdrojovou <adresu>\n"
-"  -v            podrobný výstup\n"
-"  -V            vypíše verzi a skončí\n"
-"  -w <čas>      doba, jakou se čeká na odpověď\n"
-"\n"
-"Podrobnosti naleznete v manuálu traceroute6(8).\n"
+#~ msgid ""
+#~ "\n"
+#~ "Usage:\n"
+#~ "  traceroute6 [options] <destination>\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -d            use SO_DEBUG socket option\n"
+#~ "  -i <device>   bind to <device>\n"
+#~ "  -m <hops>     use maximum <hops>\n"
+#~ "  -n            no dns name resolution\n"
+#~ "  -p <port>     use destination <port>\n"
+#~ "  -q <nprobes>  number of probes\n"
+#~ "  -r            use SO_DONTROUTE socket option\n"
+#~ "  -s <address>  use source <address>\n"
+#~ "  -v            verbose output\n"
+#~ "  -V            print version and exit\n"
+#~ "  -w <timeout>  time to wait for response\n"
+#~ "\n"
+#~ "For more details see traceroute6(8).\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Použití:\n"
+#~ "  traceroute6 [přepínače] <cíl>\n"
+#~ "\n"
+#~ "Přepínače:\n"
+#~ "  -d            použije volbu socketu SO_DEBUG\n"
+#~ "  -i <zařízení> přilepí se na <zařízení>\n"
+#~ "  -m <skoky>    použije nejvýše <skoků>\n"
+#~ "  -n            žádný překlad doménových jmen\n"
+#~ "  -p <port>     použije cílový <port>\n"
+#~ "  -q <počet>    počet pokusů\n"
+#~ "  -r            použije volbu socketu SO_DONTROUTE\n"
+#~ "  -s <adresa>   použije zdrojovou <adresu>\n"
+#~ "  -v            podrobný výstup\n"
+#~ "  -V            vypíše verzi a skončí\n"
+#~ "  -w <čas>      doba, jakou se čeká na odpověď\n"
+#~ "\n"
+#~ "Podrobnosti naleznete v manuálu traceroute6(8).\n"
 
-#: traceroute6.c:720
-msgid "wait must be >1 sec"
-msgstr "doba čekání musí být větší než 1 sekunda"
+#~ msgid "wait must be >1 sec"
+#~ msgstr "doba čekání musí být větší než 1 sekunda"
 
-#: traceroute6.c:797
 #, c-format
-msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
-msgstr "volání setsockopt(RAW_CHECKSUM) selhalo – zkusí se pokračovat."
+#~ msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
+#~ msgstr "volání setsockopt(RAW_CHECKSUM) selhalo – zkusí se pokračovat."
 
-#: traceroute6.c:839
 #, c-format
-msgid "unknown addr %s"
-msgstr "neznámá adresa %s"
+#~ msgid "unknown addr %s"
+#~ msgstr "neznámá adresa %s"
 
-#: traceroute6.c:847
 #, c-format
-msgid "traceroute to %s (%s)"
-msgstr "trasování cesty k %s (%s)"
+#~ msgid "traceroute to %s (%s)"
+#~ msgstr "trasování cesty k %s (%s)"
 
-#: traceroute6.c:850
 #, c-format
-msgid " from %s"
-msgstr " z %s"
+#~ msgid " from %s"
+#~ msgstr " z %s"
 
-#: traceroute6.c:851
 #, c-format
-msgid ", %d hops max, %d byte packets\n"
-msgstr ", %d maximum skoků, %dbajtové pakety\n"
+#~ msgid ", %d hops max, %d byte packets\n"
+#~ msgstr ", %d maximum skoků, %dbajtové pakety\n"
 
-#: traceroute6.c:877
 #, c-format
-msgid "  %.4f ms"
-msgstr "  %.4f ms"
+#~ msgid "  %.4f ms"
+#~ msgstr "  %.4f ms"

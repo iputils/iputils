@@ -2,15 +2,15 @@
 # Copyright (c) Oğuz Ersen <oguzersen@protonmail.com>, 2020
 # Copyright (c) Iputils Project, 2020-2021
 # This file is distributed under the same license as the iputils package.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-09 19:20+0000\n"
+"POT-Creation-Date: 2021-08-27 01:23+0200\n"
 "PO-Revision-Date: 2020-08-09 15:29+0000\n"
 "Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
-"Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/iputils/tr/>\n"
+"Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
+"iputils/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,115 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.1.1\n"
 
-#: ping/ping.c:1081
-#, c-format
-msgid "\t%ld absolute"
-msgstr "\t%ld mutlak"
-
-#: ping/ping.c:1075
-#, c-format
-msgid "\t%ld absolute not-standard"
-msgstr "\t%ld mutlak standart dışı"
-
-#: ping/ping.c:1077
-#, c-format
-msgid "\t%ld not-standard"
-msgstr "\t%ld standart dışı"
-
-#: ping/ping.c:1002
-#, c-format
-msgid "\t(same route)"
-msgstr "\t(aynı rota)"
-
-#: arping.c:132
-#, c-format
-msgid ""
-"\n"
-"  -s <source>   source ip address\n"
-"  <destination> dns name or ip address\n"
-"\n"
-"For more details see arping(8).\n"
-msgstr ""
-"\n"
-"  -s <kaynak>   kaynak IP adresi\n"
-"  <hedef> DNS adı veya IP adresi\n"
-"\n"
-"Daha fazla bilgi için: arping(8).\n"
-
-#: ping/ping.c:964
-#, c-format
-msgid ""
-"\n"
-"%cSRR: "
-msgstr ""
-"\n"
-"%cSRR: "
-
-#: ping/ping.c:953
-#, c-format
-msgid ""
-"\n"
-"NOP"
-msgstr ""
-"\n"
-"NOP"
-
-#: ping/ping.c:1007
-#, c-format
-msgid ""
-"\n"
-"RR: "
-msgstr ""
-"\n"
-"RR: "
-
-#: ping/ping.c:1043
-#, c-format
-msgid ""
-"\n"
-"TS: "
-msgstr ""
-"\n"
-"TS: "
-
-#: tracepath.c:398
-#, c-format
-msgid ""
-"\n"
-"Usage\n"
-"  tracepath [options] <destination>\n"
-"\n"
-"Options:\n"
-"  -4             use IPv4\n"
-"  -6             use IPv6\n"
-"  -b             print both name and ip\n"
-"  -l <length>    use packet <length>\n"
-"  -m <hops>      use maximum <hops>\n"
-"  -n             no dns name resolution\n"
-"  -p <port>      use destination <port>\n"
-"  -V             print version and exit\n"
-"  <destination>  dns name or ip address\n"
-"\n"
-"For more details see tracepath(8).\n"
-msgstr ""
-"\n"
-"Kullanım\n"
-"  tracepath [seçenekler] <hedef>\n"
-"\n"
-"Seçenekler:\n"
-"  -4             IPv4 kullan\n"
-"  -6             IPv6 kullan\n"
-"  -b             hem ad hem de IP yazdır\n"
-"  -l <uzunluk>   <uzunluk> boyunda paket kullan\n"
-"  -m <atlama>    en fazla <atlama> kadar atlama kullan\n"
-"  -n             DNS ad çözümlemesi yok\n"
-"  -p <port>      <port> hedef bağlantı noktasını kullan\n"
-"  -V             sürüm bilgisini yazdır ve çık\n"
-"  <hedef>        DNS adı veya IP adresi\n"
-"\n"
-"Daha fazla bilgi için: tracepath(8).\n"
-
-#: arping.c:113
+#: arping.c:121
 #, c-format
 msgid ""
 "\n"
@@ -162,6 +54,155 @@ msgstr ""
 "  -w <süre>     yanıt için ne kadar beklenecek\n"
 "  -i <aralık>   paketler arasındaki aralığı ayarla (öntanımlı: 1 saniye)\n"
 "  -I <aygıt>    hangi ethernet aygıtı kullanılacak"
+
+#: arping.c:140
+#, c-format
+msgid ""
+"\n"
+"  -s <source>   source ip address\n"
+"  <destination> dns name or ip address\n"
+"\n"
+"For more details see arping(8).\n"
+msgstr ""
+"\n"
+"  -s <kaynak>   kaynak IP adresi\n"
+"  <hedef> DNS adı veya IP adresi\n"
+"\n"
+"Daha fazla bilgi için: arping(8).\n"
+
+#: arping.c:303
+#, c-format
+msgid "Sent %d probes (%d broadcast(s))\n"
+msgstr "%d sorgulama gönderildi (%d genel yayın)\n"
+
+#: arping.c:304
+#, c-format
+msgid "Received %d response(s)"
+msgstr "%d cevap alındı"
+
+#: arping.c:308
+#, c-format
+msgid "%d request(s)"
+msgstr "%d istek"
+
+#: arping.c:310
+#, c-format
+msgid "%s%d broadcast(s)"
+msgstr "%s%d genel yayın"
+
+#: arping.c:413
+msgid "Unicast"
+msgstr "Tek noktaya yayın"
+
+#: arping.c:413
+msgid "Broadcast"
+msgstr "Genel yayın"
+
+#: arping.c:414
+#, c-format
+msgid "%s from "
+msgstr "%s, şuradan: "
+
+#: arping.c:414
+msgid "reply"
+msgstr "yanıt"
+
+#: arping.c:414
+msgid "request"
+msgstr "istek"
+
+#: arping.c:419
+#, c-format
+msgid "for %s "
+msgstr "%s için "
+
+#: arping.c:424
+#, c-format
+msgid "for "
+msgstr "şunun için: "
+
+#: arping.c:434
+#, c-format
+msgid " %ld.%03ldms\n"
+msgstr " %ld.%03ldms\n"
+
+#: arping.c:436
+#, c-format
+msgid " UNSOLICITED?\n"
+msgstr " İSTENMEYEN?\n"
+
+#: arping.c:587
+#, c-format
+msgid "Interface \"%s\" is down\n"
+msgstr "\"%s\" arayüzü çalışmıyor\n"
+
+#: arping.c:595
+#, c-format
+msgid "Interface \"%s\" is not ARPable\n"
+msgstr "\"%s\" arayüzü ARP için uygun değil\n"
+
+#: arping.c:688
+#, c-format
+msgid "WARNING: using default broadcast address.\n"
+msgstr "UYARI: öntanımlı genel yayın adresi kullanılıyor.\n"
+
+#: arping.c:898 arping.c:901 arping.c:904 ping/ping.c:369 ping/ping.c:415
+#: ping/ping.c:423 ping/ping.c:465 ping/ping.c:468 ping/ping.c:471
+#: ping/ping.c:484 tracepath.c:472 tracepath.c:475 tracepath.c:478
+#: tracepath.c:499
+msgid "invalid argument"
+msgstr "geçersiz argüman"
+
+#: arping.c:970
+#, c-format
+msgid "Device %s not available."
+msgstr "%s aygıtı kullanılabilir değil."
+
+#: arping.c:971
+msgid "Suitable device could not be determined. Please, use option -I."
+msgstr "Uygun aygıt belirlenemedi. Lütfen -I seçeneğini kullanın."
+
+#: arping.c:991
+msgid "WARNING: interface is ignored"
+msgstr "UYARI: arayüz yok sayıldı"
+
+#: arping.c:1010
+msgid "WARNING: setsockopt(SO_DONTROUTE)"
+msgstr "UYARI: setsockopt(SO_DONTROUTE)"
+
+#: arping.c:1034
+#, c-format
+msgid "Interface \"%s\" is not ARPable (no ll address)\n"
+msgstr "\"%s\" arayüzü ARP için uygun değil (ll adresi yok)\n"
+
+#: arping.c:1043
+#, c-format
+msgid "ARPING %s "
+msgstr "%s için ARP isteği, "
+
+#: arping.c:1044
+#, c-format
+msgid "from %s %s\n"
+msgstr "%s %s'den\n"
+
+#: arping.c:1048
+msgid "no source address in not-DAD mode"
+msgstr "DAD modunda olmayan kaynak adresi yok"
+
+#: clockdiff.c:240
+#, c-format
+msgid "Wrong timestamp %d\n"
+msgstr "Yanlış zaman damgası %d\n"
+
+#: clockdiff.c:245
+#, c-format
+msgid "Overflow %d hops\n"
+msgstr "%d atlama aşıldı\n"
+
+#: clockdiff.c:270
+#, c-format
+msgid "wrong timestamps\n"
+msgstr "yanlış zaman damgaları\n"
 
 #: clockdiff.c:451
 #, c-format
@@ -202,44 +243,24 @@ msgstr ""
 "\n"
 "Daha fazla bilgi için: clockdiff(8).\n"
 
-#: traceroute6.c:600
+#: clockdiff.c:589
+msgid "measure: unknown failure"
+msgstr "ölçüm: bilinmeyen hata"
+
+#: clockdiff.c:594
 #, c-format
-msgid ""
-"\n"
-"Usage:\n"
-"  traceroute6 [options] <destination>\n"
-"\n"
-"Options:\n"
-"  -d            use SO_DEBUG socket option\n"
-"  -i <device>   bind to <device>\n"
-"  -m <hops>     use maximum <hops>\n"
-"  -n            no dns name resolution\n"
-"  -p <port>     use destination <port>\n"
-"  -q <nprobes>  number of probes\n"
-"  -r            use SO_DONTROUTE socket option\n"
-"  -s <address>  use source <address>\n"
-"  -v            verbose output\n"
-"  -w <timeout>  time to wait for response\n"
-"\n"
-"For more details see traceroute6(8).\n"
-msgstr ""
-"\n"
-"Kullanım:\n"
-"  traceroute6 [seçenekler] <hedef>\n"
-"\n"
-"Seçenekler:\n"
-"  -d            SO_DEBUG soket seçeneğini kullan\n"
-"  -i <aygıt>    <aygıt>'a bağlan\n"
-"  -m <atlama>   en fazla <atlama> kadar atlama kullan\n"
-"  -n            DNS ad çözümlemesi yok\n"
-"  -p <port>     <port> hedef bağlantı noktasını kullan\n"
-"  -q <sayı>     sorgulama sayısı\n"
-"  -r            SO_DONTROUTE soket seçeneğini kullan\n"
-"  -s <adres>    <adres> kaynağını kullan\n"
-"  -v            ayrıntılı çıktı\n"
-"  -w <süre>     cevap için beklenecek süre\n"
-"\n"
-"Daha fazla bilgi için: traceroute6(8).\n"
+msgid "%s is down"
+msgstr "%s çalışmıyor"
+
+#: clockdiff.c:597
+#, c-format
+msgid "%s time transmitted in a non-standard format"
+msgstr "%s standart dışı bir biçimde iletilen zaman"
+
+#: clockdiff.c:600
+#, c-format
+msgid "%s is unreachable"
+msgstr "%s ulaşılabilir değil"
 
 #: clockdiff.c:619
 #, c-format
@@ -250,1175 +271,40 @@ msgstr ""
 "\n"
 "ana makine=%s rtt=%ld(%ld)ms/%ldms fark=%dms/%dms %s\n"
 
-#: ping/ping.c:1096
-#, c-format
-msgid ""
-"\n"
-"unknown option %x"
-msgstr ""
-"\n"
-"bilinmeyen seçenek %x"
-
-#: ping/ping_common.c:835
-#, c-format
-msgid ""
-"\n"
-"wrong data byte #%zu should be 0x%x but was 0x%x"
-msgstr ""
-"\n"
-"yanlış veri baytı #%zu, 0x%x olmalı ama 0x%x oldu"
-
-#: tracepath.c:609
-#, c-format
-msgid "     Resume: pmtu %d "
-msgstr "     Devam et: pmtu %d "
-
-#: ping/ping.c:1119
-#, c-format
-msgid "   %1x %04x"
-msgstr "   %1x %04x"
-
-#: traceroute6.c:875
-#, c-format
-msgid "  %.4f ms"
-msgstr "  %.4f ms"
-
-#: ping/ping.c:1121
-#, c-format
-msgid "  %02x  %02x %04x"
-msgstr "  %02x  %02x %04x"
-
-#: ping/ping.c:1117
-#, c-format
-msgid " %1x  %1x  %02x %04x %04x"
-msgstr " %1x  %1x  %02x %04x %04x"
-
-#: arping.c:408
-#, c-format
-msgid " %ld.%03ldms\n"
-msgstr " %ld.%03ldms\n"
-
-#: ping/ping_common.c:828
-#, c-format
-msgid " (BAD CHECKSUM!)"
-msgstr " (YANLIŞ SAĞLAMA TOPLAMI!)"
-
-#: ping/ping_common.c:826
-#, c-format
-msgid " (DUP!)"
-msgstr " (YİNELENEN!)"
-
-#: ping/ping6_common.c:742
-#, c-format
-msgid " (truncated)"
-msgstr " (kısaltıldı)"
-
-#: ping/ping_common.c:809
-#, c-format
-msgid " (truncated)\n"
-msgstr " (kısaltıldı)\n"
-
-#: arping.c:410
-#, c-format
-msgid " UNSOLICITED?\n"
-msgstr " İSTENMEYEN?\n"
-
-#: traceroute6.c:848
-#, c-format
-msgid " from %s"
-msgstr " %s'den"
-
-#: ping/ping6_common.c:635 ping/ping.c:1484
-#, c-format
-msgid " icmp_seq=%u"
-msgstr " icmp_seq=%u"
-
-#: ping/ping6_common.c:659 ping/ping6_common.c:720
-#, c-format
-msgid " parse error (too short)"
-msgstr " ayrıştırma hatası (çok kısa)"
-
-#: ping/ping6_common.c:673 ping/ping6_common.c:729
-#, c-format
-msgid " parse error (truncated)"
-msgstr " ayrıştırma hatası (kısaltıldı)"
-
-#: ping/ping6_common.c:765
-#, c-format
-msgid " refused"
-msgstr " reddedildi"
-
-#: ping/ping_common.c:814
-#, c-format
-msgid " time=%ld ms"
-msgstr " zaman=%ld ms"
-
-#: ping/ping_common.c:816
-#, c-format
-msgid " time=%ld.%01ld ms"
-msgstr " zaman=%ld.%01ld ms"
-
-#: ping/ping_common.c:819
-#, c-format
-msgid " time=%ld.%02ld ms"
-msgstr " zaman=%ld.%02ld ms"
-
-#: ping/ping_common.c:822
-#, c-format
-msgid " time=%ld.%03ld ms"
-msgstr " zaman=%ld.%03ld ms"
-
-#: ping/ping_common.c:806
-#, c-format
-msgid " ttl=%d"
-msgstr " ttl=%d"
-
-#: ping/ping6_common.c:733
-#, c-format
-msgid " unexpected error in inet_ntop(%s)"
-msgstr " inet_ntop'ta beklenmeyen hata(%s)"
-
-#: ping/ping6_common.c:768
-#, c-format
-msgid " unknown"
-msgstr " bilinmeyen"
-
-#: ping/ping6_common.c:771
-#, c-format
-msgid " unknown code(%02x)"
-msgstr " bilinmeyen kod(%02x)"
-
-#: ping/ping6_common.c:761
-#, c-format
-msgid " unknown qtype(0x%02x)"
-msgstr " bilinmeyen qtype(0x%02x)"
-
-#: tracepath.c:602
-#, c-format
-msgid "%2d:  no reply\n"
-msgstr "%2d:  yanıt yok\n"
-
-#: tracepath.c:391
-#, c-format
-msgid "%2d:  send failed\n"
-msgstr "%2d:  gönderme başarısız\n"
-
-#: tracepath.c:385
-#, c-format
-msgid "%2d?: reply received 8)\n"
-msgstr "%2d?: yanıt alındı 8)\n"
-
-#: tracepath.c:284
-#, c-format
-msgid "%3ld.%03ldms "
-msgstr "%3ld.%03ldms "
-
-#: ping/ping_common.c:800
-#, c-format
-msgid "%d bytes from %s:"
-msgstr "%d bayt, %s'den:"
-
-#: arping.c:290
-#, c-format
-msgid "%d request(s)"
-msgstr "%d istek"
-
-#: ping/ping_common.c:879
-#, c-format
-msgid "%ld packets transmitted, "
-msgstr "%ld paket iletildi, "
-
-#: ping/ping_common.c:880
-#, c-format
-msgid "%ld received"
-msgstr "%ld alındı"
-
-#: ping/ping_common.c:947
-#, c-format
-msgid "%ld/%ld packets, %d%% loss"
-msgstr "%ld/%ld paket, %%%d kayıp"
-
-#: arping.c:388
-#, c-format
-msgid "%s from "
-msgstr "%s, şuradan: "
-
-#: clockdiff.c:594
-#, c-format
-msgid "%s is down"
-msgstr "%s çalışmıyor"
-
-#: clockdiff.c:600
-#, c-format
-msgid "%s is unreachable"
-msgstr "%s ulaşılabilir değil"
-
-#: clockdiff.c:597
-#, c-format
-msgid "%s time transmitted in a non-standard format"
-msgstr "%s standart dışı bir biçimde iletilen zaman"
-
-#: arping.c:292
-#, c-format
-msgid "%s%d broadcast(s)"
-msgstr "%s%d genel yayın"
-
-#: ping/ping_common.c:929
-#, c-format
-msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
-
-#: ping/ping_common.c:922
-#, c-format
-msgid "%spipe %d"
-msgstr "%sboru %d"
-
-#: ping/ping6_common.c:374
-#, c-format
-msgid "%zu data bytes\n"
-msgstr "%zu bayt veri\n"
-
-#: ping/ping.c:927
-#, c-format
-msgid "%zu(%zu) bytes of data.\n"
-msgstr "%zu(%zu) bayt veri.\n"
-
-#: ping/ping.c:1588
-#, c-format
-msgid "(BAD CHECKSUM)"
-msgstr "(YANLIŞ SAĞLAMA TOPLAMI)"
-
-#: ping/ping.c:1612
-#, c-format
-msgid "(BAD CHECKSUM)\n"
-msgstr "(YANLIŞ SAĞLAMA TOPLAMI)\n"
-
-#: ping/ping.c:1228
-#, c-format
-msgid "(New nexthop: %s)\n"
-msgstr "(Yeni sonraki atlama: %s)\n"
-
-#: tracepath.c:287
-#, c-format
-msgid "(This broken router returned corrupted payload) "
-msgstr "(Bu bozuk yönlendirici bozuk yük döndürdü) "
-
-#: traceroute6.c:849
-#, c-format
-msgid ", %d hops max, %d byte packets\n"
-msgstr ", en fazla %d atlama, %d bayt paketler\n"
-
-#: ping/ping_common.c:892
-#, c-format
-msgid ", %g%% packet loss"
-msgstr ", %%%g paket kaybı"
-
-#: ping/ping_common.c:884
-#, c-format
-msgid ", +%ld corrupted"
-msgstr ", +%ld bozuk"
-
-#: ping/ping_common.c:882
-#, c-format
-msgid ", +%ld duplicates"
-msgstr ", +%ld yinelenen"
-
-#: ping/ping_common.c:886
-#, c-format
-msgid ", +%ld errors"
-msgstr ", +%ld hata"
-
-#: ping/ping6_common.c:414
-#, c-format
-msgid ", code=%d"
-msgstr ", kod=%d"
-
-#: ping/ping6_common.c:366
-#, c-format
-msgid ", flow 0x%05x, "
-msgstr ", akış 0x%05x, "
-
-#: ping/ping_common.c:952
-#, c-format
-msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
-", en düşük/ortalama/ewma/en yüksek = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-
-#: ping/ping_common.c:894
-#, c-format
-msgid ", time %ldms"
-msgstr ", zaman %ldms"
-
-#: ping/ping_common.c:878
-#, c-format
-msgid "--- %s ping statistics ---\n"
-msgstr "--- %s ping istatistikleri ---\n"
-
-#: ping/ping6_common.c:773
-#, c-format
-msgid "; seq=%u;"
-msgstr "; seq=%u;"
-
-#: arping.c:1015
-#, c-format
-msgid "ARPING %s "
-msgstr "%s için ARP isteği, "
-
-#: ping/ping.c:1281
-#, c-format
-msgid "Address Mask Reply\n"
-msgstr "Adres Maskesi Yanıtı\n"
-
-#: ping/ping.c:1276
-#, c-format
-msgid "Address Mask Request\n"
-msgstr "Adres Maskesi İsteği\n"
-
-#: ping/ping6_common.c:401
-#, c-format
-msgid "Address unreachable"
-msgstr "Ulaşılamayan adres"
-
-#: ping/ping6_common.c:395
-#, c-format
-msgid "Administratively prohibited"
-msgstr "Yönetimsel olarak yasak"
-
-#: ping/ping.c:1285
-#, c-format
-msgid "Bad ICMP type: %d\n"
-msgstr "Hatalı ICMP türü: %d\n"
-
-#: ping/ping6_common.c:398
-#, c-format
-msgid "Beyond scope of source address"
-msgstr "Kaynak adres kapsamının dışında"
-
-#: arping.c:387
-msgid "Broadcast"
-msgstr "Genel yayın"
-
-#: ping/ping6_common.c:421
-#, c-format
-msgid "Defragmentation failure"
-msgstr "Birleştirme hatası"
-
-#: ping/ping.c:1191
-#, c-format
-msgid "Dest Unreachable, Bad Code: %d\n"
-msgstr "Ulaşılamayan Hedef, Hata Kodu: %d\n"
-
-#: ping/ping.c:1173
-#, c-format
-msgid "Destination Host Prohibited\n"
-msgstr "Yasak Hedef Ana Makine\n"
-
-#: ping/ping.c:1164
-#, c-format
-msgid "Destination Host Unknown\n"
-msgstr "Bilinmeyen Hedef Ana Makine\n"
-
-#: ping/ping.c:1146
-#, c-format
-msgid "Destination Host Unreachable\n"
-msgstr "Ulaşılamayan Hedef Ana Makine\n"
-
-#: ping/ping.c:1179
-#, c-format
-msgid "Destination Host Unreachable for Type of Service\n"
-msgstr "Hizmet Türü için Ulaşılamayan Hedef Ana Makine\n"
-
-#: ping/ping.c:1170
-#, c-format
-msgid "Destination Net Prohibited\n"
-msgstr "Yasak Hedef Ağ\n"
-
-#: ping/ping.c:1161
-#, c-format
-msgid "Destination Net Unknown\n"
-msgstr "Bilinmeyen Hedef Ağ\n"
-
-#: ping/ping.c:1143
-#, c-format
-msgid "Destination Net Unreachable\n"
-msgstr "Ulaşılamayan Hedef Ağ\n"
-
-#: ping/ping.c:1176
-#, c-format
-msgid "Destination Net Unreachable for Type of Service\n"
-msgstr "Hizmet Türü için Ulaşılamayan Hedef Ağ\n"
-
-#: ping/ping.c:1152
-#, c-format
-msgid "Destination Port Unreachable\n"
-msgstr "Ulaşılamayan Hedef Bağlantı Noktası\n"
-
-#: ping/ping.c:1149
-#, c-format
-msgid "Destination Protocol Unreachable\n"
-msgstr "Ulaşılamayan Hedef Protokolü\n"
-
-#: traceroute6.c:468
-msgid "Destination Unreachable"
-msgstr "Ulaşılamayan Hedef"
-
-#: ping/ping6_common.c:389
-#, c-format
-msgid "Destination unreachable: "
-msgstr "Ulaşılamayan hedef: "
-
-#: arping.c:944
-#, c-format
-msgid "Device %s not available."
-msgstr "%s aygıtı kullanılabilir değil."
-
-#: ping/ping.c:711
-msgid ""
-"Do you want to ping broadcast? Then -b. If not, check your local firewall "
-"rules"
-msgstr ""
-"Genel yayına ping atmak istiyor musunuz? Öylese -b kullanın. Değilse, yerel "
-"güvenlik duvarı kurallarınızı gözden geçirin"
-
-#: traceroute6.c:478
-msgid "Echo Reply"
-msgstr "Yankı Yanıtı"
-
-#: ping/ping.c:1137
-#, c-format
-msgid "Echo Reply\n"
-msgstr "Yankı Yanıtı\n"
-
-#: traceroute6.c:476
-msgid "Echo Request"
-msgstr "Yankı İsteği"
-
-#: ping/ping.c:1234
-#, c-format
-msgid "Echo Request\n"
-msgstr "Yankı İsteği\n"
-
-#: ping/ping6_common.c:441
-#, c-format
-msgid "Echo reply"
-msgstr "Yankı yanıtı"
-
-#: ping/ping6_common.c:438
-#, c-format
-msgid "Echo request"
-msgstr "Yankı isteği"
-
-#: traceroute6.c:466
-msgid "Error"
-msgstr "Hata"
-
-#: ping/ping.c:1155
-#, c-format
-msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr "Parçalanma (frag) gerekli ve DF ayarlandı (mtu = %u)\n"
-
-#: ping/ping.c:1243
-#, c-format
-msgid "Frag reassembly time exceeded\n"
-msgstr "Parçalanma yeniden birleştirme zamanı aşıldı\n"
-
-#: ping/ping6_common.c:528 ping/ping.c:1370
-#, c-format
-msgid "From %s icmp_seq=%u "
-msgstr "%s'den icmp_seq=%u "
-
-#: ping/ping6_common.c:876 ping/ping.c:1610
-#, c-format
-msgid "From %s: "
-msgstr "%s'den: "
-
-#: ping/ping.c:1585
-#, c-format
-msgid "From %s: icmp_seq=%u "
-msgstr "%s'den: icmp_seq=%u "
-
-#: traceroute6.c:504
-msgid "Home Agent Address Discovery Reply message"
-msgstr "Ev Temsilcisi Adres Keşif Yanıtı mesajı"
-
-#: traceroute6.c:502
-msgid "Home Agent Address Discovery Request Message"
-msgstr "Ev Temsilcisi Adres Keşif İsteği Mesajı"
-
-#: ping/ping6_common.c:419
-#, c-format
-msgid "Hop limit"
-msgstr "Atlama sınırı"
-
-#: ping/node_info.c:308
-#, c-format
-msgid "IDN encoding error: %s"
-msgstr "IDN kodlama hatası: %s"
-
-#: ping/ping.c:1271
-#, c-format
-msgid "Information Reply\n"
-msgstr "Bilgi Yanıtı\n"
-
-#: ping/ping.c:1267
-#, c-format
-msgid "Information Request\n"
-msgstr "Bilgi İsteği\n"
-
-#: arping.c:561
-#, c-format
-msgid "Interface \"%s\" is down\n"
-msgstr "\"%s\" arayüzü çalışmıyor\n"
-
-#: arping.c:569
-#, c-format
-msgid "Interface \"%s\" is not ARPable\n"
-msgstr "\"%s\" arayüzü ARP için uygun değil\n"
-
-#: arping.c:1006
-#, c-format
-msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr "\"%s\" arayüzü ARP için uygun değil (ll adresi yok)\n"
-
-#: ping/ping6_common.c:444
-#, c-format
-msgid "MLD Query"
-msgstr "MLD Sorgusu"
-
-#: ping/ping6_common.c:450
-#, c-format
-msgid "MLD Reduction"
-msgstr "MLD Azaltma"
-
-#: ping/ping6_common.c:447
-#, c-format
-msgid "MLD Report"
-msgstr "MLD Bildirimi"
-
-#: traceroute6.c:480
-msgid "Membership Query"
-msgstr "Üyelik Sorgusu"
-
-#: traceroute6.c:484
-msgid "Membership Reduction"
-msgstr "Üyelik Azaltma"
-
-#: traceroute6.c:482
-msgid "Membership Report"
-msgstr "Üyelik Bildirimi"
-
-#: traceroute6.c:508
-msgid "Mobile Prefix Solicitation Advertisement"
-msgstr "Mobil Ön Ek İsteği Duyurusu"
-
-#: traceroute6.c:506
-msgid "Mobile Prefix Solicitation Message"
-msgstr "Mobil Ön Ek İsteği Mesajı"
-
-#: traceroute6.c:500
-msgid "Multicast Listener Report packet"
-msgstr "Çok Noktaya Yayın Dinleyici Bildirimi paketi"
-
-#: tracepath.c:340
-msgid "NET ERROR"
-msgstr "AĞ HATASI"
-
-#: traceroute6.c:492
-msgid "Neighbor Advertisement"
-msgstr "Komşu Duyurusu"
-
-#: traceroute6.c:496
-msgid "Neighbor Query"
-msgstr "Komşu Sorgusu"
-
-#: traceroute6.c:498
-msgid "Neighbor Reply"
-msgstr "Komşu Yanıtı"
-
-#: traceroute6.c:490
-msgid "Neighbor Solicitation"
-msgstr "Komşu İsteği"
-
-#: ping/ping6_common.c:392
-#, c-format
-msgid "No route"
-msgstr "Rota yok"
-
-#: traceroute6.c:510
-msgid "OUT-OF-RANGE"
-msgstr "ARALIK-DIŞI"
-
-#: tracepath.c:456 tracepath.c:461
-msgid "Only one -4 or -6 option may be specified"
-msgstr "Sadece bir -4 veya -6 seçeneği belirtilebilir"
-
-#: clockdiff.c:245
-#, c-format
-msgid "Overflow %d hops\n"
-msgstr "%d atlama aşıldı\n"
-
-#: ping/ping_common.c:225
-#, c-format
-msgid "PATTERN: 0x"
-msgstr "KALIP: 0x"
-
-#: ping/ping.c:924
-#, c-format
-msgid "PING %s (%s) "
-msgstr "PING %s (%s) "
-
-#: ping/ping6_common.c:364
-#, c-format
-msgid "PING %s(%s) "
-msgstr "PING %s(%s) "
-
-#: traceroute6.c:470
-msgid "Packet Too Big"
-msgstr "Paket Çok Büyük"
-
-#: ping/ping.c:1182
-#, c-format
-msgid "Packet filtered\n"
-msgstr "Paket filtrelendi\n"
-
-#: ping/ping6_common.c:412
-#, c-format
-msgid "Packet too big: mtu=%u"
-msgstr "Paket çok büyük: mtu=%u"
-
-#: traceroute6.c:474
-msgid "Parameter Problem"
-msgstr "Parametre Sorunu"
-
-#: ping/ping6_common.c:426
-#, c-format
-msgid "Parameter problem: "
-msgstr "Parametre sorunu: "
-
-#: ping/ping.c:1253
-#, c-format
-msgid "Parameter problem: pointer = %u\n"
-msgstr "Parametre sorunu: işaretçi = %u\n"
-
-#: ping/ping6_common.c:404
-#, c-format
-msgid "Port unreachable"
-msgstr "Ulaşılamayan bağlantı noktası"
-
-#: ping/ping.c:1188
-#, c-format
-msgid "Precedence Cutoff\n"
-msgstr "Öncelik Kesintisi\n"
-
-#: ping/ping.c:1185
-#, c-format
-msgid "Precedence Violation\n"
-msgstr "Öncelik İhlali\n"
-
-#: ping/node_info.c:165
+#: ping/node_info.c:166
 #, c-format
 msgid "Qtype conflict\n"
 msgstr "Qtype çakışması\n"
 
-#: arping.c:286
-#, c-format
-msgid "Received %d response(s)"
-msgstr "%d cevap alındı"
-
-#: traceroute6.c:494
-msgid "Redirect"
-msgstr "Yeniden Yönlendirme"
-
-#: ping/ping.c:1208
-#, c-format
-msgid "Redirect Host"
-msgstr "Ana Makine Yeniden Yönlendirme"
-
-#: ping/ping.c:1205
-#, c-format
-msgid "Redirect Network"
-msgstr "Ağ Yeniden Yönlendirme"
-
-#: ping/ping.c:1214
-#, c-format
-msgid "Redirect Type of Service and Host"
-msgstr "Hizmet Türü ve Ana Makine Yeniden Yönlendirme"
-
-#: ping/ping.c:1211
-#, c-format
-msgid "Redirect Type of Service and Network"
-msgstr "Hizmet Türü ve Ağ Yeniden Yönlendirme"
-
-#: ping/ping.c:1217
-#, c-format
-msgid "Redirect, Bad Code: %d"
-msgstr "Yeniden Yönlendirme, Hata Kodu: %d"
-
-#: traceroute6.c:488
-msgid "Router Advertisement"
-msgstr "Yönlendirici Duyurusu"
-
-#: traceroute6.c:486
-msgid "Router Solicitation"
-msgstr "Yönlendirici İsteği"
-
-#: arping.c:285
-#, c-format
-msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr "%d sorgulama gönderildi (%d genel yayın)\n"
-
-#: ping/ping.c:1167
-#, c-format
-msgid "Source Host Isolated\n"
-msgstr "Yalıtılmış Kaynak Ana Makine\n"
-
-#: ping/ping.c:1198
-#, c-format
-msgid "Source Quench\n"
-msgstr "Yavaşlatılmış Kaynak\n"
-
-#: ping/ping.c:1158
-#, c-format
-msgid "Source Route Failed\n"
-msgstr "Kaynak Rota Başarısız\n"
-
-#: ping/node_info.c:217
+#: ping/node_info.c:218
 #, c-format
 msgid "Subject type conflict\n"
 msgstr "Hedef türü çakışması\n"
 
-#: arping.c:945
-msgid "Suitable device could not be determined. Please, use option -I."
-msgstr "Uygun aygıt belirlenemedi. Lütfen -I seçeneğini kullanın."
-
-#: traceroute6.c:472
-msgid "Time Exceeded in Transit"
-msgstr "İletim Sırasında Süre Aşıldı"
-
-#: ping/ping.c:1246
+#: ping/node_info.c:309
 #, c-format
-msgid "Time exceeded, Bad Code: %d\n"
-msgstr "Süre aşıldı, Hata Kodu: %d\n"
-
-#: ping/ping6_common.c:417
-#, c-format
-msgid "Time exceeded: "
-msgstr "Süre aşıldı: "
-
-#: ping/ping.c:1240
-#, c-format
-msgid "Time to live exceeded\n"
-msgstr "Yaşam süresi aşıldı\n"
-
-#: ping/ping.c:1259
-#, c-format
-msgid "Timestamp\n"
-msgstr "Zaman Damgası\n"
-
-#: ping/ping.c:1263
-#, c-format
-msgid "Timestamp Reply\n"
-msgstr "Zaman Damgası Yanıtı\n"
-
-#: arping.c:387
-msgid "Unicast"
-msgstr "Tek noktaya yayın"
-
-#: ping/ping6_common.c:407
-#, c-format
-msgid "Unknown code %d"
-msgstr "Bilinmeyen kod %d"
-
-#: ping/ping6_common.c:430
-#, c-format
-msgid "Unknown header "
-msgstr "Bilinmeyen başlık "
-
-#: ping/ping6_common.c:432
-#, c-format
-msgid "Unknown option "
-msgstr "Bilinmeyen seçenek "
-
-#: ping/ping.c:1092
-#, c-format
-msgid "Unrecorded hops: %d\n"
-msgstr "Kaydedilmeyen atlama: %d\n"
-
-#. point to options
-#: ping/ping.c:1116
-#, c-format
-msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-
-#: ping/ping6_common.c:918 ping/ping.c:1695
-msgid "WARNING: failed to install socket filter"
-msgstr "UYARI: soket filtresi kurulamadı"
-
-#: traceroute6.c:822 arping.c:965
-msgid "WARNING: interface is ignored"
-msgstr "UYARI: arayüz yok sayıldı"
-
-#: ping/ping.c:712
-#, c-format
-msgid "WARNING: pinging broadcast address\n"
-msgstr "UYARI: genel yayın adresine ping atılıyor\n"
-
-#: ping/ping_common.c:445
-msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr "UYARI: muhtemelen, rcvbuf ön yüklemeyi tutmak için yeterli değil"
-
-#: ping/ping.c:830
-msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr "UYARI: setsockopt(ICMP_FILTER)"
-
-#: ping/ping.c:839
-msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr "UYARI: setsockopt(IP_RECVTTL)"
-
-#: ping/ping.c:841
-msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr "UYARI: setsockopt(IP_RETOPTS)"
-
-#: arping.c:983
-msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr "UYARI: setsockopt(SO_DONTROUTE)"
-
-#: arping.c:662
-#, c-format
-msgid "WARNING: using default broadcast address.\n"
-msgstr "UYARI: öntanımlı genel yayın adresi kullanılıyor.\n"
-
-#: ping/ping.c:835
-msgid "WARNING: your kernel is veeery old. No problems."
-msgstr "UYARI: çekirdek sürümünüz çok eski. Sorun yok."
-
-#. Do not exit, old kernels do not support mark.
-#: ping/ping_common.c:491
-#, c-format
-msgid "Warning: Failed to set mark: %d"
-msgstr "Uyarı: İşaret ayarlanamadı: %d"
-
-#: ping/ping_common.c:476
-msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr "Uyarı: SO_TIMESTAMP desteği yok, SIOCGSTAMP'a geri dönülüyor"
-
-#: ping/ping6_common.c:206 ping/ping.c:753
-#, c-format
-msgid "Warning: source address might be selected on device other than: %s"
-msgstr "Uyarı: kaynak adresi \"%s\" dışında bir aygıtta seçilebilir"
-
-#: ping/ping_common.c:750
-#, c-format
-msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr "Uyarı: günün zamanı geriye gidiyor (%ldus), karşı önlemler alınıyor"
-
-#: ping/ping6_common.c:428
-#, c-format
-msgid "Wrong header field "
-msgstr "Yanlış başlık alanı "
-
-#: clockdiff.c:240
-#, c-format
-msgid "Wrong timestamp %d\n"
-msgstr "Yanlış zaman damgası %d\n"
-
-#: tracepath.c:236
-msgid "[LOCALHOST]"
-msgstr "[LOCALHOST]"
-
-#: tracepath.c:323 tracepath.c:325
-#, c-format
-msgid "asymm %2d "
-msgstr "asymm %2d "
-
-#: ping/ping6_common.c:435
-#, c-format
-msgid "at %u"
-msgstr "%u'da"
-
-#: tracepath.c:613
-#, c-format
-msgid "back %d "
-msgstr "%d geri "
-
-#: ping/ping.c:244
-#, c-format
-msgid "bad TOS value: %s"
-msgstr "hatalı TOS değeri: %s"
-
-#: ping/ping.c:487
-msgid "bad linger time"
-msgstr "hatalı yanıt bekleme süresi"
-
-#: ping/ping.c:489
-#, c-format
-msgid "bad linger time: %s"
-msgstr "hatalı yanıt bekleme süresi: %s"
-
-#: ping/ping.c:378
-msgid "bad timing interval"
-msgstr "hatalı zaman aralığı"
-
-#: ping/ping.c:380
-#, c-format
-msgid "bad timing interval: %s"
-msgstr "hatalı zaman aralığı: %s"
-
-#: ping/ping.c:221
-#, c-format
-msgid "bad value for flowinfo: %s"
-msgstr "akış bilgisi için hatalı değer: %s"
-
-#: ping/ping.c:806
-msgid "broadcast ping does not fragment"
-msgstr "genel yayın pingi parçalanmaz"
-
-#: ping/ping.c:804
-#, c-format
-msgid "broadcast ping with too short interval: %d"
-msgstr "çok kısa aralıklarla genel yayın pingi: %d"
-
-#: ping/ping6_common.c:306
-msgid "can't disable multicast loopback"
-msgstr "çok noktaya yayın geri dönüşü devre dışı bırakılamıyor"
-
-#: ping/ping6_common.c:326
-msgid "can't receive hop limit"
-msgstr "atlama sınırı alınamıyor"
-
-#: ping/ping6_common.c:358
-msgid "can't send flowinfo"
-msgstr "akış bilgisi gönderilemiyor"
-
-#: ping/ping6_common.c:349
-msgid "can't set flowlabel"
-msgstr "akış etiketi ayarlanamıyor"
-
-#: ping/ping6_common.c:311
-msgid "can't set multicast hop limit"
-msgstr "çok noktaya yayın atlama sınırı ayarlanamıyor"
-
-#: ping/ping6_common.c:314
-msgid "can't set unicast hop limit"
-msgstr "tek noktaya yayın atlama sınırı ayarlanamıyor"
-
-#: ping/ping.c:391
-#, c-format
-msgid "cannot copy: %s"
-msgstr "kopyalanamıyor: %s"
-
-#: ping/ping.c:908
-msgid "cannot disable multicast loopback"
-msgstr "çok noktaya yayın geri dönüşü devre dışı bırakılamıyor"
-
-#: ping/ping_common.c:461
-#, c-format
-msgid "cannot flood; minimal interval allowed for user is %dms"
-msgstr "flood yapılamıyor; kullanıcı için izin verilen en küçük aralık %dms"
-
-#: ping/ping.c:715 ping/ping.c:902
-msgid "cannot set broadcasting"
-msgstr "genel yayın ayarlanamıyor"
-
-#: ping/ping.c:913
-msgid "cannot set multicast time-to-live"
-msgstr "çok noktaya yayın yaşam süresi ayarlanamıyor"
-
-#: ping/ping.c:414
-#, c-format
-msgid "cannot set preload to value greater than 3: %d"
-msgstr "ön yükleme 3'ten büyük bir değere ayarlanamıyor: %d"
-
-#: ping/ping.c:915
-msgid "cannot set unicast time-to-live"
-msgstr "tek noktaya yayın yaşam süresi ayarlanamıyor"
-
-#: tracepath.c:227
-#, c-format
-msgid ""
-"cmsg4:%d\n"
-" "
-msgstr ""
-"cmsg4:%d\n"
-" "
-
-#: tracepath.c:215
-#, c-format
-msgid ""
-"cmsg6:%d\n"
-" "
-msgstr ""
-"cmsg6:%d\n"
-" "
-
-#: ping/ping6_common.c:423
-#, c-format
-msgid "code %d"
-msgstr "kod %d"
-
-#: ping/ping6_common.c:434
-#, c-format
-msgid "code %d "
-msgstr "kod %d "
-
-#: ping/node_info.c:358
-msgid "dn_comp() returned too long result"
-msgstr "dn_comp() çok uzun bir sonuç döndürdü"
-
-#: ping/ping6_common.c:352
-msgid "flow labels are not supported"
-msgstr "akış etiketleri desteklenmiyor"
-
-#: ping/ping.c:224
-#, c-format
-msgid "flow value is greater than 20 bits: %s"
-msgstr "akış değeri 20 bitten büyük: %s"
-
-#: ping/ping6_common.c:360
-msgid "flowinfo is not supported"
-msgstr "akış bilgisi desteklenmiyor"
-
-#: arping.c:398
-#, c-format
-msgid "for "
-msgstr "şunun için: "
-
-#: arping.c:393
-#, c-format
-msgid "for %s "
-msgstr "%s için "
-
-#: arping.c:1016
-#, c-format
-msgid "from %s %s\n"
-msgstr "%s %s'den\n"
-
-#: ping/ping6_common.c:371 ping/ping.c:926
-#, c-format
-msgid "from %s %s: "
-msgstr "%s %s'den: "
-
-#: ping/ping.c:735
-msgid "gatifaddrs failed"
-msgstr "gatifaddrs başarısız"
-
-#: tracepath.c:611
-#, c-format
-msgid "hops %d "
-msgstr "%d atlama "
-
-#: ping/ping_common.c:464
-#, c-format
-msgid "illegal preload and/or interval: %d"
-msgstr "geçersiz ön yükleme ve/veya aralık: %d"
-
-#: ping/node_info.c:355
+msgid "IDN encoding error: %s"
+msgstr "IDN kodlama hatası: %s"
+
+#: ping/node_info.c:320
+msgid "too long scope name"
+msgstr "çok uzun kapsam adı"
+
+#: ping/node_info.c:344 ping/node_info.c:386 ping/ping6_common.c:267
+#: ping/ping.c:452 ping/ping.c:515 ping/ping.c:925
+msgid "memory allocation failed"
+msgstr "bellek ayırma başarısız"
+
+#: ping/node_info.c:356
 #, c-format
 msgid "inappropriate subject name: %s"
 msgstr "uygun olmayan hedef adı: %s"
 
-#: ping/ping.c:431
-#, c-format
-msgid "invalid -M argument: %s"
-msgstr "geçersiz -M argümanı: %s"
+#: ping/node_info.c:359
+msgid "dn_comp() returned too long result"
+msgstr "dn_comp() çok uzun bir sonuç döndürdü"
 
-#: traceroute6.c:688 traceroute6.c:694 traceroute6.c:697 ping/ping.c:366
-#: ping/ping.c:412 ping/ping.c:420 ping/ping.c:462 ping/ping.c:465
-#: ping/ping.c:468 ping/ping.c:481 tracepath.c:471 tracepath.c:474
-#: tracepath.c:477 tracepath.c:498 arping.c:872 arping.c:875 arping.c:878
-msgid "invalid argument"
-msgstr "geçersiz argüman"
-
-#: ping/ping.c:400
-#, c-format
-msgid "invalid source address: %s"
-msgstr "geçersiz kaynak adresi: %s"
-
-#: ping/ping.c:338
-#, c-format
-msgid "invalid timestamp type: %s"
-msgstr "geçersiz zaman damgası türü: %s"
-
-#: ping/ping6_common.c:504
-msgid "local error"
-msgstr "yerel hata"
-
-#: ping/ping.c:1334
-#, c-format
-msgid "local error: %s"
-msgstr "yerel hata: %s"
-
-#: ping/ping6_common.c:506
-#, c-format
-msgid "local error: message too long, mtu: %u"
-msgstr "yerel hata: mesaj çok uzun, mtu: %u"
-
-#: ping/ping.c:1336
-#, c-format
-msgid "local error: message too long, mtu=%u"
-msgstr "yerel hata: mesaj çok uzun, mtu=%u"
-
-#: clockdiff.c:589
-msgid "measure: unknown failure"
-msgstr "ölçüm: bilinmeyen hata"
-
-#: ping/ping6_common.c:258 ping/node_info.c:343 ping/node_info.c:385
-#: ping/ping.c:449 ping/ping.c:512 ping/ping.c:922
-msgid "memory allocation failed"
-msgstr "bellek ayırma başarısız"
-
-#: ping/ping6_common.c:236
-msgid "multicast ping does not fragment"
-msgstr "çok noktaya yayın pingi parçalanmaz"
-
-#: ping/ping6_common.c:233
-#, c-format
-msgid "multicast ping with too short interval: %d"
-msgstr "çok kısa aralıklarla çok noktaya yayın pingi: %d"
-
-#: ping/ping_common.c:345
-#, c-format
-msgid "no answer yet for icmp_seq=%lu\n"
-msgstr "icmp_seq=%lu için henüz cevap yok\n"
-
-#: tracepath.c:232
-#, c-format
-msgid "no info\n"
-msgstr "bilgi yok\n"
-
-#: arping.c:1020
-msgid "no source address in not-DAD mode"
-msgstr "DAD modunda olmayan kaynak adresi yok"
-
-#: ping/ping.c:316 ping/ping.c:343
-msgid "only one -4 or -6 option may be specified"
-msgstr "-4 veya -6 seçeneklerinden sadece biri belirtilebilir"
-
-#: ping/ping.c:324 ping/ping.c:329
-msgid "only one of -T or -R may be used"
-msgstr "-T veya -R seçeneklerinden sadece biri kullanılabilir"
-
-#: ping/ping.c:188
-#, c-format
-msgid "option argument contains garbage: %s"
-msgstr "seçenek argümanı çöp bilgi içeriyor: %s"
-
-#: ping/ping.c:1508
-#, c-format
-msgid "packet too short (%d bytes) from %s"
-msgstr "paket çok kısa(%d bayt), %s'den"
-
-#: ping/ping6_common.c:813
-#, c-format
-msgid "packet too short: %d bytes"
-msgstr "paket çok kısa: %d bayt"
-
-#: ping/ping_common.c:208
-#, c-format
-msgid "patterns must be specified as hex digits: %s"
-msgstr "kalıplar onaltılık tabanda rakamlar olarak belirtilmelidir: %s"
-
-#: ping/node_info.c:398
+#: ping/node_info.c:399
 #, c-format
 msgid ""
 "ping -6 -N <nodeinfo opt>\n"
@@ -1459,10 +345,955 @@ msgstr ""
 "  subject-name=ad\n"
 "  subject-fqdn=ad\n"
 
-#: tracepath.c:618
+#: ping/ping6_common.c:96 ping/ping.c:691 ping/ping.c:800
 #, c-format
-msgid "pktlen must be within: %d < value <= %d"
-msgstr "pktlen şu aralıkta olmalıdır: %d < değer <= %d"
+msgid "unknown iface: %s"
+msgstr "bilinmeyen arayüz: %s"
+
+#: ping/ping6_common.c:142
+msgid "scope discrepancy among the nodes"
+msgstr "düğümler arasındaki kapsam uyuşmazlığı"
+
+#: ping/ping6_common.c:215 ping/ping.c:756
+#, c-format
+msgid "Warning: source address might be selected on device other than: %s"
+msgstr "Uyarı: kaynak adresi \"%s\" dışında bir aygıtta seçilebilir"
+
+#: ping/ping6_common.c:242
+#, c-format
+msgid "multicast ping with too short interval: %d"
+msgstr "çok kısa aralıklarla çok noktaya yayın pingi: %d"
+
+#: ping/ping6_common.c:245
+msgid "multicast ping does not fragment"
+msgstr "çok noktaya yayın pingi parçalanmaz"
+
+#: ping/ping6_common.c:289
+msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
+msgstr "setsockopt(RAW_CHECKSUM) başarısız - devam etmeyi dene"
+
+#: ping/ping6_common.c:315
+msgid "can't disable multicast loopback"
+msgstr "çok noktaya yayın geri dönüşü devre dışı bırakılamıyor"
+
+#: ping/ping6_common.c:320
+msgid "can't set multicast hop limit"
+msgstr "çok noktaya yayın atlama sınırı ayarlanamıyor"
+
+#: ping/ping6_common.c:323
+msgid "can't set unicast hop limit"
+msgstr "tek noktaya yayın atlama sınırı ayarlanamıyor"
+
+#: ping/ping6_common.c:335
+msgid "can't receive hop limit"
+msgstr "atlama sınırı alınamıyor"
+
+#: ping/ping6_common.c:340
+msgid "setsockopt(IPV6_TCLASS)"
+msgstr "setsockopt(IPV6_TCLASS)"
+
+#: ping/ping6_common.c:342
+msgid "traffic class is not supported"
+msgstr "trafik sınıfı desteklenmiyor"
+
+#: ping/ping6_common.c:358
+msgid "can't set flowlabel"
+msgstr "akış etiketi ayarlanamıyor"
+
+#: ping/ping6_common.c:362
+msgid "can't send flowinfo"
+msgstr "akış bilgisi gönderilemiyor"
+
+#: ping/ping6_common.c:365
+#, c-format
+msgid "PING %s(%s) "
+msgstr "PING %s(%s) "
+
+#: ping/ping6_common.c:367
+#, c-format
+msgid ", flow 0x%05x, "
+msgstr ", akış 0x%05x, "
+
+#: ping/ping6_common.c:372 ping/ping.c:929
+#, c-format
+msgid "from %s %s: "
+msgstr "%s %s'den: "
+
+#: ping/ping6_common.c:375
+#, c-format
+msgid "%zu data bytes\n"
+msgstr "%zu bayt veri\n"
+
+#: ping/ping6_common.c:390
+#, c-format
+msgid "Destination unreachable: "
+msgstr "Ulaşılamayan hedef: "
+
+#: ping/ping6_common.c:393
+#, c-format
+msgid "No route"
+msgstr "Rota yok"
+
+#: ping/ping6_common.c:396
+#, c-format
+msgid "Administratively prohibited"
+msgstr "Yönetimsel olarak yasak"
+
+#: ping/ping6_common.c:399
+#, c-format
+msgid "Beyond scope of source address"
+msgstr "Kaynak adres kapsamının dışında"
+
+#: ping/ping6_common.c:402
+#, c-format
+msgid "Address unreachable"
+msgstr "Ulaşılamayan adres"
+
+#: ping/ping6_common.c:405
+#, c-format
+msgid "Port unreachable"
+msgstr "Ulaşılamayan bağlantı noktası"
+
+#: ping/ping6_common.c:408
+#, c-format
+msgid "Unknown code %d"
+msgstr "Bilinmeyen kod %d"
+
+#: ping/ping6_common.c:413
+#, c-format
+msgid "Packet too big: mtu=%u"
+msgstr "Paket çok büyük: mtu=%u"
+
+#: ping/ping6_common.c:415
+#, c-format
+msgid ", code=%d"
+msgstr ", kod=%d"
+
+#: ping/ping6_common.c:418
+#, c-format
+msgid "Time exceeded: "
+msgstr "Süre aşıldı: "
+
+#: ping/ping6_common.c:420
+#, c-format
+msgid "Hop limit"
+msgstr "Atlama sınırı"
+
+#: ping/ping6_common.c:422
+#, c-format
+msgid "Defragmentation failure"
+msgstr "Birleştirme hatası"
+
+#: ping/ping6_common.c:424
+#, c-format
+msgid "code %d"
+msgstr "kod %d"
+
+#: ping/ping6_common.c:427
+#, c-format
+msgid "Parameter problem: "
+msgstr "Parametre sorunu: "
+
+#: ping/ping6_common.c:429
+#, c-format
+msgid "Wrong header field "
+msgstr "Yanlış başlık alanı "
+
+#: ping/ping6_common.c:431
+#, c-format
+msgid "Unknown header "
+msgstr "Bilinmeyen başlık "
+
+#: ping/ping6_common.c:433
+#, c-format
+msgid "Unknown option "
+msgstr "Bilinmeyen seçenek "
+
+#: ping/ping6_common.c:435
+#, c-format
+msgid "code %d "
+msgstr "kod %d "
+
+#: ping/ping6_common.c:436
+#, c-format
+msgid "at %u"
+msgstr "%u'da"
+
+#: ping/ping6_common.c:439
+#, c-format
+msgid "Echo request"
+msgstr "Yankı isteği"
+
+#: ping/ping6_common.c:442
+#, c-format
+msgid "Echo reply"
+msgstr "Yankı yanıtı"
+
+#: ping/ping6_common.c:445
+#, c-format
+msgid "MLD Query"
+msgstr "MLD Sorgusu"
+
+#: ping/ping6_common.c:448
+#, c-format
+msgid "MLD Report"
+msgstr "MLD Bildirimi"
+
+#: ping/ping6_common.c:451
+#, c-format
+msgid "MLD Reduction"
+msgstr "MLD Azaltma"
+
+#: ping/ping6_common.c:454
+#, c-format
+msgid "unknown icmp type: %u"
+msgstr "bilinmeyen icmp türü: %u"
+
+#: ping/ping6_common.c:508
+msgid "local error"
+msgstr "yerel hata"
+
+#: ping/ping6_common.c:510
+#, c-format
+msgid "local error: message too long, mtu: %u"
+msgstr "yerel hata: mesaj çok uzun, mtu: %u"
+
+#: ping/ping6_common.c:532 ping/ping.c:1376
+#, c-format
+msgid "From %s icmp_seq=%u "
+msgstr "%s'den icmp_seq=%u "
+
+#: ping/ping6_common.c:639 ping/ping.c:1490
+#, c-format
+msgid " icmp_seq=%u"
+msgstr " icmp_seq=%u"
+
+#: ping/ping6_common.c:663 ping/ping6_common.c:724
+#, c-format
+msgid " parse error (too short)"
+msgstr " ayrıştırma hatası (çok kısa)"
+
+#: ping/ping6_common.c:677 ping/ping6_common.c:733
+#, c-format
+msgid " parse error (truncated)"
+msgstr " ayrıştırma hatası (kısaltıldı)"
+
+#: ping/ping6_common.c:737
+#, c-format
+msgid " unexpected error in inet_ntop(%s)"
+msgstr " inet_ntop'ta beklenmeyen hata(%s)"
+
+#: ping/ping6_common.c:746
+#, c-format
+msgid " (truncated)"
+msgstr " (kısaltıldı)"
+
+#: ping/ping6_common.c:765
+#, c-format
+msgid " unknown qtype(0x%02x)"
+msgstr " bilinmeyen qtype(0x%02x)"
+
+#: ping/ping6_common.c:769
+#, c-format
+msgid " refused"
+msgstr " reddedildi"
+
+#: ping/ping6_common.c:772
+#, c-format
+msgid " unknown"
+msgstr " bilinmeyen"
+
+#: ping/ping6_common.c:775
+#, c-format
+msgid " unknown code(%02x)"
+msgstr " bilinmeyen kod(%02x)"
+
+#: ping/ping6_common.c:777
+#, c-format
+msgid "; seq=%u;"
+msgstr "; seq=%u;"
+
+#: ping/ping6_common.c:817
+#, c-format
+msgid "packet too short: %d bytes"
+msgstr "paket çok kısa: %d bayt"
+
+#: ping/ping6_common.c:882 ping/ping.c:1617
+#, c-format
+msgid "From %s: "
+msgstr "%s'den: "
+
+#: ping/ping6_common.c:923 ping/ping.c:1702
+msgid "WARNING: failed to install socket filter"
+msgstr "UYARI: soket filtresi kurulamadı"
+
+#: ping/ping.c:191
+#, c-format
+msgid "option argument contains garbage: %s"
+msgstr "seçenek argümanı çöp bilgi içeriyor: %s"
+
+#: ping/ping.c:192
+msgid "this will become fatal error in the future"
+msgstr "bu gelecekte ölümcül bir hata olacaktır"
+
+#: ping/ping.c:224
+#, c-format
+msgid "bad value for flowinfo: %s"
+msgstr "akış bilgisi için hatalı değer: %s"
+
+#: ping/ping.c:227
+#, c-format
+msgid "flow value is greater than 20 bits: %s"
+msgstr "akış değeri 20 bitten büyük: %s"
+
+#: ping/ping.c:247
+#, c-format
+msgid "bad TOS value: %s"
+msgstr "hatalı TOS değeri: %s"
+
+#: ping/ping.c:250
+#, c-format
+msgid "the decimal value of TOS bits must be in range 0-255: %d"
+msgstr "TOS bitlerinin ondalık değeri 0-255 aralığında olmalıdır: %d"
+
+#: ping/ping.c:319 ping/ping.c:346
+msgid "only one -4 or -6 option may be specified"
+msgstr "-4 veya -6 seçeneklerinden sadece biri belirtilebilir"
+
+#: ping/ping.c:327 ping/ping.c:332
+msgid "only one of -T or -R may be used"
+msgstr "-T veya -R seçeneklerinden sadece biri kullanılabilir"
+
+#: ping/ping.c:341
+#, c-format
+msgid "invalid timestamp type: %s"
+msgstr "geçersiz zaman damgası türü: %s"
+
+#: ping/ping.c:381
+msgid "bad timing interval"
+msgstr "hatalı zaman aralığı"
+
+#: ping/ping.c:383
+#, c-format
+msgid "bad timing interval: %s"
+msgstr "hatalı zaman aralığı: %s"
+
+#: ping/ping.c:394
+#, c-format
+msgid "cannot copy: %s"
+msgstr "kopyalanamıyor: %s"
+
+#: ping/ping.c:403
+#, c-format
+msgid "invalid source address: %s"
+msgstr "geçersiz kaynak adresi: %s"
+
+#: ping/ping.c:417
+#, c-format
+msgid "cannot set preload to value greater than 3: %d"
+msgstr "ön yükleme 3'ten büyük bir değere ayarlanamıyor: %d"
+
+#: ping/ping.c:434
+#, c-format
+msgid "invalid -M argument: %s"
+msgstr "geçersiz -M argümanı: %s"
+
+#: ping/ping.c:490
+msgid "bad linger time"
+msgstr "hatalı yanıt bekleme süresi"
+
+#: ping/ping.c:492
+#, c-format
+msgid "bad linger time: %s"
+msgstr "hatalı yanıt bekleme süresi: %s"
+
+#: ping/ping.c:581
+#, c-format
+msgid "unknown protocol family: %d"
+msgstr "bilinmeyen protokol ailesi: %d"
+
+#: ping/ping.c:705
+msgid "warning: QOS sockopts"
+msgstr "uyarı: QOS sockopts"
+
+#: ping/ping.c:714
+msgid ""
+"Do you want to ping broadcast? Then -b. If not, check your local firewall "
+"rules"
+msgstr ""
+"Genel yayına ping atmak istiyor musunuz? Öylese -b kullanın. Değilse, yerel "
+"güvenlik duvarı kurallarınızı gözden geçirin"
+
+#: ping/ping.c:715
+#, c-format
+msgid "WARNING: pinging broadcast address\n"
+msgstr "UYARI: genel yayın adresine ping atılıyor\n"
+
+#: ping/ping.c:718 ping/ping.c:905
+msgid "cannot set broadcasting"
+msgstr "genel yayın ayarlanamıyor"
+
+#: ping/ping.c:738
+msgid "gatifaddrs failed"
+msgstr "gatifaddrs başarısız"
+
+#: ping/ping.c:780
+msgid "unknown interface"
+msgstr "bilinmeyen arayüz"
+
+#: ping/ping.c:807
+#, c-format
+msgid "broadcast ping with too short interval: %d"
+msgstr "çok kısa aralıklarla genel yayın pingi: %d"
+
+#: ping/ping.c:809
+msgid "broadcast ping does not fragment"
+msgstr "genel yayın pingi parçalanmaz"
+
+#: ping/ping.c:833
+msgid "WARNING: setsockopt(ICMP_FILTER)"
+msgstr "UYARI: setsockopt(ICMP_FILTER)"
+
+#: ping/ping.c:838
+msgid "WARNING: your kernel is veeery old. No problems."
+msgstr "UYARI: çekirdek sürümünüz çok eski. Sorun yok."
+
+#: ping/ping.c:842
+msgid "WARNING: setsockopt(IP_RECVTTL)"
+msgstr "UYARI: setsockopt(IP_RECVTTL)"
+
+#: ping/ping.c:844
+msgid "WARNING: setsockopt(IP_RETOPTS)"
+msgstr "UYARI: setsockopt(IP_RETOPTS)"
+
+#: ping/ping.c:911
+msgid "cannot disable multicast loopback"
+msgstr "çok noktaya yayın geri dönüşü devre dışı bırakılamıyor"
+
+#: ping/ping.c:916
+msgid "cannot set multicast time-to-live"
+msgstr "çok noktaya yayın yaşam süresi ayarlanamıyor"
+
+#: ping/ping.c:918
+msgid "cannot set unicast time-to-live"
+msgstr "tek noktaya yayın yaşam süresi ayarlanamıyor"
+
+#: ping/ping.c:927
+#, c-format
+msgid "PING %s (%s) "
+msgstr "PING %s (%s) "
+
+#: ping/ping.c:930
+#, c-format
+msgid "%zu(%zu) bytes of data.\n"
+msgstr "%zu(%zu) bayt veri.\n"
+
+#: ping/ping.c:956
+#, c-format
+msgid ""
+"\n"
+"NOP"
+msgstr ""
+"\n"
+"NOP"
+
+#: ping/ping.c:967
+#, c-format
+msgid ""
+"\n"
+"%cSRR: "
+msgstr ""
+"\n"
+"%cSRR: "
+
+#: ping/ping.c:1005
+#, c-format
+msgid "\t(same route)"
+msgstr "\t(aynı rota)"
+
+#: ping/ping.c:1010
+#, c-format
+msgid ""
+"\n"
+"RR: "
+msgstr ""
+"\n"
+"RR: "
+
+#: ping/ping.c:1046
+#, c-format
+msgid ""
+"\n"
+"TS: "
+msgstr ""
+"\n"
+"TS: "
+
+#: ping/ping.c:1078
+#, c-format
+msgid "\t%ld absolute not-standard"
+msgstr "\t%ld mutlak standart dışı"
+
+#: ping/ping.c:1080
+#, c-format
+msgid "\t%ld not-standard"
+msgstr "\t%ld standart dışı"
+
+#: ping/ping.c:1084
+#, c-format
+msgid "\t%ld absolute"
+msgstr "\t%ld mutlak"
+
+#: ping/ping.c:1095
+#, c-format
+msgid "Unrecorded hops: %d\n"
+msgstr "Kaydedilmeyen atlama: %d\n"
+
+#: ping/ping.c:1099
+#, c-format
+msgid ""
+"\n"
+"unknown option %x"
+msgstr ""
+"\n"
+"bilinmeyen seçenek %x"
+
+#: ping/ping.c:1119
+#, c-format
+msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
+msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
+
+#: ping/ping.c:1120
+#, c-format
+msgid " %1x  %1x  %02x %04x %04x"
+msgstr " %1x  %1x  %02x %04x %04x"
+
+#: ping/ping.c:1122
+#, c-format
+msgid "   %1x %04x"
+msgstr "   %1x %04x"
+
+#: ping/ping.c:1124
+#, c-format
+msgid "  %02x  %02x %04x"
+msgstr "  %02x  %02x %04x"
+
+#: ping/ping.c:1140
+#, c-format
+msgid "Echo Reply\n"
+msgstr "Yankı Yanıtı\n"
+
+#: ping/ping.c:1146
+#, c-format
+msgid "Destination Net Unreachable\n"
+msgstr "Ulaşılamayan Hedef Ağ\n"
+
+#: ping/ping.c:1149
+#, c-format
+msgid "Destination Host Unreachable\n"
+msgstr "Ulaşılamayan Hedef Ana Makine\n"
+
+#: ping/ping.c:1152
+#, c-format
+msgid "Destination Protocol Unreachable\n"
+msgstr "Ulaşılamayan Hedef Protokolü\n"
+
+#: ping/ping.c:1155
+#, c-format
+msgid "Destination Port Unreachable\n"
+msgstr "Ulaşılamayan Hedef Bağlantı Noktası\n"
+
+#: ping/ping.c:1158
+#, c-format
+msgid "Frag needed and DF set (mtu = %u)\n"
+msgstr "Parçalanma (frag) gerekli ve DF ayarlandı (mtu = %u)\n"
+
+#: ping/ping.c:1161
+#, c-format
+msgid "Source Route Failed\n"
+msgstr "Kaynak Rota Başarısız\n"
+
+#: ping/ping.c:1164
+#, c-format
+msgid "Destination Net Unknown\n"
+msgstr "Bilinmeyen Hedef Ağ\n"
+
+#: ping/ping.c:1167
+#, c-format
+msgid "Destination Host Unknown\n"
+msgstr "Bilinmeyen Hedef Ana Makine\n"
+
+#: ping/ping.c:1170
+#, c-format
+msgid "Source Host Isolated\n"
+msgstr "Yalıtılmış Kaynak Ana Makine\n"
+
+#: ping/ping.c:1173
+#, c-format
+msgid "Destination Net Prohibited\n"
+msgstr "Yasak Hedef Ağ\n"
+
+#: ping/ping.c:1176
+#, c-format
+msgid "Destination Host Prohibited\n"
+msgstr "Yasak Hedef Ana Makine\n"
+
+#: ping/ping.c:1179
+#, c-format
+msgid "Destination Net Unreachable for Type of Service\n"
+msgstr "Hizmet Türü için Ulaşılamayan Hedef Ağ\n"
+
+#: ping/ping.c:1182
+#, c-format
+msgid "Destination Host Unreachable for Type of Service\n"
+msgstr "Hizmet Türü için Ulaşılamayan Hedef Ana Makine\n"
+
+#: ping/ping.c:1185
+#, c-format
+msgid "Packet filtered\n"
+msgstr "Paket filtrelendi\n"
+
+#: ping/ping.c:1188
+#, c-format
+msgid "Precedence Violation\n"
+msgstr "Öncelik İhlali\n"
+
+#: ping/ping.c:1191
+#, c-format
+msgid "Precedence Cutoff\n"
+msgstr "Öncelik Kesintisi\n"
+
+#: ping/ping.c:1194
+#, c-format
+msgid "Dest Unreachable, Bad Code: %d\n"
+msgstr "Ulaşılamayan Hedef, Hata Kodu: %d\n"
+
+#: ping/ping.c:1201
+#, c-format
+msgid "Source Quench\n"
+msgstr "Yavaşlatılmış Kaynak\n"
+
+#: ping/ping.c:1208
+#, c-format
+msgid "Redirect Network"
+msgstr "Ağ Yeniden Yönlendirme"
+
+#: ping/ping.c:1211
+#, c-format
+msgid "Redirect Host"
+msgstr "Ana Makine Yeniden Yönlendirme"
+
+#: ping/ping.c:1214
+#, c-format
+msgid "Redirect Type of Service and Network"
+msgstr "Hizmet Türü ve Ağ Yeniden Yönlendirme"
+
+#: ping/ping.c:1217
+#, c-format
+msgid "Redirect Type of Service and Host"
+msgstr "Hizmet Türü ve Ana Makine Yeniden Yönlendirme"
+
+#: ping/ping.c:1220
+#, c-format
+msgid "Redirect, Bad Code: %d"
+msgstr "Yeniden Yönlendirme, Hata Kodu: %d"
+
+#: ping/ping.c:1231
+#, c-format
+msgid "(New nexthop: %s)\n"
+msgstr "(Yeni sonraki atlama: %s)\n"
+
+#: ping/ping.c:1237
+#, c-format
+msgid "Echo Request\n"
+msgstr "Yankı İsteği\n"
+
+#: ping/ping.c:1243
+#, c-format
+msgid "Time to live exceeded\n"
+msgstr "Yaşam süresi aşıldı\n"
+
+#: ping/ping.c:1246
+#, c-format
+msgid "Frag reassembly time exceeded\n"
+msgstr "Parçalanma yeniden birleştirme zamanı aşıldı\n"
+
+#: ping/ping.c:1249
+#, c-format
+msgid "Time exceeded, Bad Code: %d\n"
+msgstr "Süre aşıldı, Hata Kodu: %d\n"
+
+#: ping/ping.c:1256
+#, c-format
+msgid "Parameter problem: pointer = %u\n"
+msgstr "Parametre sorunu: işaretçi = %u\n"
+
+#: ping/ping.c:1262
+#, c-format
+msgid "Timestamp\n"
+msgstr "Zaman Damgası\n"
+
+#: ping/ping.c:1266
+#, c-format
+msgid "Timestamp Reply\n"
+msgstr "Zaman Damgası Yanıtı\n"
+
+#: ping/ping.c:1270
+#, c-format
+msgid "Information Request\n"
+msgstr "Bilgi İsteği\n"
+
+#: ping/ping.c:1274
+#, c-format
+msgid "Information Reply\n"
+msgstr "Bilgi Yanıtı\n"
+
+#: ping/ping.c:1279
+#, c-format
+msgid "Address Mask Request\n"
+msgstr "Adres Maskesi İsteği\n"
+
+#: ping/ping.c:1284
+#, c-format
+msgid "Address Mask Reply\n"
+msgstr "Adres Maskesi Yanıtı\n"
+
+#: ping/ping.c:1288
+#, c-format
+msgid "Bad ICMP type: %d\n"
+msgstr "Hatalı ICMP türü: %d\n"
+
+#: ping/ping.c:1340
+#, c-format
+msgid "local error: %s"
+msgstr "yerel hata: %s"
+
+#: ping/ping.c:1342
+#, c-format
+msgid "local error: message too long, mtu=%u"
+msgstr "yerel hata: mesaj çok uzun, mtu=%u"
+
+#: ping/ping.c:1514
+#, c-format
+msgid "packet too short (%d bytes) from %s"
+msgstr "paket çok kısa(%d bayt), %s'den"
+
+#: ping/ping.c:1592
+#, c-format
+msgid "From %s: icmp_seq=%u "
+msgstr "%s'den: icmp_seq=%u "
+
+#: ping/ping.c:1595
+#, c-format
+msgid "(BAD CHECKSUM)"
+msgstr "(YANLIŞ SAĞLAMA TOPLAMI)"
+
+#: ping/ping.c:1619
+#, c-format
+msgid "(BAD CHECKSUM)\n"
+msgstr "(YANLIŞ SAĞLAMA TOPLAMI)\n"
+
+#: ping/ping_common.c:208
+#, c-format
+msgid "patterns must be specified as hex digits: %s"
+msgstr "kalıplar onaltılık tabanda rakamlar olarak belirtilmelidir: %s"
+
+#: ping/ping_common.c:225
+#, c-format
+msgid "PATTERN: 0x"
+msgstr "KALIP: 0x"
+
+#: ping/ping_common.c:345
+#, c-format
+msgid "no answer yet for icmp_seq=%lu\n"
+msgstr "icmp_seq=%lu için henüz cevap yok\n"
+
+#: ping/ping_common.c:445
+msgid "WARNING: probably, rcvbuf is not enough to hold preload"
+msgstr "UYARI: muhtemelen, rcvbuf ön yüklemeyi tutmak için yeterli değil"
+
+#: ping/ping_common.c:461
+#, c-format
+msgid "cannot flood; minimal interval allowed for user is %dms"
+msgstr "flood yapılamıyor; kullanıcı için izin verilen en küçük aralık %dms"
+
+#: ping/ping_common.c:464
+#, c-format
+msgid "illegal preload and/or interval: %d"
+msgstr "geçersiz ön yükleme ve/veya aralık: %d"
+
+#: ping/ping_common.c:476
+msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
+msgstr "Uyarı: SO_TIMESTAMP desteği yok, SIOCGSTAMP'a geri dönülüyor"
+
+#: ping/ping_common.c:491
+#, c-format
+msgid "Warning: Failed to set mark: %d"
+msgstr "Uyarı: İşaret ayarlanamadı: %d"
+
+#: ping/ping_common.c:732
+#, c-format
+msgid "Warning: time of day goes back (%ldus), taking countermeasures"
+msgstr "Uyarı: günün zamanı geriye gidiyor (%ldus), karşı önlemler alınıyor"
+
+#: ping/ping_common.c:782
+#, c-format
+msgid "%d bytes from %s:"
+msgstr "%d bayt, %s'den:"
+
+#: ping/ping_common.c:788
+#, c-format
+msgid " ttl=%d"
+msgstr " ttl=%d"
+
+#: ping/ping_common.c:791
+#, c-format
+msgid " (truncated)\n"
+msgstr " (kısaltıldı)\n"
+
+#: ping/ping_common.c:796
+#, c-format
+msgid " time=%ld ms"
+msgstr " zaman=%ld ms"
+
+#: ping/ping_common.c:798
+#, c-format
+msgid " time=%ld.%01ld ms"
+msgstr " zaman=%ld.%01ld ms"
+
+#: ping/ping_common.c:801
+#, c-format
+msgid " time=%ld.%02ld ms"
+msgstr " zaman=%ld.%02ld ms"
+
+#: ping/ping_common.c:804
+#, c-format
+msgid " time=%ld.%03ld ms"
+msgstr " zaman=%ld.%03ld ms"
+
+#: ping/ping_common.c:808
+#, c-format
+msgid " (DUP!)"
+msgstr " (YİNELENEN!)"
+
+#: ping/ping_common.c:810
+#, c-format
+msgid " (BAD CHECKSUM!)"
+msgstr " (YANLIŞ SAĞLAMA TOPLAMI!)"
+
+#: ping/ping_common.c:817
+#, c-format
+msgid ""
+"\n"
+"wrong data byte #%zu should be 0x%x but was 0x%x"
+msgstr ""
+"\n"
+"yanlış veri baytı #%zu, 0x%x olmalı ama 0x%x oldu"
+
+#: ping/ping_common.c:860
+#, c-format
+msgid "--- %s ping statistics ---\n"
+msgstr "--- %s ping istatistikleri ---\n"
+
+#: ping/ping_common.c:861
+#, c-format
+msgid "%ld packets transmitted, "
+msgstr "%ld paket iletildi, "
+
+#: ping/ping_common.c:862
+#, c-format
+msgid "%ld received"
+msgstr "%ld alındı"
+
+#: ping/ping_common.c:864
+#, c-format
+msgid ", +%ld duplicates"
+msgstr ", +%ld yinelenen"
+
+#: ping/ping_common.c:866
+#, c-format
+msgid ", +%ld corrupted"
+msgstr ", +%ld bozuk"
+
+#: ping/ping_common.c:868
+#, c-format
+msgid ", +%ld errors"
+msgstr ", +%ld hata"
+
+#: ping/ping_common.c:874
+#, c-format
+msgid ", %g%% packet loss"
+msgstr ", %%%g paket kaybı"
+
+#: ping/ping_common.c:876
+#, c-format
+msgid ", time %ldms"
+msgstr ", zaman %ldms"
+
+#: ping/ping_common.c:896
+#, c-format
+msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr ""
+"rtt en düşük/ortalama/en yüksek/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld."
+"%03ld ms"
+
+#: ping/ping_common.c:904
+#, c-format
+msgid "%spipe %d"
+msgstr "%sboru %d"
+
+#: ping/ping_common.c:911
+#, c-format
+msgid "%sipg/ewma %d.%03d/%d.%03d ms"
+msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
+
+#: ping/ping_common.c:929
+#, c-format
+msgid "%ld/%ld packets, %d%% loss"
+msgstr "%ld/%ld paket, %%%d kayıp"
+
+#: ping/ping_common.c:934
+#, c-format
+msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
+msgstr ""
+", en düşük/ortalama/ewma/en yüksek = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
+
+#: tracepath.c:215
+#, c-format
+msgid ""
+"cmsg6:%d\n"
+" "
+msgstr ""
+"cmsg6:%d\n"
+" "
+
+#: tracepath.c:227
+#, c-format
+msgid ""
+"cmsg4:%d\n"
+" "
+msgstr ""
+"cmsg4:%d\n"
+" "
+
+#: tracepath.c:232
+#, c-format
+msgid "no info\n"
+msgstr "bilgi yok\n"
+
+#: tracepath.c:236
+msgid "[LOCALHOST]"
+msgstr "[LOCALHOST]"
+
+#: tracepath.c:284
+#, c-format
+msgid "%3ld.%03ldms "
+msgstr "%3ld.%03ldms "
+
+#: tracepath.c:287
+#, c-format
+msgid "(This broken router returned corrupted payload) "
+msgstr "(Bu bozuk yönlendirici bozuk yük döndürdü) "
 
 #: tracepath.c:302
 #, c-format
@@ -1474,105 +1305,231 @@ msgstr "pmtu %d\n"
 msgid "reached\n"
 msgstr "ulaştı\n"
 
-#: arping.c:388
-msgid "reply"
-msgstr "yanıt"
-
-#: arping.c:388
-msgid "request"
-msgstr "istek"
-
-#: ping/ping_common.c:914
+#: tracepath.c:323 tracepath.c:326
 #, c-format
-msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgid "asymm %2d "
+msgstr "asymm %2d "
+
+#: tracepath.c:341
+msgid "NET ERROR"
+msgstr "AĞ HATASI"
+
+#: tracepath.c:386
+#, c-format
+msgid "%2d?: reply received 8)\n"
+msgstr "%2d?: yanıt alındı 8)\n"
+
+#: tracepath.c:392
+#, c-format
+msgid "%2d:  send failed\n"
+msgstr "%2d:  gönderme başarısız\n"
+
+#: tracepath.c:399
+#, c-format
+msgid ""
+"\n"
+"Usage\n"
+"  tracepath [options] <destination>\n"
+"\n"
+"Options:\n"
+"  -4             use IPv4\n"
+"  -6             use IPv6\n"
+"  -b             print both name and ip\n"
+"  -l <length>    use packet <length>\n"
+"  -m <hops>      use maximum <hops>\n"
+"  -n             no dns name resolution\n"
+"  -p <port>      use destination <port>\n"
+"  -V             print version and exit\n"
+"  <destination>  dns name or ip address\n"
+"\n"
+"For more details see tracepath(8).\n"
 msgstr ""
-"rtt en düşük/ortalama/en yüksek/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/"
-"%ld.%03ld ms"
+"\n"
+"Kullanım\n"
+"  tracepath [seçenekler] <hedef>\n"
+"\n"
+"Seçenekler:\n"
+"  -4             IPv4 kullan\n"
+"  -6             IPv6 kullan\n"
+"  -b             hem ad hem de IP yazdır\n"
+"  -l <uzunluk>   <uzunluk> boyunda paket kullan\n"
+"  -m <atlama>    en fazla <atlama> kadar atlama kullan\n"
+"  -n             DNS ad çözümlemesi yok\n"
+"  -p <port>      <port> hedef bağlantı noktasını kullan\n"
+"  -V             sürüm bilgisini yazdır ve çık\n"
+"  <hedef>        DNS adı veya IP adresi\n"
+"\n"
+"Daha fazla bilgi için: tracepath(8).\n"
 
-#: ping/ping6_common.c:133
-msgid "scope discrepancy among the nodes"
-msgstr "düğümler arasındaki kapsam uyuşmazlığı"
+#: tracepath.c:457 tracepath.c:462
+msgid "Only one -4 or -6 option may be specified"
+msgstr "Sadece bir -4 veya -6 seçeneği belirtilebilir"
 
-#: ping/ping6_common.c:331
-msgid "setsockopt(IPV6_TCLASS)"
-msgstr "setsockopt(IPV6_TCLASS)"
-
-#. checksum should be enabled by default and setting this
-#. * option might fail anyway.
-#.
-#: ping/ping6_common.c:280
-msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr "setsockopt(RAW_CHECKSUM) başarısız - devam etmeyi dene"
-
-#.
-#. * checksum should be enabled by default and setting this
-#. * option might fail anyway.
-#.
-#: traceroute6.c:795
+#: tracepath.c:603
 #, c-format
-msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
-msgstr "setsockopt(RAW_CHECKSUM) başarısız - devam etmeyi dene."
+msgid "%2d:  no reply\n"
+msgstr "%2d:  yanıt yok\n"
 
-#: ping/ping.c:247
+#: tracepath.c:610
 #, c-format
-msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr "TOS bitlerinin ondalık değeri 0-255 aralığında olmalıdır: %d"
+msgid "     Resume: pmtu %d "
+msgstr "     Devam et: pmtu %d "
 
-#: ping/ping.c:189
-msgid "this will become fatal error in the future"
-msgstr "bu gelecekte ölümcül bir hata olacaktır"
-
-#: ping/node_info.c:319
-msgid "too long scope name"
-msgstr "çok uzun kapsam adı"
-
-#: traceroute6.c:845
+#: tracepath.c:612
 #, c-format
-msgid "traceroute to %s (%s)"
-msgstr "%s (%s) için rota izleme"
+msgid "hops %d "
+msgstr "%d atlama "
 
-#: traceroute6.c:437
+#: tracepath.c:614
 #, c-format
-msgid "traceroute: wrote %s %d chars, ret=%d\n"
-msgstr "traceroute: %s %d karakter yazıldı, döndürülen=%d\n"
+msgid "back %d "
+msgstr "%d geri "
 
-#: ping/ping6_common.c:333
-msgid "traffic class is not supported"
-msgstr "trafik sınıfı desteklenmiyor"
-
-#: traceroute6.c:837
+#: tracepath.c:619
 #, c-format
-msgid "unknown addr %s"
-msgstr "bilinmeyen adres %s"
+msgid "pktlen must be within: %d < value <= %d"
+msgstr "pktlen şu aralıkta olmalıdır: %d < değer <= %d"
 
-#: ping/ping6_common.c:453
 #, c-format
-msgid "unknown icmp type: %u"
-msgstr "bilinmeyen icmp türü: %u"
+#~ msgid ""
+#~ "\n"
+#~ "Usage:\n"
+#~ "  traceroute6 [options] <destination>\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -d            use SO_DEBUG socket option\n"
+#~ "  -i <device>   bind to <device>\n"
+#~ "  -m <hops>     use maximum <hops>\n"
+#~ "  -n            no dns name resolution\n"
+#~ "  -p <port>     use destination <port>\n"
+#~ "  -q <nprobes>  number of probes\n"
+#~ "  -r            use SO_DONTROUTE socket option\n"
+#~ "  -s <address>  use source <address>\n"
+#~ "  -v            verbose output\n"
+#~ "  -w <timeout>  time to wait for response\n"
+#~ "\n"
+#~ "For more details see traceroute6(8).\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Kullanım:\n"
+#~ "  traceroute6 [seçenekler] <hedef>\n"
+#~ "\n"
+#~ "Seçenekler:\n"
+#~ "  -d            SO_DEBUG soket seçeneğini kullan\n"
+#~ "  -i <aygıt>    <aygıt>'a bağlan\n"
+#~ "  -m <atlama>   en fazla <atlama> kadar atlama kullan\n"
+#~ "  -n            DNS ad çözümlemesi yok\n"
+#~ "  -p <port>     <port> hedef bağlantı noktasını kullan\n"
+#~ "  -q <sayı>     sorgulama sayısı\n"
+#~ "  -r            SO_DONTROUTE soket seçeneğini kullan\n"
+#~ "  -s <adres>    <adres> kaynağını kullan\n"
+#~ "  -v            ayrıntılı çıktı\n"
+#~ "  -w <süre>     cevap için beklenecek süre\n"
+#~ "\n"
+#~ "Daha fazla bilgi için: traceroute6(8).\n"
 
-#: ping/ping6_common.c:87 ping/ping.c:688 ping/ping.c:797
 #, c-format
-msgid "unknown iface: %s"
-msgstr "bilinmeyen arayüz: %s"
+#~ msgid "  %.4f ms"
+#~ msgstr "  %.4f ms"
 
-#: ping/ping.c:777
-msgid "unknown interface"
-msgstr "bilinmeyen arayüz"
-
-#: ping/ping.c:578
 #, c-format
-msgid "unknown protocol family: %d"
-msgstr "bilinmeyen protokol ailesi: %d"
+#~ msgid " from %s"
+#~ msgstr " %s'den"
 
-#: traceroute6.c:718
-msgid "wait must be >1 sec"
-msgstr "bekleme 1 saniyeden büyük olmalıdır"
-
-#: ping/ping.c:702
-msgid "warning: QOS sockopts"
-msgstr "uyarı: QOS sockopts"
-
-#: clockdiff.c:270
 #, c-format
-msgid "wrong timestamps\n"
-msgstr "yanlış zaman damgaları\n"
+#~ msgid ", %d hops max, %d byte packets\n"
+#~ msgstr ", en fazla %d atlama, %d bayt paketler\n"
+
+#~ msgid "Destination Unreachable"
+#~ msgstr "Ulaşılamayan Hedef"
+
+#~ msgid "Echo Reply"
+#~ msgstr "Yankı Yanıtı"
+
+#~ msgid "Echo Request"
+#~ msgstr "Yankı İsteği"
+
+#~ msgid "Error"
+#~ msgstr "Hata"
+
+#~ msgid "Home Agent Address Discovery Reply message"
+#~ msgstr "Ev Temsilcisi Adres Keşif Yanıtı mesajı"
+
+#~ msgid "Home Agent Address Discovery Request Message"
+#~ msgstr "Ev Temsilcisi Adres Keşif İsteği Mesajı"
+
+#~ msgid "Membership Query"
+#~ msgstr "Üyelik Sorgusu"
+
+#~ msgid "Membership Reduction"
+#~ msgstr "Üyelik Azaltma"
+
+#~ msgid "Membership Report"
+#~ msgstr "Üyelik Bildirimi"
+
+#~ msgid "Mobile Prefix Solicitation Advertisement"
+#~ msgstr "Mobil Ön Ek İsteği Duyurusu"
+
+#~ msgid "Mobile Prefix Solicitation Message"
+#~ msgstr "Mobil Ön Ek İsteği Mesajı"
+
+#~ msgid "Multicast Listener Report packet"
+#~ msgstr "Çok Noktaya Yayın Dinleyici Bildirimi paketi"
+
+#~ msgid "Neighbor Advertisement"
+#~ msgstr "Komşu Duyurusu"
+
+#~ msgid "Neighbor Query"
+#~ msgstr "Komşu Sorgusu"
+
+#~ msgid "Neighbor Reply"
+#~ msgstr "Komşu Yanıtı"
+
+#~ msgid "Neighbor Solicitation"
+#~ msgstr "Komşu İsteği"
+
+#~ msgid "OUT-OF-RANGE"
+#~ msgstr "ARALIK-DIŞI"
+
+#~ msgid "Packet Too Big"
+#~ msgstr "Paket Çok Büyük"
+
+#~ msgid "Parameter Problem"
+#~ msgstr "Parametre Sorunu"
+
+#~ msgid "Redirect"
+#~ msgstr "Yeniden Yönlendirme"
+
+#~ msgid "Router Advertisement"
+#~ msgstr "Yönlendirici Duyurusu"
+
+#~ msgid "Router Solicitation"
+#~ msgstr "Yönlendirici İsteği"
+
+#~ msgid "Time Exceeded in Transit"
+#~ msgstr "İletim Sırasında Süre Aşıldı"
+
+#~ msgid "flow labels are not supported"
+#~ msgstr "akış etiketleri desteklenmiyor"
+
+#~ msgid "flowinfo is not supported"
+#~ msgstr "akış bilgisi desteklenmiyor"
+
+#, c-format
+#~ msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
+#~ msgstr "setsockopt(RAW_CHECKSUM) başarısız - devam etmeyi dene."
+
+#, c-format
+#~ msgid "traceroute to %s (%s)"
+#~ msgstr "%s (%s) için rota izleme"
+
+#, c-format
+#~ msgid "traceroute: wrote %s %d chars, ret=%d\n"
+#~ msgstr "traceroute: %s %d karakter yazıldı, döndürülen=%d\n"
+
+#, c-format
+#~ msgid "unknown addr %s"
+#~ msgstr "bilinmeyen adres %s"
+
+#~ msgid "wait must be >1 sec"
+#~ msgstr "bekleme 1 saniyeden büyük olmalıdır"
