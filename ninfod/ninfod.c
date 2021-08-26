@@ -169,6 +169,10 @@ void DEBUG(int const pri, char const *const fmt, ...)
 	}
 	errno = saved_errno;
 }
+#else
+iputils_attribute_format(__printf__, 2, 3)
+void DEBUG(int const pri __attribute__ ((unused)), char const *const fmt __attribute__ ((unused)), ...)
+{}
 #endif
 
 /* --------- */
