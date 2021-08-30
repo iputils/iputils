@@ -260,7 +260,7 @@ xml:id="man.ping">
           The default is to wait for one second between each packet
           normally, or not to wait in flood mode.
           Only super-user may set interval to values
-          less than 0.2 seconds.</para>
+          less than 2 ms.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
