@@ -9,7 +9,7 @@ xmlns:foaf="http://xmlns.com/foaf/0.1/">
     <shortdesc>The iputils package is set of small utilities for
     Linux networking.</shortdesc>
     <description>The iputils package includes arping, clockdiff,
-    ninfod, ping, rarpd, rdisc, tftpd, tracepath.
+    ninfod, ping, rarpd, rdisc, tracepath.
     The rarpd is not built by default, this utility is obsoleted by
     bootp and later dhcp protocols.</description>
     <bug-database rdf:resource="https://github.com/iputils/iputils/issues" />

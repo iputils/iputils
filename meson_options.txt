@@ -24,9 +24,6 @@ option('BUILD_RDISC', type : 'boolean', value : true,
 option('ENABLE_RDISC_SERVER', type : 'boolean', value : true,
 	description : 'Enable RDISC server code')
 
-option('BUILD_TFTPD', type : 'boolean', value : false,
-        description : 'Build tftpd')
-
 option('BUILD_TRACEPATH', type : 'boolean', value : true,
         description : 'Build tracepath')
 

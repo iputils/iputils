@@ -29,7 +29,6 @@ build_ping = get_option('BUILD_PING')
 build_rarpd = get_option('BUILD_RARPD')
 build_rdisc = get_option('BUILD_RDISC')
 build_rdisc_server = get_option('ENABLE_RDISC_SERVER')
-build_tftpd = get_option('BUILD_TFTPD')
 build_tracepath = get_option('BUILD_TRACEPATH')
 
 build_mans = get_option('BUILD_MANS')
@@ -304,10 +303,6 @@ if build_arping == true
 	endif
 endif
 
-if build_tftpd == true
-	subdir ('tftpd')
-endif
-
 if build_rarpd == true
 	rarpd = executable('rarpd', ['rarpd.c', git_version_h],
 		install_dir: sbindir,
@@ -352,7 +347,6 @@ output += 'rarpd: ' + build_rarpd.to_string() + '\n'
 output += 'rdisc: ' + build_rdisc.to_string()
 output += ' (server: ' + build_rdisc_server.to_string() + ', '
 output += 'capability or suid: ' + setcap_rdisc.to_string() + ')\n'
-output += 'tftpd: ' + build_tftpd.to_string() + '\n'
 output += 'tracepath: ' + build_tracepath.to_string() + '\n'
 
 output += '\nCONFIGURATION\n'
