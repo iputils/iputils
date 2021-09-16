@@ -6,6 +6,5 @@ rarp: GPL v2 or later
 rdisc: AS-IS, SUN MICROSYSTEMS license
 tftpd: BSD-3
 tracepath: GPL v2 or later
-traceroute: BSD-3
 
 Files containing license texts are available in Documentation directory.
