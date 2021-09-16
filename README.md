@@ -10,7 +10,6 @@ These tools are included in iputils
 - ping
 - rarpd
 - rdisc
-- tftpd
 - tracepath
 
 If you still use [old version](http://www.skbuff.net/iputils/), please consider moving forward to new releases placed here.
