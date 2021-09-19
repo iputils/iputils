@@ -20,6 +20,13 @@ Localization is hosted on [Fedora Weblate](https://translate.fedoraproject.org/p
 - rdisc
 - tracepath
 
-If you still use [old version](http://www.skbuff.net/iputils/), please consider moving forward to new releases placed here.
+## History
+### Alexey Kuznetsov (1999–2002)
+- first release (1999-04-16):  [`iputils-ss990417.tar.gz`](http://ftp.icm.edu.pl/packages/linux-iproute/ip-routing/iputils-ss990417.tar.gz)
+- latest release (2002-09-26): [`iputils-ss020927.tar.gz`](http://ftp.icm.edu.pl/packages/linux-iproute/ip-routing/iputils-ss020927.tar.gz)
+
+### Hideaki Yoshifuji (2006–2015)
+- first release (2006-04-25): [`iputils-s20060425.tar.bz2`](http://www.skbuff.net/iputils/iputils-s20060425.tar.bz2)
+- latest release (2015-12-18): [`iputils-s20151218.tar.bz2`](http://www.skbuff.net/iputils/iputils-s20151218.tar.bz2)
 
 <!-- vim: set tw=80: -->
