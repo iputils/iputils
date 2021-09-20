@@ -319,9 +319,6 @@ main(int argc, char **argv)
 				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET;
 			break;
-		case 'b':
-			rts.broadcast_pings = 1;
-			break;
 		case 'R':
 			if (rts.opt_timestamp)
 				error(2, 0, _("only one of -T or -R may be used"));
@@ -361,6 +358,9 @@ main(int argc, char **argv)
 			break;
 		case 'A':
 			rts.opt_adaptive = 1;
+			break;
+		case 'b':
+			rts.broadcast_pings = 1;
 			break;
 		case 'B':
 			rts.opt_strictsource = 1;
