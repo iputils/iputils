@@ -16,5 +16,4 @@ zypper --non-interactive install --no-recommends \
 	make \
 	meson \
 	ninja \
-	pkg-config \
-	which
+	pkg-config

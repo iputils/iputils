@@ -10,8 +10,7 @@ yum -y install \
 	libcap-devel \
 	libxslt \
 	make \
-	pkg-config \
-	which
+	pkg-config
 
 yum -y install libidn2-devel docbook5-style-xsl || true
 
