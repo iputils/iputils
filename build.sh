@@ -17,16 +17,16 @@ check_build_dependencies()
 {
 	# ninja-build is not detected causes build failing => symlink to ninja
 	# needed for CentOS 7 but maybe for others
-	if ! which ninja > /dev/null >&2; then
-		if which ninja-build > /dev/null >&2; then
-			ln -sv $(which ninja-build) /usr/local/bin/ninja
+	if ! command -v ninja > /dev/null; then
+		if command -v ninja-build > /dev/null; then
+			ln -sv $(command -v ninja-build) /usr/local/bin/ninja
 		else
 			echo "ninja binary not found (tried ninja and $NINJA on $PATH)" >&2
 			exit 1
 		fi
 	fi
 
-	which meson > /dev/null 2>&1 || { echo "meson binary not found" >&2; exit 1; }
+	command -v meson > /dev/null 2>&1 || { echo "meson binary not found" >&2; exit 1; }
 }
 
 print_versions()
