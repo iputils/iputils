@@ -235,7 +235,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		ipi->ipi6_ifindex = if_name2index(rts->device);
 	}
 
-	if (IN6_IS_ADDR_MULTICAST(&rts->whereto6.sin6_addr)) {
+	if (IN6_IS_ADDR_MULTICAST(&rts->whereto6.sin6_addr) || rts->broadcast_pings) {
 		rts->multicast = 1;
 		if (rts->uid) {
 			if (rts->interval < 1000)

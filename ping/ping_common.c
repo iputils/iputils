@@ -76,7 +76,7 @@ void usage(void)
 		"  -W <timeout>       time to wait for response\n"
 		"\nIPv4 options:\n"
 		"  -4                 use IPv4\n"
-		"  -b                 allow pinging broadcast\n"
+		"  -b                 allow pinging broadcast or multicast addresses\n"
 		"  -R                 record route\n"
 		"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|tsprespec>\n"
 		"\nIPv6 options:\n"
