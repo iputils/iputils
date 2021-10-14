@@ -328,7 +328,7 @@ static int measure_inner_loop(struct run_state *ctl, struct measure_vars *mv)
 		if (diff < RANGE) {
 			mv->min1 = delta1;
 			mv->min2 = delta2;
-			return BREAK;
+			return GOOD;
 		}
 	}
 	return CONTINUE;
@@ -420,6 +420,8 @@ static int measure(struct run_state *ctl)
 				case BREAK:
 					escape = 1;
 					break;
+				case GOOD:
+					goto good_exit;
 				case CONTINUE:
 					continue;
 				default:
@@ -427,6 +429,7 @@ static int measure(struct run_state *ctl)
 			}
 		}
 	}
+good_exit:
 	ctl->measure_delta = (mv.min1 - mv.min2) / 2 + PROCESSING_TIME;
 	return GOOD;
 }
