@@ -389,7 +389,8 @@ extern void common_options(int ch);
 extern int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 			     int cc, uint16_t seq, int hops,
 			     int csfailed, struct timeval *tv, char *from,
-			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast);
+			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast,
+			     int wrong_source);
 extern void print_timestamp(struct ping_rts *rts);
 void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet_size);
 
