@@ -711,7 +711,8 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 		      int cc, uint16_t seq, int hops,
 		      int csfailed, struct timeval *tv, char *from,
-		      void (*pr_reply)(uint8_t *icmph, int cc), int multicast)
+		      void (*pr_reply)(uint8_t *icmph, int cc), int multicast,
+		      int wrong_source)
 {
 	int dupflag = 0;
 	long triptime = 0;
@@ -804,10 +805,13 @@ restamp:
 				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
 				       triptime % 1000);
 		}
+
 		if (dupflag && (!multicast || rts->opt_verbose))
 			printf(_(" (DUP!)"));
 		if (csfailed)
 			printf(_(" (BAD CHECKSUM!)"));
+		if (wrong_source)
+			printf(_(" (DIFFERENT ADDRESS!)"));
 
 		/* check the data */
 		cp = ((unsigned char *)ptr) + sizeof(struct timeval);

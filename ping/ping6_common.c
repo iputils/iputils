@@ -803,6 +803,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	struct cmsghdr *c;
 	struct icmp6_hdr *icmph;
 	int hops = -1;
+	int wrong_source = 0;
 
 	for (c = CMSG_FIRSTHDR(msg); c; c = CMSG_NXTHDR(msg, c)) {
 		if (c->cmsg_level != IPPROTO_IPV6)
@@ -829,16 +830,18 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (!rts->multicast && !rts->subnet_router_anycast &&
-		    memcmp(&from->sin6_addr.s6_addr, &rts->whereto6.sin6_addr.s6_addr, 16))
-			return 1;
 		if (!is_ours(rts, sock, icmph->icmp6_id))
 			return 1;
+
+		if (!rts->multicast && !rts->subnet_router_anycast &&
+		    memcmp(&from->sin6_addr.s6_addr, &rts->whereto6.sin6_addr.s6_addr, 16))
+			wrong_source = 1;
+
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
 				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
 				      pr_echo_reply,
-				      rts->multicast)) {
+				      rts->multicast, wrong_source)) {
 			fflush(stdout);
 			return 0;
 		}
@@ -851,7 +854,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 				      seq,
 				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
 				      pr_niquery_reply,
-				      rts->multicast))
+				      rts->multicast, 0))
 			return 0;
 	} else {
 		int nexthdr;
