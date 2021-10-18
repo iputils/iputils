@@ -212,6 +212,7 @@ struct ping_rts {
 #endif
 
 	/* Used only in ping6_common.c */
+	int subnet_router_anycast; /* Subnet-Router anycast (RFC 4291) */
 	struct sockaddr_in6 firsthop;
 	unsigned char cmsgbuf[4096];
 	size_t cmsglen;

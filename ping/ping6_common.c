@@ -102,6 +102,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	      struct socket_st *sock)
 {
 	int hold, packlen;
+	size_t i;
 	unsigned char *packet;
 	char *target;
 	struct icmp6_filter filter;
@@ -246,6 +247,15 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		}
 		if (rts->pmtudisc < 0)
 			rts->pmtudisc = IPV6_PMTUDISC_DO;
+	}
+
+	/* detect Subnet-Router anycast at least for the default prefix 64 */
+	rts->subnet_router_anycast = 1;
+	for (i = 8; i < sizeof(struct in6_addr); i++) {
+		if (rts->whereto6.sin6_addr.s6_addr[i]) {
+			rts->subnet_router_anycast = 0;
+			break;
+		}
 	}
 
 	if (rts->pmtudisc >= 0) {
@@ -819,7 +829,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (!rts->multicast &&
+		if (!rts->multicast && !rts->subnet_router_anycast &&
 		    memcmp(&from->sin6_addr.s6_addr, &rts->whereto6.sin6_addr.s6_addr, 16))
 			return 1;
 		if (!is_ours(rts, sock, icmph->icmp6_id))
