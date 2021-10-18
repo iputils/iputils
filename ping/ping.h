@@ -192,6 +192,7 @@ struct ping_rts {
 	struct sockaddr_in6 source6;
 	struct sockaddr_in6 whereto6;
 	struct sockaddr_in6 firsthop6;
+	int multicast;
 
 	/* Used only in ping.c */
 	int ts_type;
@@ -201,7 +202,6 @@ struct ping_rts {
 	int optlen;
 	int settos;			/* Set TOS, Precedence or other QOS options */
 	int broadcast_pings;
-	int multicast;
 	struct sockaddr_in source;
 
 	/* Used only in ping_common.c */
