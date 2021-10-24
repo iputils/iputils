@@ -289,7 +289,8 @@ msgid "too long scope name"
 msgstr "liian pitkä laajuuden nimi"
 
 #: ping/node_info.c:344 ping/node_info.c:386 ping/ping6_common.c:293
-#: ping/ping.c:452 ping/ping.c:515 ping/ping.c:903
+#: ping/ping.c:452 ping/ping.c:515 ping/ping.c:903 ping/ping6_common.c:267
+#: ping/ping.c:925
 msgid "memory allocation failed"
 msgstr "muistin varaus ei onnistunut"
 
@@ -348,7 +349,7 @@ msgstr ""
 msgid "unknown iface: %s"
 msgstr "tuntematon iface: %s"
 
-#: ping/ping6_common.c:143
+#: ping/ping6_common.c:143 ping/ping6_common.c:142
 msgid "scope discrepancy among the nodes"
 msgstr ""
 
@@ -502,7 +503,7 @@ msgstr "Väärä otsikkokenttä "
 msgid "Unknown header "
 msgstr "Tuntematon otsikko "
 
-#: ping/ping6_common.c:459
+#: ping/ping6_common.c:459 ping/ping6_common.c:433
 #, c-format
 msgid "Unknown option "
 msgstr "tuntematon valitsin "
@@ -596,7 +597,7 @@ msgstr " tuntematon qtype(0x%02x)"
 msgid " refused"
 msgstr " hylätty"
 
-#: ping/ping6_common.c:798
+#: ping/ping6_common.c:798 ping/ping6_common.c:772
 #, c-format
 msgid " unknown"
 msgstr " tuntematon"
@@ -621,7 +622,8 @@ msgstr "paketti liian lyhyt: %d tavua"
 msgid "From %s: "
 msgstr "%s:lta: "
 
-#: ping/ping6_common.c:952 ping/ping.c:1682
+#: ping/ping6_common.c:952 ping/ping.c:1682 ping/ping6_common.c:923
+#: ping/ping.c:1702
 msgid "WARNING: failed to install socket filter"
 msgstr ""
 
@@ -710,367 +712,367 @@ msgstr ""
 msgid "unknown protocol family: %d"
 msgstr ""
 
-#: ping/ping.c:716
+#: ping/ping.c:716 ping/ping.c:705
 msgid "warning: QOS sockopts"
 msgstr ""
 
-#: ping/ping.c:728
+#: ping/ping.c:728 ping/ping.c:714
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
 msgstr ""
 
-#: ping/ping.c:729
+#: ping/ping.c:729 ping/ping.c:715
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
 msgstr ""
 
-#: ping/ping.c:732 ping/ping.c:883
+#: ping/ping.c:732 ping/ping.c:883 ping/ping.c:718 ping/ping.c:905
 msgid "cannot set broadcasting"
 msgstr ""
 
-#: ping/ping.c:752
+#: ping/ping.c:752 ping/ping.c:738
 msgid "gatifaddrs failed"
 msgstr ""
 
-#: ping/ping.c:785
+#: ping/ping.c:785 ping/ping.c:807
 #, c-format
 msgid "broadcast ping with too short interval: %d"
 msgstr ""
 
-#: ping/ping.c:787
+#: ping/ping.c:787 ping/ping.c:809
 msgid "broadcast ping does not fragment"
 msgstr ""
 
-#: ping/ping.c:811
+#: ping/ping.c:811 ping/ping.c:833
 msgid "WARNING: setsockopt(ICMP_FILTER)"
 msgstr ""
 
-#: ping/ping.c:816
+#: ping/ping.c:816 ping/ping.c:838
 msgid "WARNING: your kernel is veeery old. No problems."
 msgstr ""
 
-#: ping/ping.c:820
+#: ping/ping.c:820 ping/ping.c:842
 msgid "WARNING: setsockopt(IP_RECVTTL)"
 msgstr ""
 
-#: ping/ping.c:822
+#: ping/ping.c:822 ping/ping.c:844
 msgid "WARNING: setsockopt(IP_RETOPTS)"
 msgstr ""
 
-#: ping/ping.c:889
+#: ping/ping.c:889 ping/ping.c:911
 msgid "cannot disable multicast loopback"
 msgstr ""
 
-#: ping/ping.c:894
+#: ping/ping.c:894 ping/ping.c:916
 msgid "cannot set multicast time-to-live"
 msgstr ""
 
-#: ping/ping.c:896
+#: ping/ping.c:896 ping/ping.c:918
 msgid "cannot set unicast time-to-live"
 msgstr ""
 
-#: ping/ping.c:905
+#: ping/ping.c:905 ping/ping.c:927
 #, c-format
 msgid "PING %s (%s) "
 msgstr ""
 
-#: ping/ping.c:908
+#: ping/ping.c:908 ping/ping.c:930
 #, c-format
 msgid "%zu(%zu) bytes of data.\n"
 msgstr ""
 
-#: ping/ping.c:934
+#: ping/ping.c:934 ping/ping.c:956
 #, c-format
 msgid ""
 "\n"
 "NOP"
 msgstr ""
 
-#: ping/ping.c:945
+#: ping/ping.c:945 ping/ping.c:967
 #, c-format
 msgid ""
 "\n"
 "%cSRR: "
 msgstr ""
 
-#: ping/ping.c:983
+#: ping/ping.c:983 ping/ping.c:1005
 #, c-format
 msgid "\t(same route)"
 msgstr ""
 
-#: ping/ping.c:988
+#: ping/ping.c:988 ping/ping.c:1010
 #, c-format
 msgid ""
 "\n"
 "RR: "
 msgstr ""
 
-#: ping/ping.c:1024
+#: ping/ping.c:1024 ping/ping.c:1046
 #, c-format
 msgid ""
 "\n"
 "TS: "
 msgstr ""
 
-#: ping/ping.c:1056
+#: ping/ping.c:1056 ping/ping.c:1078
 #, c-format
 msgid "\t%ld absolute not-standard"
 msgstr ""
 
-#: ping/ping.c:1058
+#: ping/ping.c:1058 ping/ping.c:1080
 #, c-format
 msgid "\t%ld not-standard"
 msgstr ""
 
-#: ping/ping.c:1062
+#: ping/ping.c:1062 ping/ping.c:1084
 #, c-format
 msgid "\t%ld absolute"
 msgstr ""
 
-#: ping/ping.c:1073
+#: ping/ping.c:1073 ping/ping.c:1095
 #, c-format
 msgid "Unrecorded hops: %d\n"
 msgstr ""
 
-#: ping/ping.c:1077
+#: ping/ping.c:1077 ping/ping.c:1099
 #, c-format
 msgid ""
 "\n"
 "unknown option %x"
 msgstr ""
 
-#: ping/ping.c:1097
+#: ping/ping.c:1097 ping/ping.c:1119
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 msgstr ""
 
-#: ping/ping.c:1098
+#: ping/ping.c:1098 ping/ping.c:1120
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
 msgstr ""
 
-#: ping/ping.c:1100
+#: ping/ping.c:1100 ping/ping.c:1122
 #, c-format
 msgid "   %1x %04x"
 msgstr ""
 
-#: ping/ping.c:1102
+#: ping/ping.c:1102 ping/ping.c:1124
 #, c-format
 msgid "  %02x  %02x %04x"
 msgstr ""
 
-#: ping/ping.c:1118
+#: ping/ping.c:1118 ping/ping.c:1140
 #, c-format
 msgid "Echo Reply\n"
 msgstr ""
 
-#: ping/ping.c:1124
+#: ping/ping.c:1124 ping/ping.c:1146
 #, c-format
 msgid "Destination Net Unreachable\n"
 msgstr ""
 
-#: ping/ping.c:1127
+#: ping/ping.c:1127 ping/ping.c:1149
 #, c-format
 msgid "Destination Host Unreachable\n"
 msgstr ""
 
-#: ping/ping.c:1130
+#: ping/ping.c:1130 ping/ping.c:1152
 #, c-format
 msgid "Destination Protocol Unreachable\n"
 msgstr ""
 
-#: ping/ping.c:1133
+#: ping/ping.c:1133 ping/ping.c:1155
 #, c-format
 msgid "Destination Port Unreachable\n"
 msgstr ""
 
-#: ping/ping.c:1136
+#: ping/ping.c:1136 ping/ping.c:1158
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
 msgstr ""
 
-#: ping/ping.c:1139
+#: ping/ping.c:1139 ping/ping.c:1161
 #, c-format
 msgid "Source Route Failed\n"
 msgstr ""
 
-#: ping/ping.c:1142
+#: ping/ping.c:1142 ping/ping.c:1164
 #, c-format
 msgid "Destination Net Unknown\n"
 msgstr ""
 
-#: ping/ping.c:1145
+#: ping/ping.c:1145 ping/ping.c:1167
 #, c-format
 msgid "Destination Host Unknown\n"
 msgstr ""
 
-#: ping/ping.c:1148
+#: ping/ping.c:1148 ping/ping.c:1170
 #, c-format
 msgid "Source Host Isolated\n"
 msgstr ""
 
-#: ping/ping.c:1151
+#: ping/ping.c:1151 ping/ping.c:1173
 #, c-format
 msgid "Destination Net Prohibited\n"
 msgstr ""
 
-#: ping/ping.c:1154
+#: ping/ping.c:1154 ping/ping.c:1176
 #, c-format
 msgid "Destination Host Prohibited\n"
 msgstr ""
 
-#: ping/ping.c:1157
+#: ping/ping.c:1157 ping/ping.c:1179
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
 msgstr ""
 
-#: ping/ping.c:1160
+#: ping/ping.c:1160 ping/ping.c:1182
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
 msgstr ""
 
-#: ping/ping.c:1163
+#: ping/ping.c:1163 ping/ping.c:1185
 #, c-format
 msgid "Packet filtered\n"
 msgstr ""
 
-#: ping/ping.c:1166
+#: ping/ping.c:1166 ping/ping.c:1188
 #, c-format
 msgid "Precedence Violation\n"
 msgstr ""
 
-#: ping/ping.c:1169
+#: ping/ping.c:1169 ping/ping.c:1191
 #, c-format
 msgid "Precedence Cutoff\n"
 msgstr ""
 
-#: ping/ping.c:1172
+#: ping/ping.c:1172 ping/ping.c:1194
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
 msgstr ""
 
-#: ping/ping.c:1179
+#: ping/ping.c:1179 ping/ping.c:1201
 #, c-format
 msgid "Source Quench\n"
 msgstr ""
 
-#: ping/ping.c:1186
+#: ping/ping.c:1186 ping/ping.c:1208
 #, c-format
 msgid "Redirect Network"
 msgstr ""
 
-#: ping/ping.c:1189
+#: ping/ping.c:1189 ping/ping.c:1211
 #, c-format
 msgid "Redirect Host"
 msgstr ""
 
-#: ping/ping.c:1192
+#: ping/ping.c:1192 ping/ping.c:1214
 #, c-format
 msgid "Redirect Type of Service and Network"
 msgstr ""
 
-#: ping/ping.c:1195
+#: ping/ping.c:1195 ping/ping.c:1217
 #, c-format
 msgid "Redirect Type of Service and Host"
 msgstr ""
 
-#: ping/ping.c:1198
+#: ping/ping.c:1198 ping/ping.c:1220
 #, c-format
 msgid "Redirect, Bad Code: %d"
 msgstr ""
 
-#: ping/ping.c:1209
+#: ping/ping.c:1209 ping/ping.c:1231
 #, c-format
 msgid "(New nexthop: %s)\n"
 msgstr ""
 
-#: ping/ping.c:1215
+#: ping/ping.c:1215 ping/ping.c:1237
 #, c-format
 msgid "Echo Request\n"
 msgstr ""
 
-#: ping/ping.c:1221
+#: ping/ping.c:1221 ping/ping.c:1243
 #, c-format
 msgid "Time to live exceeded\n"
 msgstr ""
 
-#: ping/ping.c:1224
+#: ping/ping.c:1224 ping/ping.c:1246
 #, c-format
 msgid "Frag reassembly time exceeded\n"
 msgstr ""
 
-#: ping/ping.c:1227
+#: ping/ping.c:1227 ping/ping.c:1249
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
 msgstr ""
 
-#: ping/ping.c:1234
+#: ping/ping.c:1234 ping/ping.c:1256
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
 msgstr ""
 
-#: ping/ping.c:1240
+#: ping/ping.c:1240 ping/ping.c:1262
 #, c-format
 msgid "Timestamp\n"
 msgstr "Aikaleima\n"
 
-#: ping/ping.c:1244
+#: ping/ping.c:1244 ping/ping.c:1266
 #, c-format
 msgid "Timestamp Reply\n"
 msgstr ""
 
-#: ping/ping.c:1248
+#: ping/ping.c:1248 ping/ping.c:1270
 #, c-format
 msgid "Information Request\n"
 msgstr ""
 
-#: ping/ping.c:1252
+#: ping/ping.c:1252 ping/ping.c:1274
 #, c-format
 msgid "Information Reply\n"
 msgstr ""
 
-#: ping/ping.c:1257
+#: ping/ping.c:1257 ping/ping.c:1279
 #, c-format
 msgid "Address Mask Request\n"
 msgstr ""
 
-#: ping/ping.c:1262
+#: ping/ping.c:1262 ping/ping.c:1284
 #, c-format
 msgid "Address Mask Reply\n"
 msgstr ""
 
-#: ping/ping.c:1266
+#: ping/ping.c:1266 ping/ping.c:1288
 #, c-format
 msgid "Bad ICMP type: %d\n"
 msgstr ""
 
-#: ping/ping.c:1318
+#: ping/ping.c:1318 ping/ping.c:1340
 #, c-format
 msgid "local error: %s"
 msgstr ""
 
-#: ping/ping.c:1320
+#: ping/ping.c:1320 ping/ping.c:1342
 #, c-format
 msgid "local error: message too long, mtu=%u"
 msgstr ""
 
-#: ping/ping.c:1493
+#: ping/ping.c:1493 ping/ping.c:1514
 #, c-format
 msgid "packet too short (%d bytes) from %s"
 msgstr ""
 
-#: ping/ping.c:1572
+#: ping/ping.c:1572 ping/ping.c:1592
 #, c-format
 msgid "From %s: icmp_seq=%u "
 msgstr ""
 
-#: ping/ping.c:1575
+#: ping/ping.c:1575 ping/ping.c:1595
 #, c-format
 msgid "(BAD CHECKSUM)"
 msgstr ""
 
-#: ping/ping.c:1599
+#: ping/ping.c:1599 ping/ping.c:1619
 #, c-format
 msgid "(BAD CHECKSUM)\n"
 msgstr ""
@@ -1103,66 +1105,66 @@ msgstr ""
 msgid "WARNING: SO_MARK not supported"
 msgstr ""
 
-#: ping/ping_common.c:480
+#: ping/ping_common.c:480 ping/ping_common.c:461
 #, c-format
 msgid "cannot flood; minimal interval allowed for user is %dms"
 msgstr ""
 
-#: ping/ping_common.c:483
+#: ping/ping_common.c:483 ping/ping_common.c:464
 #, c-format
 msgid "illegal preload and/or interval: %d"
 msgstr ""
 
-#: ping/ping_common.c:495
+#: ping/ping_common.c:495 ping/ping_common.c:476
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr ""
 
-#: ping/ping_common.c:739
+#: ping/ping_common.c:739 ping/ping_common.c:732
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
 msgstr ""
 
-#: ping/ping_common.c:789
+#: ping/ping_common.c:789 ping/ping_common.c:782
 #, c-format
 msgid "%d bytes from %s:"
 msgstr ""
 
-#: ping/ping_common.c:795
+#: ping/ping_common.c:795 ping/ping_common.c:788
 #, c-format
 msgid " ttl=%d"
 msgstr ""
 
-#: ping/ping_common.c:798
+#: ping/ping_common.c:798 ping/ping_common.c:791
 #, c-format
 msgid " (truncated)\n"
 msgstr ""
 
-#: ping/ping_common.c:803
+#: ping/ping_common.c:803 ping/ping_common.c:796
 #, c-format
 msgid " time=%ld ms"
 msgstr ""
 
-#: ping/ping_common.c:805
+#: ping/ping_common.c:805 ping/ping_common.c:798
 #, c-format
 msgid " time=%ld.%01ld ms"
 msgstr ""
 
-#: ping/ping_common.c:808
+#: ping/ping_common.c:808 ping/ping_common.c:801
 #, c-format
 msgid " time=%ld.%02ld ms"
 msgstr ""
 
-#: ping/ping_common.c:811
+#: ping/ping_common.c:811 ping/ping_common.c:804
 #, c-format
 msgid " time=%ld.%03ld ms"
 msgstr ""
 
-#: ping/ping_common.c:816
+#: ping/ping_common.c:816 ping/ping_common.c:808
 #, c-format
 msgid " (DUP!)"
 msgstr ""
 
-#: ping/ping_common.c:818
+#: ping/ping_common.c:818 ping/ping_common.c:810
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr ""
@@ -1172,74 +1174,74 @@ msgstr ""
 msgid " (DIFFERENT ADDRESS!)"
 msgstr ""
 
-#: ping/ping_common.c:827
+#: ping/ping_common.c:827 ping/ping_common.c:817
 #, c-format
 msgid ""
 "\n"
 "wrong data byte #%zu should be 0x%x but was 0x%x"
 msgstr ""
 
-#: ping/ping_common.c:870
+#: ping/ping_common.c:870 ping/ping_common.c:860
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr ""
 
-#: ping/ping_common.c:871
+#: ping/ping_common.c:871 ping/ping_common.c:861
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr ""
 
-#: ping/ping_common.c:872
+#: ping/ping_common.c:872 ping/ping_common.c:862
 #, c-format
 msgid "%ld received"
 msgstr ""
 
-#: ping/ping_common.c:874
+#: ping/ping_common.c:874 ping/ping_common.c:864
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ""
 
-#: ping/ping_common.c:876
+#: ping/ping_common.c:876 ping/ping_common.c:866
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ""
 
-#: ping/ping_common.c:878
+#: ping/ping_common.c:878 ping/ping_common.c:868
 #, c-format
 msgid ", +%ld errors"
 msgstr ""
 
-#: ping/ping_common.c:884
+#: ping/ping_common.c:884 ping/ping_common.c:874
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ""
 
-#: ping/ping_common.c:886
+#: ping/ping_common.c:886 ping/ping_common.c:876
 #, c-format
 msgid ", time %ldms"
 msgstr ""
 
-#: ping/ping_common.c:906
+#: ping/ping_common.c:906 ping/ping_common.c:896
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr ""
 
-#: ping/ping_common.c:914
+#: ping/ping_common.c:914 ping/ping_common.c:904
 #, c-format
 msgid "%spipe %d"
 msgstr ""
 
-#: ping/ping_common.c:921
+#: ping/ping_common.c:921 ping/ping_common.c:911
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr ""
 
-#: ping/ping_common.c:939
+#: ping/ping_common.c:939 ping/ping_common.c:929
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr ""
 
-#: ping/ping_common.c:944
+#: ping/ping_common.c:944 ping/ping_common.c:934
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ""
@@ -1354,4 +1356,13 @@ msgstr ""
 #: tracepath.c:619
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
+msgstr ""
+
+#: ping/ping.c:780
+msgid "unknown interface"
+msgstr ""
+
+#: ping/ping_common.c:491
+#, c-format
+msgid "Warning: Failed to set mark: %d"
 msgstr ""
