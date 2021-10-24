@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-28 09:58+0200\n"
-"PO-Revision-Date: 2021-09-25 12:05+0000\n"
+"PO-Revision-Date: 2021-10-25 18:05+0000\n"
 "Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/fi/>\n"
@@ -102,7 +102,7 @@ msgstr "kohteelle "
 #: arping.c:434
 #, c-format
 msgid " %ld.%03ldms\n"
-msgstr ""
+msgstr " %ld.%03ldms\n"
 
 #: arping.c:436
 #, c-format
@@ -142,11 +142,11 @@ msgstr "Sopivaa laitetta ei voitu määrittää. Ole hyvä ja käytä vaihtoehto
 
 #: arping.c:991
 msgid "WARNING: interface is ignored"
-msgstr ""
+msgstr "VAROITUS: liitäntää ei huomioida"
 
 #: arping.c:1010
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr ""
+msgstr "VAROITUS: setsockopt(SO_DONTROUTE)"
 
 #: arping.c:1034
 #, c-format
