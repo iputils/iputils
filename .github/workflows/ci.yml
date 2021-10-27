@@ -43,6 +43,10 @@ jobs:
               EXTRA_BUILD_OPTS: "-DUSE_CAP=false -DUSE_IDN=false -DBUILD_ARPING=false -DBUILD_CLOCKDIFF=false -DENABLE_RDISC_SERVER=false -DNINFOD_MESSAGES=false -DNO_SETCAP_OR_SUID=true -DUSE_GETTEXT=false"
 
           # other builds
+          - container: "opensuse/tumbleweed"
+            env:
+              CC: gcc
+
           - container: "opensuse/leap"
             env:
               CC: clang
@@ -81,6 +85,7 @@ jobs:
     container:
       image: ${{ matrix.container }}
       env: ${{ matrix.env }}
+      options: --security-opt seccomp=unconfined
 
     steps:
     - name: Show OS
