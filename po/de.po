@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-27 01:23+0200\n"
-"PO-Revision-Date: 2020-06-21 14:10+0000\n"
-"Last-Translator: Jens Maucher <de@li.org>\n"
+"PO-Revision-Date: 2021-11-08 14:05+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/de/>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.8\n"
 
 #: arping.c:121
 #, c-format
@@ -135,12 +135,12 @@ msgstr "WARNUNG: Nutze Standard-Broadcastadresse.\n"
 #: ping/ping.c:484 tracepath.c:472 tracepath.c:475 tracepath.c:478
 #: tracepath.c:499
 msgid "invalid argument"
-msgstr ""
+msgstr "ungültiges Argument"
 
 #: arping.c:970
 #, c-format
 msgid "Device %s not available."
-msgstr ""
+msgstr "Gerät %s nicht verfügbar."
 
 #: arping.c:971
 msgid "Suitable device could not be determined. Please, use option -I."
@@ -216,7 +216,7 @@ msgstr ""
 #: clockdiff.c:594
 #, c-format
 msgid "%s is down"
-msgstr ""
+msgstr "%s ist ausgefallen"
 
 #: clockdiff.c:597
 #, c-format
@@ -226,7 +226,7 @@ msgstr ""
 #: clockdiff.c:600
 #, c-format
 msgid "%s is unreachable"
-msgstr ""
+msgstr "%s ist nicht erreichbar"
 
 #: clockdiff.c:619
 #, c-format
@@ -458,7 +458,7 @@ msgstr "Unbekannte Option "
 #: ping/ping6_common.c:435
 #, c-format
 msgid "code %d "
-msgstr ""
+msgstr "Code %d "
 
 #: ping/ping6_common.c:436
 #, c-format
