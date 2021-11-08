@@ -594,6 +594,46 @@ main(int argc, char **argv)
 	return ret_val;
 }
 
+static int iface_name2index(struct ping_rts *rts, int fd)
+{
+	struct ifreq ifr;
+
+	memset(&ifr, 0, sizeof(ifr));
+	strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
+
+	if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
+		error(2, 0, _("unknown iface: %s"), rts->device);
+
+	return ifr.ifr_ifindex;
+}
+
+static void bind_to_device(struct ping_rts *rts, int fd, in_addr_t addr)
+{
+	int rc;
+	int errno_save;
+
+	enable_capability_raw();
+	rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, rts->device,
+			strlen(rts->device) + 1);
+	errno_save = errno;
+	disable_capability_raw();
+
+	if (rc != -1)
+		return;
+
+	if (IN_MULTICAST(ntohl(addr))) {
+		struct ip_mreqn imr;
+
+		memset(&imr, 0, sizeof(imr));
+		imr.imr_ifindex = iface_name2index(rts, fd);
+
+		if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF, &imr, sizeof(imr)) == -1)
+			error(2, errno, "IP_MULTICAST_IF");
+	} else {
+		error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
+	}
+}
+
 /* return >= 0: exit with this code, < 0: go on to next addrinfo result */
 int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	      socket_st *sock)
@@ -665,39 +705,10 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 		if (probe_fd < 0)
 			error(2, errno, "socket");
+
 		if (rts->device) {
-			struct ifreq ifr;
-			int i;
-			int fds[2] = {probe_fd, sock->fd};
-
-			memset(&ifr, 0, sizeof(ifr));
-			strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
-
-			for (i = 0; i < 2; i++) {
-				int fd = fds[i];
-				int rc;
-				int errno_save;
-
-				enable_capability_raw();
-				rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
-						rts->device, strlen(rts->device) + 1);
-				errno_save = errno;
-				disable_capability_raw();
-
-				if (rc == -1) {
-					if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
-						struct ip_mreqn imr;
-						if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
-							error(2, 0, _("unknown iface: %s"), rts->device);
-						memset(&imr, 0, sizeof(imr));
-						imr.imr_ifindex = ifr.ifr_ifindex;
-						if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
-							       &imr, sizeof(imr)) == -1)
-							error(2, errno, "IP_MULTICAST_IF");
-					} else
-						error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
-				}
-			}
+			bind_to_device(rts, probe_fd, dst.sin_addr.s_addr);
+			bind_to_device(rts, sock->fd, dst.sin_addr.s_addr);
 		}
 
 		if (rts->settos &&
@@ -758,47 +769,11 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		close(probe_fd);
 
 	} else if (rts->device) {
-		struct sockaddr_in dst = rts->whereto;
-		struct ifreq ifr;
-		int fd = sock->fd;
-		int rc;
-		int errno_save;
-
-		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
-
-		enable_capability_raw();
-		rc = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, rts->device, strlen(rts->device) + 1);
-		errno_save = errno;
-		disable_capability_raw();
-
-		if (rc == -1) {
-			if (IN_MULTICAST(ntohl(dst.sin_addr.s_addr))) {
-				struct ip_mreqn imr;
-
-				if (ioctl(fd, SIOCGIFINDEX, &ifr) < 0)
-					error(2, 0, "%s: %s", _("unknown interface"), rts->device);
-				memset(&imr, 0, sizeof(imr));
-				imr.imr_ifindex = ifr.ifr_ifindex;
-				if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
-					       &imr, sizeof(imr)) == -1)
-					error(2, errno, "IP_MULTICAST_IF");
-			} else
-				error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
-		}
+		bind_to_device(rts, sock->fd, rts->whereto.sin_addr.s_addr);
 	}
 
 	if (rts->whereto.sin_addr.s_addr == 0)
 		rts->whereto.sin_addr.s_addr = rts->source.sin_addr.s_addr;
-
-	if (rts->device) {
-		struct ifreq ifr;
-
-		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, rts->device, IFNAMSIZ - 1);
-		if (ioctl(sock->fd, SIOCGIFINDEX, &ifr) < 0)
-			error(2, 0, _("unknown iface: %s"), rts->device);
-	}
 
 	if (rts->broadcast_pings || IN_MULTICAST(ntohl(rts->whereto.sin_addr.s_addr))) {
 		rts->multicast = 1;
