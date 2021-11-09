@@ -237,14 +237,16 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		memset(ipi, 0, sizeof(*ipi));
 		ipi->ipi6_ifindex = if_name2index(rts->device);
 
-		enable_capability_raw();
-		rc = setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE,
-				rts->device, strlen(rts->device) + 1);
-		errno_save = errno;
-		disable_capability_raw();
+		if (rts->opt_strictsource) {
+			enable_capability_raw();
+			rc = setsockopt(sock->fd, SOL_SOCKET, SO_BINDTODEVICE,
+					rts->device, strlen(rts->device) + 1);
+			errno_save = errno;
+			disable_capability_raw();
 
-		if (rc == -1)
-			error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
+			if (rc == -1)
+				error(2, errno_save, "SO_BINDTODEVICE %s", rts->device);
+		}
 	}
 
 	if (IN6_IS_ADDR_MULTICAST(&rts->whereto6.sin6_addr)) {
