@@ -70,6 +70,12 @@
 #ifndef IPV6_FLOWINFO_SEND
 # define IPV6_FLOWINFO_SEND 33
 #endif
+#ifndef ICMP6_EXT_ECHO_REQUEST
+#define ICMP6_EXT_ECHO_REQUEST	160
+#endif
+#ifndef ICMP6_EXT_ECHO_REPLY
+#define ICMP6_EXT_ECHO_REPLY	161
+#endif
 
 ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,

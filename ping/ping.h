@@ -67,6 +67,52 @@
 #define MININTERVAL	10		/* Minimal interpacket gap */
 #define MINUSERINTERVAL	2		/* Minimal allowed interval for non-root */
 
+/* Definitions for Extended Echo (PROBE) messages */
+#ifndef ICMP_EXT_ECHO
+#define ICMP_EXT_ECHO		42
+#endif
+#ifndef ICMP_EXT_ECHOREPLY
+#define ICMP_EXT_ECHOREPLY	43
+#endif
+#ifndef ICMP_EXT_MAL_QUERY
+#define ICMP_EXT_MAL_QUERY	1
+#endif
+#ifndef ICMP_EXT_NO_IF
+#define ICMP_EXT_NO_IF		2
+#endif
+#ifndef ICMP_EXT_NO_TABLE_ENT
+#define	ICMP_EXT_NO_TABLE_ENT	3
+#endif
+#ifndef ICMP_EXT_MULT_IFS
+#define ICMP_EXT_MULT_IFS	4
+#endif
+#ifndef EXT_ECHOREPLY_ACTIVE
+#define EXT_ECHOREPLY_ACTIVE	(1 << 2)
+#endif
+#ifndef EXT_ECHOREPLY_IPV4
+#define EXT_ECHOREPLY_IPV4	(1 << 1)
+#endif
+#ifndef EXT_ECHOREPLY_IPV6
+#define EXT_ECHOREPLY_IPV6	1
+#endif
+#ifndef EXT_ECHO_CTYPE_NAME
+#define EXT_ECHO_CTYPE_NAME	1
+#endif
+#ifndef EXT_ECHO_CTYPE_INDEX
+#define EXT_ECHO_CTYPE_INDEX	2
+#endif
+#ifndef EXT_ECHO_CTYPE_ADDR
+#define EXT_ECHO_CTYPE_ADDR	3
+#endif
+#ifndef ICMP_AFI_IP
+#define ICMP_AFI_IP		1
+#endif
+#ifndef ICMP_AFI_IP6
+#define ICMP_AFI_IP6		2
+#endif
+#define IIO_AFI_POS		16
+#define IIO_ADRLEN_POS		8
+
 #define SCHINT(a)	(((a) <= MININTERVAL) ? MININTERVAL : (a))
 
 
@@ -107,17 +153,23 @@ typedef struct socket_st {
 
 struct ping_rts;
 
+int check_ifname(const char *name);
+int get_c_type(const char *interface);
+
 int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai, socket_st *sock);
 int ping4_send_probe(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
 int ping4_receive_error_msg(struct ping_rts *, socket_st *);
 int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
+int probe4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *); 
 void ping4_install_filter(struct ping_rts *rts, socket_st *);
+void probe4_install_filter(struct ping_rts *rts, socket_st *);
 
 typedef struct ping_func_set_st {
 	int (*send_probe)(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
 	int (*receive_error_msg)(struct ping_rts *rts, socket_st *sock);
 	int (*parse_reply)(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
 	void (*install_filter)(struct ping_rts *rts, socket_st *);
+	void (*install_probe_filter)(struct ping_rts *rts, socket_st *sock);
 } ping_func_set_st;
 
 /* Node Information query */
@@ -206,6 +258,10 @@ struct ping_rts {
 
 	/* Used only in ping_common.c */
 	int screen_width;
+
+	/* Used in sending PROBE messages */
+	int probe;
+	char* interface;
 #ifdef HAVE_LIBCAP
 	cap_value_t cap_raw;
 	cap_value_t cap_admin;

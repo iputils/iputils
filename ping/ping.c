@@ -64,21 +64,37 @@ struct ping_rts *global_rts;
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
 struct icmp_filter {
-	uint32_t	data;
+	uint64_t	data;
 };
 #endif
+
+
+struct exthdr {
+    uint16_t    v_rsvd;
+    uint16_t    checksum;
+};
+
+struct iiohdr {
+    uint16_t    len;
+    uint8_t     class;
+    uint8_t     ctype;
+};
 
 ping_func_set_st ping4_func_set = {
 	.send_probe = ping4_send_probe,
 	.receive_error_msg = ping4_receive_error_msg,
 	.parse_reply = ping4_parse_reply,
-	.install_filter = ping4_install_filter
+	.install_filter = ping4_install_filter,
+	.install_probe_filter = probe4_install_filter,
 };
 
 #define	MAXIPLEN	60
 #define	MAXICMPLEN	76
 #define	NROUTES		9		/* number of record route slots */
 #define TOS_MAX		255		/* 8-bit TOS field */
+
+#define    READ_VERSION(x)      (ntohs(x) >> 12)
+#define    WRITE_VERSION(x, y)  (htons(x = (x & 0x0FFF) | (y << 12)))
 
 static void create_socket(struct ping_rts *rts, socket_st *sock, int family,
 			  int socktype, int protocol, int requisite)
@@ -311,7 +327,7 @@ main(int argc, char **argv)
 		hints.ai_family = AF_INET6;
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:dDfi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:dDfi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:e:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -493,7 +509,15 @@ main(int argc, char **argv)
 			/* lingertime will be converted to usec later */
 			rts.lingertime = (int)(optval * 1000);
 		}
-			break;
+
+		break;
+		
+		case 'e':
+		{
+			rts.probe = 1;
+			rts.interface = optarg;
+		break;
+		}
 		default:
 			usage();
 			break;
@@ -780,6 +804,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 					error(2, 0, "%s: %s", _("unknown interface"), rts->device);
 				memset(&imr, 0, sizeof(imr));
 				imr.imr_ifindex = ifr.ifr_ifindex;
+				printf("IP_MULTICAST\n");
 				if (setsockopt(fd, SOL_IP, IP_MULTICAST_IF,
 					       &imr, sizeof(imr)) == -1)
 					error(2, errno, "IP_MULTICAST_IF");
@@ -828,7 +853,8 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			      (1 << ICMP_TIME_EXCEEDED) |
 			      (1 << ICMP_PARAMETERPROB) |
 			      (1 << ICMP_REDIRECT)	|
-			      (1 << ICMP_ECHOREPLY));
+			      (1 << ICMP_ECHOREPLY)
+				  );
 		if (setsockopt(sock->fd, SOL_RAW, ICMP_FILTER, &filt, sizeof filt) == -1)
 			error(0, errno, _("WARNING: setsockopt(ICMP_FILTER)"));
 	}
@@ -887,7 +913,6 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			tmp_rspace = (uint32_t *)&rspace[4 + i * 4];
 			*tmp_rspace = rts->route[i];
 		}
-
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + rts->nroute * 4) < 0)
 			error(2, errno, "record route");
 		rts->optlen = 40;
@@ -1424,6 +1449,39 @@ in_cksum(const unsigned short *addr, int len, unsigned short csum)
 	return (answer);
 }
 
+/* Helper functions for constructing RFC 8335 PROBE messages */
+/* Copied from iproute2's if name check */
+int check_ifname(const char *name)
+{
+	/* These checks mimic kernel checks in dev_valid_name */
+	if (*name == '\0')
+		return -1;
+	if (strlen(name) >= IFNAMSIZ)
+		return -1;
+
+	while (*name) {
+		if (*name == '/' || isspace(*name))
+			return -1;
+		++name;
+	}
+	return 0;
+}
+
+int get_c_type(const char *interface) {
+	void *ptr;
+
+	if(inet_pton(AF_INET, interface, ptr) == 1 || inet_pton(AF_INET6, interface, ptr) == 1)
+		return EXT_ECHO_CTYPE_ADDR;
+	if(isalpha(interface[0]) && check_ifname(interface) == 0)
+		return EXT_ECHO_CTYPE_NAME;
+	while (*interface) {
+		if (isalpha(*interface) || isspace(*interface))
+			return -1;
+		++interface;
+	}
+	return EXT_ECHO_CTYPE_INDEX;
+}
+
 /*
  * pinger --
  * 	Compose and transmit an ICMP ECHO REQUEST packet.  The IP packet
@@ -1435,16 +1493,21 @@ in_cksum(const unsigned short *addr, int len, unsigned short csum)
 int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
 		     unsigned packet_size __attribute__((__unused__)))
 {
-	struct icmphdr *icp;
+	uint32_t        iio_ip_hdr = 0;
+	struct exthdr   *extbase, ext;
+	struct iiohdr   *iiobase, iio;
+	struct icmphdr  *icp;
 	int cc;
 	int i;
 
 	icp = (struct icmphdr *)packet;
-	icp->type = ICMP_ECHO;
 	icp->code = 0;
 	icp->checksum = 0;
-	icp->un.echo.sequence = htons(rts->ntransmitted + 1);
 	icp->un.echo.id = rts->ident;			/* ID */
+	if (rts->probe == 1)
+		goto build_probe;
+	icp->type = ICMP_ECHO;
+	icp->un.echo.sequence = htons(rts->ntransmitted + 1);
 
 	rcvd_clear(rts, rts->ntransmitted + 1);
 
@@ -1458,6 +1521,7 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
 		}
 	}
 
+send_msg:
 	cc = rts->datalen + 8;			/* skips ICMP portion */
 
 	/* compute ICMP checksum here */
@@ -1466,13 +1530,81 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
 	if (rts->timing && !rts->opt_latency) {
 		struct timeval tmp_tv;
 		gettimeofday(&tmp_tv, NULL);
-		memcpy(icp + 1, &tmp_tv, sizeof(tmp_tv));
+		// printf("timeval %x\n", tmp_tv);
+		if (rts->probe == 0)
+			memcpy(icp + 1, &tmp_tv, sizeof(tmp_tv));
+		else if (rts->probe == 1)
+			memcpy((char *)iiobase + ntohs(iio.len), &tmp_tv, sizeof(tmp_tv));
 		icp->checksum = in_cksum((unsigned short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
 	}
-
 	i = sendto(sock->fd, icp, cc, 0, (struct sockaddr *)&rts->whereto, sizeof(rts->whereto));
 
 	return (cc == i ? 0 : i);
+build_probe:
+    	extbase = (struct exthdr *)(icp + 1);
+    	iiobase = (struct iiohdr *)((char *)packet + sizeof(struct icmphdr) + sizeof(struct exthdr));
+    	icp->type = ICMP_EXT_ECHO;
+	/* PROBE messages use only the first 8 bits as sequence number */
+    	icp->un.echo.sequence = htons((rts->ntransmitted + 1) << 8);
+	icp->un.echo.sequence |= htons(1);	/* Set L-bit */
+    	WRITE_VERSION(ext.v_rsvd , 2);
+    	ext.v_rsvd = htons(ext.v_rsvd);
+    	ext.checksum = 0;
+    	iio.len = sizeof(struct iiohdr);
+    	iio.class = 3;
+    	iio.ctype = get_c_type(rts->interface);
+	/* 3 is highest valid ctype */
+	if (iio.ctype > 3)
+		return -1;
+
+	rcvd_clear(rts, rts->ntransmitted + 1);
+
+    	// Create IIO addr info based on C-Type
+	switch (iio.ctype) {
+	case EXT_ECHO_CTYPE_NAME:
+		iio.len += strlen(rts->interface);
+    	    	// pad to 32-bit boundary
+    	    	memset(iiobase + 1 + ((strlen(rts->interface)-1)/4), 0, sizeof(uint32_t));
+    	    	memcpy(iiobase + 1, rts->interface, strlen(rts->interface));
+		break;
+	case EXT_ECHO_CTYPE_ADDR:
+		iio.len += sizeof(struct in_addr);
+		// if we're sending an ipv4 address
+    	    	if(strchr(rts->interface, '.')) {
+			iio.len += sizeof(struct in_addr);
+			/* set up AFI and length */
+			iio_ip_hdr = (ICMP_AFI_IP << IIO_AFI_POS) | (sizeof(struct in_addr) << IIO_ADRLEN_POS);
+			iio_ip_hdr = htonl(iio_ip_hdr);
+    	    		inet_pton(AF_INET, rts->interface, (iiobase+2));
+    	    		memcpy(iiobase + 1, &iio_ip_hdr, sizeof(iio_ip_hdr));
+		}
+    	    	else {
+			iio.len += sizeof(struct in6_addr);
+			/* set up AFI and length */
+    	    		iio_ip_hdr = (ICMP_AFI_IP6 << IIO_AFI_POS) | (sizeof(struct in6_addr) << IIO_ADRLEN_POS);
+    	    		iio_ip_hdr = htonl(iio_ip_hdr);
+    	    		inet_pton(AF_INET6, rts->interface, (iiobase+2));
+    	    		memcpy(iiobase + 1, &iio_ip_hdr, sizeof(iio_ip_hdr));
+    	    	}
+		break;
+    	case EXT_ECHO_CTYPE_INDEX:
+		iio.len += sizeof(uint32_t);
+    	    	// Using iio_ip_hdr as a temp variable to store ifIndex
+    	    	iio_ip_hdr = htonl(atoi(rts->interface));
+    	    	memcpy(iiobase + 1, &iio_ip_hdr, sizeof(uint32_t));
+		break;
+	default:
+		return -1;
+    	}
+    	
+    	
+    	iio.len = htons(iio.len);
+    	memcpy(extbase, &ext, sizeof(ext));
+    	memcpy(iiobase, &iio, sizeof(iio));
+    	
+    	icp->checksum = in_cksum((unsigned short *)&ext, sizeof(ext), ~icp->checksum);
+    	icp->checksum = in_cksum((unsigned short *)&iio, sizeof(iio), ~icp->checksum);
+	goto send_msg;
 }
 
 /*
@@ -1505,6 +1637,9 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 	uint8_t *opts, *tmp_ttl;
 	int olen;
 	int wrong_source = 0;
+
+	if (rts->probe == 1)
+		return probe4_parse_reply(rts, sock, msg, cc, addr, tv);
 
 	/* Check the IP header */
 	ip = (struct iphdr *)buf;
@@ -1639,6 +1774,227 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 	return 0;
 }
 
+int probe4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
+              struct msghdr *msg, int cc, void *addr,
+              struct timeval *tv)
+{
+	struct sockaddr_in *from = addr;
+    uint8_t *buf = msg->msg_iov->iov_base;
+    struct icmphdr *icp;
+    struct iphdr *ip;
+    int hlen;
+    int csfailed;
+    struct cmsghdr *cmsgh;
+    int reply_ttl;
+    uint8_t *opts, *tmp_ttl;
+    int olen;
+
+    /* Check the IP header */
+    ip = (struct iphdr *)buf;
+    if (sock->socktype == SOCK_RAW) {
+        hlen = ip->ihl * 4;
+        if (cc < hlen + 8 || ip->ihl < 5) {
+            if (rts->opt_verbose)
+                error(0, 0, _("packet too short (%d bytes) from %s"), cc,
+                    pr_addr(rts,from, sizeof *from));
+            return 1;
+        }
+        olen = hlen - sizeof(struct iphdr);
+    } else {
+        hlen = 0;
+        reply_ttl = 0;
+        opts = buf;
+        olen = 0;
+        for (cmsgh = CMSG_FIRSTHDR(msg); cmsgh; cmsgh = CMSG_NXTHDR(msg, cmsgh)) {
+            if (cmsgh->cmsg_level != SOL_IP)
+                continue;
+            if (cmsgh->cmsg_type == IP_TTL) {
+                if (cmsgh->cmsg_len < sizeof(int))
+                    continue;
+                tmp_ttl = (uint8_t *)CMSG_DATA(cmsgh);
+                reply_ttl = (int)*tmp_ttl;
+            } else if (cmsgh->cmsg_type == IP_RETOPTS) {
+                opts = (uint8_t *)CMSG_DATA(cmsgh);
+                olen = cmsgh->cmsg_len;
+            }
+        }
+    }
+
+    /* Now the ICMP part */
+    cc -= hlen;
+    icp = (struct icmphdr *)(buf + hlen);
+    csfailed = in_cksum((unsigned short *)icp, cc, 0);
+	// printf("type:%d\n", icp->type);
+	// printf("code:%d\n", icp->code);
+
+    if (icp->type == ICMP_EXT_ECHOREPLY) {
+		uint16_t sequence = ntohs(icp->un.echo.sequence);
+		uint8_t code = icp->code;
+		uint8_t state = (sequence & 0x00e0) >> 5;
+		uint16_t active_bit = (sequence & 0x0004) >> 2;
+		uint16_t four_bit = (sequence & 0x0002) >> 1;
+		uint16_t six_bit = sequence & 0x0001;
+		if (code != 0) {
+			switch (code)
+			{
+			case 1:
+				printf("Error: Malformed Query\n");
+				break;
+			case 2:
+				printf("Error: No Such Interface\n");
+				break;
+			case 3:
+				printf("Error: No Such Table Entry\n");
+				break;
+			case 4:
+				printf("Error: Multiple Interfaces Satisfy Query\n");
+				break;
+			
+			default:
+				printf("Unrecognized Error\n");
+				break;
+			}
+			if (state) {
+				printf("Error: State must be 0 when code is 0\n");
+			}
+		} else {
+			switch (state)
+			{
+				case 1:
+					printf("State: Incomplete\n");
+					break;
+				case 2:
+					printf("State: Reachable\n");
+					break;
+				case 3:
+					printf("State: Stale");
+					break;
+				case 4:
+					printf("State: Delay");
+					break;
+				case 5:
+					printf("State: Probe");
+					break;
+				case 6:
+					printf("State: Failed");
+					break;
+			}
+
+			if (active_bit == 0) {
+				printf("Error: A-bit must be set\n");
+
+				if (four_bit) {
+					printf("Error: 4-bit set when A-bit is 0\n");
+				}
+				if (six_bit) {
+					printf("Error: 6-bit set when A-bit is 0\n");
+				}
+			}
+		}
+		
+        if (!rts->broadcast_pings && !rts->multicast &&
+            from->sin_addr.s_addr != rts->whereto.sin_addr.s_addr) {
+                printf("not broadcast, not multicast, and from is not whereto\n");
+                return 1;
+            }
+        if (!is_ours(rts, sock, icp->un.echo.id)) {
+                printf("'Twas not our ECHO\b");
+                return 1;            /* 'Twas not our ECHO */
+        }
+        if (!contains_pattern_in_payload(rts, (uint8_t *)(icp + 1))) {
+                printf("'Twas really not our ECHO\n");
+                return 1;            /* 'Twas really not our ECHO */
+        }
+        if (gather_statistics(rts, (uint8_t *)icp, sizeof(*icp), cc,
+                      ntohs(icp->un.echo.sequence),
+                      reply_ttl, 0, tv, pr_addr(rts, from, sizeof *from),
+                      pr_echo_reply, rts->multicast)) {
+            printf("Gather_statistics = 1\n");
+            fflush(stdout);
+            return 0;
+        }
+    } else {
+        /* We fall here when a redirect or source quench arrived. */
+
+        // TODO: Modify following case statement to handle icmp extended echo (?)
+        switch (icp->type) {
+        case ICMP_ECHO:
+            /* MUST NOT */
+            return 1;
+        case ICMP_SOURCE_QUENCH:
+        case ICMP_REDIRECT:
+        case ICMP_DEST_UNREACH:
+        case ICMP_TIME_EXCEEDED:
+        case ICMP_PARAMETERPROB:
+            {
+                struct iphdr *iph = (struct iphdr *)(&icp[1]);
+                struct icmphdr *icp1 = (struct icmphdr *)
+                        ((unsigned char *)iph + iph->ihl * 4);
+                int error_pkt;
+                if (cc < (int)(8 + sizeof(struct iphdr) + 8) ||
+                    cc < 8 + iph->ihl * 4 + 8)
+                    return 1;
+                if (icp1->type != ICMP_ECHO ||
+                    iph->daddr != rts->whereto.sin_addr.s_addr ||
+                    !is_ours(rts, sock, icp1->un.echo.id))
+                    return 1;
+                error_pkt = (icp->type != ICMP_REDIRECT &&
+                         icp->type != ICMP_SOURCE_QUENCH);
+                if (error_pkt) {
+                    acknowledge(rts, ntohs(icp1->un.echo.sequence));
+                    return 0;
+                }
+                if (rts->opt_quiet || rts->opt_flood)
+                    return 1;
+                print_timestamp(rts);
+                printf(_("From %s: icmp_seq=%u "), pr_addr(rts, from, sizeof *from),
+                       ntohs(icp1->un.echo.sequence));
+                if (csfailed)
+                    printf(_("(BAD CHECKSUM)"));
+                pr_icmph(rts, icp->type, icp->code, ntohl(icp->un.gateway), icp);
+                return 1;
+            }
+        default:
+            /* MUST NOT */
+            break;
+        }
+        if (rts->opt_flood && !(rts->opt_verbose || rts->opt_quiet)) {
+            if (!csfailed)
+                write_stdout("!E", 2);
+            else
+                write_stdout("!EC", 3);
+            return 0;
+        }
+        if (!rts->opt_verbose || rts->uid)
+            return 0;
+        if (rts->opt_ptimeofday) {
+            struct timeval recv_time;
+            gettimeofday(&recv_time, NULL);
+            printf("%lu.%06lu ", (unsigned long)recv_time.tv_sec, (unsigned long)recv_time.tv_usec);
+        }
+        printf(_("From %s: "), pr_addr(rts, from, sizeof *from));
+        if (csfailed) {
+            printf(_("(BAD CHECKSUM)\n"));
+            return 0;
+        }
+        pr_icmph(rts, icp->type, icp->code, ntohl(icp->un.gateway), icp);
+        return 0;
+    }
+
+    if (rts->opt_audible) {
+        putchar('\a');
+        if (rts->opt_flood)
+            fflush(stdout);
+    }
+    if (!rts->opt_flood) {
+        pr_options(rts, opts, olen + sizeof(struct iphdr));
+
+        putchar('\n');
+        fflush(stdout);
+    }
+    return 0;
+}
+
 /*
  * pr_addr --
  *
@@ -1703,3 +2059,36 @@ void ping4_install_filter(struct ping_rts *rts, socket_st *sock)
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		error(0, errno, _("WARNING: failed to install socket filter"));
 }
+
+
+void probe4_install_filter(struct ping_rts *rts, socket_st *sock)
+{
+	printf("probe filter");
+	// return;
+	// static int once;
+	// static struct sock_filter insns[] = {
+	// 	BPF_STMT(BPF_LDX | BPF_B   | BPF_MSH, 0),	/* Skip IP header due BSD, see ping6. */
+	// 	BPF_STMT(BPF_LD  | BPF_H   | BPF_IND, 4),	/* Load icmp echo ident */
+	// 	BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, 0xAAAA, 0, 1), /* Ours? */
+	// 	BPF_STMT(BPF_RET | BPF_K, ~0U),			/* Yes, it passes. */
+	// 	BPF_STMT(BPF_LD  | BPF_B   | BPF_IND, 0),	/* Load icmp type */
+	// 	BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, ICMP_ECHOREPLY, 1, 0), /* Echo? */
+	// 	BPF_STMT(BPF_RET | BPF_K, 0xFFFFFFF),		/* No. It passes. */
+	// 	BPF_STMT(BPF_RET | BPF_K, 0)			/* Echo with wrong ident. Reject. */
+	// };
+	// static struct sock_fprog filter = {
+	// 	sizeof insns / sizeof(insns[0]),
+	// 	insns
+	// };
+
+	// if (once)
+	// 	return;
+	// once = 1;
+
+	// /* Patch bpflet for current identifier. */
+	// insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, htons(rts->ident), 0, 1);
+
+	// if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
+	// 	error(0, errno, _("WARNING: failed to install socket filter"));
+}
+
