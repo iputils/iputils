@@ -47,10 +47,6 @@ jobs:
             env:
               CC: gcc
 
-          - container: "opensuse/tumbleweed"
-            env:
-              CC: gcc
-
           - container: "opensuse/leap"
             env:
               CC: clang
