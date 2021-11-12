@@ -421,6 +421,8 @@ static int measure(struct run_state *ctl)
 					escape = 1;
 					break;
 				case GOOD:
+					ctl->rtt = 0;
+					ctl->rtt_sigma = 0;
 					goto good_exit;
 				case CONTINUE:
 					continue;
