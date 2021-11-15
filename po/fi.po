@@ -344,7 +344,7 @@ msgstr ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 
-#: ping/ping6_common.c:96 ping/ping.c:605
+#: ping/ping6_common.c:96 ping/ping.c:605 ping/ping.c:691 ping/ping.c:800
 #, c-format
 msgid "unknown iface: %s"
 msgstr "tuntematon iface: %s"
@@ -353,152 +353,154 @@ msgstr "tuntematon iface: %s"
 msgid "scope discrepancy among the nodes"
 msgstr ""
 
-#: ping/ping6_common.c:219 ping/ping.c:770
+#: ping/ping6_common.c:219 ping/ping.c:770 ping/ping6_common.c:215
+#: ping/ping.c:756
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr "Varoitus: lähdeosoite on saatettu valita muusta laitteesta kuin: %s"
 
-#: ping/ping6_common.c:259
+#: ping/ping6_common.c:259 ping/ping6_common.c:242
 #, c-format
 msgid "multicast ping with too short interval: %d"
 msgstr "moni-lähetyksen ping liian lyhyellä aikavälillä: %d"
 
-#: ping/ping6_common.c:262
+#: ping/ping6_common.c:262 ping/ping6_common.c:245
 msgid "multicast ping does not fragment"
 msgstr "moni-lähetyksen ping ei pirstoudu"
 
-#: ping/ping6_common.c:315
+#: ping/ping6_common.c:315 ping/ping6_common.c:289
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
 msgstr "setsockopt(RAW_CHECKSUM) epäonnistui - yritä jatkaa"
 
-#: ping/ping6_common.c:341
+#: ping/ping6_common.c:341 ping/ping6_common.c:315
 msgid "can't disable multicast loopback"
 msgstr "ei voi poistaa moni-lähetyssilmukaa käytöstä"
 
-#: ping/ping6_common.c:346
+#: ping/ping6_common.c:346 ping/ping6_common.c:320
 msgid "can't set multicast hop limit"
 msgstr "ei voi asettaa moni-lähetyksen hyppyrajaa"
 
-#: ping/ping6_common.c:349
+#: ping/ping6_common.c:349 ping/ping6_common.c:323
 msgid "can't set unicast hop limit"
 msgstr "ei voi asettaa yksi-lähetyksen hyppyrajaa"
 
-#: ping/ping6_common.c:361
+#: ping/ping6_common.c:361 ping/ping6_common.c:335
 msgid "can't receive hop limit"
 msgstr "ei voi vastaanottaa hyppyrajaa"
 
-#: ping/ping6_common.c:366
+#: ping/ping6_common.c:366 ping/ping6_common.c:340
 msgid "setsockopt(IPV6_TCLASS)"
 msgstr "setsockopt(IPV6_TCLASS)"
 
-#: ping/ping6_common.c:368
+#: ping/ping6_common.c:368 ping/ping6_common.c:342
 msgid "traffic class is not supported"
 msgstr "liikenneluokkaa ei tueta"
 
-#: ping/ping6_common.c:384
+#: ping/ping6_common.c:384 ping/ping6_common.c:358
 msgid "can't set flowlabel"
 msgstr "virtausnimiötä ei voi asettaa"
 
-#: ping/ping6_common.c:388
+#: ping/ping6_common.c:388 ping/ping6_common.c:362
 msgid "can't send flowinfo"
 msgstr "ei voi lähettää virtaustietoja"
 
-#: ping/ping6_common.c:391
+#: ping/ping6_common.c:391 ping/ping6_common.c:365
 #, c-format
 msgid "PING %s(%s) "
 msgstr "PING %s(%s) "
 
-#: ping/ping6_common.c:393
+#: ping/ping6_common.c:393 ping/ping6_common.c:367
 #, c-format
 msgid ", flow 0x%05x, "
 msgstr ", virtaus 0x%05x, "
 
-#: ping/ping6_common.c:398 ping/ping.c:907
+#: ping/ping6_common.c:398 ping/ping.c:907 ping/ping6_common.c:372
+#: ping/ping.c:929
 #, c-format
 msgid "from %s %s: "
 msgstr "%s %s:lta : "
 
-#: ping/ping6_common.c:401
+#: ping/ping6_common.c:401 ping/ping6_common.c:375
 #, c-format
 msgid "%zu data bytes\n"
 msgstr "%zu data-tavut\n"
 
-#: ping/ping6_common.c:416
+#: ping/ping6_common.c:416 ping/ping6_common.c:390
 #, c-format
 msgid "Destination unreachable: "
 msgstr "Kohde tavoittamaton: "
 
-#: ping/ping6_common.c:419
+#: ping/ping6_common.c:419 ping/ping6_common.c:393
 #, c-format
 msgid "No route"
 msgstr "Ei reittiä"
 
-#: ping/ping6_common.c:422
+#: ping/ping6_common.c:422 ping/ping6_common.c:396
 #, c-format
 msgid "Administratively prohibited"
 msgstr "Hallinnollisesti kielletty"
 
-#: ping/ping6_common.c:425
+#: ping/ping6_common.c:425 ping/ping6_common.c:399
 #, c-format
 msgid "Beyond scope of source address"
 msgstr "Lähdeosoitteen laajuuden ulkopuolella"
 
-#: ping/ping6_common.c:428
+#: ping/ping6_common.c:428 ping/ping6_common.c:402
 #, c-format
 msgid "Address unreachable"
 msgstr "Tavoittamaton osoite"
 
-#: ping/ping6_common.c:431
+#: ping/ping6_common.c:431 ping/ping6_common.c:405
 #, c-format
 msgid "Port unreachable"
 msgstr "Tavoittamaton portti"
 
-#: ping/ping6_common.c:434
+#: ping/ping6_common.c:434 ping/ping6_common.c:408
 #, c-format
 msgid "Unknown code %d"
 msgstr "Tuntematon koodi %d"
 
-#: ping/ping6_common.c:439
+#: ping/ping6_common.c:439 ping/ping6_common.c:413
 #, c-format
 msgid "Packet too big: mtu=%u"
 msgstr "Paketti liian iso: mtu=%u"
 
-#: ping/ping6_common.c:441
+#: ping/ping6_common.c:441 ping/ping6_common.c:415
 #, c-format
 msgid ", code=%d"
 msgstr ", koodi=%d"
 
-#: ping/ping6_common.c:444
+#: ping/ping6_common.c:444 ping/ping6_common.c:418
 #, c-format
 msgid "Time exceeded: "
 msgstr "Ylitetty aika: "
 
-#: ping/ping6_common.c:446
+#: ping/ping6_common.c:446 ping/ping6_common.c:420
 #, c-format
 msgid "Hop limit"
 msgstr "Hyppyraja"
 
-#: ping/ping6_common.c:448
+#: ping/ping6_common.c:448 ping/ping6_common.c:422
 #, c-format
 msgid "Defragmentation failure"
 msgstr "Hajanaisuuden poiston epäonnistus"
 
-#: ping/ping6_common.c:450
+#: ping/ping6_common.c:450 ping/ping6_common.c:424
 #, c-format
 msgid "code %d"
 msgstr "koodi %d"
 
-#: ping/ping6_common.c:453
+#: ping/ping6_common.c:453 ping/ping6_common.c:427
 #, c-format
 msgid "Parameter problem: "
 msgstr "Parametriongelma: "
 
-#: ping/ping6_common.c:455
+#: ping/ping6_common.c:455 ping/ping6_common.c:429
 #, c-format
 msgid "Wrong header field "
 msgstr "Väärä otsikkokenttä "
 
-#: ping/ping6_common.c:457
+#: ping/ping6_common.c:457 ping/ping6_common.c:431
 #, c-format
 msgid "Unknown header "
 msgstr "Tuntematon otsikko "
@@ -508,91 +510,95 @@ msgstr "Tuntematon otsikko "
 msgid "Unknown option "
 msgstr "tuntematon valitsin "
 
-#: ping/ping6_common.c:461
+#: ping/ping6_common.c:461 ping/ping6_common.c:435
 #, c-format
 msgid "code %d "
 msgstr "koodi %d "
 
-#: ping/ping6_common.c:462
+#: ping/ping6_common.c:462 ping/ping6_common.c:436
 #, c-format
 msgid "at %u"
 msgstr "%u:lle"
 
-#: ping/ping6_common.c:465
+#: ping/ping6_common.c:465 ping/ping6_common.c:439
 #, c-format
 msgid "Echo request"
 msgstr "Kaikupyyntö"
 
-#: ping/ping6_common.c:468
+#: ping/ping6_common.c:468 ping/ping6_common.c:442
 #, c-format
 msgid "Echo reply"
 msgstr "Kaikuvastaus"
 
-#: ping/ping6_common.c:471
+#: ping/ping6_common.c:471 ping/ping6_common.c:445
 #, c-format
 msgid "MLD Query"
 msgstr "MLD-kysely"
 
-#: ping/ping6_common.c:474
+#: ping/ping6_common.c:474 ping/ping6_common.c:448
 #, c-format
 msgid "MLD Report"
 msgstr "MLD-raportti"
 
-#: ping/ping6_common.c:477
+#: ping/ping6_common.c:477 ping/ping6_common.c:451
 #, c-format
 msgid "MLD Reduction"
 msgstr "MLD-vähennys"
 
-#: ping/ping6_common.c:480
+#: ping/ping6_common.c:480 ping/ping6_common.c:454
 #, c-format
 msgid "unknown icmp type: %u"
 msgstr "tuntematon icmp-tyyppi: %u"
 
-#: ping/ping6_common.c:534
+#: ping/ping6_common.c:534 ping/ping6_common.c:508
 msgid "local error"
 msgstr "paikallinen virhe"
 
-#: ping/ping6_common.c:536
+#: ping/ping6_common.c:536 ping/ping6_common.c:510
 #, c-format
 msgid "local error: message too long, mtu: %u"
 msgstr "paikallinen virhe: viesti liian pitkä, mtu: %u"
 
-#: ping/ping6_common.c:558 ping/ping.c:1354
+#: ping/ping6_common.c:558 ping/ping.c:1354 ping/ping6_common.c:532
+#: ping/ping.c:1376
 #, c-format
 msgid "From %s icmp_seq=%u "
 msgstr "%s:lta icmp_seq=%u "
 
-#: ping/ping6_common.c:665 ping/ping.c:1468
+#: ping/ping6_common.c:665 ping/ping.c:1468 ping/ping6_common.c:639
+#: ping/ping.c:1490
 #, c-format
 msgid " icmp_seq=%u"
 msgstr " icmp_seq=%u"
 
-#: ping/ping6_common.c:689 ping/ping6_common.c:750
+#: ping/ping6_common.c:689 ping/ping6_common.c:750 ping/ping6_common.c:663
+#: ping/ping6_common.c:724
 #, c-format
 msgid " parse error (too short)"
 msgstr " jäsennysvirhe (liian lyhyt)"
 
-#: ping/ping6_common.c:703 ping/ping6_common.c:759
+#: ping/ping6_common.c:703 ping/ping6_common.c:759 ping/ping6_common.c:677
+#: ping/ping6_common.c:733
 #, c-format
 msgid " parse error (truncated)"
 msgstr " jäsennysvirhe (typistetty)"
 
-#: ping/ping6_common.c:763
+#: ping/ping6_common.c:763 ping/ping6_common.c:737
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
 msgstr " odottamaton virhe inet_ntop(%s):ssa"
 
-#: ping/ping6_common.c:772
+#: ping/ping6_common.c:772 ping/ping6_common.c:746
 #, c-format
 msgid " (truncated)"
 msgstr " (typistetty)"
 
-#: ping/ping6_common.c:791
+#: ping/ping6_common.c:791 ping/ping6_common.c:765
 #, c-format
 msgid " unknown qtype(0x%02x)"
 msgstr " tuntematon qtype(0x%02x)"
 
-#: ping/ping6_common.c:795
+#: ping/ping6_common.c:795 ping/ping6_common.c:769
 #, c-format
 msgid " refused"
 msgstr " hylätty"
@@ -602,22 +608,23 @@ msgstr " hylätty"
 msgid " unknown"
 msgstr " tuntematon"
 
-#: ping/ping6_common.c:801
+#: ping/ping6_common.c:801 ping/ping6_common.c:775
 #, c-format
 msgid " unknown code(%02x)"
 msgstr " tuntematon code(%02x)"
 
-#: ping/ping6_common.c:803
+#: ping/ping6_common.c:803 ping/ping6_common.c:777
 #, c-format
 msgid "; seq=%u;"
 msgstr "; seq=%u;"
 
-#: ping/ping6_common.c:844
+#: ping/ping6_common.c:844 ping/ping6_common.c:817
 #, c-format
 msgid "packet too short: %d bytes"
 msgstr "paketti liian lyhyt: %d tavua"
 
-#: ping/ping6_common.c:911 ping/ping.c:1597
+#: ping/ping6_common.c:911 ping/ping.c:1597 ping/ping6_common.c:882
+#: ping/ping.c:1617
 #, c-format
 msgid "From %s: "
 msgstr "%s:lta: "
