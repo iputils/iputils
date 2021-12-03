@@ -48,7 +48,7 @@ xml:id="man.clockdiff">
     us and
     <emphasis remap="I">destination</emphasis> with 1 msec
     resolution using ICMP TIMESTAMP [2] packets or, optionally, IP
-    TIMESTAMP option [3] option added to ICMP ECHO. [1]</para>
+    TIMESTAMP option [3] added to ICMP ECHO. [1]</para>
   </refsection>
 
   <refsection>
