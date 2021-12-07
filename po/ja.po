@@ -162,7 +162,9 @@ msgstr "デバイス %s は使用不能です。"
 
 #: arping.c:971
 msgid "Suitable device could not be determined. Please, use option -I."
-msgstr "arping: 適切なデバイスを検出できませんでした。-I オプションを使用してください。"
+msgstr ""
+"arping: 適切なデバイスを検出できませんでした。-I オプションを使用してくださ"
+"い。"
 
 #: arping.c:991
 msgid "WARNING: interface is ignored"
@@ -175,7 +177,8 @@ msgstr "警告: setsockopt(SO_DONTROUTE)"
 #: arping.c:1034
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr "インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)\n"
+msgstr ""
+"インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)\n"
 
 #: arping.c:1043
 #, c-format
@@ -1423,50 +1426,39 @@ msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけ
 #~ msgid "unknown interface"
 #~ msgstr "不明なインタフェースです: %s"
 
-#, c-format
 #~ msgid "arping: too many interfaces!?\n"
 #~ msgstr "arping: インタフェースが多すぎます!?\n"
 
-#, c-format
 #~ msgid "arping: invalid source %s\n"
 #~ msgstr "arping: %s は無効なソースアドレスです。\n"
 
 #~ msgid "ping: IP_OPTIONS (fallback to icmp tstamps)"
 #~ msgstr "ping: IP_OPTIONS (icmp tstampsにフォールバックします)"
 
-#, c-format
 #~ msgid "bad number of packets to transmit: %ld"
 #~ msgstr "不正な送信パケットサイズです: %ld"
 
-#, c-format
 #~ msgid "bad preload value: %s, should be 1..%d"
 #~ msgstr "%s は不正なpreloadの値です。1〜%d である必要があります"
 
-#, c-format
 #~ msgid "mark cannot be negative: %s"
 #~ msgstr "mark %s は負数にできません"
 
-#, c-format
 #~ msgid "illegal packet size: %d"
 #~ msgstr "不正なパケットサイズです: %d"
 
-#, c-format
 #~ msgid "packet size too large: %d"
 #~ msgstr "パケットサイズ %d は大きすぎます"
 
-#, c-format
 #~ msgid "bad sndbuf value: %s"
 #~ msgstr "sndbuf の値が正しくありません: %s"
 
-#, c-format
 #~ msgid "ttl out of range: %s"
 #~ msgstr "TTLが範囲を超えています: %s"
 
-#, c-format
 #~ msgid "bad wait time: %s"
 #~ msgstr "終了待ち時間が正しくありません: %s"
 
-#, c-format
 #~ msgid "packet size %d is too large. Maximum is %d"
 #~ msgstr "パケットサイズ %d が大きすぎます。最大値は %d です"
 
@@ -1478,19 +1470,15 @@ msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけ
 #~ msgid "flowinfo is not supported"
 #~ msgstr "フロー情報はサポートされていません"
 
-#, c-format
 #~ msgid "tracepath: Only one -4 or -6 option may be specified\n"
 #~ msgstr "tracepath: -4 か -6 のどちらか一方のみを使うことができます。\n"
 
-#, c-format
 #~ msgid "Error: pktlen must be > %d and <= %d.\n"
 #~ msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけません。\n"
 
-#, c-format
 #~ msgid "Error: max hops must be 0 .. %d (inclusive).\n"
 #~ msgstr "エラー: 最大ホップ数は 0〜%d(含む) です。\n"
 
-#, c-format
 #~ msgid "traceroute: wrote %s %d chars, ret=%d\n"
 #~ msgstr "traceroute: 送信先 %s へ %d 文字送信。結果: %d\n"
 
@@ -1574,7 +1562,6 @@ msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけ
 #~ msgid "OUT-OF-RANGE"
 #~ msgstr "範囲外"
 
-#, c-format
 #~ msgid ""
 #~ "\n"
 #~ "Usage:\n"
@@ -1612,47 +1599,36 @@ msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけ
 #~ "\n"
 #~ "詳細は traceroute6(8)を参照してください。\n"
 
-#, c-format
 #~ msgid "traceroute: max ttl must be >1.\n"
 #~ msgstr "traceroute: 最大TTLは1より大きくなければいけません。\n"
 
-#, c-format
 #~ msgid "traceroute: port must be >0.\n"
 #~ msgstr "traceroute: ポートは0より大きくなければいけません。\n"
 
-#, c-format
 #~ msgid "traceroute: nprobes must be >0.\n"
 #~ msgstr "traceroute: nprobesは0より大きくなければいけません。\n"
 
-#, c-format
 #~ msgid "traceroute: wait must be >1 sec.\n"
 #~ msgstr "traceroute: 待ち時間は1秒より大きくなければいけません。\n"
 
-#, c-format
 #~ msgid "traceroute: packet size must be %d <= s < %d.\n"
 #~ msgstr ""
 #~ "traceroute: パケットサイズは %d <= s < %d の範囲内でなければいけません。\n"
 
-#, c-format
 #~ msgid "malloc failed\n"
 #~ msgstr "メモリ確保に失敗しました。\n"
 
-#, c-format
 #~ msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
 #~ msgstr "setsockopt(RAW_CHECKSUM) に失敗しました。再試行します。"
 
-#, c-format
 #~ msgid "traceroute: unknown addr %s\n"
 #~ msgstr "traceroute: %s は不明なアドレスです。\n"
 
-#, c-format
 #~ msgid " from %s"
 #~ msgstr " 送信元 %s"
 
-#, c-format
 #~ msgid ", %d hops max, %d byte packets\n"
 #~ msgstr ", 最大 %d ホップ, %d バイトパケット\n"
 
-#, c-format
 #~ msgid "  %.4f ms"
 #~ msgstr "  %.4f ミリ秒"
