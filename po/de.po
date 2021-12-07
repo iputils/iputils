@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2021-11-08 14:05+0000\n"
+"PO-Revision-Date: 2021-12-07 20:09+0000\n"
 "Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/de/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: arping.c:121
 #, c-format
@@ -123,7 +123,7 @@ msgstr "Schnittstelle »%s« ist inaktiv\n"
 #: arping.c:595
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
-msgstr ""
+msgstr "Schnittstelle „%s“ ist nicht ARPfähig\n"
 
 #: arping.c:688
 #, c-format
@@ -145,6 +145,8 @@ msgstr "Gerät %s nicht verfügbar."
 #: arping.c:971
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr ""
+"Es konnte kein geeignetes Gerät ermittelt werden. Bitte verwenden Sie die "
+"Option -I."
 
 #: arping.c:991
 msgid "WARNING: interface is ignored"
@@ -157,7 +159,7 @@ msgstr "WARNUNG: setsockopt(SO_DONTROUTE)"
 #: arping.c:1034
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
+msgstr "Schnittstelle „%s“ ist nicht ARPfähig (keine ll-Adresse)\n"
 
 #: arping.c:1043
 #, c-format
@@ -171,7 +173,7 @@ msgstr "von %s %s\n"
 
 #: arping.c:1048
 msgid "no source address in not-DAD mode"
-msgstr ""
+msgstr "keine Quelladresse im Nicht-DAD-Modus"
 
 #: clockdiff.c:240
 #, c-format
@@ -221,7 +223,7 @@ msgstr "%s ist ausgefallen"
 #: clockdiff.c:597
 #, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr ""
+msgstr "%s Zeit in einem nicht standardkonformen Format übertragen"
 
 #: clockdiff.c:600
 #, c-format
@@ -234,6 +236,8 @@ msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
+"\n"
+"host=%s rtt=%ld (%ld) ms / %ld ms delta=%d ms / %d ms %s\n"
 
 #: ping/node_info.c:166
 #, c-format
@@ -266,7 +270,7 @@ msgstr ""
 
 #: ping/node_info.c:359
 msgid "dn_comp() returned too long result"
-msgstr ""
+msgstr "dn_comp() gab ein zu langes Ergebnis zurück"
 
 #: ping/node_info.c:399
 #, c-format
@@ -304,6 +308,8 @@ msgstr ""
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr ""
+"Warnung: Die Quelladresse könnte auf einem anderen Gerät ausgewählt sein als:"
+" %s"
 
 #: ping/ping6_common.c:259
 #, c-format
@@ -368,7 +374,7 @@ msgstr "von %s %s: "
 #: ping/ping6_common.c:401
 #, c-format
 msgid "%zu data bytes\n"
-msgstr ""
+msgstr "%zu Datenbytes\n"
 
 #: ping/ping6_common.c:416
 #, c-format
@@ -388,7 +394,7 @@ msgstr "Administrativ verboten"
 #: ping/ping6_common.c:425
 #, c-format
 msgid "Beyond scope of source address"
-msgstr ""
+msgstr "Außerhalb des Gültigkeitsbereichs der Quelladresse"
 
 #: ping/ping6_common.c:428
 #, c-format
@@ -428,7 +434,7 @@ msgstr ""
 #: ping/ping6_common.c:448
 #, c-format
 msgid "Defragmentation failure"
-msgstr ""
+msgstr "Defragmentierungsfehler"
 
 #: ping/ping6_common.c:450
 #, c-format
@@ -443,12 +449,12 @@ msgstr "Parameter-Problem: "
 #: ping/ping6_common.c:455
 #, c-format
 msgid "Wrong header field "
-msgstr ""
+msgstr "Falsches Kopfzeilenfeld "
 
 #: ping/ping6_common.c:457
 #, c-format
 msgid "Unknown header "
-msgstr ""
+msgstr "Unbekannte Kopfzeile "
 
 #: ping/ping6_common.c:459
 #, c-format
@@ -463,37 +469,37 @@ msgstr "Code %d "
 #: ping/ping6_common.c:462
 #, c-format
 msgid "at %u"
-msgstr ""
+msgstr "bei %u"
 
 #: ping/ping6_common.c:465
 #, c-format
 msgid "Echo request"
-msgstr ""
+msgstr "Echo-Anforderung"
 
 #: ping/ping6_common.c:468
 #, c-format
 msgid "Echo reply"
-msgstr ""
+msgstr "Echo-Antwort"
 
 #: ping/ping6_common.c:471
 #, c-format
 msgid "MLD Query"
-msgstr ""
+msgstr "MLD-Abfrage"
 
 #: ping/ping6_common.c:474
 #, c-format
 msgid "MLD Report"
-msgstr ""
+msgstr "MLD-Bericht"
 
 #: ping/ping6_common.c:477
 #, c-format
 msgid "MLD Reduction"
-msgstr ""
+msgstr "MLD-Reduktion"
 
 #: ping/ping6_common.c:480
 #, c-format
 msgid "unknown icmp type: %u"
-msgstr ""
+msgstr "unbekannter icmp-Typ: %u"
 
 #: ping/ping6_common.c:534
 msgid "local error"
@@ -527,7 +533,7 @@ msgstr " Analysefehler (abgeschnitten)"
 #: ping/ping6_common.c:763
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
-msgstr ""
+msgstr " unerwarteter Fehler in inet_ntop(%s)"
 
 #: ping/ping6_common.c:772
 #, c-format
@@ -537,7 +543,7 @@ msgstr " (abgeschnitten)"
 #: ping/ping6_common.c:791
 #, c-format
 msgid " unknown qtype(0x%02x)"
-msgstr ""
+msgstr " unbekannter qtype(0x%02x)"
 
 #: ping/ping6_common.c:795
 #, c-format
@@ -576,31 +582,31 @@ msgstr "WARNUNG: Socket-Filter konnte nicht installiert werden"
 #: ping/ping.c:191
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr ""
+msgstr "Optionsargument enthält Müll: %s"
 
 #: ping/ping.c:192
 msgid "this will become fatal error in the future"
-msgstr ""
+msgstr "dies wird in Zukunft zu einem fatalen Fehler werden"
 
 #: ping/ping.c:224
 #, c-format
 msgid "bad value for flowinfo: %s"
-msgstr ""
+msgstr "falscher Wert für flowinfo: %s"
 
 #: ping/ping.c:227
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
-msgstr ""
+msgstr "Flusswert ist größer als 20 Bit: %s"
 
 #: ping/ping.c:247
 #, c-format
 msgid "bad TOS value: %s"
-msgstr ""
+msgstr "falscher TOS-Wert: %s"
 
 #: ping/ping.c:250
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr ""
+msgstr "der Dezimalwert der TOS-Bits muss im Bereich 0-255 liegen: %d"
 
 #: ping/ping.c:319 ping/ping.c:346
 msgid "only one -4 or -6 option may be specified"
@@ -679,7 +685,7 @@ msgstr ""
 
 #: ping/ping.c:752
 msgid "gatifaddrs failed"
-msgstr ""
+msgstr "gatifaddrs fehlgeschlagen"
 
 #: ping/ping.c:785
 #, c-format
@@ -726,7 +732,7 @@ msgstr "PING %s (%s) "
 #: ping/ping.c:908
 #, c-format
 msgid "%zu(%zu) bytes of data.\n"
-msgstr ""
+msgstr "%zu(%zu) Bytes an Daten.\n"
 
 #: ping/ping.c:934
 #, c-format
@@ -749,7 +755,7 @@ msgstr ""
 #: ping/ping.c:983
 #, c-format
 msgid "\t(same route)"
-msgstr ""
+msgstr "\t(gleiche Route)"
 
 #: ping/ping.c:988
 #, c-format
@@ -881,12 +887,12 @@ msgstr "Zielhost verboten\n"
 #: ping/ping.c:1157
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr ""
+msgstr "Zielnetz unerreichbar für Typ des Dienstes\n"
 
 #: ping/ping.c:1160
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
-msgstr ""
+msgstr "Zielhost unerreichbar für Typ des Dienstes\n"
 
 #: ping/ping.c:1163
 #, c-format
@@ -946,7 +952,7 @@ msgstr ""
 #: ping/ping.c:1215
 #, c-format
 msgid "Echo Request\n"
-msgstr ""
+msgstr "Echo-Anforderung\n"
 
 #: ping/ping.c:1221
 #, c-format
@@ -966,7 +972,7 @@ msgstr "Zeit überschritten, schlechter Code: %d\n"
 #: ping/ping.c:1234
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr ""
+msgstr "Parameterproblem: Zeiger = %u\n"
 
 #: ping/ping.c:1240
 #, c-format
@@ -1001,7 +1007,7 @@ msgstr "Adressmaske-Antwort\n"
 #: ping/ping.c:1266
 #, c-format
 msgid "Bad ICMP type: %d\n"
-msgstr ""
+msgstr "Falscher ICMP-Typ: %d\n"
 
 #: ping/ping.c:1318
 #, c-format
@@ -1053,13 +1059,13 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr ""
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
-msgstr "WARNUNG: Socket-Filter konnte nicht installiert werden"
+msgstr ""
 
 #: ping/ping_common.c:464
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "WARNUNG: SO_MARK wird nicht unterstützt"
 
 #: ping/ping_common.c:480
 #, c-format
@@ -1128,7 +1134,7 @@ msgstr " (FALSCHE PRÜFSUMME!)"
 #: ping/ping_common.c:820
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (ANDERE ADRESSE!)"
 
 #: ping/ping_common.c:827
 #, c-format
@@ -1136,11 +1142,13 @@ msgid ""
 "\n"
 "wrong data byte #%zu should be 0x%x but was 0x%x"
 msgstr ""
+"\n"
+"falsches Datenbyte #%zu sollte 0x%x sein, aber war 0x%x"
 
 #: ping/ping_common.c:870
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr ""
+msgstr "--- %s ping-Statistik ---\n"
 
 #: ping/ping_common.c:871
 #, c-format
@@ -1223,7 +1231,7 @@ msgstr ""
 #: tracepath.c:232
 #, c-format
 msgid "no info\n"
-msgstr ""
+msgstr "keine Info\n"
 
 #: tracepath.c:236
 msgid "[LOCALHOST]"
@@ -1247,7 +1255,7 @@ msgstr "pmtu %d\n"
 #: tracepath.c:307
 #, c-format
 msgid "reached\n"
-msgstr ""
+msgstr "erreicht\n"
 
 #: tracepath.c:323 tracepath.c:326
 #, c-format
@@ -1256,12 +1264,12 @@ msgstr ""
 
 #: tracepath.c:341
 msgid "NET ERROR"
-msgstr ""
+msgstr "NETZFEHLER"
 
 #: tracepath.c:386
 #, c-format
 msgid "%2d?: reply received 8)\n"
-msgstr ""
+msgstr "%2d?: Antwort erhalten 8)\n"
 
 #: tracepath.c:392
 #, c-format
@@ -1291,7 +1299,7 @@ msgstr ""
 
 #: tracepath.c:457 tracepath.c:462
 msgid "Only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "Es darf nur eine Option -4 oder -6 angegeben werden"
 
 #: tracepath.c:603
 #, c-format
