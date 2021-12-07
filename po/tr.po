@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2020-08-09 15:29+0000\n"
+"PO-Revision-Date: 2021-12-07 20:09+0000\n"
 "Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: arping.c:121
 #, c-format
@@ -1109,13 +1109,13 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "UYARI: muhtemelen, rcvbuf ön yüklemeyi tutmak için yeterli değil"
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
-msgstr "Uyarı: İşaret ayarlanamadı: %d"
+msgstr "UYARI: işaret ayarlanamadı: %d"
 
 #: ping/ping_common.c:464
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "UYARI: SO_MARK desteklenmiyor"
 
 #: ping/ping_common.c:480
 #, c-format
@@ -1184,7 +1184,7 @@ msgstr " (YANLIŞ SAĞLAMA TOPLAMI!)"
 #: ping/ping_common.c:820
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (FARKLI ADRES!)"
 
 #: ping/ping_common.c:827
 #, c-format
