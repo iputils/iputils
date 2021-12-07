@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
 "PO-Revision-Date: 2022-11-24 08:14+0000\n"
-"Last-Translator: Jens Maucher <de@li.org>\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/de/>\n"
 "Language: de\n"
@@ -342,8 +342,8 @@ msgstr ""
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr ""
-"Warnung: Die Quelladresse könnte auf einem anderen Gerät ausgewählt sein "
-"als: %s"
+"Warnung: Die Quelladresse könnte auf einem anderen Gerät ausgewählt sein als:"
+" %s"
 
 #: ping/ping6_common.c:262
 #, c-format
