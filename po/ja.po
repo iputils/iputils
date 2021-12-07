@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils 20161105\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2021-05-04 11:34+0000\n"
+"PO-Revision-Date: 2021-12-09 12:16+0000\n"
 "Last-Translator: Tomohiro KATO <tomop@teamgedoh.net>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ja/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.6.1\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: arping.c:121
 #, c-format
@@ -136,12 +136,12 @@ msgstr ""
 #: arping.c:587
 #, c-format
 msgid "Interface \"%s\" is down\n"
-msgstr "インタフェース \"%s\" は停止しています。\n"
+msgstr "インタフェース \"%s\" は停止しています\n"
 
 #: arping.c:595
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
-msgstr "インタフェース \"%s\" ではARPを利用できません。\n"
+msgstr "インタフェース \"%s\" ではARPを利用できません\n"
 
 #: arping.c:688
 #, c-format
@@ -152,21 +152,17 @@ msgstr "警告: 既定のブロードキャストアドレスを使用してい�
 #: ping/ping.c:423 ping/ping.c:465 ping/ping.c:468 ping/ping.c:471
 #: ping/ping.c:484 tracepath.c:472 tracepath.c:475 tracepath.c:478
 #: tracepath.c:499
-#, fuzzy
 msgid "invalid argument"
-msgstr "不正な -M オプション値です: %s"
+msgstr "無効な引数です"
 
 #: arping.c:970
-#, fuzzy, c-format
+#, c-format
 msgid "Device %s not available."
-msgstr "arping: デバイス %s は使用不能です。\n"
+msgstr "デバイス %s は使用不能です。"
 
 #: arping.c:971
-#, fuzzy
 msgid "Suitable device could not be determined. Please, use option -I."
-msgstr ""
-"arping: 適切なデバイスを検出できませんでした。-I オプションを使用してくださ"
-"い。\n"
+msgstr "arping: 適切なデバイスを検出できませんでした。-I オプションを使用してください。"
 
 #: arping.c:991
 msgid "WARNING: interface is ignored"
@@ -179,8 +175,7 @@ msgstr "警告: setsockopt(SO_DONTROUTE)"
 #: arping.c:1034
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
-"インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)。\n"
+msgstr "インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)\n"
 
 #: arping.c:1043
 #, c-format
@@ -193,27 +188,26 @@ msgid "from %s %s\n"
 msgstr "送信元 %s %s\n"
 
 #: arping.c:1048
-#, fuzzy
 msgid "no source address in not-DAD mode"
-msgstr "arping: 非DADモードにおいてソースアドレスがありません。\n"
+msgstr "非DADモードにおいてソースアドレスがありません"
 
 #: clockdiff.c:240
 #, c-format
 msgid "Wrong timestamp %d\n"
-msgstr "%d は不正なタイムスタンプです。\n"
+msgstr "%d は不正なタイムスタンプです\n"
 
 #: clockdiff.c:245
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr "%d ホップを超過しました。\n"
+msgstr "%d ホップを超過しました\n"
 
 #: clockdiff.c:270
 #, c-format
 msgid "wrong timestamps\n"
-msgstr "タイムスタンプが不正です。\n"
+msgstr "タイムスタンプが不正です\n"
 
 #: clockdiff.c:451
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -240,30 +234,33 @@ msgstr ""
 "                -oオプションがない場合、IPタイムスタンプのみを利用します。\n"
 "  -o            IPタイムスタンプとICMPエコーを使用します。\n"
 "  -o1           3項目のIPタイムスタンプとICMPエコーを使用します。\n"
+"  -T, --time-format <ctime|iso>\n"
+"                  時刻表示形式を指定します, デフォルトはctimeです\n"
+"  -I            --time-format=isoのエイリアス\n"
+"  -h, --help    このヘルプを表示します\n"
 "  -V            バージョンを表示して終了します。\n"
 "  <送信先>      DNS名またはIPアドレス\n"
 "\n"
 "詳細は clockdiff(8) を参照してください。\n"
 
 #: clockdiff.c:589
-#, fuzzy
 msgid "measure: unknown failure"
-msgstr "measure: 不明なエラーです。\n"
+msgstr "measure: 不明なエラーです"
 
 #: clockdiff.c:594
-#, fuzzy, c-format
+#, c-format
 msgid "%s is down"
-msgstr "%s は停止しています。\n"
+msgstr "%s は停止しています"
 
 #: clockdiff.c:597
-#, fuzzy, c-format
+#, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr "%sの時刻が非標準な形式で送信されました。\n"
+msgstr "%sの時刻が非標準の形式で送信されました"
 
 #: clockdiff.c:600
-#, fuzzy, c-format
+#, c-format
 msgid "%s is unreachable"
-msgstr "%s へ到達できません。\n"
+msgstr "%s へ到達できません"
 
 #: clockdiff.c:619
 #, c-format
@@ -271,16 +268,18 @@ msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
+"\n"
+"host=%s rtt=%ld(%ld)ミリ秒/%ldミリ秒 delta=%dミリ秒/%dミリ秒 %s\n"
 
 #: ping/node_info.c:166
 #, c-format
 msgid "Qtype conflict\n"
-msgstr ""
+msgstr "問い合わせ種別が衝突しています\n"
 
 #: ping/node_info.c:218
 #, c-format
 msgid "Subject type conflict\n"
-msgstr ""
+msgstr "対象の種別が重複しています\n"
 
 #: ping/node_info.c:309
 #, c-format
@@ -396,7 +395,7 @@ msgstr "ホップ数の上限を設定できません"
 
 #: ping/ping6_common.c:366
 msgid "setsockopt(IPV6_TCLASS)"
-msgstr ""
+msgstr "setsockopt(IPV6_TCLASS)"
 
 #
 #: ping/ping6_common.c:368
@@ -414,7 +413,7 @@ msgstr "フロー情報を送信できません"
 #: ping/ping6_common.c:391
 #, c-format
 msgid "PING %s(%s) "
-msgstr ""
+msgstr "PING %s(%s) "
 
 #: ping/ping6_common.c:393
 #, c-format
@@ -427,9 +426,9 @@ msgid "from %s %s: "
 msgstr "送信元 %s %s: "
 
 #: ping/ping6_common.c:401
-#, fuzzy, c-format
+#, c-format
 msgid "%zu data bytes\n"
-msgstr "%d データ長(byte)\n"
+msgstr "%zu データ長(byte)\n"
 
 #: ping/ping6_common.c:416
 #, c-format
@@ -524,7 +523,7 @@ msgstr "コード %d "
 #: ping/ping6_common.c:462
 #, c-format
 msgid "at %u"
-msgstr ""
+msgstr "位置 %u"
 
 #: ping/ping6_common.c:465
 #, c-format
@@ -574,7 +573,7 @@ msgstr "送信元 %s icmp_seq=%u "
 #: ping/ping6_common.c:665 ping/ping.c:1468
 #, c-format
 msgid " icmp_seq=%u"
-msgstr ""
+msgstr " icmp_seq=%u"
 
 #: ping/ping6_common.c:689 ping/ping6_common.c:750
 #, c-format
@@ -619,7 +618,7 @@ msgstr " 未知のコード(%02x)"
 #: ping/ping6_common.c:803
 #, c-format
 msgid "; seq=%u;"
-msgstr ""
+msgstr "; seq=%u;"
 
 #: ping/ping6_common.c:844
 #, c-format
@@ -639,11 +638,11 @@ msgstr "警告: ソケットフィルタのインストールに失敗しまし�
 #: ping/ping.c:191
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr ""
+msgstr "オプション引数に間違ったデータが含まれています: %s"
 
 #: ping/ping.c:192
 msgid "this will become fatal error in the future"
-msgstr ""
+msgstr "これは将来致命的なエラーになるでしょう"
 
 #: ping/ping.c:224
 #, c-format
@@ -658,7 +657,7 @@ msgstr "フロー値 %s は20ビットより大きいです"
 #: ping/ping.c:247
 #, c-format
 msgid "bad TOS value: %s"
-msgstr ""
+msgstr "不適切なTOS値です: %s"
 
 #: ping/ping.c:250
 #, c-format
@@ -799,12 +798,12 @@ msgstr "ユニキャストTTLを設定できません"
 #: ping/ping.c:905
 #, c-format
 msgid "PING %s (%s) "
-msgstr ""
+msgstr "PING %s (%s) "
 
 #: ping/ping.c:908
-#, fuzzy, c-format
+#, c-format
 msgid "%zu(%zu) bytes of data.\n"
-msgstr "%d(%d) バイトのデータ\n"
+msgstr "%zu(%zu) バイトのデータ\n"
 
 #: ping/ping.c:934
 #, c-format
@@ -812,6 +811,8 @@ msgid ""
 "\n"
 "NOP"
 msgstr ""
+"\n"
+"NOP"
 
 #: ping/ping.c:945
 #, c-format
@@ -819,6 +820,8 @@ msgid ""
 "\n"
 "%cSRR: "
 msgstr ""
+"\n"
+"%cSRR: "
 
 #: ping/ping.c:983
 #, c-format
@@ -831,6 +834,8 @@ msgid ""
 "\n"
 "RR: "
 msgstr ""
+"\n"
+"RR: "
 
 #: ping/ping.c:1024
 #, c-format
@@ -838,6 +843,8 @@ msgid ""
 "\n"
 "TS: "
 msgstr ""
+"\n"
+"TS: "
 
 #: ping/ping.c:1056
 #, c-format
@@ -857,7 +864,7 @@ msgstr ""
 #: ping/ping.c:1073
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr ""
+msgstr "記録されていないホップ数: %d\n"
 
 #: ping/ping.c:1077
 #, c-format
@@ -876,17 +883,17 @@ msgstr ""
 #: ping/ping.c:1098
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
-msgstr ""
+msgstr " %1x  %1x  %02x %04x %04x"
 
 #: ping/ping.c:1100
 #, c-format
 msgid "   %1x %04x"
-msgstr ""
+msgstr "   %1x %04x"
 
 #: ping/ping.c:1102
 #, c-format
 msgid "  %02x  %02x %04x"
-msgstr ""
+msgstr "  %02x  %02x %04x"
 
 #: ping/ping.c:1118
 #, c-format
@@ -1096,12 +1103,12 @@ msgstr "送信元 %s: icmp_seq=%u "
 #: ping/ping.c:1575
 #, c-format
 msgid "(BAD CHECKSUM)"
-msgstr ""
+msgstr "(チェックサム異常)"
 
 #: ping/ping.c:1599
 #, c-format
 msgid "(BAD CHECKSUM)\n"
-msgstr ""
+msgstr "(チェックサム異常)\n"
 
 #: ping/ping_common.c:208
 #, c-format
@@ -1124,13 +1131,13 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "警告: おそらく preload のために充分な受信バッファがありません"
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
 msgstr "警告: マーク %d の設定に失敗しました"
 
 #: ping/ping_common.c:464
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "警告: SO_MARKはサポートされていません"
 
 #: ping/ping_common.c:480
 #, c-format
@@ -1162,7 +1169,7 @@ msgstr "%d バイト応答 送信元 %s:"
 #: ping/ping_common.c:795
 #, c-format
 msgid " ttl=%d"
-msgstr ""
+msgstr " ttl=%d"
 
 #: ping/ping_common.c:798
 #, c-format
@@ -1192,26 +1199,26 @@ msgstr " 時間=%ld.%03ldミリ秒"
 #: ping/ping_common.c:816
 #, c-format
 msgid " (DUP!)"
-msgstr ""
+msgstr " (重複!)"
 
 #: ping/ping_common.c:818
 #, c-format
 msgid " (BAD CHECKSUM!)"
-msgstr ""
+msgstr " (チェックサム異常!)"
 
 #: ping/ping_common.c:820
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (アドレス相違!)"
 
 #: ping/ping_common.c:827
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%zu should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"誤りデータバイト #%d. 正しい値: 0x%x 返り値: 0x%x"
+"誤りデータバイト #%zu. 正しい値: 0x%x 返り値: 0x%x"
 
 #: ping/ping_common.c:870
 #, c-format
@@ -1262,7 +1269,7 @@ msgstr ""
 #: ping/ping_common.c:914
 #, c-format
 msgid "%spipe %d"
-msgstr ""
+msgstr "%spipe %d"
 
 #: ping/ping_common.c:921
 #, c-format
@@ -1285,6 +1292,8 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
+"cmsg6:%d\n"
+" "
 
 #: tracepath.c:227
 #, c-format
@@ -1292,6 +1301,8 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
+"cmsg4:%d\n"
+" "
 
 #: tracepath.c:232
 #, c-format
@@ -1300,7 +1311,7 @@ msgstr "情報なし\n"
 
 #: tracepath.c:236
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[LOCALHOST]"
 
 #: tracepath.c:284
 #, c-format
@@ -1315,7 +1326,7 @@ msgstr "(不完全なルーターが破損したデータを返しました) "
 #: tracepath.c:302
 #, c-format
 msgid "pmtu %d\n"
-msgstr ""
+msgstr "pmtu %d\n"
 
 #: tracepath.c:307
 #, c-format
@@ -1325,11 +1336,11 @@ msgstr "到達しました\n"
 #: tracepath.c:323 tracepath.c:326
 #, c-format
 msgid "asymm %2d "
-msgstr ""
+msgstr "asymm %2d "
 
 #: tracepath.c:341
 msgid "NET ERROR"
-msgstr ""
+msgstr "ネットワークエラー"
 
 #: tracepath.c:386
 #, c-format
@@ -1380,7 +1391,6 @@ msgstr ""
 
 #
 #: tracepath.c:457 tracepath.c:462
-#, fuzzy
 msgid "Only one -4 or -6 option may be specified"
 msgstr "-4 か -6 のどちらか一方のみを使うことができます"
 
@@ -1392,22 +1402,22 @@ msgstr "%2d:  応答なし\n"
 #: tracepath.c:610
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr ""
+msgstr "     要約: pmtu %d "
 
 #: tracepath.c:612
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "ホップ数 %d "
 
 #: tracepath.c:614
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "戻りホップ数 %d "
 
 #: tracepath.c:619
-#, fuzzy, c-format
+#, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけません。\n"
+msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけません"
 
 #, fuzzy
 #~ msgid "unknown interface"
