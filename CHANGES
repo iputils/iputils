@@ -1,3 +1,63 @@
+===== 20211215 =====
+released December 15, 2021
+
+* removed tools (issue: #363)
+- tftpd: removing commit: 341975a, PR: #369
+  replacement:
+  - tftp-hpa (https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git)
+  - dnsmasq (https://thekelleys.org.uk/dnsmasq/doc.html)
+- traceroute6: removing commit: a139421, PR: #362
+  replacement:
+  - mtr (https://www.bitwizard.nl/mtr/)
+  - traceroute (http://traceroute.sourceforge.net/)
+  - tracepath (https://github.com/iputils/iputils/blob/master/tracepath.c)
+
+  WARNING: More tools (ninfod, rarpd, rdisc) are going to be removed in next
+  release, see https://github.com/iputils/iputils/issues/363
+
+* Meson build system
+- require version 0.40 (due multiple install_dir for custom_target; commit: 65941ab)
+
+* arping
+- fix: ARP protocol field for AX.25 and NETROM (PR: #360)
+
+* clockdiff
+- fix man: remove duplicated word (PR: #384)
+
+* ninfod
+- fix: build with -DNINFOD_MESSAGES=false (commit: a0b3917)
+- systemd unit: add ProtectHostname, ProtectKernelLogs (PR: #375)
+
+* ping
+- fix: remove 'unsupported IPv6' warning on disabled IPv6 (issue: #293, PR: #370)
+- fix: ping6 binding to VRF and address (PR: #344)
+- fix: print reply from Subnet-Router anycast address (issue: #371)
+- fix: print reply with wrong source with warning (issue: #371)
+- fix: set mark (SO_MARK) on probe socket (PR: #340)
+- fix: man: update lowered minimum ping interval (PR: #367)
+- fix: mark is unsigned int, not signed (PR: #345)
+
+* rarpd
+- systemd unit: add ProtectHostname, ProtectKernelLogs (PR: #375)
+
+* rdisc
+- systemd unit: add ProtectHostname, ProtectKernelLogs (PR: #375)
+
+* localization
+- fix: add missing cs, id, ko languages (commit: be8f704)
+- new translations: Finnish, Korean
+- updated translations: German, Japanese, Turkish, Ukrainian
+
+* CI
+- add build with some non-default options (commit: c4a5373)
+- remove Tumbleweed (not only ocassional bugs: 086de3c, b19df68, but the way
+  how repos are published often breaks using it)
+- add latest CentOS (currently CentOS 8, commit: 5f3711e)
+
+* tests
+- add -V test for all binaries (commit: 802fade)
+- make tests optional with -DSKIP_TESTS=true (PR: #359)
+
 ===== 20210722 =====
 released July 22, 2021
 
@@ -28,7 +88,7 @@ released July 22, 2021
 - mention -V in usage() (PR: #323)
 
 * localization
-- new translation: Czech (100%), Indonesian (94%)
+- new translations: Czech (100%), Indonesian (94%)
 - updated translations: Portuguese (Brazil, 95%), Indonesian (94%), French:
   (58%), Chinese (Simplified, 53%)
 - fully translated languages in this release: Czech, Turkish, Ukrainian
