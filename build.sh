@@ -12,7 +12,7 @@ BUILD_OPTS="-Dprefix=$PREFIX -DBUILD_RARPD=true $EXTRA_BUILD_OPTS"
 
 # NOTE: meson iself checkes for minimal version
 # see meson_version in meson.build, it fails if not required
-# Meson version is 0.37.1 but project requires >=0.39.
+# Meson version is 0.37.1 but project requires >=0.40.
 check_build_dependencies()
 {
 	# ninja-build is not detected causes build failing => symlink to ninja

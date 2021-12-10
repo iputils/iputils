@@ -6,7 +6,7 @@ project('iputils', 'c',
 		'warning_level=3',
 		'localstatedir=var',
 	],
-	meson_version : '>=0.39',
+	meson_version : '>=0.40',
 	version : '20210722') # keep in sync with: git describe | awk -F- '{print $1}'
 
 cc = meson.get_compiler('c')
