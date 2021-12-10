@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2021-08-11 13:04+0000\n"
+"PO-Revision-Date: 2021-12-11 06:16+0000\n"
 "Last-Translator: simmon <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7.2\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: arping.c:121
 #, c-format
@@ -1109,13 +1109,13 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "경고: 아마도, rcvbuf는 사전적재를 유지하기에 충분치 않습니다"
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
 msgstr "경고: 표시 설정에 실패하였습니다: %d"
 
 #: ping/ping_common.c:464
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "경고: SO_MARK는 지원되지 않음"
 
 #: ping/ping_common.c:480
 #, c-format
@@ -1186,7 +1186,7 @@ msgstr " (나쁜 체크섬!)"
 #: ping/ping_common.c:820
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (다른 주소!)"
 
 #: ping/ping_common.c:827
 #, c-format
