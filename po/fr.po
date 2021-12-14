@@ -1094,7 +1094,7 @@ msgstr ""
 "le préchargement"
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
 msgstr "AVERTISSEMENT : échec de l’installation du filtre de socket"
 

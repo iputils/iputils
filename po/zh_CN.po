@@ -1088,7 +1088,7 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr ""
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
 msgstr "警告：无法安装套接字过滤器"
 
