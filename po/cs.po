@@ -1105,7 +1105,8 @@ msgstr "žádná odpověď pro pořadí=%lu\n"
 
 #: ping/ping_common.c:445
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr "POZOR: přijímací paměť pravděpodobně není dost velká pro udržení zátěže"
+msgstr ""
+"POZOR: přijímací paměť pravděpodobně není dost velká pro udržení zátěže"
 
 #: ping/ping_common.c:462
 #, c-format
@@ -1394,7 +1395,6 @@ msgstr "délka paketu musí být mezi: %d < hodnota <= %d"
 #~ msgid "unknown interface"
 #~ msgstr "neznámé rozhraní"
 
-#, c-format
 #~ msgid "traceroute: wrote %s %d chars, ret=%d\n"
 #~ msgstr "traceroute: zapsáno %s %d znaků, vráceno=%d\n"
 
@@ -1467,7 +1467,6 @@ msgstr "délka paketu musí být mezi: %d < hodnota <= %d"
 #~ msgid "OUT-OF-RANGE"
 #~ msgstr "MIMO ROZSAH"
 
-#, c-format
 #~ msgid ""
 #~ "\n"
 #~ "Usage:\n"
@@ -1510,26 +1509,20 @@ msgstr "délka paketu musí být mezi: %d < hodnota <= %d"
 #~ msgid "wait must be >1 sec"
 #~ msgstr "doba čekání musí být větší než 1 sekunda"
 
-#, c-format
 #~ msgid "setsockopt(RAW_CHECKSUM) failed - try to continue."
 #~ msgstr "volání setsockopt(RAW_CHECKSUM) selhalo – zkusí se pokračovat."
 
-#, c-format
 #~ msgid "unknown addr %s"
 #~ msgstr "neznámá adresa %s"
 
-#, c-format
 #~ msgid "traceroute to %s (%s)"
 #~ msgstr "trasování cesty k %s (%s)"
 
-#, c-format
 #~ msgid " from %s"
 #~ msgstr " z %s"
 
-#, c-format
 #~ msgid ", %d hops max, %d byte packets\n"
 #~ msgstr ", %d maximum skoků, %dbajtové pakety\n"
 
-#, c-format
 #~ msgid "  %.4f ms"
 #~ msgstr "  %.4f ms"

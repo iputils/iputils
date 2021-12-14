@@ -52,8 +52,8 @@ msgstr ""
 "  -V            afficher la version et quitter\n"
 "  -c <count>    nombre de paquets à envoyer\n"
 "  -w <timeout>  temps à attendre la réponse\n"
-"  -i <interval> définir l’intervalle entre les paquets (par défaut : 1 "
-"seconde)\n"
+"  -i <interval> définir l’intervalle entre les paquets (par défaut : "
+"1 seconde)\n"
 "  -I <device>   périphérique Ethernet à utiliser"
 
 #: arping.c:140
@@ -1094,7 +1094,7 @@ msgstr ""
 "le préchargement"
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
 msgstr "AVERTISSEMENT : échec de l’installation du filtre de socket"
 
@@ -1373,7 +1373,6 @@ msgstr ""
 msgid "pktlen must be within: %d < value <= %d"
 msgstr ""
 
-#, c-format
 #~ msgid ""
 #~ "\n"
 #~ "Usage:\n"
@@ -1411,15 +1410,12 @@ msgstr ""
 #~ "\n"
 #~ "Pour plus de détails, consultez traceroute6(8).\n"
 
-#, c-format
 #~ msgid "  %.4f ms"
 #~ msgstr "  %.4f ms"
 
-#, c-format
 #~ msgid " from %s"
 #~ msgstr " de %s"
 
-#, c-format
 #~ msgid ", %d hops max, %d byte packets\n"
 #~ msgstr ", %d sauts max, %d paquets d’octets\n"
 

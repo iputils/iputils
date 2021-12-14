@@ -1088,7 +1088,7 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr ""
 
 #: ping/ping_common.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %d"
 msgstr "警告：无法安装套接字过滤器"
 
@@ -1367,7 +1367,6 @@ msgstr ""
 msgid "pktlen must be within: %d < value <= %d"
 msgstr ""
 
-#, c-format
 #~ msgid ""
 #~ "\n"
 #~ "Usage:\n"
@@ -1405,15 +1404,12 @@ msgstr ""
 #~ "\n"
 #~ "For more details see traceroute6(8).\n"
 
-#, c-format
 #~ msgid "  %.4f ms"
 #~ msgstr "  %.4f 毫秒"
 
-#, c-format
 #~ msgid " from %s"
 #~ msgstr " 来自 %s"
 
-#, c-format
 #~ msgid ", %d hops max, %d byte packets\n"
 #~ msgstr ", 最大 %d 跃点， %d 字节的包\n"
 
