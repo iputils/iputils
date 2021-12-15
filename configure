@@ -1,12 +1,17 @@
 #!/bin/sh
 
+DIR=builddir
+
+echo "Using './$DIR' as the directory for build output"
+echo
+
 if [ $# -ne 0 ]; then
-	meson configure builddir
-	echo ''
+	meson configure $DIR
+	echo
 	echo 'Configuration can be changed like this:'
-	echo '  meson configure builddir -Dprefix=/usr'
+	echo '  meson configure $DIR -Dprefix=/usr'
 	echo '  More info: http://mesonbuild.com/Configuring-a-build-directory.html'
 	# See also: http://mesonbuild.com/howtox.html
 fi
 
-meson builddir
+meson $DIR
