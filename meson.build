@@ -24,7 +24,6 @@ conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that 
 build_arping = get_option('BUILD_ARPING')
 build_clockdiff = get_option('BUILD_CLOCKDIFF')
 build_ping = get_option('BUILD_PING')
-build_rarpd = get_option('BUILD_RARPD')
 build_rdisc = get_option('BUILD_RDISC')
 build_rdisc_server = get_option('ENABLE_RDISC_SERVER')
 build_tracepath = get_option('BUILD_TRACEPATH')
@@ -255,23 +254,6 @@ if build_arping == true
 	endif
 endif
 
-if build_rarpd == true
-	rarpd = executable('rarpd', ['rarpd.c', git_version_h],
-		install_dir: sbindir,
-		link_with : [libcommon],
-		install: true)
-	if install_systemd_units
-		subs = configuration_data()
-		subs.set('sbindir', sbindir)
-		unit_file = configure_file(
-			input: 'systemd/rarpd.service.in',
-			output: 'rarpd@.service',
-			configuration: subs
-		)
-		install_data(unit_file, install_dir: systemdunitdir)
-	endif
-endif
-
 if build_mans == true or build_html_mans == true
 	subdir ('doc')
 endif
@@ -289,7 +271,6 @@ output += 'clockdiff: ' + build_clockdiff.to_string()
 output += ' (capability or suid: ' + setcap_clockdiff.to_string() + ')\n'
 output += 'ping: ' + build_ping.to_string()
 output += ' (capability or suid: ' + setcap_ping.to_string() + ')\n'
-output += 'rarpd: ' + build_rarpd.to_string() + '\n'
 output += 'rdisc: ' + build_rdisc.to_string()
 output += ' (server: ' + build_rdisc_server.to_string() + ', '
 output += 'capability or suid: ' + setcap_rdisc.to_string() + ')\n'

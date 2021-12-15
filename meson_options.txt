@@ -15,9 +15,6 @@ option('BUILD_CLOCKDIFF', type : 'boolean', value : true,
 option('BUILD_PING', type : 'boolean', value : true,
         description : 'Build ping')
 
-option('BUILD_RARPD', type : 'boolean', value : false,
-        description : 'Build rarpd')
-
 option('BUILD_RDISC', type : 'boolean', value : true,
 	description : 'Build RDISC')
 

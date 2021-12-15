@@ -12,10 +12,6 @@ if build_ping == true
   subdir('ping')
 endif
 
-if build_rarpd == true
-  subdir('rarpd')
-endif
-
 if build_tracepath == true
   subdir('tracepath')
 endif
