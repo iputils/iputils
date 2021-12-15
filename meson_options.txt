@@ -27,12 +27,6 @@ option('ENABLE_RDISC_SERVER', type : 'boolean', value : true,
 option('BUILD_TRACEPATH', type : 'boolean', value : true,
         description : 'Build tracepath')
 
-option('BUILD_NINFOD', type : 'boolean', value : true,
-	description : 'Build ninfod')
-
-option('NINFOD_MESSAGES', type : 'boolean', value : true,
-	description : 'Enable ninfod syslog messages')
-
 option('BUILD_MANS', type : 'boolean', value : true,
 	description : 'Build manuals')
 

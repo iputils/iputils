@@ -28,10 +28,6 @@ if build_tracepath == true
 	manpages += ['tracepath']
 endif
 
-if build_ninfod == true
-	manpages += ['ninfod']
-endif
-
 xsltproc = find_program('xsltproc', required : build_mans or build_html_mans)
 xsltproc_args = [
 	'--nonet',

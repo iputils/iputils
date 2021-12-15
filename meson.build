@@ -23,8 +23,6 @@ conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that 
 
 build_arping = get_option('BUILD_ARPING')
 build_clockdiff = get_option('BUILD_CLOCKDIFF')
-build_ninfod = get_option('BUILD_NINFOD')
-nifold_messages = get_option('NINFOD_MESSAGES')
 build_ping = get_option('BUILD_PING')
 build_rarpd = get_option('BUILD_RARPD')
 build_rdisc = get_option('BUILD_RDISC')
@@ -153,52 +151,6 @@ if build_rdisc == true
 	endif
 endif
 
-if build_ninfod == true
-	foreach h : [
-		'inttypes.h',
-		'limits.h',
-		'linux/rtnetlink.h',
-		'memory.h',
-		'netdb.h',
-		'netinet/icmp6.h',
-		'netinet/in.h',
-		'netinet/ip6.h',
-		'pwd.h',
-		'stdint.h',
-		'stdlib.h',
-		'string.h',
-		'strings.h',
-		'sys/capability.h',
-		'syslog.h',
-		'sys/time.h',
-		'sys/types.h',
-		'sys/uio.h',
-		'sys/utsname.h',
-		'unistd.h',
-	]
-		if cc.has_header(h)
-			conf.set('HAVE_' + h.to_upper().underscorify(), 1,
-				description : 'Define if ' + h + ' can be included.')
-		endif
-	endforeach
-	if cc.has_header('stdio.h') and cc.has_header('stdlib.h') and cc.has_header('stddef.h') and cc.has_header('stdarg.h')
-		conf.set('STDC_HEADERS', 1,
-			description : 'Define to 1 if you have the ANSI C header files.')
-	endif
-	threads = dependency('threads')
-	if threads.found()
-		conf.set('ENABLE_THREADS', 1,
-			description : 'Defined if libpthread is found.')
-	endif
-	if host_machine.endian() == 'big'
-		conf.set('WORDS_BIGENDIAN', 1,
-			description : 'Defined if processor stores words with the most significant byte first.')
-	endif
-	if nifold_messages == true
-		conf.set('ENABLE_DEBUG', 1, description : 'Enable ninfod syslog messages.')
-	endif
-endif
-
 foreach h : [
 	'error.h',
 ]
@@ -320,10 +272,6 @@ if build_rarpd == true
 	endif
 endif
 
-if build_ninfod == true
-	subdir ('ninfod')
-endif
-
 if build_mans == true or build_html_mans == true
 	subdir ('doc')
 endif
@@ -339,8 +287,6 @@ output += 'arping: ' + build_arping.to_string()
 output += ' (capability or suid: ' + setcap_arping.to_string() + ')\n'
 output += 'clockdiff: ' + build_clockdiff.to_string()
 output += ' (capability or suid: ' + setcap_clockdiff.to_string() + ')\n'
-output += 'ninfod: ' + build_ninfod.to_string()
-output += ' (syslog: ' + nifold_messages.to_string() + ')\n'
 output += 'ping: ' + build_ping.to_string()
 output += ' (capability or suid: ' + setcap_ping.to_string() + ')\n'
 output += 'rarpd: ' + build_rarpd.to_string() + '\n'
