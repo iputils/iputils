@@ -14,10 +14,7 @@ Localization is hosted on [Fedora Weblate](https://translate.fedoraproject.org/p
 ## Tools are included in iputils
 - arping
 - clockdiff
-- ninfod
 - ping
-- rarpd
-- rdisc
 - tracepath
 
 ## Tools removed from iputils
@@ -27,6 +24,9 @@ Some obsolete tools has been removed (see
 
 | Tool | Removing commit | Last release | Replacement
 | ---- | --------------- | ------------ | -----------
+| ninfod | [8f0d897](https://github.com/iputils/iputils/commit/8f0d897) | [20211215](https://github.com/iputils/iputils/releases/tag/20211215) | experimental unused protocol
+| rarpd | [fba7b62](https://github.com/iputils/iputils/commit/fba7b62) | [20211215](https://github.com/iputils/iputils/releases/tag/20211215) | superseded by DHCP protocol
+| rdisc | [7447806](https://github.com/iputils/iputils/commit/7447806) | [20211215](https://github.com/iputils/iputils/releases/tag/20211215) | superseded by DHCP protocol
 | tftpd | [341975a](https://github.com/iputils/iputils/commit/341975ab9c8d196b2a0d7af78a5ddea497495089) | [20210722](https://github.com/iputils/iputils/releases/tag/20210722) | [tftp-hpa](https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git), [dnsmasq](https://thekelleys.org.uk/dnsmasq/doc.html)
 | traceroute6 | [a139421](https://github.com/iputils/iputils/commit/a1394212fd4b3e3259104467d9861909961b219e) | [20210722](https://github.com/iputils/iputils/releases/tag/20210722) | [mtr](https://www.bitwizard.nl/mtr/), [traceroute](http://traceroute.sourceforge.net/), [tracepath](https://github.com/iputils/iputils/blob/master/tracepath.c)
 
