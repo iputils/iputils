@@ -24,8 +24,6 @@ conf.set('_GNU_SOURCE', 1, description : 'Enable GNU extensions on systems that 
 build_arping = get_option('BUILD_ARPING')
 build_clockdiff = get_option('BUILD_CLOCKDIFF')
 build_ping = get_option('BUILD_PING')
-build_rdisc = get_option('BUILD_RDISC')
-build_rdisc_server = get_option('ENABLE_RDISC_SERVER')
 build_tracepath = get_option('BUILD_TRACEPATH')
 
 build_mans = get_option('BUILD_MANS')
@@ -48,12 +46,10 @@ endif
 setcap_arping = false
 setcap_clockdiff = false
 setcap_ping = false
-setcap_rdisc = false
 if (not get_option('NO_SETCAP_OR_SUID'))
   setcap_arping = get_option('SETCAP_OR_SUID_ARPING')
   setcap_clockdiff = get_option('SETCAP_OR_SUID_CLOCKDIFF')
   setcap_ping = get_option('SETCAP_OR_SUID_PING')
-  setcap_rdisc = get_option('SETCAP_OR_SUID_RDISC')
 endif
 
 # Check functions.
@@ -144,12 +140,6 @@ if host_machine.endian() == 'big'
 	conf.set('WORDS_BIGENDIAN', '1')
 endif
 
-if build_rdisc == true
-	if build_rdisc_server == true
-		conf.set('RDISC_SERVER', 1, description : 'If set build rdisc server.')
-	endif
-endif
-
 foreach h : [
 	'error.h',
 ]
@@ -214,31 +204,6 @@ if build_clockdiff == true
 	endif
 endif
 
-if build_rdisc == true
-	rdisc = executable('rdisc', ['rdisc.c', git_version_h],
-		install_dir: sbindir,
-		link_with : [libcommon],
-		install: true)
-	if (setcap_rdisc)
-		meson.add_install_script('build-aux/setcap-setuid.sh',
-			sbindir,
-			'rdisc',
-			perm_type,
-			setcap_path
-		)
-	endif
-	if install_systemd_units
-		subs = configuration_data()
-		subs.set('sbindir', sbindir)
-		unit_file = configure_file(
-			input: 'systemd/rdisc.service.in',
-			output: 'rdisc.service',
-			configuration: subs
-		)
-		install_data(unit_file, install_dir: systemdunitdir)
-	endif
-endif
-
 if build_arping == true
 	arping = executable('arping', ['arping.c', git_version_h],
 		dependencies : [rt_dep, cap_dep, idn_dep, intl_dep],
@@ -271,9 +236,6 @@ output += 'clockdiff: ' + build_clockdiff.to_string()
 output += ' (capability or suid: ' + setcap_clockdiff.to_string() + ')\n'
 output += 'ping: ' + build_ping.to_string()
 output += ' (capability or suid: ' + setcap_ping.to_string() + ')\n'
-output += 'rdisc: ' + build_rdisc.to_string()
-output += ' (server: ' + build_rdisc_server.to_string() + ', '
-output += 'capability or suid: ' + setcap_rdisc.to_string() + ')\n'
 output += 'tracepath: ' + build_tracepath.to_string() + '\n'
 
 output += '\nCONFIGURATION\n'

@@ -16,10 +16,6 @@ if build_ping == true
 	manpages += ['ping']
 endif
 
-if build_rdisc == true
-	manpages += ['rdisc']
-endif
-
 if build_tracepath == true
 	manpages += ['tracepath']
 endif

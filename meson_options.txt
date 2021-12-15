@@ -15,12 +15,6 @@ option('BUILD_CLOCKDIFF', type : 'boolean', value : true,
 option('BUILD_PING', type : 'boolean', value : true,
         description : 'Build ping')
 
-option('BUILD_RDISC', type : 'boolean', value : true,
-	description : 'Build RDISC')
-
-option('ENABLE_RDISC_SERVER', type : 'boolean', value : true,
-	description : 'Enable RDISC server code')
-
 option('BUILD_TRACEPATH', type : 'boolean', value : true,
         description : 'Build tracepath')
 
@@ -41,9 +35,6 @@ option('SETCAP_OR_SUID_CLOCKDIFF', type : 'boolean', value : true,
 
 option('SETCAP_OR_SUID_PING', type : 'boolean', value : true,
 	description : 'Set setcap or setuid on ping with build-aux/setcap-setuid.sh')
-
-option('SETCAP_OR_SUID_RDISC', type : 'boolean', value : false,
-	description : 'Set setcap or setuid on rdisc with build-aux/setcap-setuid.sh, NOTE: this is strongly discouraged, recommended way is to run it as systemd service which does not require it to be enabled')
 
 option('ARPING_DEFAULT_DEVICE', type : 'string', value : '',
 	description : 'Default device for arping')
