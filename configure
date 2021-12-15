@@ -9,7 +9,7 @@ if [ $# -ne 0 ]; then
 	meson configure $DIR
 	echo
 	echo 'Configuration can be changed like this:'
-	echo '  meson configure $DIR -Dprefix=/usr'
+	echo "  meson configure $DIR -Dprefix=/usr"
 	echo '  More info: http://mesonbuild.com/Configuring-a-build-directory.html'
 	# See also: http://mesonbuild.com/howtox.html
 fi
