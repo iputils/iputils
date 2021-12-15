@@ -16,10 +16,6 @@ if build_ping == true
 	manpages += ['ping']
 endif
 
-if build_rarpd == true
-	manpages += ['rarpd']
-endif
-
 if build_rdisc == true
 	manpages += ['rdisc']
 endif
