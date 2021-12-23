@@ -94,6 +94,8 @@ Sign tarballs and sha256 hash:
 
 and upload all these four files to the release as additional files.
 
+NOTE: if you use more keys, use -u KEY to specify which key should be used.
+
 The release should be ready.  People tend to react to releases, so expect bug
 reports and pull requests after release.  Assuming release has fatal flaw(s)
 make another one sometime soon.
