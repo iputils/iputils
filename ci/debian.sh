@@ -16,6 +16,9 @@ EOF
 	BACKPORT_REPO="xenial-backports"
 fi
 
+# workaround for Ubuntu impish asking to interactively configure tzdata
+export DEBIAN_FRONTEND="noninteractive"
+
 apt update
 
 apt install -y --no-install-recommends \

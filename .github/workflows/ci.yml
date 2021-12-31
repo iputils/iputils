@@ -58,7 +58,7 @@ jobs:
               # meson error: not using Unicode-compatible locale (ANSI_X3.4-1968)
               SKIP_TESTS: true
 
-          - container: "ubuntu:groovy"
+          - container: "ubuntu:impish"
             env:
               CC: gcc
 
