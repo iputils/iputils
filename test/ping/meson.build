@@ -5,11 +5,13 @@
 # https://github.com/actions/virtual-environments/issues/668
 ipv6_dst = []
 ipv6_switch = []
-r = run_command('ip', '-6', 'a')
-if r.stdout().strip().contains('::1')
+ip = find_program('ip', required: false)
+if ip.found() and run_command(ip, '-6', 'a').stdout().contains('::1')
   message('IPv6 enabled')
   ipv6_dst = [ '::1' ]
   ipv6_switch = [ '-6' ]
+elif not ip.found()
+  message('WARNING: ip binary not found => disable IPv6 tests')
 else
   message('WARNING: IPv6 disabled')
 endif
