@@ -243,7 +243,8 @@ struct ping_rts {
 		opt_tclass:1,
 		opt_timestamp:1,
 		opt_ttl:1,
-		opt_verbose:1;
+		opt_verbose:1,
+		opt_connect_sk:1;
 };
 /* FIXME: global_rts will be removed in future */
 extern struct ping_rts *global_rts;

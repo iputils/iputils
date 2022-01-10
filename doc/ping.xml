@@ -31,6 +31,10 @@ xml:id="man.ping">
         <replaceable>count</replaceable></option>
       </arg>
       <arg choice="opt" rep="norepeat">
+        <option>-C
+        <replaceable>connect_sk</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
         <option>-F
         <replaceable>flowlabel</replaceable></option>
       </arg>
@@ -192,6 +196,15 @@ xml:id="man.ping">
           <command>ping</command> waits for
           <emphasis remap="I">count</emphasis> ECHO_REPLY packets,
           until the timeout expires.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-C</option>
+          <emphasis remap="I">connect_sk</emphasis>
+        </term>
+        <listitem>
+          <para>Call connect() syscall on socket creation</para>
         </listitem>
       </varlistentry>
       <varlistentry>
