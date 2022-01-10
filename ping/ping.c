@@ -357,7 +357,7 @@ main(int argc, char **argv)
 		hints.ai_family = AF_INET6;
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:dDe:fi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:CdDe:fi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -417,6 +417,9 @@ main(int argc, char **argv)
 			break;
 		case 'c':
 			rts.npackets = strtol_or_err(optarg, _("invalid argument"), 1, LONG_MAX);
+			break;
+		case 'C':
+			rts.opt_connect_sk = 1;
 			break;
 		case 'd':
 			rts.opt_so_debug = 1;
@@ -738,6 +741,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	char hnamebuf[NI_MAXHOST];
 	unsigned char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 	uint32_t *tmp_rspace;
+	struct sockaddr_in dst;
 
 	if (argc > 1) {
 		if (rts->opt_rroute)
@@ -789,8 +793,8 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	if (rts->source.sin_addr.s_addr == 0) {
 		socklen_t alen;
-		struct sockaddr_in dst = rts->whereto;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);
+		dst = rts->whereto;
 
 		if (probe_fd < 0)
 			error(2, errno, "socket");
@@ -997,6 +1001,9 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	printf(_("%zu(%zu) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
 
 	setup(rts, sock);
+	if (rts->opt_connect_sk &&
+	    connect(sock->fd, (struct sockaddr *)&dst, sizeof(dst)) == -1)
+		error(2, errno, "connect failed");
 
 	drop_capabilities();
 

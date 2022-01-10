@@ -24,7 +24,7 @@ xml:id="man.ping">
     <cmdsynopsis sepchar=" ">
       <command>ping</command>
       <arg choice="opt" rep="norepeat">
-        <option>-aAbBdDefhLnOqrRUvV46</option>
+        <option>-aAbBdCDefhLnOqrRUvV46</option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-c
@@ -192,6 +192,14 @@ xml:id="man.ping">
           <command>ping</command> waits for
           <emphasis remap="I">count</emphasis> ECHO_REPLY packets,
           until the timeout expires.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-C</option>
+        </term>
+        <listitem>
+          <para>Call connect() syscall on socket creation.</para>
         </listitem>
       </varlistentry>
       <varlistentry>

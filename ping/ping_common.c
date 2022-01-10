@@ -54,6 +54,7 @@ void usage(void)
 		"  -A                 use adaptive ping\n"
 		"  -B                 sticky source address\n"
 		"  -c <count>         stop after <count> replies\n"
+		"  -C                 call connect() syscall on socket creation\n"
 		"  -D                 print timestamps\n"
 		"  -d                 use SO_DEBUG socket option\n"
 		"  -e <identifier>    define identifier for ping session, default is random for\n"
