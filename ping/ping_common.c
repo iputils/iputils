@@ -462,7 +462,7 @@ void sock_setmark(unsigned int mark, int fd)
 
 	/* Do not exit, old kernels do not support mark. */
 	if (ret == -1)
-		error(0, errno_save, _("WARNING: failed to set mark: %d"), mark);
+		error(0, errno_save, _("WARNING: failed to set mark: %u"), mark);
 #else
 		error(0, errno_save, _("WARNING: SO_MARK not supported"));
 #endif

@@ -81,8 +81,29 @@ long strtol_or_err(char const *const str, char const *const errmesg,
 	if (errno || str == end || (end && *end))
 		goto err;
 	if (num < min || max < num)
-		error(EXIT_FAILURE, 0, "%s: '%s': out of range: %lu <= value <= %lu",
+		error(EXIT_FAILURE, 0, "%s: '%s': out of range: %ld <= value <= %ld",
 		      errmesg, str,  min, max);
+	return num;
+ err:
+	error(EXIT_FAILURE, errno, "%s: '%s'", errmesg, str);
+	abort();
+}
+
+unsigned long strtoul_or_err(char const *const str, char const *const errmesg,
+		   const unsigned long min, const unsigned long max)
+{
+	unsigned long num;
+	char *end = NULL;
+
+	errno = 0;
+	if (str == NULL || *str == '\0')
+		goto err;
+	num = strtoul(str, &end, 10);
+	if (errno || str == end || (end && *end))
+		goto err;
+	if (num < min || max < num)
+		error(EXIT_FAILURE, 0, "%s: '%s'=>'%lu': out of range: %lu <= value <= %lu",
+		      errmesg, str, num, min, max);
 	return num;
  err:
 	error(EXIT_FAILURE, errno, "%s: '%s'", errmesg, str);
