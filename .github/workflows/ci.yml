@@ -43,10 +43,6 @@ jobs:
               EXTRA_BUILD_OPTS: "-DUSE_CAP=false -DUSE_IDN=false -DBUILD_ARPING=false -DBUILD_CLOCKDIFF=false -DNO_SETCAP_OR_SUID=true -DUSE_GETTEXT=false"
 
           # other builds
-          - container: "centos:latest"
-            env:
-              CC: gcc
-
           - container: "opensuse/leap"
             env:
               CC: clang
