@@ -759,7 +759,7 @@ static int event_loop(struct run_state *ctl)
 
 	/* timeout timerfd */
 	timeoutfd = timerfd_create(CLOCK_MONOTONIC, 0);
-	if (tfd == -1) {
+	if (timeoutfd == -1) {
 		error(0, errno, "timerfd_create failed");
 		return 1;
 	}
