@@ -202,13 +202,13 @@ xml:id="man.arping">
         <listitem>
           <para>Specify a timeout, in seconds, before
           <command>arping</command> exits regardless of how many
-          packets have been sent or received. In this case
-          <command>arping</command> does not stop after
-          <emphasis remap='I'>count</emphasis> packet are sent, it
-          waits either for
-          <emphasis remap='I'>deadline</emphasis> expire or until
-          <emphasis remap='I'>count</emphasis> probes are
-          answered.</para>
+          packets have been sent or received.  If any replies are
+          received, exit with status 0, otherwise status 1.  When
+          combined with the <emphasis remap="I">count</emphasis>
+          option, exit with status 0 if <emphasis
+          remap="I">count</emphasis> replies are received before the
+          deadline expiration, otherwise status 1.
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
