@@ -555,6 +555,24 @@ main(int argc, char **argv)
 	int target_ai_family = hints.ai_family;
 	hints.ai_family = AF_UNSPEC;
 
+	/*
+	 * Allow to use -I<ifname|scope-id> for IPv6 link-local scope address
+	 * when passing it to getaddrinfo():
+	 * i.e. -I<ifname|scope-id> => %<ifname|scope-id>
+	 */
+	unsigned char buf[sizeof(struct in6_addr)];
+	int free_target = 0;
+	if (!strchr(target, '%') && inet_pton(AF_INET6, target, buf) > 0 &&
+		(IN6_IS_ADDR_LINKLOCAL(buf) || IN6_IS_ADDR_MC_LINKLOCAL(buf))) {
+		if (rts.device) {
+			asprintf(&target, "%s%%%s", target, rts.device);
+			rts.device = NULL;
+			free_target = 1;
+		} else if (sock6.socktype == SOCK_DGRAM) {
+			error(0, 0, _("Warning: IPv6 link-local address requires scope-id or ifname => use address%%<ifname|scope-id> or address -I<ifname|scope-id>"));
+		}
+	}
+
 	ret_val = getaddrinfo(target, NULL, &hints, &result);
 	if (ret_val)
 		error(2, 0, "%s: %s", target, gai_strerror(ret_val));
@@ -590,6 +608,9 @@ main(int argc, char **argv)
 
 	freeaddrinfo(result);
 	free(rts.outpack);
+
+	if (free_target)
+		free(target);
 
 	return ret_val;
 }

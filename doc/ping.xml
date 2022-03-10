@@ -280,10 +280,17 @@ xml:id="man.ping">
           name, each packet is routed using the corresponding
           routing table; in this case, the <option>-I</option> option
           can be repeated to specify a source address.
-          NOTE: For IPv6, when doing ping to a link-local scope
-          address, link specification (by the '%'-notation in
-          <emphasis remap="I">destination</emphasis>, or by this
-          option) can be used but it is no longer required.</para>
+          </para>
+
+          <para>
+          NOTE: For ping to a IPv6 link-local scope address when using ICMP socket
+          (not required on legacy raw socket), link specification is required on
+          one of following forms:
+          <emphasis remap="I">destination%&lt;ifname|scope-id&gt;</emphasis> or
+          <emphasis remap="I">destination -I&lt;ifname|scope-id&gt;</emphasis>,
+          where &lt;ifname&gt; is interface name, &lt;scope-id&gt; is it's index.
+          E.g. fe80::fc54:ff:fe9e:936c -Ivnet2 or fe80::fc54:ff:fe9e:936c%20.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
