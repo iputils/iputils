@@ -908,7 +908,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	printf(_("%zu(%zu) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
 
 	setup(rts, sock);
-
+	drop_capabilities();
 	hold = main_loop(rts, &ping4_func_set, sock, packet, packlen);
 	free(packet);
 	return hold;
