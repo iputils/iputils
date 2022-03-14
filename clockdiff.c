@@ -49,6 +49,8 @@
  * number of messages sent in each measurement.
  */
 
+#define _GNU_SOURCE
+
 #define TSPTYPES
 
 #include <arpa/inet.h>

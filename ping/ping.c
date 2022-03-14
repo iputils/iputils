@@ -49,6 +49,8 @@
  *	net_cap_raw enabled.
  */
 
+#define _GNU_SOURCE
+
 #include "ping.h"
 
 #include <assert.h>

@@ -30,6 +30,8 @@
  * SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE
+
 #include <stddef.h>
 
 #include "iputils_common.h"

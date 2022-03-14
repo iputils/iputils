@@ -1,7 +1,8 @@
 #ifndef IPUTILS_PING_H
 #define IPUTILS_PING_H
 
-/* Includes */
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -55,7 +56,6 @@
 #include <linux/types.h>
 #include <linux/errqueue.h>
 #include <linux/in6.h>
-/* All includes done. */
 
 #ifndef SCOPE_DELIMITER
 # define SCOPE_DELIMITER '%'

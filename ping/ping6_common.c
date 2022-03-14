@@ -57,6 +57,9 @@
  *	if -N option is used, this program has to run SUID to ROOT or
  *	with net_cap_raw enabled.
  */
+
+#define _GNU_SOURCE
+
 #include <stddef.h>
 
 #include "iputils_common.h"
