@@ -850,7 +850,7 @@ static int event_loop(struct run_state *ctl)
 	else if (ctl->dad && ctl->quit_on_reply)
 		/* Duplicate address detection mode return value */
 		rc |= !(ctl->brd_sent != ctl->received);
-	else if (ctl->timeout && !(ctl->count > 0))
+	else if (ctl->timeout && (!(ctl->count > 0) || (ctl->interval > ctl->timeout / ctl->count)))
 		rc |= !(ctl->received > 0);
 	else
 		rc |= (ctl->sent != ctl->received);
