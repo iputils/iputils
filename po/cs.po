@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2021-07-12 19:25+0000\n"
+"PO-Revision-Date: 2022-04-15 07:17+0000\n"
 "Last-Translator: Petr Pisar <ppisar@redhat.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.7.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: arping.c:121
 #, c-format
@@ -249,7 +249,7 @@ msgstr "měření: neznámá chyba"
 #: clockdiff.c:594
 #, c-format
 msgid "%s is down"
-msgstr "%s je vypuntý"
+msgstr "%s je vypnutý"
 
 #: clockdiff.c:597
 #, c-format
@@ -1232,7 +1232,7 @@ msgstr ", %g%% ztráta paketů"
 #: ping/ping_common.c:886
 #, c-format
 msgid ", time %ldms"
-msgstr ", čad %ld ms"
+msgstr ", čas %ld ms"
 
 #: ping/ping_common.c:906
 #, c-format
