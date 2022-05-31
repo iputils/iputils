@@ -449,6 +449,7 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			rts.opt_pingfilled = 1;
+			free(outpack_fill);
 			outpack_fill = strdup(optarg);
 			if (!outpack_fill)
 				error(2, errno, _("memory allocation failed"));
