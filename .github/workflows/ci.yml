@@ -12,7 +12,7 @@ jobs:
       matrix:
         include:
           # cross compilation builds
-          - container: "debian:unstable"
+          - container: "debian:testing"
             env:
               ARCH: arm64
               CC: aarch64-linux-gnu-gcc
