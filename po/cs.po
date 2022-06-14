@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 17:45+0100\n"
-"PO-Revision-Date: 2022-04-15 07:17+0000\n"
-"Last-Translator: Petr Pisar <ppisar@redhat.com>\n"
+"PO-Revision-Date: 2022-04-22 16:17+0000\n"
+"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
 "Language: cs\n"
@@ -43,7 +43,7 @@ msgstr ""
 "  arping [přepínače] <cíl>\n"
 "\n"
 "Přepínače:\n"
-"  -f            skončí s první odpovědí\n"
+"  -f            skončí s první odpovědí\n"
 "  -q            bude potichu\n"
 "  -b            pokračuje ve všesměrovém vysílání, žádný unicast\n"
 "  -D            režim zjišťování duplicitních adres\n"
@@ -68,7 +68,7 @@ msgstr ""
 "  -s <zdroj>    zdrojová IP adresa\n"
 "  <cíl>         doménové jméno nebo IP adresa\n"
 "\n"
-"Podrobnosti naleznete v arping(8).\n"
+"Podrobnosti naleznete v arping(8).\n"
 
 #: arping.c:303
 #, c-format
@@ -164,7 +164,7 @@ msgstr "Vhodné zařízení nebylo možné určit. Prosím, použijte přepína�
 
 #: arping.c:991
 msgid "WARNING: interface is ignored"
-msgstr "POZOR: zařízení se ignoruje"
+msgstr "POZOR: zařízení je ignorováno"
 
 #: arping.c:1010
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
@@ -178,12 +178,12 @@ msgstr "Zařízení „%s“ nepodporuje protokol ARP (chybí linková adresa)\n
 #: arping.c:1043
 #, c-format
 msgid "ARPING %s "
-msgstr "ARPinká se %s "
+msgstr "ARPingá se %s "
 
 #: arping.c:1044
 #, c-format
 msgid "from %s %s\n"
-msgstr "od %s %s\n"
+msgstr "od %s %s\n"
 
 #: arping.c:1048
 msgid "no source address in not-DAD mode"
@@ -229,18 +229,18 @@ msgstr ""
 "  clockdiff [přepínače] <cíl>\n"
 "\n"
 "Přepínače:\n"
-"                bez -o použije pouze časovou službu ICMP (vizte stranu 16\n"
-"                RFC 792)\n"
-"  -o            použije časovou značku IP a ICMP echo\n"
-"  -o1           použije třízáznamovou časovou značku IP a ICMP echo\n"
+"                bez -o použít pouze ICMP časovou značku (viz str. 16 normy "
+"RFC0792)\n"
+"  -o            použít časovou značku IP a ICMP echo\n"
+"  -o1           použít třízáznamovou časovou značku IP a ICMP echo\n"
 "  -T, --time-format <ctime|iso>\n"
-"                určuje formát času pro zobrazení, výchozí je ctime\n"
+"                určuje formát zobrazování času – výchozí je ctime\n"
 "  -I            stejné jako --time-format=iso\n"
-"  -h, --help    zobrazí tuto nápovědu\n"
-"  -V, --version zobrazí verzi a skončí\n"
+"  -h, --help    zobrazit tuto nápovědu\n"
+"  -V, --version zobrazit verzi a skončit\n"
 "  <cíl>         doménové jméno nebo IP adresa\n"
 "\n"
-"Podrobnosti naleznete v clockdiff(8).\n"
+"Podrobnosti naleznete v clockdiff(8).\n"
 
 #: clockdiff.c:589
 msgid "measure: unknown failure"
@@ -254,7 +254,7 @@ msgstr "%s je vypnutý"
 #: clockdiff.c:597
 #, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr "Čas %s byl přenesen v nestandardním tvaru"
+msgstr "Čas %s byl přenesen v nestandardním tvaru"
 
 #: clockdiff.c:600
 #, c-format
@@ -268,17 +268,17 @@ msgid ""
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 "\n"
-"stroj=%s rtt=%ld (%ld) ms / %ld ms delta=%d ms / %d ms %s\n"
+"stroj=%s rtt=%ld (%ld) ms / %ld ms delta=%d ms / %d ms %s\n"
 
 #: ping/node_info.c:166
 #, c-format
 msgid "Qtype conflict\n"
-msgstr "Rozpor v typu dotazu\n"
+msgstr "Rozpor v typu dotazu\n"
 
 #: ping/node_info.c:218
 #, c-format
 msgid "Subject type conflict\n"
-msgstr "Rozpor v typu předmětu\n"
+msgstr "Rozpor v typu předmětu\n"
 
 #: ping/node_info.c:309
 #, c-format
@@ -292,7 +292,7 @@ msgstr "název síťové oblasti je příliš dlouhý"
 #: ping/node_info.c:344 ping/node_info.c:386 ping/ping6_common.c:293
 #: ping/ping.c:452 ping/ping.c:515 ping/ping.c:903
 msgid "memory allocation failed"
-msgstr "alokace paměti selhala"
+msgstr "nepodařilo se přidělit paměť"
 
 #: ping/node_info.c:356
 #, c-format
@@ -361,11 +361,11 @@ msgstr "Pozor: zdrojová adresa může být vybrána na zařízením jiném než
 #: ping/ping6_common.c:259
 #, c-format
 msgid "multicast ping with too short interval: %d"
-msgstr "multicastový pink s příliš krátkým intervalem: %d"
+msgstr "multicastový ping s příliš krátkým intervalem: %d"
 
 #: ping/ping6_common.c:262
 msgid "multicast ping does not fragment"
-msgstr "multicastový pink se nefragmentuje"
+msgstr "multicastový ping se nefragmentuje"
 
 #: ping/ping6_common.c:315
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
@@ -385,7 +385,7 @@ msgstr "omezení na počet skoků při unicastu nelze nastavit"
 
 #: ping/ping6_common.c:361
 msgid "can't receive hop limit"
-msgstr "údaj o omezení počtu skoků nelze přijímat"
+msgstr "nedaří se získat údaj o omezení počtu skoků"
 
 #: ping/ping6_common.c:366
 msgid "setsockopt(IPV6_TCLASS)"
@@ -406,7 +406,7 @@ msgstr "údaje o toku nelze poslat"
 #: ping/ping6_common.c:391
 #, c-format
 msgid "PING %s(%s) "
-msgstr "PINK %s (%s) "
+msgstr "PING %s (%s) "
 
 #: ping/ping6_common.c:393
 #, c-format
@@ -431,7 +431,7 @@ msgstr "Cíl je nedostupný: "
 #: ping/ping6_common.c:419
 #, c-format
 msgid "No route"
-msgstr "Chybí cesta k síti"
+msgstr "Chybí cesta k síti"
 
 #: ping/ping6_common.c:422
 #, c-format
@@ -451,7 +451,7 @@ msgstr "Adresa není dostupná"
 #: ping/ping6_common.c:431
 #, c-format
 msgid "Port unreachable"
-msgstr "Port není dostupný"
+msgstr "Port nedosažitelný"
 
 #: ping/ping6_common.c:434
 #, c-format
@@ -471,7 +471,7 @@ msgstr ", kód=%d"
 #: ping/ping6_common.c:444
 #, c-format
 msgid "Time exceeded: "
-msgstr "Čas vypršel: "
+msgstr "Překročen časový limit: "
 
 #: ping/ping6_common.c:446
 #, c-format
@@ -580,7 +580,7 @@ msgstr " chyba rozboru (zkráceno)"
 #: ping/ping6_common.c:763
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
-msgstr " nečekaná chyba v inet_ntop(%s)"
+msgstr " nečekaná chyba v inet_ntop(%s)"
 
 #: ping/ping6_common.c:772
 #, c-format
@@ -624,21 +624,21 @@ msgstr "Od %s: "
 
 #: ping/ping6_common.c:952 ping/ping.c:1682
 msgid "WARNING: failed to install socket filter"
-msgstr "POZOR: socketový filtr se nepodařilo nainstalovat"
+msgstr "POZOR: soketový filtr se nepodařilo nainstalovat"
 
 #: ping/ping.c:191
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr "argument přepínače obsahuje smetí: %s"
+msgstr "argument přepínače obsahuje něco neplatného: %s"
 
 #: ping/ping.c:192
 msgid "this will become fatal error in the future"
-msgstr "v budoucnu toto bude nepřekonatelná chyba"
+msgstr "v budoucnu toto bude nepřekonatelná chyba"
 
 #: ping/ping.c:224
 #, c-format
 msgid "bad value for flowinfo: %s"
-msgstr "chybná hodnota v údajích o toku: %s"
+msgstr "chybná hodnota v údajích o toku: %s"
 
 #: ping/ping.c:227
 #, c-format
@@ -653,15 +653,15 @@ msgstr "chybná hodnota ToS: %s"
 #: ping/ping.c:250
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr "desítková hodnota bitů ToS musí být v rozsahu 0 až 255: %d"
+msgstr "je třeba, aby desítková hodnota bitů ToS byla z rozsahu 0 až 255: %d"
 
 #: ping/ping.c:319 ping/ping.c:346
 msgid "only one -4 or -6 option may be specified"
-msgstr "lze zadat pouze jeden z přepínačů -4 nebo -6"
+msgstr "není možné použít souběžně oba přepínače -4 a -6"
 
 #: ping/ping.c:327 ping/ping.c:332
 msgid "only one of -T or -R may be used"
-msgstr "lze použít pouze jeden z přepínačů -T nebo -R"
+msgstr "není možné použít souběžně oba přepínače -T a -R"
 
 #: ping/ping.c:341
 #, c-format
@@ -690,7 +690,7 @@ msgstr "neplatná zdrojová adresa: %s"
 #: ping/ping.c:417
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
-msgstr "hodnotu zátěže nelze nastavit na více jak 3: %d"
+msgstr "hodnotu přednačítání nelze nastavit na více jak 3: %d"
 
 #: ping/ping.c:434
 #, c-format
@@ -709,24 +709,24 @@ msgstr "chybný čas čekání: %s"
 #: ping/ping.c:581
 #, c-format
 msgid "unknown protocol family: %d"
-msgstr "neznámá rodina protokolu: %d"
+msgstr "neznámá generace protokolu: %d"
 
 #: ping/ping.c:716
 msgid "warning: QOS sockopts"
-msgstr "pozor: QoS volby socketu"
+msgstr "pozor: QoS volby soketu"
 
 #: ping/ping.c:728
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
 msgstr ""
-"Přejete si všesměrový pink? Pak použijte -b. Jestli ne, zkontrolujte "
-"pravidla místního firewallu"
+"Přejete si všesměrový ping? Pak použijte -b. Pokud ne, zkontrolujte pravidla "
+"místní brány firewall"
 
 #: ping/ping.c:729
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
-msgstr "POZOR: pinká se všesměrová adresa\n"
+msgstr "POZOR: jedná se o ping na adresu všesměrového vysílání\n"
 
 #: ping/ping.c:732 ping/ping.c:883
 msgid "cannot set broadcasting"
@@ -734,16 +734,16 @@ msgstr "všesměr nelze nastavit"
 
 #: ping/ping.c:752
 msgid "gatifaddrs failed"
-msgstr "funkce getifaddrs selhala"
+msgstr "funkce getifaddrs nezafungovala"
 
 #: ping/ping.c:785
 #, c-format
 msgid "broadcast ping with too short interval: %d"
-msgstr "všesměrový pink s příliš krátkým intervalem: %d"
+msgstr "všesměrový ping s příliš krátkým intervalem: %d"
 
 #: ping/ping.c:787
 msgid "broadcast ping does not fragment"
-msgstr "všesměrový pink se nefragmentuje"
+msgstr "všesměrový ping se nefragmentuje"
 
 #: ping/ping.c:811
 msgid "WARNING: setsockopt(ICMP_FILTER)"
@@ -751,7 +751,9 @@ msgstr "POZOR: setsockopt(ICMP_FILTER)"
 
 #: ping/ping.c:816
 msgid "WARNING: your kernel is veeery old. No problems."
-msgstr "POZOR: vaše jádro je převelice staré. Žádný problém."
+msgstr ""
+"POZOR: jádro vámi používaného systému je ale opravdu staré verze. Nicméně "
+"zatím žádné problémy."
 
 #: ping/ping.c:820
 msgid "WARNING: setsockopt(IP_RECVTTL)"
@@ -767,16 +769,16 @@ msgstr "příjem vlastních multicastových dotazů nelze zakázat"
 
 #: ping/ping.c:894
 msgid "cannot set multicast time-to-live"
-msgstr "délku života u multicastu nelze nastavit"
+msgstr "délku životnosti nelze u multicastu nastavit"
 
 #: ping/ping.c:896
 msgid "cannot set unicast time-to-live"
-msgstr "délku života u unicastu nelze natavit"
+msgstr "délku životnosti nelze u unicastu nastavit"
 
 #: ping/ping.c:905
 #, c-format
 msgid "PING %s (%s) "
-msgstr "PINK %s (%s) "
+msgstr "PING %s (%s) "
 
 #: ping/ping.c:908
 #, c-format
@@ -804,7 +806,7 @@ msgstr ""
 #: ping/ping.c:983
 #, c-format
 msgid "\t(same route)"
-msgstr "\t(stejná cesta)"
+msgstr "\t(stejná trasa)"
 
 #: ping/ping.c:988
 #, c-format
@@ -842,7 +844,7 @@ msgstr "\t%ld absolutní"
 #: ping/ping.c:1073
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr "Neznamenané skoky: %d\n"
+msgstr "Nezaznamenané skoky: %d\n"
 
 #: ping/ping.c:1077
 #, c-format
@@ -881,22 +883,22 @@ msgstr "Odpověď na echo\n"
 #: ping/ping.c:1124
 #, c-format
 msgid "Destination Net Unreachable\n"
-msgstr "Cílová síť není dostupná\n"
+msgstr "Cílová síť nedostupná\n"
 
 #: ping/ping.c:1127
 #, c-format
 msgid "Destination Host Unreachable\n"
-msgstr "Cílový stroj není dostupný\n"
+msgstr "Cílový stroj nedostupný\n"
 
 #: ping/ping.c:1130
 #, c-format
 msgid "Destination Protocol Unreachable\n"
-msgstr "Cílový protokol není dostupný\n"
+msgstr "Cílový protokol nedostupný\n"
 
 #: ping/ping.c:1133
 #, c-format
 msgid "Destination Port Unreachable\n"
-msgstr "Cílový port není dostupný\n"
+msgstr "Cílový port nedostupný\n"
 
 #: ping/ping.c:1136
 #, c-format
@@ -906,7 +908,7 @@ msgstr "Potřeba fragmentace, ale DF je nastaveno (MTU = %u)\n"
 #: ping/ping.c:1139
 #, c-format
 msgid "Source Route Failed\n"
-msgstr "Zdrojové směrovaná selhalo\n"
+msgstr "Zdrojová trasa nezafungovala\n"
 
 #: ping/ping.c:1142
 #, c-format
@@ -921,7 +923,7 @@ msgstr "Cílový stroj není znám\n"
 #: ping/ping.c:1148
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr "Cílový stroj je izolován\n"
+msgstr "Zdrojový stroj je izolován\n"
 
 #: ping/ping.c:1151
 #, c-format
@@ -936,17 +938,17 @@ msgstr "Cílový stroj je zakázán\n"
 #: ping/ping.c:1157
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr "Cílový síť není dostupná pro typ služby\n"
+msgstr "Cílový síť není pro daný typ služby dostupná\n"
 
 #: ping/ping.c:1160
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
-msgstr "Cílový stroj není dostupný pro typ služby\n"
+msgstr "Cílový stroj není pro daný typ služby dostupný\n"
 
 #: ping/ping.c:1163
 #, c-format
 msgid "Packet filtered\n"
-msgstr "Paket filtrován\n"
+msgstr "Paket odfiltrován\n"
 
 #: ping/ping.c:1166
 #, c-format
@@ -961,7 +963,7 @@ msgstr "Nedostatečná přednost\n"
 #: ping/ping.c:1172
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
-msgstr "Cíl není dostupný, chybný kód: %d\n"
+msgstr "Cíl nedostupný, chybný kód: %d\n"
 
 #: ping/ping.c:1179
 #, c-format
@@ -996,7 +998,7 @@ msgstr "Přesměrování, chybný kód: %d"
 #: ping/ping.c:1209
 #, c-format
 msgid "(New nexthop: %s)\n"
-msgstr "(Nový skok: %s)\n"
+msgstr "(Nový následující skok: %s)\n"
 
 #: ping/ping.c:1215
 #, c-format
@@ -1006,22 +1008,22 @@ msgstr "Požadavek na echo\n"
 #: ping/ping.c:1221
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr "Překročena doba života\n"
+msgstr "Překročena doba životnosti\n"
 
 #: ping/ping.c:1224
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr "Doba strávená defragmentací překročena\n"
+msgstr "Překročena doba pro provedení opětovného složení fragmentů\n"
 
 #: ping/ping.c:1227
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
-msgstr "Čas vypršel, chybný kód: %d\n"
+msgstr "Překročen čas, chybný kód: %d\n"
 
 #: ping/ping.c:1234
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr "Problém s parametrem: ukazatel = %u\n"
+msgstr "Problém s parametrem: ukazatel = %u\n"
 
 #: ping/ping.c:1240
 #, c-format
@@ -1031,12 +1033,12 @@ msgstr "Časová značka\n"
 #: ping/ping.c:1244
 #, c-format
 msgid "Timestamp Reply\n"
-msgstr "Odpověď s časovou značkou\n"
+msgstr "Odpověď s časovou značkou\n"
 
 #: ping/ping.c:1248
 #, c-format
 msgid "Information Request\n"
-msgstr "Požadavek na informace\n"
+msgstr "Dotaz na informace\n"
 
 #: ping/ping.c:1252
 #, c-format
@@ -1051,7 +1053,7 @@ msgstr "Dotaz na masku adresy\n"
 #: ping/ping.c:1262
 #, c-format
 msgid "Address Mask Reply\n"
-msgstr "Odpověď s maskou adresu\n"
+msgstr "Odpověď s maskou adresy\n"
 
 #: ping/ping.c:1266
 #, c-format
@@ -1071,7 +1073,7 @@ msgstr "místní chyba: zpráva je příliš dlouhá, MTU=%u"
 #: ping/ping.c:1493
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr "paket je příliš krátký (%d bajtů) od %s"
+msgstr "paket od %s je příliš krátký (%d bajtů)"
 
 #: ping/ping.c:1572
 #, c-format
@@ -1091,12 +1093,12 @@ msgstr "(CHYBNÝ KONTROLNÍ SOUČET)\n"
 #: ping/ping_common.c:208
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
-msgstr "vzorek musí být zadán pomocí šestnáctkových číslic: %s"
+msgstr "vzory je třeba zadávat jako šestnáctkové číslice: %s"
 
 #: ping/ping_common.c:225
 #, c-format
 msgid "PATTERN: 0x"
-msgstr "VZOREK: 0x"
+msgstr "VZOR: 0x"
 
 #: ping/ping_common.c:345
 #, c-format
@@ -1105,7 +1107,9 @@ msgstr "žádná odpověď pro pořadí=%lu\n"
 
 #: ping/ping_common.c:445
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr "POZOR: přijímací paměť pravděpodobně není dost velká pro udržení zátěže"
+msgstr ""
+"POZOR: vyrovnávací paměť příjmu pravděpodobně není dost velká, aby pojala "
+"přednačítané"
 
 #: ping/ping_common.c:462
 #, c-format
@@ -1119,12 +1123,14 @@ msgstr "Pozor: SO_MARK není podporováno"
 #: ping/ping_common.c:480
 #, c-format
 msgid "cannot flood; minimal interval allowed for user is %dms"
-msgstr "nelze zaplavovat, nejmenší dovolený interval pro uživatele je %d ms"
+msgstr ""
+"prevence zahlcování – uživatelům bez práva správy přístupné pouze intervaly "
+"delší než %d ms"
 
 #: ping/ping_common.c:483
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr "zakázaná zátěž nebo interval: %d"
+msgstr "neplatné přednačtení nebo interval: %d"
 
 #: ping/ping_common.c:495
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
@@ -1133,7 +1139,7 @@ msgstr "Pozor: SO_TIMESTAMP není podporováno, přechází se na SIOCGSTAMP"
 #: ping/ping_common.c:739
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr "Pozor: čas se vrátil zpět (%ld µs), přijímají se protiopatření"
+msgstr "Pozor: čas se vrátil zpět (%ld µs), přijímají se protiopatření"
 
 #: ping/ping_common.c:789
 #, c-format
@@ -1153,27 +1159,27 @@ msgstr " (zkráceno)\n"
 #: ping/ping_common.c:803
 #, c-format
 msgid " time=%ld ms"
-msgstr " čas=%ld ms"
+msgstr " čas=%ld ms"
 
 #: ping/ping_common.c:805
 #, c-format
 msgid " time=%ld.%01ld ms"
-msgstr " čas=%ld,%01ld ms"
+msgstr " čas=%ld,%01ld ms"
 
 #: ping/ping_common.c:808
 #, c-format
 msgid " time=%ld.%02ld ms"
-msgstr " čas=%ld,%02ld ms"
+msgstr " čas=%ld,%02ld ms"
 
 #: ping/ping_common.c:811
 #, c-format
 msgid " time=%ld.%03ld ms"
-msgstr " čas=%ld,%03ld ms"
+msgstr " čas=%ld,%03ld ms"
 
 #: ping/ping_common.c:816
 #, c-format
 msgid " (DUP!)"
-msgstr " (DUP!)"
+msgstr " (DUPL!)"
 
 #: ping/ping_common.c:818
 #, c-format
@@ -1192,12 +1198,12 @@ msgid ""
 "wrong data byte #%zu should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"špatná data na bajtu č. %zu, měla by být 0x%x, ale jsou 0x%x"
+"nesprávná data na bajtu č. %zu – měla by být 0x%x, ale jsou 0x%x"
 
 #: ping/ping_common.c:870
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr "--- Statistika pinků na %s ---\n"
+msgstr "--- Statistika pingů na %s ---\n"
 
 #: ping/ping_common.c:871
 #, c-format
@@ -1232,12 +1238,12 @@ msgstr ", %g%% ztráta paketů"
 #: ping/ping_common.c:886
 #, c-format
 msgid ", time %ldms"
-msgstr ", čas %ld ms"
+msgstr ", čas %ld ms"
 
 #: ping/ping_common.c:906
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr "RTT min/prům/max/s.odch = %ld,%03ld/%lu,%03ld/%ld,%03ld/%ld,%03ld ms"
+msgstr "RTT min/prům/max/std.odch = %ld,%03ld/%lu,%03ld/%ld,%03ld/%ld,%03ld ms"
 
 #: ping/ping_common.c:914
 #, c-format
@@ -1247,7 +1253,7 @@ msgstr "%sroura %d"
 #: ping/ping_common.c:921
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr "%sIPG/k.prům %d,%03d/%d,%03d ms"
+msgstr "%sIPG/klouz.prům %d,%03d/%d,%03d ms"
 
 #: ping/ping_common.c:939
 #, c-format
@@ -1257,7 +1263,7 @@ msgstr "%ld/%ld paketů, %d%% ztráta"
 #: ping/ping_common.c:944
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ", min/prům/k.prům/max = %ld,%03ld/%lu,%03ld/%d,%03d/%ld,%03ld ms"
+msgstr ", min/prům/klouz.prům/max = %ld,%03ld/%lu,%03ld/%d,%03d/%ld,%03ld ms"
 
 #: tracepath.c:215
 #, c-format
@@ -1289,7 +1295,7 @@ msgstr "[LOCALHOST]"
 #: tracepath.c:284
 #, c-format
 msgid "%3ld.%03ldms "
-msgstr "%3ld,%03ld ms "
+msgstr "%3ld,%03ld ms "
 
 #: tracepath.c:287
 #, c-format
@@ -1318,12 +1324,12 @@ msgstr "CHYBA SÍTĚ"
 #: tracepath.c:386
 #, c-format
 msgid "%2d?: reply received 8)\n"
-msgstr "%2d?: přijato odpovědí 8)\n"
+msgstr "%2d?: přijata odpověď 8)\n"
 
 #: tracepath.c:392
 #, c-format
 msgid "%2d:  send failed\n"
-msgstr "%2d:  odeslání selhalo\n"
+msgstr "%2d: odeslání se nezdařilo\n"
 
 #: tracepath.c:399
 #, c-format
@@ -1350,26 +1356,26 @@ msgstr ""
 "  tracepath [přepínače] <cíl>\n"
 "\n"
 "Přepínače:\n"
-"  -4             použije IPv4\n"
-"  -6             použije IPv6\n"
-"  -b             vypíše jméno i IP adresu\n"
-"  -l <délka>     použije paket o <délce>\n"
-"  -m <skoky>     použije nejvýše <skoků>\n"
-"  -n             žádný překlad doménových jmen\n"
-"  -p <port>      použije cílový <port>\n"
-"  -V             vypíše verzi a skončí\n"
+"  -4             použít IPv4\n"
+"  -6             použít IPv6\n"
+"  -b             vypsat jak jméno, tak IP adresu\n"
+"  -l <délka>     použít paket o <délce>\n"
+"  -m <skoky>     použít nejvýše <skoků>\n"
+"  -n             nepřekládat doménová jména\n"
+"  -p <port>      použít cílový <port>\n"
+"  -V             vypsat verzi a ukončit\n"
 "  <cíl>          doménové jméno nebo IP adresa\n"
 "\n"
 "Podrobnosti naleznete v manuálu tracepath(8).\n"
 
 #: tracepath.c:457 tracepath.c:462
 msgid "Only one -4 or -6 option may be specified"
-msgstr "Pouze jeden z přepínačů -4 nebo -6 smí být zadán"
+msgstr "Není možné použít souběžně oba přepínače -4 a -6"
 
 #: tracepath.c:603
 #, c-format
 msgid "%2d:  no reply\n"
-msgstr "%2d:  žádná odpověď\n"
+msgstr "%2d: žádná odpověď\n"
 
 #: tracepath.c:610
 #, c-format
@@ -1389,7 +1395,7 @@ msgstr "zpět %d "
 #: tracepath.c:619
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr "délka paketu musí být mezi: %d < hodnota <= %d"
+msgstr "Je třeba, aby délka paketu byla z rozmezí: %d < hodnota <= %d"
 
 #~ msgid "unknown interface"
 #~ msgstr "neznámé rozhraní"
