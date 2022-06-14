@@ -923,7 +923,7 @@ xml:id="man.ping">
     <command>ping</command> requires CAP_NET_RAW capability to be
     executed 1) if the program is used for non-echo queries (See
     <option>-N</option> option), or 2) if kernel does not support
-    non-raw ICMP sockets, or 3) if the user is not allowed to
+    ICMP datagram sockets, or 3) if the user is not allowed to
     create an ICMP echo socket. The program may be used as set-uid
     root.</para>
   </refsection>

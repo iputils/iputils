@@ -44,7 +44,7 @@
  *	Public Domain.  Distribution Unlimited.
  * Bugs -
  *	More statistics could always be gathered.
- *	If kernel does not support non-raw ICMP sockets,
+ *	If kernel does not support ICMP datagram sockets,
  *	this program has to run SUID to ROOT or with
  *	net_cap_raw enabled.
  */
