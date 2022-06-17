@@ -120,46 +120,6 @@ xml:id="man.ping">
 
   <refsection>
     <info>
-      <title>IPV6 LINK-LOCAL DESTINATIONS</title>
-    </info>
-    <para>For IPv6, when the destination address has link-local scope and
-    ping is using <emphasis remap="I">ICMP datagram sockets</emphasis>,
-    the output interface must be specified.
-    When <command>ping</command> is using raw sockets, it is not strictly
-    necessary to specify the output interface but it should be done to avoid
-    ambiguity when there are multiple possible output interfaces.</para>
-    <para>There are two ways to specify the output interface:</para>
-    <variablelist remap="TP">
-      <varlistentry>
-        <term>
-          • using the
-          <emphasis remap="I">% notation</emphasis>
-        </term>
-        <listitem>
-        <para>The destination address is postfixed with
-        <emphasis remap="I">%</emphasis>
-         and the output interface name or ifindex, for example:</para>
-        <para><command>ping fe80::5054:ff:fe70:67bc%eth0</command></para>
-        <para><command>ping fe80::5054:ff:fe70:67bc%2</command></para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          • using the
-          <emphasis remap="I">-I option</emphasis>
-        </term>
-        <listitem>
-          <para>When using <emphasis remap="I">ICMP datagram sockets</emphasis>,
-          this method is only supported on some kernel versions: 5.17,
-          5.15.19, 5.10.96, 5.4.176, 4.19.228, 4.14.265.
-          Also it is not supported on musl libc.</para>
-        </listitem>
-      </varlistentry>
-    </variablelist>
-  </refsection>
-
-  <refsection>
-    <info>
       <title>OPTIONS</title>
     </info>
     <variablelist remap="TP">
@@ -770,6 +730,46 @@ xml:id="man.ping">
     on the network, it is unwise to use
     <command>ping</command> during normal operations or from
     automated scripts.</para>
+  </refsection>
+
+  <refsection>
+    <info>
+      <title>IPV6 LINK-LOCAL DESTINATIONS</title>
+    </info>
+    <para>For IPv6, when the destination address has link-local scope and
+    <command>ping</command> is using <emphasis remap="I">ICMP datagram sockets</emphasis>,
+    the output interface must be specified.
+    When <command>ping</command> is using <emphasis remap="I">raw sockets</emphasis>,
+    it is not strictly necessary to specify the output interface but it should be done
+    to avoid ambiguity when there are multiple possible output interfaces.</para>
+    <para>There are two ways to specify the output interface:</para>
+    <variablelist remap="TP">
+      <varlistentry>
+        <term>
+          • using the
+          <emphasis remap="I">% notation</emphasis>
+        </term>
+        <listitem>
+        <para>The destination address is postfixed with
+        <emphasis remap="I">%</emphasis>
+         and the output interface name or ifindex, for example:</para>
+        <para><command>ping fe80::5054:ff:fe70:67bc%eth0</command></para>
+        <para><command>ping fe80::5054:ff:fe70:67bc%2</command></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          • using the
+          <emphasis remap="I">-I option</emphasis>
+        </term>
+        <listitem>
+          <para>When using <emphasis remap="I">ICMP datagram sockets</emphasis>,
+          this method is supported since the following kernel versions: 5.17,
+          5.15.19, 5.10.96, 5.4.176, 4.19.228, 4.14.265.
+          Also it is not supported on musl libc.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
   </refsection>
 
   <refsection xml:id="icmp_packet_details">
