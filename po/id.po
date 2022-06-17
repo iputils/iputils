@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-07 17:45+0100\n"
+"POT-Creation-Date: 2022-06-17 22:24+0200\n"
 "PO-Revision-Date: 2021-07-16 13:31+0000\n"
 "Last-Translator: Didik Supriadi <didiksupriadi41@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.7.1\n"
 
-#: arping.c:121
+#: arping.c:123
 #, c-format
 msgid ""
 "\n"
@@ -55,7 +55,7 @@ msgstr ""
 "  -i <interval> atur interval antar paket (bawaan: 1 detik)\n"
 "  -I <device>   perangkat ethernet"
 
-#: arping.c:140
+#: arping.c:142
 #, c-format
 msgid ""
 "\n"
@@ -70,141 +70,141 @@ msgstr ""
 "\n"
 "Untuk lebih jelasnya lihat arping(8).\n"
 
-#: arping.c:303
+#: arping.c:305
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
 msgstr "Dikirim %d probe (%d broadcast)\n"
 
-#: arping.c:304
+#: arping.c:306
 #, c-format
 msgid "Received %d response(s)"
 msgstr "Diterima %d respons"
 
-#: arping.c:308
+#: arping.c:310
 #, c-format
 msgid "%d request(s)"
 msgstr "%d permintaan"
 
-#: arping.c:310
+#: arping.c:312
 #, c-format
 msgid "%s%d broadcast(s)"
 msgstr "%s%d broadcast"
 
-#: arping.c:413
+#: arping.c:415
 msgid "Unicast"
 msgstr "Unicast"
 
-#: arping.c:413
+#: arping.c:415
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: arping.c:414
+#: arping.c:416
 #, c-format
 msgid "%s from "
 msgstr "%s dari "
 
-#: arping.c:414
+#: arping.c:416
 msgid "reply"
 msgstr "balasan"
 
-#: arping.c:414
+#: arping.c:416
 msgid "request"
 msgstr "permintaan"
 
-#: arping.c:419
+#: arping.c:421
 #, c-format
 msgid "for %s "
 msgstr "untuk %s "
 
-#: arping.c:424
+#: arping.c:426
 #, c-format
 msgid "for "
 msgstr "untuk "
 
-#: arping.c:434
+#: arping.c:436
 #, c-format
 msgid " %ld.%03ldms\n"
 msgstr " %ld.%03ldms\n"
 
-#: arping.c:436
+#: arping.c:438
 #, c-format
 msgid " UNSOLICITED?\n"
 msgstr ""
 
-#: arping.c:587
+#: arping.c:589
 #, c-format
 msgid "Interface \"%s\" is down\n"
 msgstr "Interface \"%s\" mati\n"
 
-#: arping.c:595
+#: arping.c:597
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
 msgstr "Interface \"%s\" tidak ARPable\n"
 
-#: arping.c:688
+#: arping.c:690
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
 msgstr "WARNING: menggunakan alamat broadcast bawaan.\n"
 
-#: arping.c:898 arping.c:901 arping.c:904 ping/ping.c:369 ping/ping.c:415
-#: ping/ping.c:423 ping/ping.c:465 ping/ping.c:468 ping/ping.c:471
-#: ping/ping.c:484 tracepath.c:472 tracepath.c:475 tracepath.c:478
-#: tracepath.c:499
+#: arping.c:902 arping.c:905 arping.c:908 ping/ping.c:371 ping/ping.c:417
+#: ping/ping.c:425 ping/ping.c:468 ping/ping.c:471 ping/ping.c:474
+#: ping/ping.c:487 tracepath.c:474 tracepath.c:477 tracepath.c:480
+#: tracepath.c:501
 msgid "invalid argument"
 msgstr "argumen tidak valid"
 
-#: arping.c:970
+#: arping.c:974
 #, c-format
 msgid "Device %s not available."
 msgstr "Perangkat %s tidak tersedia."
 
-#: arping.c:971
+#: arping.c:975
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr "Perangkat yang cocok tidak dapat ditentukan. Tolong, gunakan opsi -I."
 
-#: arping.c:991
+#: arping.c:995
 msgid "WARNING: interface is ignored"
 msgstr "WARNING: interface diabaikan"
 
-#: arping.c:1010
+#: arping.c:1014
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
 msgstr "WARNING: setsockopt(SO_DONTROUTE)"
 
-#: arping.c:1034
+#: arping.c:1038
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr "Interface \"%s\" tidak ARPable (tidak ada alamat ll)\n"
 
-#: arping.c:1043
+#: arping.c:1047
 #, c-format
 msgid "ARPING %s "
 msgstr "ARPING %s "
 
-#: arping.c:1044
+#: arping.c:1048
 #, c-format
 msgid "from %s %s\n"
 msgstr "dari %s %s\n"
 
-#: arping.c:1048
+#: arping.c:1052
 msgid "no source address in not-DAD mode"
 msgstr "tidak ada alamat asal dalam mode not-DAD"
 
-#: clockdiff.c:240
+#: clockdiff.c:242
 #, c-format
 msgid "Wrong timestamp %d\n"
 msgstr "Kesalahan timestamp %d\n"
 
-#: clockdiff.c:245
+#: clockdiff.c:247
 #, c-format
 msgid "Overflow %d hops\n"
 msgstr "Overflow %d hop\n"
 
-#: clockdiff.c:270
+#: clockdiff.c:272
 #, c-format
 msgid "wrong timestamps\n"
 msgstr "kesalahan timestamp\n"
 
-#: clockdiff.c:451
+#: clockdiff.c:453
 #, c-format
 msgid ""
 "\n"
@@ -242,26 +242,26 @@ msgstr ""
 "\n"
 "Untuk lebih jelasnya lihat clockdiff(8).\n"
 
-#: clockdiff.c:589
+#: clockdiff.c:591
 msgid "measure: unknown failure"
 msgstr "ukuran: kegagalan tidak diketahui"
 
-#: clockdiff.c:594
+#: clockdiff.c:596
 #, c-format
 msgid "%s is down"
 msgstr "%s mati"
 
-#: clockdiff.c:597
+#: clockdiff.c:599
 #, c-format
 msgid "%s time transmitted in a non-standard format"
 msgstr "%s waktu dikirim dalam format non-standar"
 
-#: clockdiff.c:600
+#: clockdiff.c:602
 #, c-format
 msgid "%s is unreachable"
 msgstr "%s tidak dapat dijangkau"
 
-#: clockdiff.c:619
+#: clockdiff.c:621
 #, c-format
 msgid ""
 "\n"
@@ -270,40 +270,40 @@ msgstr ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 
-#: ping/node_info.c:166
+#: ping/node_info.c:168
 #, c-format
 msgid "Qtype conflict\n"
 msgstr "Konflik Qtype\n"
 
-#: ping/node_info.c:218
+#: ping/node_info.c:220
 #, c-format
 msgid "Subject type conflict\n"
 msgstr "Konflik tipe subjek\n"
 
-#: ping/node_info.c:309
+#: ping/node_info.c:311
 #, c-format
 msgid "IDN encoding error: %s"
 msgstr "Kesalahan pengkodean IDN: %s"
 
-#: ping/node_info.c:320
+#: ping/node_info.c:322
 msgid "too long scope name"
 msgstr "nama scope terlalu panjang"
 
-#: ping/node_info.c:344 ping/node_info.c:386 ping/ping6_common.c:293
-#: ping/ping.c:452 ping/ping.c:515 ping/ping.c:903
+#: ping/node_info.c:346 ping/node_info.c:388 ping/ping6_common.c:296
+#: ping/ping.c:455 ping/ping.c:518 ping/ping.c:915
 msgid "memory allocation failed"
 msgstr "alokasi memori gagal"
 
-#: ping/node_info.c:356
+#: ping/node_info.c:358
 #, c-format
 msgid "inappropriate subject name: %s"
 msgstr "nama subjek tidak tepat: %s"
 
-#: ping/node_info.c:359
+#: ping/node_info.c:361
 msgid "dn_comp() returned too long result"
 msgstr "dn_comp() mengembalikan hasil yang terlalu panjang"
 
-#: ping/node_info.c:399
+#: ping/node_info.c:401
 #, c-format
 msgid ""
 "ping -6 -N <nodeinfo opt>\n"
@@ -344,378 +344,385 @@ msgstr ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 
-#: ping/ping6_common.c:96 ping/ping.c:605
+#: ping/ping6_common.c:99 ping/ping.c:617
 #, c-format
 msgid "unknown iface: %s"
 msgstr "iface tidak diketahui: %s"
 
-#: ping/ping6_common.c:143
+#: ping/ping6_common.c:146
 msgid "scope discrepancy among the nodes"
 msgstr "perbedaan scope antar node"
 
-#: ping/ping6_common.c:219 ping/ping.c:770
+#: ping/ping6_common.c:222 ping/ping.c:782
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr "Warning: alamat asal mungkin dipilih pada perangkat selain: %s"
 
-#: ping/ping6_common.c:259
+#: ping/ping6_common.c:262
 #, c-format
 msgid "multicast ping with too short interval: %d"
 msgstr "ping multicast dengan interval terlalu pendek: %d"
 
-#: ping/ping6_common.c:262
+#: ping/ping6_common.c:265
 msgid "multicast ping does not fragment"
 msgstr "ping multicast tidak terfragmentasi"
 
-#: ping/ping6_common.c:315
+#: ping/ping6_common.c:318
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
 msgstr "setsockopt(RAW_CHECKSUM) gagal - coba lanjutkan"
 
-#: ping/ping6_common.c:341
+#: ping/ping6_common.c:344
 msgid "can't disable multicast loopback"
 msgstr "tidak dapat menonaktifkan loopback multicast"
 
-#: ping/ping6_common.c:346
+#: ping/ping6_common.c:349
 msgid "can't set multicast hop limit"
 msgstr "tidak bisa mengatur batas hop multicast"
 
-#: ping/ping6_common.c:349
+#: ping/ping6_common.c:352
 msgid "can't set unicast hop limit"
 msgstr "tidak bisa mengatur batas hop unicast"
 
-#: ping/ping6_common.c:361
+#: ping/ping6_common.c:364
 msgid "can't receive hop limit"
 msgstr "tidak dapat menerima batas hop"
 
-#: ping/ping6_common.c:366
+#: ping/ping6_common.c:369
 msgid "setsockopt(IPV6_TCLASS)"
 msgstr "setsockopt(IPV6_TCLASS)"
 
-#: ping/ping6_common.c:368
+#: ping/ping6_common.c:371
 msgid "traffic class is not supported"
 msgstr "kelas traffic tidak didukung"
 
-#: ping/ping6_common.c:384
+#: ping/ping6_common.c:387
 msgid "can't set flowlabel"
 msgstr "tidak bisa mengatur flowlabel"
 
-#: ping/ping6_common.c:388
+#: ping/ping6_common.c:391
 msgid "can't send flowinfo"
 msgstr "tidak bisa mengirim flowinfo"
 
-#: ping/ping6_common.c:391
+#: ping/ping6_common.c:394
 #, c-format
 msgid "PING %s(%s) "
 msgstr "PING %s(%s) "
 
-#: ping/ping6_common.c:393
+#: ping/ping6_common.c:396
 #, c-format
 msgid ", flow 0x%05x, "
 msgstr ", flow 0x%05x, "
 
-#: ping/ping6_common.c:398 ping/ping.c:907
+#: ping/ping6_common.c:401 ping/ping.c:919
 #, c-format
 msgid "from %s %s: "
 msgstr "dari %s %s: "
 
-#: ping/ping6_common.c:401
+#: ping/ping6_common.c:404
 #, c-format
 msgid "%zu data bytes\n"
 msgstr "%zu byte data\n"
 
-#: ping/ping6_common.c:416
+#: ping/ping6_common.c:419
 #, c-format
 msgid "Destination unreachable: "
 msgstr "Tujuan tidak dapat dijangkau: "
 
-#: ping/ping6_common.c:419
+#: ping/ping6_common.c:422
 #, c-format
 msgid "No route"
 msgstr "Tidak ada route"
 
-#: ping/ping6_common.c:422
+#: ping/ping6_common.c:425
 #, c-format
 msgid "Administratively prohibited"
 msgstr "Dilarang secara administratif"
 
-#: ping/ping6_common.c:425
+#: ping/ping6_common.c:428
 #, c-format
 msgid "Beyond scope of source address"
 msgstr "Diluar cakupan alamat asal"
 
-#: ping/ping6_common.c:428
+#: ping/ping6_common.c:431
 #, c-format
 msgid "Address unreachable"
 msgstr "Alamat tidak dapat dijangkau"
 
-#: ping/ping6_common.c:431
+#: ping/ping6_common.c:434
 #, c-format
 msgid "Port unreachable"
 msgstr "Port tidak dapat dijangkau"
 
-#: ping/ping6_common.c:434
+#: ping/ping6_common.c:437
 #, c-format
 msgid "Unknown code %d"
 msgstr "Kode tidak diketahui %d"
 
-#: ping/ping6_common.c:439
+#: ping/ping6_common.c:442
 #, c-format
 msgid "Packet too big: mtu=%u"
 msgstr "Paket terlalu besar: mtu=%u"
 
-#: ping/ping6_common.c:441
+#: ping/ping6_common.c:444
 #, c-format
 msgid ", code=%d"
 msgstr ", kode=%d"
 
-#: ping/ping6_common.c:444
+#: ping/ping6_common.c:447
 #, c-format
 msgid "Time exceeded: "
 msgstr "Waktu terlampaui: "
 
-#: ping/ping6_common.c:446
+#: ping/ping6_common.c:449
 #, c-format
 msgid "Hop limit"
 msgstr "Batas hop"
 
-#: ping/ping6_common.c:448
+#: ping/ping6_common.c:451
 #, c-format
 msgid "Defragmentation failure"
 msgstr "Kegagalan defragmentasi"
 
-#: ping/ping6_common.c:450
+#: ping/ping6_common.c:453
 #, c-format
 msgid "code %d"
 msgstr "kode %d"
 
-#: ping/ping6_common.c:453
+#: ping/ping6_common.c:456
 #, c-format
 msgid "Parameter problem: "
 msgstr "Masalah parameter: "
 
-#: ping/ping6_common.c:455
+#: ping/ping6_common.c:458
 #, c-format
 msgid "Wrong header field "
 msgstr "Kolom header salah "
 
-#: ping/ping6_common.c:457
+#: ping/ping6_common.c:460
 #, c-format
 msgid "Unknown header "
 msgstr "Header tidak diketahui "
 
-#: ping/ping6_common.c:459
+#: ping/ping6_common.c:462
 #, c-format
 msgid "Unknown option "
 msgstr "Opsi tidak diketahui "
 
-#: ping/ping6_common.c:461
+#: ping/ping6_common.c:464
 #, c-format
 msgid "code %d "
 msgstr "kode %d "
 
-#: ping/ping6_common.c:462
+#: ping/ping6_common.c:465
 #, c-format
 msgid "at %u"
 msgstr "pada %u"
 
-#: ping/ping6_common.c:465
+#: ping/ping6_common.c:468
 #, c-format
 msgid "Echo request"
 msgstr "Echo permintaan"
 
-#: ping/ping6_common.c:468
+#: ping/ping6_common.c:471
 #, c-format
 msgid "Echo reply"
 msgstr "Echo balasan"
 
-#: ping/ping6_common.c:471
+#: ping/ping6_common.c:474
 #, c-format
 msgid "MLD Query"
 msgstr "Query MLD"
 
-#: ping/ping6_common.c:474
+#: ping/ping6_common.c:477
 #, c-format
 msgid "MLD Report"
 msgstr "Laporan MLD"
 
-#: ping/ping6_common.c:477
+#: ping/ping6_common.c:480
 #, c-format
 msgid "MLD Reduction"
 msgstr "Reduksi MLD"
 
-#: ping/ping6_common.c:480
+#: ping/ping6_common.c:483
 #, c-format
 msgid "unknown icmp type: %u"
 msgstr "tipe icmp tidak diketahui: %u"
 
-#: ping/ping6_common.c:534
+#: ping/ping6_common.c:537
 msgid "local error"
 msgstr "kesalahan lokal"
 
-#: ping/ping6_common.c:536
+#: ping/ping6_common.c:539
 #, c-format
 msgid "local error: message too long, mtu: %u"
 msgstr "kesalahan lokal: pesan terlalu panjang, mtu: %u"
 
-#: ping/ping6_common.c:558 ping/ping.c:1354
+#: ping/ping6_common.c:561 ping/ping.c:1366
 #, c-format
 msgid "From %s icmp_seq=%u "
 msgstr "Dari %s icmp_seq=%u "
 
-#: ping/ping6_common.c:665 ping/ping.c:1468
+#: ping/ping6_common.c:668 ping/ping.c:1480
 #, c-format
 msgid " icmp_seq=%u"
 msgstr " icmp_seq=%u"
 
-#: ping/ping6_common.c:689 ping/ping6_common.c:750
+#: ping/ping6_common.c:692 ping/ping6_common.c:753
 #, c-format
 msgid " parse error (too short)"
 msgstr " kesalahan parse (terlalu pendek)"
 
-#: ping/ping6_common.c:703 ping/ping6_common.c:759
+#: ping/ping6_common.c:706 ping/ping6_common.c:762
 #, c-format
 msgid " parse error (truncated)"
 msgstr " kesalahan parse (terpotong)"
 
-#: ping/ping6_common.c:763
+#: ping/ping6_common.c:766
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
 msgstr " kesalahan tidak terduga di inet_ntop(%s)"
 
-#: ping/ping6_common.c:772
+#: ping/ping6_common.c:775
 #, c-format
 msgid " (truncated)"
 msgstr " (terpotong)"
 
-#: ping/ping6_common.c:791
+#: ping/ping6_common.c:794
 #, c-format
 msgid " unknown qtype(0x%02x)"
 msgstr " qtype tidak diketahui(0x%02x)"
 
-#: ping/ping6_common.c:795
+#: ping/ping6_common.c:798
 #, c-format
 msgid " refused"
 msgstr " ditolak"
 
-#: ping/ping6_common.c:798
+#: ping/ping6_common.c:801
 #, c-format
 msgid " unknown"
 msgstr " tidak diketahui"
 
-#: ping/ping6_common.c:801
+#: ping/ping6_common.c:804
 #, c-format
 msgid " unknown code(%02x)"
 msgstr " kode tidak diketahui(%02x)"
 
-#: ping/ping6_common.c:803
+#: ping/ping6_common.c:806
 #, c-format
 msgid "; seq=%u;"
 msgstr "; seq=%u;"
 
-#: ping/ping6_common.c:844
+#: ping/ping6_common.c:847
 #, c-format
 msgid "packet too short: %d bytes"
 msgstr "paket terlalu singkat: %d byte"
 
-#: ping/ping6_common.c:911 ping/ping.c:1597
+#: ping/ping6_common.c:914 ping/ping.c:1609
 #, c-format
 msgid "From %s: "
 msgstr "Dari %s: "
 
-#: ping/ping6_common.c:952 ping/ping.c:1682
+#: ping/ping6_common.c:955 ping/ping.c:1694
 msgid "WARNING: failed to install socket filter"
 msgstr "WARNING: gagal menginstall filter socket"
 
-#: ping/ping.c:191
+#: ping/ping.c:193
 #, c-format
 msgid "option argument contains garbage: %s"
 msgstr "Argumen opsi mengandung sampah: %s"
 
-#: ping/ping.c:192
+#: ping/ping.c:194
 msgid "this will become fatal error in the future"
 msgstr "ini akan menjadi kesalahan yang fatal di masa mendatang"
 
-#: ping/ping.c:224
+#: ping/ping.c:226
 #, c-format
 msgid "bad value for flowinfo: %s"
 msgstr "nilai buruk untuk flowinfo: %s"
 
-#: ping/ping.c:227
+#: ping/ping.c:229
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
 msgstr "nilai flow lebih besar dari 20 bit: %s"
 
-#: ping/ping.c:247
+#: ping/ping.c:249
 #, c-format
 msgid "bad TOS value: %s"
 msgstr "nilai TOS buruk: %s"
 
-#: ping/ping.c:250
+#: ping/ping.c:252
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
 msgstr "nilai desimal dari bit TOS harus dalam kisaran 0-255: %d"
 
-#: ping/ping.c:319 ping/ping.c:346
+#: ping/ping.c:321 ping/ping.c:348
 msgid "only one -4 or -6 option may be specified"
 msgstr "hanya satu opsi -4 atau -6 yang dapat ditentukan"
 
-#: ping/ping.c:327 ping/ping.c:332
+#: ping/ping.c:329 ping/ping.c:334
 msgid "only one of -T or -R may be used"
 msgstr "hanya satu dari -T atau -R yang dapat digunakan"
 
-#: ping/ping.c:341
+#: ping/ping.c:343
 #, c-format
 msgid "invalid timestamp type: %s"
 msgstr "tipe timestamp tidak valid: %s"
 
-#: ping/ping.c:381
+#: ping/ping.c:383
 msgid "bad timing interval"
 msgstr "interval waktu yang buruk"
 
-#: ping/ping.c:383
+#: ping/ping.c:385
 #, c-format
 msgid "bad timing interval: %s"
 msgstr "interval waktu yang buruk: %s"
 
-#: ping/ping.c:394
+#: ping/ping.c:396
 #, c-format
 msgid "cannot copy: %s"
 msgstr "tidak bisa menyalin: %s"
 
-#: ping/ping.c:403
+#: ping/ping.c:405
 #, c-format
 msgid "invalid source address: %s"
 msgstr "alamat asal tidak valid: %s"
 
-#: ping/ping.c:417
+#: ping/ping.c:419
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
 msgstr "tidak bisa mengatur preload ke nilai lebih besar dari 3: %d"
 
-#: ping/ping.c:434
+#: ping/ping.c:436
 #, c-format
 msgid "invalid -M argument: %s"
 msgstr "argumen -M tidak valid: %s"
 
-#: ping/ping.c:490
+#: ping/ping.c:493
 msgid "bad linger time"
 msgstr "waktu berlama-lama yang buruk"
 
-#: ping/ping.c:492
+#: ping/ping.c:495
 #, c-format
 msgid "bad linger time: %s"
 msgstr "waktu berlama-lama yang buruk: %s"
 
-#: ping/ping.c:581
+#: ping/ping.c:566
+#, c-format
+msgid ""
+"Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
+"or scope-id => use: address%%<ifname|scope-id>"
+msgstr ""
+
+#: ping/ping.c:593
 #, c-format
 msgid "unknown protocol family: %d"
 msgstr "protocol family tidak diketahui: %d"
 
-#: ping/ping.c:716
+#: ping/ping.c:728
 msgid "warning: QOS sockopts"
 msgstr "warning: QOS sockopts"
 
-#: ping/ping.c:728
+#: ping/ping.c:740
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
@@ -723,67 +730,67 @@ msgstr ""
 "Apakah Anda ingin melakukan ping broadcast? Maka pilih opsi -b. Jika tidak, "
 "periksa aturan firewall lokal Anda"
 
-#: ping/ping.c:729
+#: ping/ping.c:741
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
 msgstr "WARNING: ping alamat broadcast\n"
 
-#: ping/ping.c:732 ping/ping.c:883
+#: ping/ping.c:744 ping/ping.c:895
 msgid "cannot set broadcasting"
 msgstr "tidak bisa mengatur broadcast"
 
-#: ping/ping.c:752
+#: ping/ping.c:764
 msgid "gatifaddrs failed"
 msgstr "gatifaddrs gagal"
 
-#: ping/ping.c:785
+#: ping/ping.c:797
 #, c-format
 msgid "broadcast ping with too short interval: %d"
 msgstr "ping broadcast dengan interval terlalu pendek: %d"
 
-#: ping/ping.c:787
+#: ping/ping.c:799
 msgid "broadcast ping does not fragment"
 msgstr "ping broadcast tidak terfragmentasi"
 
-#: ping/ping.c:811
+#: ping/ping.c:823
 msgid "WARNING: setsockopt(ICMP_FILTER)"
 msgstr "WARNING: setsockopt(ICMP_FILTER)"
 
-#: ping/ping.c:816
+#: ping/ping.c:828
 msgid "WARNING: your kernel is veeery old. No problems."
 msgstr "WARNING: kernel Anda terlalu tua. Tidak ada masalah."
 
-#: ping/ping.c:820
+#: ping/ping.c:832
 msgid "WARNING: setsockopt(IP_RECVTTL)"
 msgstr "WARNING: setsockopt(IP_RECVTTL)"
 
-#: ping/ping.c:822
+#: ping/ping.c:834
 msgid "WARNING: setsockopt(IP_RETOPTS)"
 msgstr "WARNING: setsockopt(IP_RETOPTS)"
 
-#: ping/ping.c:889
+#: ping/ping.c:901
 msgid "cannot disable multicast loopback"
 msgstr "tidak bisa menonaktifkan loopback multicast"
 
-#: ping/ping.c:894
+#: ping/ping.c:906
 msgid "cannot set multicast time-to-live"
 msgstr "tidak bisa mengatur time-to-live multicast"
 
-#: ping/ping.c:896
+#: ping/ping.c:908
 msgid "cannot set unicast time-to-live"
 msgstr "tidak bisa mengatur time-to-live unicast"
 
-#: ping/ping.c:905
+#: ping/ping.c:917
 #, c-format
 msgid "PING %s (%s) "
 msgstr "PING %s (%s) "
 
-#: ping/ping.c:908
+#: ping/ping.c:920
 #, c-format
 msgid "%zu(%zu) bytes of data.\n"
 msgstr "%zu(%zu) byte data.\n"
 
-#: ping/ping.c:934
+#: ping/ping.c:946
 #, c-format
 msgid ""
 "\n"
@@ -792,7 +799,7 @@ msgstr ""
 "\n"
 "NOP"
 
-#: ping/ping.c:945
+#: ping/ping.c:957
 #, c-format
 msgid ""
 "\n"
@@ -801,12 +808,12 @@ msgstr ""
 "\n"
 "%cSRR: "
 
-#: ping/ping.c:983
+#: ping/ping.c:995
 #, c-format
 msgid "\t(same route)"
 msgstr "\t(route yang sama)"
 
-#: ping/ping.c:988
+#: ping/ping.c:1000
 #, c-format
 msgid ""
 "\n"
@@ -815,7 +822,7 @@ msgstr ""
 "\n"
 "RR: "
 
-#: ping/ping.c:1024
+#: ping/ping.c:1036
 #, c-format
 msgid ""
 "\n"
@@ -824,27 +831,27 @@ msgstr ""
 "\n"
 "TS: "
 
-#: ping/ping.c:1056
+#: ping/ping.c:1068
 #, c-format
 msgid "\t%ld absolute not-standard"
 msgstr "\t%ld mutlak tidak standar"
 
-#: ping/ping.c:1058
+#: ping/ping.c:1070
 #, c-format
 msgid "\t%ld not-standard"
 msgstr "\t%ld tidak standar"
 
-#: ping/ping.c:1062
+#: ping/ping.c:1074
 #, c-format
 msgid "\t%ld absolute"
 msgstr "\t%ld mutlak"
 
-#: ping/ping.c:1073
+#: ping/ping.c:1085
 #, c-format
 msgid "Unrecorded hops: %d\n"
 msgstr "Hop tidak tercatat: %d\n"
 
-#: ping/ping.c:1077
+#: ping/ping.c:1089
 #, c-format
 msgid ""
 "\n"
@@ -853,341 +860,341 @@ msgstr ""
 "\n"
 "opsi tidak diketahui %x"
 
-#: ping/ping.c:1097
+#: ping/ping.c:1109
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 
-#: ping/ping.c:1098
+#: ping/ping.c:1110
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
 msgstr " %1x  %1x  %02x %04x %04x"
 
-#: ping/ping.c:1100
+#: ping/ping.c:1112
 #, c-format
 msgid "   %1x %04x"
 msgstr "   %1x %04x"
 
-#: ping/ping.c:1102
+#: ping/ping.c:1114
 #, c-format
 msgid "  %02x  %02x %04x"
 msgstr "  %02x  %02x %04x"
 
-#: ping/ping.c:1118
+#: ping/ping.c:1130
 #, c-format
 msgid "Echo Reply\n"
 msgstr "Echo Balasan\n"
 
-#: ping/ping.c:1124
+#: ping/ping.c:1136
 #, c-format
 msgid "Destination Net Unreachable\n"
 msgstr "Jaringan Tujuan Tidak Terjangkau\n"
 
-#: ping/ping.c:1127
+#: ping/ping.c:1139
 #, c-format
 msgid "Destination Host Unreachable\n"
 msgstr "Host Tujuan Tidak Terjangkau\n"
 
-#: ping/ping.c:1130
+#: ping/ping.c:1142
 #, c-format
 msgid "Destination Protocol Unreachable\n"
 msgstr "Protokol Tujuan Tidak Terjangkau\n"
 
-#: ping/ping.c:1133
+#: ping/ping.c:1145
 #, c-format
 msgid "Destination Port Unreachable\n"
 msgstr "Port Tujuan Tidak Terjangkau\n"
 
-#: ping/ping.c:1136
+#: ping/ping.c:1148
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
 msgstr "Frag dibutuhkan dan DF diatur (mtu = %u)\n"
 
-#: ping/ping.c:1139
+#: ping/ping.c:1151
 #, c-format
 msgid "Source Route Failed\n"
 msgstr "Rute Asal Gagal\n"
 
-#: ping/ping.c:1142
+#: ping/ping.c:1154
 #, c-format
 msgid "Destination Net Unknown\n"
 msgstr "Jaringan Tujuan Tidak Diketahui\n"
 
-#: ping/ping.c:1145
+#: ping/ping.c:1157
 #, c-format
 msgid "Destination Host Unknown\n"
 msgstr "Host Tujuan Tidak Diketahui\n"
 
-#: ping/ping.c:1148
+#: ping/ping.c:1160
 #, c-format
 msgid "Source Host Isolated\n"
 msgstr "Host Asal Terisolasi\n"
 
-#: ping/ping.c:1151
+#: ping/ping.c:1163
 #, c-format
 msgid "Destination Net Prohibited\n"
 msgstr "Jaringan Tujuan Terlarang\n"
 
-#: ping/ping.c:1154
+#: ping/ping.c:1166
 #, c-format
 msgid "Destination Host Prohibited\n"
 msgstr "Host Tujuan Terlarang\n"
 
-#: ping/ping.c:1157
+#: ping/ping.c:1169
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
 msgstr "Jaringan Tujuan Tidak Terjangkau untuk Type of Service\n"
 
-#: ping/ping.c:1160
+#: ping/ping.c:1172
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
 msgstr "Host Tujuan Tidak Terjangkau untuk Type of Service\n"
 
-#: ping/ping.c:1163
+#: ping/ping.c:1175
 #, c-format
 msgid "Packet filtered\n"
 msgstr "Paket difilter\n"
 
-#: ping/ping.c:1166
+#: ping/ping.c:1178
 #, c-format
 msgid "Precedence Violation\n"
 msgstr "Pelanggaran Prioritas\n"
 
-#: ping/ping.c:1169
+#: ping/ping.c:1181
 #, c-format
 msgid "Precedence Cutoff\n"
 msgstr "Batas Prioritas\n"
 
-#: ping/ping.c:1172
+#: ping/ping.c:1184
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
 msgstr "Tujuan Tidak Terjangkau, Kode Buruk: %d\n"
 
-#: ping/ping.c:1179
+#: ping/ping.c:1191
 #, c-format
 msgid "Source Quench\n"
 msgstr ""
 
-#: ping/ping.c:1186
+#: ping/ping.c:1198
 #, c-format
 msgid "Redirect Network"
 msgstr "Alihkan Network"
 
-#: ping/ping.c:1189
+#: ping/ping.c:1201
 #, c-format
 msgid "Redirect Host"
 msgstr "Alihkan Host"
 
-#: ping/ping.c:1192
+#: ping/ping.c:1204
 #, c-format
 msgid "Redirect Type of Service and Network"
 msgstr "Alihkan TOS dan Jaringan"
 
-#: ping/ping.c:1195
+#: ping/ping.c:1207
 #, c-format
 msgid "Redirect Type of Service and Host"
 msgstr "Alihkan TOS dan Host"
 
-#: ping/ping.c:1198
+#: ping/ping.c:1210
 #, c-format
 msgid "Redirect, Bad Code: %d"
 msgstr ""
 
-#: ping/ping.c:1209
+#: ping/ping.c:1221
 #, c-format
 msgid "(New nexthop: %s)\n"
 msgstr "(Nexthop baru: %s)\n"
 
-#: ping/ping.c:1215
+#: ping/ping.c:1227
 #, c-format
 msgid "Echo Request\n"
 msgstr "Echo permintaan\n"
 
-#: ping/ping.c:1221
+#: ping/ping.c:1233
 #, c-format
 msgid "Time to live exceeded\n"
 msgstr "Time to live terlampaui\n"
 
-#: ping/ping.c:1224
+#: ping/ping.c:1236
 #, c-format
 msgid "Frag reassembly time exceeded\n"
 msgstr "Waktu reassembly fragmen terlampaui\n"
 
-#: ping/ping.c:1227
+#: ping/ping.c:1239
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
 msgstr "Waktu terlampaui, Kode Buruk: %d\n"
 
-#: ping/ping.c:1234
+#: ping/ping.c:1246
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
 msgstr "Masalah parameter: pointer = %u\n"
 
-#: ping/ping.c:1240
+#: ping/ping.c:1252
 #, c-format
 msgid "Timestamp\n"
 msgstr "Timestamp\n"
 
-#: ping/ping.c:1244
+#: ping/ping.c:1256
 #, c-format
 msgid "Timestamp Reply\n"
 msgstr "Timestamp Balasan\n"
 
-#: ping/ping.c:1248
+#: ping/ping.c:1260
 #, c-format
 msgid "Information Request\n"
 msgstr "Informasi Permintaan\n"
 
-#: ping/ping.c:1252
+#: ping/ping.c:1264
 #, c-format
 msgid "Information Reply\n"
 msgstr "Informasi Balasan\n"
 
-#: ping/ping.c:1257
+#: ping/ping.c:1269
 #, c-format
 msgid "Address Mask Request\n"
 msgstr "Mask Alamat Permintaan\n"
 
-#: ping/ping.c:1262
+#: ping/ping.c:1274
 #, c-format
 msgid "Address Mask Reply\n"
 msgstr "Mask Alamat Balasan\n"
 
-#: ping/ping.c:1266
+#: ping/ping.c:1278
 #, c-format
 msgid "Bad ICMP type: %d\n"
 msgstr "Tipe ICMP buruk: %d\n"
 
-#: ping/ping.c:1318
+#: ping/ping.c:1330
 #, c-format
 msgid "local error: %s"
 msgstr "kesalahan lokal: %s"
 
-#: ping/ping.c:1320
+#: ping/ping.c:1332
 #, c-format
 msgid "local error: message too long, mtu=%u"
 msgstr "kesalahan lokal: pesan terlalu panjang, mtu=%u"
 
-#: ping/ping.c:1493
+#: ping/ping.c:1505
 #, c-format
 msgid "packet too short (%d bytes) from %s"
 msgstr "packet terlalu singkat (%d byte) dari %s"
 
-#: ping/ping.c:1572
+#: ping/ping.c:1584
 #, c-format
 msgid "From %s: icmp_seq=%u "
 msgstr "Dari %s: icmp_seq=%u "
 
-#: ping/ping.c:1575
+#: ping/ping.c:1587
 #, c-format
 msgid "(BAD CHECKSUM)"
 msgstr "(BAD CHECKSUM)"
 
-#: ping/ping.c:1599
+#: ping/ping.c:1611
 #, c-format
 msgid "(BAD CHECKSUM)\n"
 msgstr "(BAD CHECKSUM)\n"
 
-#: ping/ping_common.c:208
+#: ping/ping_common.c:211
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
 msgstr "pola harus ditentukan sebagai digit heksa: %s"
 
-#: ping/ping_common.c:225
+#: ping/ping_common.c:228
 #, c-format
 msgid "PATTERN: 0x"
 msgstr "POLA: 0x"
 
-#: ping/ping_common.c:345
+#: ping/ping_common.c:348
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
 msgstr "belum ada jawaban untuk icmp_seq=%lu\n"
 
-#: ping/ping_common.c:445
+#: ping/ping_common.c:448
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "WARNING: mungkin, rcvbuf tidak cukup untuk menahan preload"
 
-#: ping/ping_common.c:462
-#, c-format
-msgid "WARNING: failed to set mark: %d"
+#: ping/ping_common.c:465
+#, fuzzy, c-format
+msgid "WARNING: failed to set mark: %u"
 msgstr "Warning: Gagal untuk mengatur tanda: %d"
 
-#: ping/ping_common.c:464
+#: ping/ping_common.c:467
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
-
-#: ping/ping_common.c:480
-#, c-format
-msgid "cannot flood; minimal interval allowed for user is %dms"
 msgstr ""
 
 #: ping/ping_common.c:483
 #, c-format
+msgid "cannot flood; minimal interval allowed for user is %dms"
+msgstr ""
+
+#: ping/ping_common.c:486
+#, c-format
 msgid "illegal preload and/or interval: %d"
 msgstr "preload dan/atau interval ilegal: %d"
 
-#: ping/ping_common.c:495
+#: ping/ping_common.c:498
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr ""
 "Warning: tidak ada dukungan untuk SO_TIMESTAMP, kembali menggunakan "
 "SIOCGSTAMP"
 
-#: ping/ping_common.c:739
+#: ping/ping_common.c:742
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
 msgstr ""
 
-#: ping/ping_common.c:789
+#: ping/ping_common.c:792
 #, c-format
 msgid "%d bytes from %s:"
 msgstr "%d byte dari %s:"
 
-#: ping/ping_common.c:795
+#: ping/ping_common.c:798
 #, c-format
 msgid " ttl=%d"
 msgstr " ttl=%d"
 
-#: ping/ping_common.c:798
+#: ping/ping_common.c:801
 #, c-format
 msgid " (truncated)\n"
 msgstr " (terpotong)\n"
 
-#: ping/ping_common.c:803
+#: ping/ping_common.c:806
 #, c-format
 msgid " time=%ld ms"
 msgstr " waktu=%ld ms"
 
-#: ping/ping_common.c:805
+#: ping/ping_common.c:808
 #, c-format
 msgid " time=%ld.%01ld ms"
 msgstr " waktu=%ld.%01ld ms"
 
-#: ping/ping_common.c:808
+#: ping/ping_common.c:811
 #, c-format
 msgid " time=%ld.%02ld ms"
 msgstr " waktu=%ld.%02ld ms"
 
-#: ping/ping_common.c:811
+#: ping/ping_common.c:814
 #, c-format
 msgid " time=%ld.%03ld ms"
 msgstr " waktu=%ld.%03ld ms"
 
-#: ping/ping_common.c:816
+#: ping/ping_common.c:819
 #, c-format
 msgid " (DUP!)"
 msgstr " (DUP!)"
 
-#: ping/ping_common.c:818
+#: ping/ping_common.c:821
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (BAD CHECKSUM!)"
 
-#: ping/ping_common.c:820
+#: ping/ping_common.c:823
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr ""
 
-#: ping/ping_common.c:827
+#: ping/ping_common.c:830
 #, c-format
 msgid ""
 "\n"
@@ -1196,72 +1203,72 @@ msgstr ""
 "\n"
 "kesalahan byte data #%zu harusnya 0x%x bukan 0x%x"
 
-#: ping/ping_common.c:870
+#: ping/ping_common.c:873
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr "--- statistik ping %s ---\n"
 
-#: ping/ping_common.c:871
+#: ping/ping_common.c:874
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr "%ld paket dikirim, "
 
-#: ping/ping_common.c:872
+#: ping/ping_common.c:875
 #, c-format
 msgid "%ld received"
 msgstr "%ld diterima"
 
-#: ping/ping_common.c:874
+#: ping/ping_common.c:877
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ", +%ld duplikat"
 
-#: ping/ping_common.c:876
+#: ping/ping_common.c:879
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ", +%ld korup"
 
-#: ping/ping_common.c:878
+#: ping/ping_common.c:881
 #, c-format
 msgid ", +%ld errors"
 msgstr ", +%ld error"
 
-#: ping/ping_common.c:884
+#: ping/ping_common.c:887
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ", %g%% paket hilang"
 
-#: ping/ping_common.c:886
+#: ping/ping_common.c:889
 #, c-format
 msgid ", time %ldms"
 msgstr ", waktu %ldms"
 
-#: ping/ping_common.c:906
+#: ping/ping_common.c:909
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
-#: ping/ping_common.c:914
+#: ping/ping_common.c:917
 #, c-format
 msgid "%spipe %d"
 msgstr "%spipe %d"
 
-#: ping/ping_common.c:921
+#: ping/ping_common.c:924
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
-#: ping/ping_common.c:939
+#: ping/ping_common.c:942
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld paket, %d%% loss"
 
-#: ping/ping_common.c:944
+#: ping/ping_common.c:947
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
-#: tracepath.c:215
+#: tracepath.c:217
 #, c-format
 msgid ""
 "cmsg6:%d\n"
@@ -1270,7 +1277,7 @@ msgstr ""
 "cmsg6:%d\n"
 " "
 
-#: tracepath.c:227
+#: tracepath.c:229
 #, c-format
 msgid ""
 "cmsg4:%d\n"
@@ -1279,55 +1286,55 @@ msgstr ""
 "cmsg4:%d\n"
 " "
 
-#: tracepath.c:232
+#: tracepath.c:234
 #, c-format
 msgid "no info\n"
 msgstr "tidak ada info\n"
 
-#: tracepath.c:236
+#: tracepath.c:238
 msgid "[LOCALHOST]"
 msgstr "[LOCALHOST]"
 
-#: tracepath.c:284
+#: tracepath.c:286
 #, c-format
 msgid "%3ld.%03ldms "
 msgstr "%3ld.%03ldms "
 
-#: tracepath.c:287
+#: tracepath.c:289
 #, c-format
 msgid "(This broken router returned corrupted payload) "
 msgstr "(Router rusak ini mengembalikan payload korup) "
 
-#: tracepath.c:302
+#: tracepath.c:304
 #, c-format
 msgid "pmtu %d\n"
 msgstr "pmtu %d\n"
 
-#: tracepath.c:307
+#: tracepath.c:309
 #, c-format
 msgid "reached\n"
 msgstr "tercapai\n"
 
-#: tracepath.c:323 tracepath.c:326
+#: tracepath.c:325 tracepath.c:328
 #, c-format
 msgid "asymm %2d "
 msgstr "asymm %2d "
 
-#: tracepath.c:341
+#: tracepath.c:343
 msgid "NET ERROR"
 msgstr "KESALAHAN JARINGAN"
 
-#: tracepath.c:386
+#: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
 msgstr "%2d?: balasan diterima 8)\n"
 
-#: tracepath.c:392
+#: tracepath.c:394
 #, c-format
 msgid "%2d:  send failed\n"
 msgstr "%2d:  gagal mengirim\n"
 
-#: tracepath.c:399
+#: tracepath.c:401
 #, c-format
 msgid ""
 "\n"
@@ -1364,31 +1371,31 @@ msgstr ""
 "\n"
 "Untuk lebih jelasnya lihat tracepath(8).\n"
 
-#: tracepath.c:457 tracepath.c:462
+#: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
 msgstr "Hanya satu opsi -4 atau -6 yang dapat ditentukan"
 
-#: tracepath.c:603
+#: tracepath.c:605
 #, c-format
 msgid "%2d:  no reply\n"
 msgstr "%2d:  tidak ada balasan\n"
 
-#: tracepath.c:610
+#: tracepath.c:612
 #, c-format
 msgid "     Resume: pmtu %d "
 msgstr ""
 
-#: tracepath.c:612
+#: tracepath.c:614
 #, c-format
 msgid "hops %d "
 msgstr "hop %d "
 
-#: tracepath.c:614
+#: tracepath.c:616
 #, c-format
 msgid "back %d "
 msgstr "kembali %d "
 
-#: tracepath.c:619
+#: tracepath.c:621
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "panjang paket harus dalam: %d < nilai <= %d"
