@@ -58,6 +58,11 @@ xml:id="man.arping">
     <emphasis remap="I">interface</emphasis> by ARP packets, using
     source address
     <emphasis remap="I">source</emphasis>.</para>
+    <para>arping supports IPv4 addresses only. For IPv6, see
+    <citerefentry>
+      <refentrytitle>ndisc6</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>.</para>
   </refsection>
 
   <refsection>
@@ -227,6 +232,10 @@ xml:id="man.arping">
   <refsect1 id='see_also'>
     <title>SEE ALSO</title>
     <para>
+    <citerefentry>
+      <refentrytitle>ndisc6</refentrytitle>
+      <manvolnum>8</manvolnum>
+    </citerefentry>,
     <citerefentry>
       <refentrytitle>ping</refentrytitle>
       <manvolnum>8</manvolnum>
