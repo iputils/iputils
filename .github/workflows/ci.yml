@@ -47,14 +47,14 @@ jobs:
             env:
               CC: clang
 
-          - container: "ubuntu:xenial"
+          - container: "ubuntu:bionic"
             env:
               CC: clang
               EXTRA_BUILD_OPTS: "-DUSE_GETTEXT=false"
               # meson error: not using Unicode-compatible locale (ANSI_X3.4-1968)
               SKIP_TESTS: true
 
-          - container: "ubuntu:impish"
+          - container: "ubuntu:jammy"
             env:
               CC: gcc
 
