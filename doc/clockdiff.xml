@@ -198,8 +198,9 @@ xml:id="man.clockdiff">
   <refsect1 id='security'>
     <title>SECURITY</title>
     <para>
-    <command>clockdiff</command> requires CAP_NET_RAW capability to
-    be executed. It is safe to be used as set-uid root.</para>
+    <command>clockdiff</command> requires CAP_NET_RAW and 
+    CAP_SYS_NICE capabilities to be executed. It is safe 
+    to be used as set-uid root.</para>
   </refsect1>
 
   <refsect1 id='availability'>
