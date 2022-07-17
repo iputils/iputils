@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2021-12-07 20:09+0000\n"
-"Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
+"PO-Revision-Date: 2022-07-18 11:18+0000\n"
+"Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
 "Language: tr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 4.13\n"
 
 #: arping.c:123
 #, c-format
@@ -713,6 +713,9 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
+"Uyarı: ICMP datagram soketindeki IPv6 bağlantı yerel adresi arayüz adı veya "
+"kapsam kimliği kullanımını gerektirebilir => adres%%<arayüz-adı|kapsam-"
+"kimliği> kullanın"
 
 #: ping/ping.c:593
 #, c-format
@@ -1116,9 +1119,9 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "UYARI: muhtemelen, rcvbuf ön yüklemeyi tutmak için yeterli değil"
 
 #: ping/ping_common.c:465
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "UYARI: işaret ayarlanamadı: %d"
+msgstr "UYARI: işaret ayarlanamadı: %u"
 
 #: ping/ping_common.c:467
 msgid "WARNING: SO_MARK not supported"
