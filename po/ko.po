@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2022-05-19 15:18+0000\n"
+"PO-Revision-Date: 2022-07-18 11:18+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Weblate 4.13\n"
 
 #: arping.c:123
 #, c-format
@@ -711,6 +711,8 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
+"경고: ICMP 데이타그램에서 IPv6 연결-로컬 주소는 ifname 또는 scope-id가 요구 "
+"될 수 있습니다 => use: address%%<ifname|scope-id>"
 
 #: ping/ping.c:593
 #, c-format
@@ -1114,9 +1116,9 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "경고: 아마도, rcvbuf는 사전적재를 유지하기에 충분치 않습니다"
 
 #: ping/ping_common.c:465
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "경고: 표시 설정에 실패함: %d"
+msgstr "경고: 표시 설정에 실패함: %u"
 
 #: ping/ping_common.c:467
 msgid "WARNING: SO_MARK not supported"
