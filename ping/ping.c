@@ -149,11 +149,7 @@ static void create_socket(struct ping_rts *rts, socket_st *sock, int family,
 	}
 
 	if (sock->fd == -1) {
-		/* Report error related to disabled IPv6 only when IPv6 also failed or in
-		 * verbose mode. Report other errors always.
-		 */
-		if ((errno == EAFNOSUPPORT && family == AF_INET6 && requisite) ||
-		    rts->opt_verbose)
+		if (requisite || rts->opt_verbose)
 			error(0, errno, "socket");
 		if (requisite)
 			exit(2);
