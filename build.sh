@@ -19,7 +19,7 @@ check_build_dependencies()
 	# needed for CentOS 7 but maybe for others
 	if ! command -v ninja > /dev/null; then
 		if command -v ninja-build > /dev/null; then
-			ln -sv $(command -v ninja-build) /usr/local/bin/ninja
+			ln -sv "$(command -v ninja-build)" /usr/local/bin/ninja
 		else
 			echo "ninja binary not found (tried ninja and $NINJA on $PATH)" >&2
 			exit 1
@@ -82,7 +82,7 @@ run_tests()
 	local ret
 
 	echo "=== tests ==="
-	cd $BUILD_DIR
+	cd "$BUILD_DIR"
 
 	meson test
 	ret=$?
@@ -103,11 +103,11 @@ print_log()
 	fi
 
 	echo "=== START $log ==="
-	cat $log
+	cat "$log"
 	echo "=== END $log ==="
 }
 
-cd `dirname $0`
+cd "$(dirname "$0")"
 
 cmd=
 case "$1" in
