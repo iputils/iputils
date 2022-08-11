@@ -238,7 +238,7 @@ output += ' (capability or suid: ' + setcap_ping.to_string() + ')\n'
 output += 'tracepath: ' + build_tracepath.to_string() + '\n'
 
 output += '\nCONFIGURATION\n'
-output += 'Capatiblity (with libcap): ' + cap.to_string() + '\n'
+output += 'Capability (with libcap): ' + cap.to_string() + '\n'
 output += 'IDN (with libidn2): ' + idn.to_string() + '\n'
 output += 'I18N (with gettext): ' + gettext.to_string() + '\n'
 output += 'systemd: ' + install_systemd_units.to_string() + '\n'

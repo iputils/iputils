@@ -1,7 +1,7 @@
 # Copyright (c) Iputils Project, 2017-2021
 
 option('USE_CAP', type : 'boolean', value : true,
-	description : 'Capatiblity support (with libcap)')
+	description : 'Capability support (with libcap)')
 
 option('USE_IDN', type : 'boolean', value : true,
 	description : 'IDN support (with libidn2)')
