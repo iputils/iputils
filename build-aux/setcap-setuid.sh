@@ -11,7 +11,7 @@ if [ -n "$DESTDIR" ]; then
 fi
 
 _log() {
-	echo "$(basename $0): $1"
+	echo "$(basename "$0"): $1"
 }
 
 case "$perm_type" in
