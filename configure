@@ -6,7 +6,7 @@ echo "Using './$DIR' as the directory for build output"
 echo
 
 if [ $# -ne 0 ]; then
-	meson configure $DIR
+	meson configure "$DIR"
 	echo
 	echo 'Configuration can be changed like this:'
 	echo "  meson configure $DIR -Dprefix=/usr"
@@ -14,4 +14,4 @@ if [ $# -ne 0 ]; then
 	# See also: http://mesonbuild.com/howtox.html
 fi
 
-meson $DIR
+meson "$DIR"
