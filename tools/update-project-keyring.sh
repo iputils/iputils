@@ -8,10 +8,10 @@ keys="33C58482C402292D2E3C5C069709F90C3C96FFC8 $keys" # Thomas Deutschmann
 keys="2016FEA4858B1C36B32E833AC0DEC2EE72F33A5F $keys" # Petr Vorel
 keys="4AEE18F83AFDEB23 $keys" # GitHub (web-flow commit signing)
 
-out="$(dirname $0)/../Documentation/project-keys.gpg"
+out="$(dirname "$0")/../Documentation/project-keys.gpg"
 in="iputils-maintainer-keys.gpg"
 
-gpg --no-default-keyring --keyring $in --recv-keys $keys
-rm -f $out
-gpg --no-default-keyring --keyring $in --export --armor --output $out
-rm -f ~/.gnupg/$in
+gpg --no-default-keyring --keyring "$in" --recv-keys $keys
+rm -f "$out"
+gpg --no-default-keyring --keyring "$in" --export --armor --output "$out"
+rm -f ~/.gnupg/"$in"
