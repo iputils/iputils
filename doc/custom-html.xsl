@@ -217,7 +217,7 @@
      -->
     <xsl:with-param name="templateID">
       <xsl:call-template name="inline.charseq">
-	<xsl:with-param name="content" select="term[1]"/>
+        <xsl:with-param name="content" select="term[1]"/>
       </xsl:call-template>
     </xsl:with-param>
   </xsl:call-template>
