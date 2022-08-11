@@ -61,7 +61,7 @@ Assuming things are great push to github.
     git push origin master:master
     git push origin --tags
 
-Go to github https://github.com/iputils/iputils/releases and paste the
+Go to github https://github.com/iputils/iputils/releases and paste
 the content of CHANGES file for upcoming release to the text box.
 Add there also credit for all contributors:
 
