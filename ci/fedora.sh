@@ -15,7 +15,7 @@ yum -y install \
 yum -y install libidn2-devel docbook5-style-xsl || true
 
 # supported since CentOS 7 (CentOS 6 don't have python 3.5 meson dependency)
-if [ "$(basename $0)" = "centos.sh" ]; then
+if [ "$(basename "$0")" = "centos.sh" ]; then
 	# CentOS 7: provided by epel
 	yum -y install epel-release
 
