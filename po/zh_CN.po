@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2021-07-13 21:28+0000\n"
-"Last-Translator: Charles Lee <lchopn@gmail.com>\n"
+"PO-Revision-Date: 2022-08-23 11:19+0000\n"
+"Last-Translator: Yang Yulin <yylteam@icloud.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7.1\n"
+"X-Generator: Weblate 4.13\n"
 
 #: arping.c:123
 #, c-format
@@ -86,7 +86,7 @@ msgid "%d request(s)"
 msgstr "%d 请求"
 
 #: arping.c:312
-#, fuzzy, c-format
+#, c-format
 msgid "%s%d broadcast(s)"
 msgstr "%s%d 广播"
 
@@ -105,21 +105,21 @@ msgstr "%s 来自 "
 
 #: arping.c:416
 msgid "reply"
-msgstr ""
+msgstr "回复"
 
 #: arping.c:416
 msgid "request"
-msgstr ""
+msgstr "请求"
 
 #: arping.c:421
 #, c-format
 msgid "for %s "
-msgstr ""
+msgstr "对于 %s "
 
 #: arping.c:426
 #, c-format
 msgid "for "
-msgstr ""
+msgstr "对于 "
 
 #: arping.c:436
 #, c-format
@@ -129,7 +129,7 @@ msgstr " %ld.%03ld毫秒\n"
 #: arping.c:438
 #, c-format
 msgid " UNSOLICITED?\n"
-msgstr ""
+msgstr " 不请自来？\n"
 
 #: arping.c:589
 #, c-format
@@ -144,14 +144,14 @@ msgstr "网络接口 “%s” 不适用 ARP\n"
 #: arping.c:690
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
-msgstr ""
+msgstr "警告：使用默认广播地址。\n"
 
 #: arping.c:902 arping.c:905 arping.c:908 ping/ping.c:371 ping/ping.c:417
 #: ping/ping.c:425 ping/ping.c:468 ping/ping.c:471 ping/ping.c:474
 #: ping/ping.c:487 tracepath.c:474 tracepath.c:477 tracepath.c:480
 #: tracepath.c:501
 msgid "invalid argument"
-msgstr ""
+msgstr "无效参数"
 
 #: arping.c:974
 #, c-format
@@ -160,7 +160,7 @@ msgstr "设备 %s 不可用."
 
 #: arping.c:975
 msgid "Suitable device could not be determined. Please, use option -I."
-msgstr ""
+msgstr "无法确定合适的设备。请使用选项 -I。"
 
 #: arping.c:995
 msgid "WARNING: interface is ignored"
@@ -168,7 +168,7 @@ msgstr "警告：接口被忽略"
 
 #: arping.c:1014
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr ""
+msgstr "警告：setockopt(SO_DONTROUTE)"
 
 #: arping.c:1038
 #, c-format
@@ -183,11 +183,11 @@ msgstr "ARPING %s "
 #: arping.c:1048
 #, c-format
 msgid "from %s %s\n"
-msgstr ""
+msgstr "来自 %s %s\n"
 
 #: arping.c:1052
 msgid "no source address in not-DAD mode"
-msgstr ""
+msgstr "非 DAD 模式下没有源地址"
 
 #: clockdiff.c:242
 #, c-format
