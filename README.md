@@ -26,10 +26,10 @@ Build dependencies are listed in scripts in
 Localization is hosted on [Fedora Weblate](https://translate.fedoraproject.org/projects/iputils/iputils/).
 
 ## Tools are included in iputils
-- arping
-- clockdiff
-- ping
-- tracepath
+- [arping](https://github.com/iputils/iputils/blob/master/arping.c)
+- [clockdiff](https://github.com/iputils/iputils/blob/master/clockdiff.c)
+- [ping](https://github.com/iputils/iputils/tree/master/ping)
+- [tracepath](https://github.com/iputils/iputils/blob/master/tracepath.c)
 
 ## Tools removed from iputils
 
