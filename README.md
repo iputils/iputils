@@ -15,12 +15,12 @@ Configuration can be adjusted (prefix, what is being build, etc.), see
 [`meson.build`](https://github.com/iputils/iputils/blob/master/meson.build).
 
 Build dependencies are listed in scripts in
-[`ci` directory](https://github.com/iputils/iputils/tree/master/ci).
+[ci directory](https://github.com/iputils/iputils/tree/master/ci).
 
 ## Supported libc
-- glibc
-- uClibc
-- musl
+- [glibc](https://www.gnu.org/software/libc/)
+- [uClibc-ng](https://uclibc-ng.org/)
+- [musl](https://musl.libc.org/)
 
 ## Localization
 Localization is hosted on [Fedora Weblate](https://translate.fedoraproject.org/projects/iputils/iputils/).
