@@ -3,6 +3,20 @@
 
 The iputils package is set of small useful utilities for Linux networking.
 
+## Installation
+
+```
+$ ./configure && meson build
+# cd builddir && meson install
+```
+
+Configuration can be adjusted (prefix, what is being build, etc.), see
+[`meson_options.txt`](https://github.com/iputils/iputils/blob/master/meson.build),
+[`meson.build`](https://github.com/iputils/iputils/blob/master/meson.build).
+
+Build dependencies are listed in scripts in
+[`ci` directory](https://github.com/iputils/iputils/tree/master/ci).
+
 ## Supported libc
 - glibc
 - uClibc
