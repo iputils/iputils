@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
 "PO-Revision-Date: 2022-11-24 08:14+0000\n"
-"Last-Translator: Qiyu Yan <yanqiyu01@gmail.com>\n"
+"Last-Translator: yangyangdaji <1504305527@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -1259,8 +1259,7 @@ msgstr ", 耗时 %ld 毫秒"
 #: ping/ping_common.c:916
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
-"rtt 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:924
 #, c-format
