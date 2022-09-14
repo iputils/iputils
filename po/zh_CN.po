@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2022-08-23 11:19+0000\n"
-"Last-Translator: Yang Yulin <yylteam@icloud.com>\n"
+"PO-Revision-Date: 2022-09-14 03:39+0000\n"
+"Last-Translator: Qiyu Yan <yanqiyu01@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Weblate 4.14\n"
 
 #: arping.c:123
 #, c-format
@@ -417,7 +417,7 @@ msgstr "没有路由（可达）"
 #: ping/ping6_common.c:425
 #, c-format
 msgid "Administratively prohibited"
-msgstr ""
+msgstr "已被管理员禁止"
 
 #: ping/ping6_common.c:428
 #, fuzzy, c-format
@@ -814,7 +814,7 @@ msgstr ""
 #: ping/ping.c:1068
 #, c-format
 msgid "\t%ld absolute not-standard"
-msgstr ""
+msgstr "\t%ld 绝对非标准"
 
 #: ping/ping.c:1070
 #, c-format
@@ -1008,7 +1008,7 @@ msgstr ""
 #: ping/ping.c:1246
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr ""
+msgstr "参数问题：指针=%u\n"
 
 #: ping/ping.c:1252
 #, c-format
@@ -1028,7 +1028,7 @@ msgstr "信息请求\n"
 #: ping/ping.c:1264
 #, c-format
 msgid "Information Reply\n"
-msgstr "应答信息\n"
+msgstr "回答信息\n"
 
 #: ping/ping.c:1269
 #, c-format
