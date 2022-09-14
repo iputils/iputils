@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
 "PO-Revision-Date: 2022-09-14 03:39+0000\n"
-"Last-Translator: Qiyu Yan <yanqiyu01@gmail.com>\n"
+"Last-Translator: yangyangdaji <1504305527@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -291,7 +291,7 @@ msgstr ""
 #: ping/node_info.c:346 ping/node_info.c:388 ping/ping6_common.c:296
 #: ping/ping.c:455 ping/ping.c:518 ping/ping.c:915
 msgid "memory allocation failed"
-msgstr ""
+msgstr "内存分配错误"
 
 #: ping/node_info.c:358
 #, c-format
@@ -390,7 +390,7 @@ msgid "PING %s(%s) "
 msgstr ""
 
 #: ping/ping6_common.c:396
-#, fuzzy, c-format
+#, c-format
 msgid ", flow 0x%05x, "
 msgstr ", flow 0x%05x, "
 
@@ -420,9 +420,9 @@ msgid "Administratively prohibited"
 msgstr "已被管理员禁止"
 
 #: ping/ping6_common.c:428
-#, fuzzy, c-format
+#, c-format
 msgid "Beyond scope of source address"
-msgstr "找源的地址范围外"
+msgstr "超出源的地址范围外"
 
 #: ping/ping6_common.c:431
 #, c-format
@@ -544,7 +544,7 @@ msgid "From %s icmp_seq=%u "
 msgstr "来自 %s icmp_seq=%u "
 
 #: ping/ping6_common.c:668 ping/ping.c:1480
-#, fuzzy, c-format
+#, c-format
 msgid " icmp_seq=%u"
 msgstr " icmp_seq=%u"
 
@@ -584,7 +584,7 @@ msgid " unknown"
 msgstr " 未知"
 
 #: ping/ping6_common.c:804
-#, fuzzy, c-format
+#, c-format
 msgid " unknown code(%02x)"
 msgstr " 未知代码(%02x)"
 
@@ -638,7 +638,7 @@ msgstr ""
 
 #: ping/ping.c:321 ping/ping.c:348
 msgid "only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "只接受参数 -4 或 -6 中的一个"
 
 #: ping/ping.c:329 ping/ping.c:334
 msgid "only one of -T or -R may be used"
@@ -661,7 +661,7 @@ msgstr ""
 #: ping/ping.c:396
 #, c-format
 msgid "cannot copy: %s"
-msgstr ""
+msgstr "无法打开 %s"
 
 #: ping/ping.c:405
 #, c-format
@@ -676,7 +676,7 @@ msgstr "不能将 preload 设置到 3 以上的 %d"
 #: ping/ping.c:436
 #, c-format
 msgid "invalid -M argument: %s"
-msgstr ""
+msgstr "无效参数：%s"
 
 #: ping/ping.c:493
 msgid "bad linger time"
@@ -704,11 +704,10 @@ msgid "warning: QOS sockopts"
 msgstr ""
 
 #: ping/ping.c:740
-#, fuzzy
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
-msgstr "你想要广播 ping 吗？是的话加上参数 -b，如不是则检查你的本地防火墙规则"
+msgstr "您想要 ping 广播地址吗？若是则加上参数 -b，否则检查你的本地防火墙规则"
 
 #: ping/ping.c:741
 #, c-format
@@ -771,7 +770,7 @@ msgid "%zu(%zu) bytes of data.\n"
 msgstr "%zu(%zu) 字节的数据。\n"
 
 #: ping/ping.c:946
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "NOP"
@@ -794,7 +793,7 @@ msgid "\t(same route)"
 msgstr "\t(同一路由)"
 
 #: ping/ping.c:1000
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "RR: "
@@ -916,9 +915,9 @@ msgid "Destination Net Prohibited\n"
 msgstr "目标网络被禁止。\n"
 
 #: ping/ping.c:1166
-#, fuzzy, c-format
+#, c-format
 msgid "Destination Host Prohibited\n"
-msgstr "被目标主机禁止\n"
+msgstr "目标主机被禁止\n"
 
 #: ping/ping.c:1169
 #, c-format
@@ -1095,7 +1094,7 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr ""
 
 #: ping/ping_common.c:465
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %u"
 msgstr "警告：无法安装套接字过滤器"
 
@@ -1128,7 +1127,7 @@ msgid "%d bytes from %s:"
 msgstr "%d 字节，来自 %s:"
 
 #: ping/ping_common.c:798
-#, fuzzy, c-format
+#, c-format
 msgid " ttl=%d"
 msgstr " ttl=%d"
 
