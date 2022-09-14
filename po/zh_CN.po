@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2022-09-14 03:39+0000\n"
+"PO-Revision-Date: 2022-09-15 04:19+0000\n"
 "Last-Translator: yangyangdaji <1504305527@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
@@ -661,7 +661,7 @@ msgstr ""
 #: ping/ping.c:396
 #, c-format
 msgid "cannot copy: %s"
-msgstr "无法打开 %s"
+msgstr "无法打开：%s"
 
 #: ping/ping.c:405
 #, c-format
@@ -1027,7 +1027,7 @@ msgstr "信息请求\n"
 #: ping/ping.c:1264
 #, c-format
 msgid "Information Reply\n"
-msgstr "回答信息\n"
+msgstr "应答信息\n"
 
 #: ping/ping.c:1269
 #, c-format
@@ -1096,7 +1096,7 @@ msgstr ""
 #: ping/ping_common.c:465
 #, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "警告：无法安装套接字过滤器"
+msgstr "警告：无法安装套接字过滤器：%u"
 
 #: ping/ping_common.c:467
 msgid "WARNING: SO_MARK not supported"
@@ -1223,7 +1223,7 @@ msgstr ", 耗时 %ld 毫秒"
 #: ping/ping_common.c:909
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
+msgstr "rtt 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:917
 #, c-format
