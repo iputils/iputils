@@ -265,7 +265,7 @@ main(int argc, char **argv)
 	socket_st sock6 = { .fd = -1 };
 	char *target;
 	char *outpack_fill = NULL;
-	struct ping_rts rts = {
+	static struct ping_rts rts = {
 		.interval = 1000,
 		.preload = 1,
 		.lingertime = MAXWAIT * 1000,
