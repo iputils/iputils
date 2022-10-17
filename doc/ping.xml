@@ -24,7 +24,7 @@ xml:id="man.ping">
     <cmdsynopsis sepchar=" ">
       <command>ping</command>
       <arg choice="opt" rep="norepeat">
-        <option>-aAbBdDfhLnOqrRUvV46</option>
+        <option>-aAbBdDefhLnOqrRUvV46</option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-c
@@ -202,6 +202,22 @@ xml:id="man.ping">
           <para>Set the SO_DEBUG option on the socket being used.
           Essentially, this socket option is not used by Linux
           kernel.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-e</option>
+        </term>
+        <listitem>
+          <para>Set identification field of the
+          <emphasis remap="I">ECHO_REQUEST</emphasis>.
+          Setting identification to 0 implies
+          <emphasis remap="I">raw socket</emphasis>
+          option since setting zero identification on
+          <emphasis remap="I">ICMP datagram sockets</emphasis> isn't
+          supported right now. The value of the field may be printed with
+          <option>-v</option> option.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -962,10 +978,12 @@ xml:id="man.ping">
     <para>
     <command>ping</command> requires CAP_NET_RAW capability to be
     executed 1) if the program is used for non-echo queries (See
-    <option>-N</option> option), or 2) if kernel does not support
+    <option>-N</option> option) or set zero identification field of
+    the <emphasis remap="I">ECHO_REQUEST</emphasis> (See
+    <option>-e</option>), or 2) if kernel does not support
     ICMP datagram sockets, or 3) if the user is not allowed to
-    create an ICMP echo socket. The program may be used as set-uid
-    root.</para>
+    create an ICMP echo socket. The program may be used as set-uid root.
+    </para>
   </refsection>
 
   <refsection xml:id="availability">

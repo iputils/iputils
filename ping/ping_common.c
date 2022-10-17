@@ -82,6 +82,8 @@ void usage(void)
 		"  -b                 allow pinging broadcast\n"
 		"  -R                 record route\n"
 		"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|tsprespec>\n"
+		"  -e <identifier>    define identifier for ping session, default is random for\n"
+		"                     SOCK_RAW and kernel defined for SOCK_DGRAM\n"
 		"\nIPv6 options:\n"
 		"  -6                 use IPv6\n"
 		"  -F <flowlabel>     define flow label, default is random\n"
@@ -530,7 +532,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 			*p++ = i;
 	}
 
-	if (sock->socktype == SOCK_RAW)
+	if (sock->socktype == SOCK_RAW && rts->ident == -1)
 		rts->ident = rand() & IDENTIFIER_MAX;
 
 	set_signal(SIGINT, sigexit);
@@ -793,6 +795,9 @@ restamp:
 
 		if (pr_reply)
 			pr_reply(icmph, cc);
+
+		if (rts->opt_verbose && rts->ident != -1)
+			printf(_(" ident=%d"), ntohs(rts->ident));
 
 		if (hops >= 0)
 			printf(_(" ttl=%d"), hops);
