@@ -66,6 +66,7 @@
 #define	MAXWAIT		10		/* max seconds to wait for response */
 #define MININTERVAL	10		/* Minimal interpacket gap */
 #define MINUSERINTERVAL	2		/* Minimal allowed interval for non-root */
+#define IDENTIFIER_MAX	0xFFFF		/* max unsigned 2-byte value */
 
 #define SCHINT(a)	(((a) <= MININTERVAL) ? MININTERVAL : (a))
 
