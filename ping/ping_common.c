@@ -56,6 +56,9 @@ void usage(void)
 		"  -c <count>         stop after <count> replies\n"
 		"  -D                 print timestamps\n"
 		"  -d                 use SO_DEBUG socket option\n"
+		"  -e <identifier>    define identifier for ping session, default is random for\n"
+		"                     SOCK_RAW and kernel defined for SOCK_DGRAM\n"
+		"                     Imply using SOCK_RAW (for IPv4 only for identifier 0)\n"
 		"  -f                 flood ping\n"
 		"  -h                 print help and exit\n"
 		"  -I <interface>     either interface name or address\n"
@@ -530,7 +533,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 			*p++ = i;
 	}
 
-	if (sock->socktype == SOCK_RAW)
+	if (sock->socktype == SOCK_RAW && rts->ident == -1)
 		rts->ident = rand() & IDENTIFIER_MAX;
 
 	set_signal(SIGINT, sigexit);
@@ -793,6 +796,9 @@ restamp:
 
 		if (pr_reply)
 			pr_reply(icmph, cc);
+
+		if (rts->opt_verbose && rts->ident != -1)
+			printf(_(" ident=%d"), ntohs(rts->ident));
 
 		if (hops >= 0)
 			printf(_(" ttl=%d"), hops);

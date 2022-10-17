@@ -278,6 +278,7 @@ main(int argc, char **argv)
 		.tmin = LONG_MAX,
 		.pipesize = -1,
 		.datalen = DEFDATALEN,
+		.ident = -1,
 		.screen_width = INT_MAX,
 #ifdef HAVE_LIBCAP
 		.cap_raw = CAP_NET_RAW,
@@ -314,7 +315,7 @@ main(int argc, char **argv)
 		hints.ai_family = AF_INET6;
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:dDfi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4be:RT:" "6F:N:" "aABc:dDfi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -324,6 +325,10 @@ main(int argc, char **argv)
 			break;
 		case 'b':
 			rts.broadcast_pings = 1;
+			break;
+		case 'e':
+			rts.ident = htons(strtoul_or_err(optarg, _("invalid argument"),
+							 0, IDENTIFIER_MAX));
 			break;
 		case 'R':
 			if (rts.opt_timestamp)
@@ -524,17 +529,38 @@ main(int argc, char **argv)
 
 	/* Create sockets */
 	enable_capability_raw();
-	if (hints.ai_family != AF_INET6)
+
+	if (hints.ai_family != AF_INET6) {
+
+		/*
+		 * Current Linux kernel 6.0 doesn't support on SOCK_DGRAM setting
+		 * ident == 0 on IPv4.
+		 */
+		if (!rts.ident)
+			hints.ai_socktype = SOCK_RAW;
+
 		create_socket(&rts, &sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP,
 			      hints.ai_family == AF_INET);
+	}
+
 	if (hints.ai_family != AF_INET) {
+
+		/*
+		 * Current Linux kernel 6.0 doesn't support on SOCK_DGRAM any ident
+		 * setting on IPv6.
+		 */
+		if (rts.ident >= 0)
+			hints.ai_socktype = SOCK_RAW;
+
 		create_socket(&rts, &sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6, sock4.fd == -1);
+
 		/* This may not be needed if both protocol versions always had the same value, but
 		 * since I don't know that, it's better to be safe than sorry. */
 		rts.pmtudisc = rts.pmtudisc == IP_PMTUDISC_DO	? IPV6_PMTUDISC_DO   :
 			       rts.pmtudisc == IP_PMTUDISC_DONT ? IPV6_PMTUDISC_DONT :
 			       rts.pmtudisc == IP_PMTUDISC_WANT ? IPV6_PMTUDISC_WANT : rts.pmtudisc;
 	}
+
 	disable_capability_raw();
 
 	/* Limit address family on single-protocol systems */
@@ -809,9 +835,14 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, "IP_MTU_DISCOVER");
 	}
 
-	if (rts->opt_strictsource &&
-	    bind(sock->fd, (struct sockaddr *)&rts->source, sizeof rts->source) == -1)
-		error(2, errno, "bind");
+	int set_ident = rts->ident > 0 && sock->socktype == SOCK_DGRAM;
+	if (set_ident)
+		rts->source.sin_port = rts->ident;
+
+	if (rts->opt_strictsource || set_ident) {
+		if (bind(sock->fd, (struct sockaddr *)&rts->source, sizeof rts->source) == -1)
+			error(2, errno, "bind");
+	}
 
 	if (sock->socktype == SOCK_RAW) {
 		struct icmp_filter filt;

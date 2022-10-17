@@ -24,7 +24,7 @@ xml:id="man.ping">
     <cmdsynopsis sepchar=" ">
       <command>ping</command>
       <arg choice="opt" rep="norepeat">
-        <option>-aAbBdDfhLnOqrRUvV46</option>
+        <option>-aAbBdDefhLnOqrRUvV46</option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-c
@@ -202,6 +202,19 @@ xml:id="man.ping">
           <para>Set the SO_DEBUG option on the socket being used.
           Essentially, this socket option is not used by Linux
           kernel.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-e</option>
+        </term>
+        <listitem>
+          <para>Set the identification field of ECHO_REQUEST.
+          Implies using <emphasis remap="I">raw socket</emphasis>,
+          for IPv4 only for id 0 (not supported on
+          <emphasis remap="I">ICMP datagram socket</emphasis>).
+          The value of the field may be printed with <option>-v</option> option.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -961,11 +974,13 @@ xml:id="man.ping">
     </info>
     <para>
     <command>ping</command> requires CAP_NET_RAW capability to be
-    executed 1) if the program is used for non-echo queries (See
-    <option>-N</option> option), or 2) if kernel does not support
-    ICMP datagram sockets, or 3) if the user is not allowed to
-    create an ICMP echo socket. The program may be used as set-uid
-    root.</para>
+    executed 1) if the program is used for non-echo queries (see
+    <option>-N</option> option) or set the identification field of
+    ECHO_REQUEST (for IPv4 only when set to 0; see <option>-e</option>), or
+    2) if kernel does not support ICMP datagram sockets, or
+    3) if the user is not allowed to create an ICMP echo socket.
+    The program may be used as set-uid root.
+    </para>
   </refsection>
 
   <refsection xml:id="availability">
