@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2021-12-07 20:09+0000\n"
-"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
+"PO-Revision-Date: 2022-10-19 23:20+0000\n"
+"Last-Translator: Robert Scheck <redhat@linuxnetz.de>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/de/>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: arping.c:123
 #, c-format
@@ -38,6 +38,22 @@ msgid ""
 "  -i <interval> set interval between packets (default: 1 second)\n"
 "  -I <device>   which ethernet device to use"
 msgstr ""
+"\n"
+"Verwendung:\n"
+"  arping [Optionen] <Ziel>\n"
+"\n"
+"Optionen:\n"
+"  -f             Nach erster Antwort beenden\n"
+"  -q             Stiller Modus\n"
+"  -b             Alle Pakete als Broadcast, nicht als Unicast, versenden\n"
+"  -D             Modus zur Erkennung doppelter Adressen\n"
+"  -U             Unaufgefordertes ARP-Antworten, aktualisiert die Nachbarn\n"
+"  -A             Unaufgeforderte ARP-Anfragen, aktualisiert die Nachbarn\n"
+"  -V             Version ausgeben und beenden\n"
+"  -c <Anzahl>    Anzahl der zu sendenden Pakete\n"
+"  -w <Wartezeit> Maximale Wartezeit auf Antworten\n"
+"  -i <Intervall> Intervall zwischen den Paketen (Standard: 1 Sekunde)\n"
+"  -I <Gerät>     Zu verwendendes Ethernet-Gerät"
 
 #: arping.c:142
 #, c-format
@@ -49,10 +65,10 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <Quelle>   Quell-IP-Adresse\n"
-"  <Ziel> DNS-Name oder IP-Adresse\n"
+"  -s <Quelle>    Quell-IP-Adresse\n"
+"  <Ziel>         DNS-Name oder IP-Adresse\n"
 "\n"
-"Für mehr Details sehen Sie sich arping(8) an.\n"
+"Weitere Details in arping(8).\n"
 
 #: arping.c:305
 #, c-format
@@ -210,6 +226,24 @@ msgid ""
 "\n"
 "For more details see clockdiff(8).\n"
 msgstr ""
+"\n"
+"Verwendung:\n"
+"  clockdiff [Optionen] <Ziel>\n"
+"\n"
+"Optionen:\n"
+"                Ohne -o nur ICMP-Zeitstempel verwenden (siehe RFC0792, Seite "
+"16)\n"
+"  -o            IP-Zeitstempel und ICMP-Echo verwenden\n"
+"  -o1           Dreimaligen IP-Zeitstempel und ICMP-Echo verwenden\n"
+"  -T, --time-format <ctime|iso>\n"
+"                  Zu verwendendes Anzeigezeitformat, ctime ist der "
+"Standardwert\n"
+"  -I            Alias für --time-format=iso\n"
+"  -h, --help    Diese Hilfe anzeigen\n"
+"  -V, --version Version ausgeben und beenden\n"
+"  <Ziel>        DNS-Name oder IP-Adresse\n"
+"\n"
+"Weitere Details in clockdiff(8).\n"
 
 #: clockdiff.c:591
 msgid "measure: unknown failure"
@@ -364,7 +398,7 @@ msgstr "PING %s(%s) "
 #: ping/ping6_common.c:396
 #, c-format
 msgid ", flow 0x%05x, "
-msgstr ""
+msgstr ", flow 0x%05x, "
 
 #: ping/ping6_common.c:401 ping/ping.c:919
 #, c-format
@@ -429,7 +463,7 @@ msgstr "Zeit überschritten: "
 #: ping/ping6_common.c:449
 #, c-format
 msgid "Hop limit"
-msgstr ""
+msgstr "Hop-Limit"
 
 #: ping/ping6_common.c:451
 #, c-format
@@ -1200,12 +1234,12 @@ msgstr ""
 #: ping/ping_common.c:917
 #, c-format
 msgid "%spipe %d"
-msgstr ""
+msgstr "%spipe %d"
 
 #: ping/ping_common.c:924
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr ""
+msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
 #: ping/ping_common.c:942
 #, c-format
@@ -1215,7 +1249,7 @@ msgstr "%ld/%ld Pakete, %d%% Verlust"
 #: ping/ping_common.c:947
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
+msgstr ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: tracepath.c:217
 #, c-format
@@ -1303,6 +1337,22 @@ msgid ""
 "\n"
 "For more details see tracepath(8).\n"
 msgstr ""
+"\n"
+"Verwendung:\n"
+"  tracepath [Optionen] <Ziel>\n"
+"\n"
+"Options:\n"
+"  -4             IPv4 verwenden\n"
+"  -6             IPv6 verwenden\n"
+"  -b             Namen und IP-Adresse ausgeben\n"
+"  -l <Länge>     Paketlänge <Länge> verwenden\n"
+"  -m <Hops>      Maximale Anzahl der Hops\n"
+"  -n             Keine DNS-Namensauflösung\n"
+"  -p <Port>      Zielport <Port> verwenden\n"
+"  -V             Version ausgeben und beenden\n"
+"  <Ziel>         DNS-Name oder IP-Adresse\n"
+"\n"
+"Weitere Details in tracepath(8).\n"
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
