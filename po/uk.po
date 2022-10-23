@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2021-12-07 20:09+0000\n"
-"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
+"PO-Revision-Date: 2022-10-23 20:15+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.9.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: arping.c:123
 #, c-format
@@ -54,8 +54,8 @@ msgstr ""
 "  -V            вивести дані щодо версії і завершити роботу\n"
 "  -c <к-ть>     кількість пакетів, які слід надіслати\n"
 "  -w <час>      гранична тривалість очікування на відповідь\n"
-"  -i <інтервал> встановити інтервал між пакетами (типове значення: 1 "
-"секунда)\n"
+"  -i <інтервал> встановити інтервал між пакетами (типове значення: 1 секунда)"
+"\n"
 "  -I <пристрій> пристрій ethernet, яким слід скористатися"
 
 #: arping.c:142
@@ -244,8 +244,8 @@ msgstr ""
 "  -V            вивести дані щодо версії і завершити роботу\n"
 "  <призначення> dns-назва або ip-адреса\n"
 "\n"
-"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо "
-"clockdiff(8).\n"
+"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо clockdiff(8)."
+"\n"
 
 #: clockdiff.c:591
 msgid "measure: unknown failure"
@@ -385,8 +385,7 @@ msgstr "неможливо вимкнути зворотну петлю несп
 
 #: ping/ping6_common.c:349
 msgid "can't set multicast hop limit"
-msgstr ""
-"Не вдалося встановити обмеження перестрибувань неспрямованої трансляції"
+msgstr "Не вдалося встановити обмеження перестрибувань неспрямованої трансляції"
 
 #: ping/ping6_common.c:352
 msgid "can't set unicast hop limit"
@@ -663,8 +662,7 @@ msgstr "помилкове значення TOS: %s"
 #: ping/ping.c:252
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr ""
-"десяткове значення бітів TOS має належати до діапазону від 0 до 255: %d"
+msgstr "десяткове значення бітів TOS має належати до діапазону від 0 до 255: %d"
 
 #: ping/ping.c:321 ping/ping.c:348
 msgid "only one -4 or -6 option may be specified"
@@ -1387,8 +1385,8 @@ msgstr ""
 "  -V             вивести дані щодо версії і завершити роботу\n"
 "  <призначення>  назва dns або ip-адреса\n"
 "\n"
-"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо "
-"tracepath(8).\n"
+"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо tracepath(8)."
+"\n"
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
