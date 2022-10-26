@@ -201,6 +201,7 @@ static double ping_strtod(const char *str, const char *err_msg)
  err:
 	error(2, errno, "%s: %s", err_msg, str);
 	abort();	/* cannot be reached, above error() will exit */
+
 	return 0.0;
 }
 
@@ -224,6 +225,7 @@ static int parseflow(char *str)
 
 	if (val & ~IPV6_FLOWINFO_FLOWLABEL)
 		error(2, 0, _("flow value is greater than 20 bits: %s"), str);
+
 	return (val);
 }
 
@@ -248,6 +250,7 @@ static int parsetos(char *str)
 
 	if (tos > TOS_MAX)
 		error(2, 0, _("the decimal value of TOS bits must be in range 0-255: %d"), tos);
+
 	return (tos);
 }
 
@@ -544,9 +547,9 @@ main(int argc, char **argv)
 
 	/* Set socket options */
 	if (rts.settos)
-		set_socket_option(&sock4, IPPROTO_IP, IP_TOS, &rts.settos, sizeof rts.settos);
+		set_socket_option(&sock4, IPPROTO_IP, IP_TOS, &rts.settos, sizeof(rts.settos));
 	if (rts.tclass)
-		set_socket_option(&sock6, IPPROTO_IPV6, IPV6_TCLASS, &rts.tclass, sizeof rts.tclass);
+		set_socket_option(&sock6, IPPROTO_IPV6, IPV6_TCLASS, &rts.tclass, sizeof(rts.tclass));
 
 	/* getaddrinfo fails to indicate a scopeid when not used in dual-stack mode.
 	 * Work around by always using dual-stack name resolution.
@@ -745,8 +748,9 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			} else if ((errno == EHOSTUNREACH || errno == ENETUNREACH) && ai->ai_next) {
 				close(probe_fd);
 				return -1;
-			} else
+			} else {
 				error(2, errno, "connect");
+			}
 		}
 		alen = sizeof(rts->source);
 		if (getsockname(probe_fd, (struct sockaddr *)&rts->source, &alen) == -1)
@@ -923,6 +927,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	hold = main_loop(rts, &ping4_func_set, sock, packet, packlen);
 	free(packet);
+
 	return hold;
 }
 
