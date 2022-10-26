@@ -214,8 +214,9 @@ static int parseflow(char *str)
 	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
 		cp = str + 2;
 		val = (int)strtoul(cp, &ep, 16);
-	} else
+	} else {
 		val = (int)strtoul(str, &ep, 10);
+	}
 
 	/* doesn't look like decimal or hex, eh? */
 	if (*ep != '\0')
@@ -237,8 +238,9 @@ static int parsetos(char *str)
 	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
 		cp = str + 2;
 		tos = (int)strtol(cp, &ep, 16);
-	} else
+	} else {
 		tos = (int)strtol(str, &ep, 10);
+	}
 
 	/* doesn't look like decimal or hex, eh? */
 	if (*ep != '\0')
