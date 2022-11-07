@@ -82,6 +82,36 @@ ping_func_set_st ping4_func_set = {
 #define	NROUTES		9		/* number of record route slots */
 #define TOS_MAX		255		/* 8-bit TOS field */
 
+#define CASE_TYPE(x) case x: return #x;
+
+static char *str_family(int family)
+{
+	switch (family) {
+		CASE_TYPE(AF_UNSPEC)
+		CASE_TYPE(AF_INET)
+		CASE_TYPE(AF_INET6)
+	default:
+		error(2, 0, _("unknown protocol family: %d"), family);
+	}
+
+	return "";
+}
+
+static char *str_socktype(int socktype)
+{
+	if (!socktype)
+		return "0";
+
+	switch (socktype) {
+		CASE_TYPE(SOCK_DGRAM)
+		CASE_TYPE(SOCK_RAW)
+	default:
+		error(2, 0, _("unknown sock type: %d"), socktype);
+	}
+
+	return "";
+}
+
 static void create_socket(struct ping_rts *rts, socket_st *sock, int family,
 			  int socktype, int protocol, int requisite)
 {
@@ -571,6 +601,13 @@ main(int argc, char **argv)
 			hints.ai_family = AF_INET;
 	}
 
+	if (rts.opt_verbose)
+		printf("sock4.fd: %d (socktype: %s), sock6.fd: %d (socktype: %s),"
+			   " hints.ai_family: %s\n",
+			   sock4.fd, str_socktype(sock4.socktype),
+			   sock6.fd, str_socktype(sock6.socktype),
+			   str_family(hints.ai_family));
+
 	/* Set socket options */
 	if (rts.settos)
 		set_socket_option(&sock4, IPPROTO_IP, IP_TOS, &rts.settos, sizeof(rts.settos));
@@ -599,6 +636,11 @@ main(int argc, char **argv)
 		error(2, 0, "%s: %s", target, gai_strerror(ret_val));
 
 	for (ai = result; ai; ai = ai->ai_next) {
+		if (rts.opt_verbose)
+			printf("ai->ai_family: %s, ai->ai_canonname: %s\n",
+				   str_family(ai->ai_family),
+				   ai->ai_canonname ? ai->ai_canonname : "");
+
 		if (target_ai_family != AF_UNSPEC &&
 			target_ai_family != ai->ai_family) {
 			if (!ai->ai_next) {
