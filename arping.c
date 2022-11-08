@@ -918,6 +918,7 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("arping"));
+			print_config();
 			exit(0);
 		case 'h':
 		case '?':

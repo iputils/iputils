@@ -498,6 +498,7 @@ static void parse_opts(struct run_state *ctl, int argc, char **argv)
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("clockdiff"));
+			print_config();
 			exit(0);
 		case 'h':
 			usage(0);

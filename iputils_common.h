@@ -71,5 +71,6 @@ extern unsigned long strtoul_or_err(char const *const str, char const *const err
 extern void iputils_srand(void);
 extern void timespecsub(struct timespec *a, struct timespec *b,
 			struct timespec *res);
+void print_config(void);
 
 #endif /* IPUTILS_COMMON_H */

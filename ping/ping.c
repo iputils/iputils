@@ -530,6 +530,7 @@ main(int argc, char **argv)
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("ping"));
+			print_config();
 			exit(0);
 		case 'w':
 			rts.deadline = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);

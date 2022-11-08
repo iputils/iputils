@@ -161,3 +161,52 @@ void timespecsub(struct timespec *a, struct timespec *b, struct timespec *res)
 		res->tv_nsec += 1000000000L;
 	}
 }
+
+void print_config(void)
+{
+	printf(
+
+	"libcap: "
+#ifdef HAVE_LIBCAP
+	"yes"
+#else
+	"no"
+#endif
+
+	", IDN: "
+#ifdef USE_IDN
+	"yes"
+#else
+	"no"
+#endif
+
+	", NLS: "
+#ifdef ENABLE_NLS
+	"yes"
+#else
+	"no"
+#endif
+
+	", error.h: "
+#ifdef HAVE_ERROR_H
+	"yes"
+#else
+	"no"
+#endif
+
+	", getrandom(): "
+#ifdef HAVE_GETRANDOM
+	"yes"
+#else
+	"no"
+#endif
+
+	", __fpending(): "
+#ifdef HAVE___FPENDING
+	"yes"
+#else
+	"no"
+#endif
+
+	"\n");
+}

@@ -481,6 +481,7 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 			printf(IPUTILS_VERSION("tracepath"));
+			print_config();
 			return 0;
 		default:
 			usage();
