@@ -210,9 +210,8 @@ xml:id="man.ping">
         </term>
         <listitem>
           <para>Set the identification field of ECHO_REQUEST.
-          Implies using <emphasis remap="I">raw socket</emphasis>,
-          for IPv4 only for id 0 (not supported on
-          <emphasis remap="I">ICMP datagram socket</emphasis>).
+          Value 0 implies using <emphasis remap="I">raw socket</emphasis>
+          (not supported on <emphasis remap="I">ICMP datagram socket</emphasis>).
           The value of the field may be printed with <option>-v</option> option.
           </para>
         </listitem>
@@ -975,8 +974,8 @@ xml:id="man.ping">
     <para>
     <command>ping</command> requires CAP_NET_RAW capability to be
     executed 1) if the program is used for non-echo queries (see
-    <option>-N</option> option) or set the identification field of
-    ECHO_REQUEST (for IPv4 only when set to 0; see <option>-e</option>), or
+    <option>-N</option> option) or when the identification field set to 0
+    for ECHO_REQUEST (see <option>-e</option>), or
     2) if kernel does not support ICMP datagram sockets, or
     3) if the user is not allowed to create an ICMP echo socket.
     The program may be used as set-uid root.

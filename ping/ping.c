@@ -345,7 +345,7 @@ main(int argc, char **argv)
 		hints.ai_family = AF_INET6;
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4be:RT:" "6F:N:" "aABc:dDfi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:dDe:fi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -560,28 +560,19 @@ main(int argc, char **argv)
 	/* Create sockets */
 	enable_capability_raw();
 
+	/*
+	 * Current Linux kernel 6.0 doesn't support on SOCK_DGRAM setting
+	 * ident == 0
+	 */
+	if (!rts.ident)
+		hints.ai_socktype = SOCK_RAW;
+
 	if (hints.ai_family != AF_INET6) {
-
-		/*
-		 * Current Linux kernel 6.0 doesn't support on SOCK_DGRAM setting
-		 * ident == 0 on IPv4.
-		 */
-		if (!rts.ident)
-			hints.ai_socktype = SOCK_RAW;
-
 		create_socket(&rts, &sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP,
 			      hints.ai_family == AF_INET);
 	}
 
 	if (hints.ai_family != AF_INET) {
-
-		/*
-		 * Current Linux kernel 6.0 doesn't support on SOCK_DGRAM any ident
-		 * setting on IPv6.
-		 */
-		if (rts.ident >= 0)
-			hints.ai_socktype = SOCK_RAW;
-
 		create_socket(&rts, &sock6, AF_INET6, hints.ai_socktype, IPPROTO_ICMPV6, sock4.fd == -1);
 
 		/* This may not be needed if both protocol versions always had the same value, but

@@ -283,9 +283,14 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, "IPV6_MTU_DISCOVER");
 	}
 
-	if (rts->opt_strictsource &&
-	    bind(sock->fd, (struct sockaddr *)&rts->source6, sizeof rts->source6) == -1)
-		error(2, errno, "bind icmp socket");
+	int set_ident = rts->ident > 0 && sock->socktype == SOCK_DGRAM;
+	if (set_ident)
+		rts->source6.sin6_port = rts->ident;
+
+	if (rts->opt_strictsource || set_ident) {
+		if (bind(sock->fd, (struct sockaddr *)&rts->source6, sizeof rts->source6) == -1)
+			error(2, errno, "bind icmp socket");
+	}
 
 	if ((ssize_t)rts->datalen >= (ssize_t)sizeof(struct timeval) && (rts->ni.query < 0)) {
 		/* can we time transfer */
