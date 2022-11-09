@@ -1,3 +1,5 @@
+[ type description here; PLEASE REMOVE THIS LINE AND THE LINES BELOW BEFORE SUBMITTING THIS ISSUE ]
+
 If reporting a bug, please document how to reproduce it.
 
 Please always test the latest master branch.

@@ -1,3 +1,5 @@
+[ type description here; PLEASE REMOVE THIS LINE AND THE LINES BELOW BEFORE SUBMITTING THIS PULL REQUEST ]
+
 If fixing a bug, please document how to reproduce it.
 
 Finding the commit which introduced the problem helps (bisecting). Add Fixme: tag.
