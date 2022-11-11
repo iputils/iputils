@@ -644,7 +644,7 @@ main(int argc, char **argv)
 
 	for (ai = result; ai; ai = ai->ai_next) {
 		if (rts.opt_verbose)
-			printf("ai->ai_family: %s, ai->ai_canonname: %s\n",
+			printf("ai->ai_family: %s, ai->ai_canonname: '%s'\n",
 				   str_family(ai->ai_family),
 				   ai->ai_canonname ? ai->ai_canonname : "");
 
