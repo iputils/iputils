@@ -178,13 +178,19 @@ static void create_socket(struct ping_rts *rts, socket_st *sock, int family,
 		sock->fd = socket(family, SOCK_RAW, protocol);
 	}
 
-	if (sock->fd == -1) {
-		if (requisite || rts->opt_verbose)
-			error(0, errno, "socket");
-		if (requisite)
-			exit(2);
-	} else
-		sock->socktype = socktype;
+	sock->socktype = socktype;
+
+	/* valid socket */
+	if (sock->fd != -1)
+		return;
+
+	/* failed to create socket */
+
+	if (requisite || rts->opt_verbose)
+		error(0, errno, "socket");
+
+	if (requisite)
+		exit(2);
 }
 
 static void set_socket_option(socket_st *sock, int level, int optname,
