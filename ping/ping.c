@@ -564,8 +564,12 @@ main(int argc, char **argv)
 	 * Current Linux kernel 6.0 doesn't support on SOCK_DGRAM setting
 	 * ident == 0
 	 */
-	if (!rts.ident)
+	if (!rts.ident) {
+		if (rts.opt_verbose)
+			error(0, 0, _("WARNING: ident 0 => forcing raw socket"));
+
 		hints.ai_socktype = SOCK_RAW;
+	}
 
 	if (hints.ai_family != AF_INET6) {
 		create_socket(&rts, &sock4, AF_INET, hints.ai_socktype, IPPROTO_ICMP,
