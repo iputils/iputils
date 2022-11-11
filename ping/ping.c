@@ -597,7 +597,7 @@ main(int argc, char **argv)
 	}
 
 	if (rts.opt_verbose)
-		printf("sock4.fd: %d (socktype: %s), sock6.fd: %d (socktype: %s),"
+		error(0, 0, "sock4.fd: %d (socktype: %s), sock6.fd: %d (socktype: %s),"
 			   " hints.ai_family: %s\n",
 			   sock4.fd, str_socktype(sock4.socktype),
 			   sock6.fd, str_socktype(sock6.socktype),
