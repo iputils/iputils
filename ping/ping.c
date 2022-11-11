@@ -186,11 +186,17 @@ static void create_socket(struct ping_rts *rts, socket_st *sock, int family,
 
 	/* failed to create socket */
 
-	if (requisite || rts->opt_verbose)
+	if (requisite || rts->opt_verbose) {
+		error(0, 0, "socktype: %s", str_socktype(socktype));
 		error(0, errno, "socket");
+	}
 
-	if (requisite)
+	if (requisite) {
+		if (socktype == SOCK_RAW && geteuid() != 0)
+			error(0, 0, _("=> missing cap_net_raw+p capability or setuid?"));
+
 		exit(2);
+	}
 }
 
 static void set_socket_option(socket_st *sock, int level, int optname,
