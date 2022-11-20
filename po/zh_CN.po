@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-17 22:24+0200\n"
-"PO-Revision-Date: 2022-09-15 04:19+0000\n"
+"PO-Revision-Date: 2022-11-22 01:20+0000\n"
 "Last-Translator: yangyangdaji <1504305527@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: arping.c:123
 #, c-format
@@ -192,7 +192,7 @@ msgstr "非 DAD 模式下没有源地址"
 #: clockdiff.c:242
 #, c-format
 msgid "Wrong timestamp %d\n"
-msgstr ""
+msgstr "错误的时间戳 %d\n"
 
 #: clockdiff.c:247
 #, c-format
@@ -202,7 +202,7 @@ msgstr "超过 %d 跃点数\n"
 #: clockdiff.c:272
 #, c-format
 msgid "wrong timestamps\n"
-msgstr ""
+msgstr "错误的时间戳\n"
 
 #: clockdiff.c:453
 #, c-format
@@ -243,7 +243,7 @@ msgstr ""
 
 #: clockdiff.c:591
 msgid "measure: unknown failure"
-msgstr ""
+msgstr "措施：未知故障"
 
 #: clockdiff.c:596
 #, c-format
@@ -253,7 +253,7 @@ msgstr "%s 已关闭"
 #: clockdiff.c:599
 #, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr ""
+msgstr "%s 以非标准格式传输的时间"
 
 #: clockdiff.c:602
 #, c-format
@@ -272,12 +272,12 @@ msgstr ""
 #: ping/node_info.c:168
 #, c-format
 msgid "Qtype conflict\n"
-msgstr ""
+msgstr "Qtype 冲突\n"
 
 #: ping/node_info.c:220
 #, c-format
 msgid "Subject type conflict\n"
-msgstr ""
+msgstr "主题类型冲突\n"
 
 #: ping/node_info.c:311
 #, c-format
@@ -286,7 +286,7 @@ msgstr "IDN 编码错误：%s"
 
 #: ping/node_info.c:322
 msgid "too long scope name"
-msgstr ""
+msgstr "作用域名称太长"
 
 #: ping/node_info.c:346 ping/node_info.c:388 ping/ping6_common.c:296
 #: ping/ping.c:455 ping/ping.c:518 ping/ping.c:915
@@ -296,7 +296,7 @@ msgstr "内存分配错误"
 #: ping/node_info.c:358
 #, c-format
 msgid "inappropriate subject name: %s"
-msgstr ""
+msgstr "不恰当的主题名称：%s"
 
 #: ping/node_info.c:361
 msgid "dn_comp() returned too long result"
@@ -324,29 +324,47 @@ msgid ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 msgstr ""
+"ping -6 -N <节点信息选项>\n"
+"Help:\n"
+"  help\n"
+"Query:\n"
+"  name\n"
+"  ipv6\n"
+"  ipv6-all\n"
+"  ipv6-compatible\n"
+"  ipv6-global\n"
+"  ipv6-linklocal\n"
+"  ipv6-sitelocal\n"
+"  ipv4\n"
+"  ipv4-all\n"
+"Subject:\n"
+"  subject-ipv6=addr\n"
+"  subject-ipv4=addr\n"
+"  subject-name=name\n"
+"  subject-fqdn=name\n"
 
 #: ping/ping6_common.c:99 ping/ping.c:617
 #, c-format
 msgid "unknown iface: %s"
-msgstr ""
+msgstr "未知界面：%s"
 
 #: ping/ping6_common.c:146
 msgid "scope discrepancy among the nodes"
-msgstr ""
+msgstr "节点之间的范围差异"
 
 #: ping/ping6_common.c:222 ping/ping.c:782
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
-msgstr ""
+msgstr "警告：可能在除以下设备之外的设备上选择了源地址：%s"
 
 #: ping/ping6_common.c:262
 #, c-format
 msgid "multicast ping with too short interval: %d"
-msgstr ""
+msgstr "间隔太短的多播 ping：%d"
 
 #: ping/ping6_common.c:265
 msgid "multicast ping does not fragment"
-msgstr ""
+msgstr "多播 ping 不分片"
 
 #: ping/ping6_common.c:318
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
@@ -397,7 +415,7 @@ msgstr ", flow 0x%05x, "
 #: ping/ping6_common.c:401 ping/ping.c:919
 #, c-format
 msgid "from %s %s: "
-msgstr ""
+msgstr "来自 %s %s "
 
 #: ping/ping6_common.c:404
 #, c-format
