@@ -1,3 +1,61 @@
+===== 20221126 =====
+released November 26, 2022
+
+* removed tools (issue: #363)
+- ninfod (commit: 8f0d897, reason: experimental unused protocol)
+- rarpd  (commit: fba7b62, reason: superseded by DHCP protocol)
+- rdisc  (commit: 7447806, reason: superseded by DHCP protocol)
+
+* license
+- use SPDX identifiers for license names
+
+* tree
+- make _GNU_SOURCE mandatory (commit: 2410ed1, PR: #402)
+
+* arping
+- fix: exit 0 if running in deadline mode and we see replies (commit: 854873b,
+  PR: #395)
+- fix: check correct variable (commit: 8a6a2ce, PR: #395)
+- man: Mention IPv4 only and ndisc6(8) (commit: 6becbb3)
+
+* clockdiff
+- setcap-setuid.sh: Add cap_sys_nice for clockdiff (commit: 9139397, issue:
+  #326, #422)
+- document CAP_SYS_NICE requirement (PR: #416)
+
+* ping
+- feature: add option -C to call connect() before sending/receiving - useful
+  when using Path MTU Discovery (commit: 07eca4a, PR: #391)
+- feature: add option -e to set Identifier field for ICMP ECHO_REQUEST (commit:
+  43e38f2, PR: #426)
+- feature: print various debug info on -v (issue: #411)
+- feature: print config options on -V (PR: #432)
+- fix: -m (SO_MARK) in 32-bit archs (commit: fecf335, PR: #394, more fixes will
+  come next release)
+- fix: potential memory leakage on -p option (commit: 626ea66, PR: #409)
+- fix: socket error reporting (commit: bbe451f, issue: #406)
+- fix: make ping_rts struct static - fix occasional segfault (commit: 7861af9,
+  issue: #423)
+- fix: add SA_RESTART to sa_flags - avoid missing output in write on aarch64
+  (commit: 09f1b37, issue: #424)
+- security: drop capabilities for IPv4 (commit: 5990843, PR: #400)
+- print warning on missing '%'-notation (commit: c4b8b44, issue: #398, PR: #405)
+- man: add "IPV6 LINK-LOCAL DESTINATIONS" section (PR: #405)
+- man: use "ICMP datagram socket" (PR: #405)
+
+* CI
+- Debian: unstable -> testing (stability)
+- Ubuntu: xenial -> bionic, groovy -> jammy (EOL)
+- remove CentOS 8 (EOL, commit: 931504a)
+
+* localization
+- new translations: Georgian (by Temuri Doghonadze)
+- many updates
+- 100% translated: Czech, Finnish, Georgian, Korean, Turkish, Ukrainian
+
+* tests
+- don't fail when ip binary missing (issue: #383, PR: #390)
+
 ===== 20211215 =====
 released December 15, 2021
 
