@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
-"PO-Revision-Date: 2021-07-16 13:31+0000\n"
+"PO-Revision-Date: 2022-11-22 23:51+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.7.1\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: arping.c:123
 #, c-format
@@ -634,13 +634,13 @@ msgid "unknown protocol family: %d"
 msgstr "família de protocolo desconhecida: %d"
 
 #: ping/ping.c:109
-#, fuzzy, c-format
+#, c-format
 msgid "unknown sock type: %d"
-msgstr "tipo de icmp desconhecido: %u"
+msgstr "tipo de sock desconhecido: %d"
 
 #: ping/ping.c:196
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "=> faltando a capacidade cap_net_raw+p ou setuid?"
 
 #: ping/ping.c:231
 #, c-format
@@ -715,16 +715,16 @@ msgstr "argumento -M inválido: %s"
 
 #: ping/ping.c:545
 msgid "bad linger time"
-msgstr ""
+msgstr "tempo de espera inválido"
 
 #: ping/ping.c:547
 #, c-format
 msgid "bad linger time: %s"
-msgstr ""
+msgstr "tempo de espera inválido: %s"
 
 #: ping/ping.c:585
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "AVISO: ident 0 => forçando socket não tratado"
 
 #: ping/ping.c:641
 #, c-format
