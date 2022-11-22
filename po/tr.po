@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
-"PO-Revision-Date: 2022-07-18 11:18+0000\n"
+"PO-Revision-Date: 2022-11-22 23:51+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: arping.c:123
 #, c-format
@@ -633,13 +633,13 @@ msgid "unknown protocol family: %d"
 msgstr "bilinmeyen protokol ailesi: %d"
 
 #: ping/ping.c:109
-#, fuzzy, c-format
+#, c-format
 msgid "unknown sock type: %d"
-msgstr "bilinmeyen icmp türü: %u"
+msgstr "bilinmeyen soket türü: %d"
 
 #: ping/ping.c:196
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "=> eksik cap_net_raw+p özelliği veya setuid?"
 
 #: ping/ping.c:231
 #, c-format
@@ -723,7 +723,7 @@ msgstr "hatalı yanıt bekleme süresi: %s"
 
 #: ping/ping.c:585
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "UYARI: ident 0 => ham soket zorlanıyor"
 
 #: ping/ping.c:641
 #, c-format
@@ -1167,7 +1167,7 @@ msgstr "%d bayt, %s'den:"
 #: ping/ping_common.c:802
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:805
 #, c-format
