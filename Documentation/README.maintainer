@@ -59,7 +59,7 @@ Check that the commit and tag looks ok.
 Assuming things are great push to github.
 
     git push origin master:master
-    git push origin --tags
+    git push origin $tag
 
 Go to github https://github.com/iputils/iputils/releases and paste
 the content of CHANGES file for upcoming release to the text box.
@@ -67,17 +67,16 @@ Add there also credit for all contributors:
 
     Many thanks to the people contributing to this release:
 
-    git shortlog -s -n $tag..
+    old_tag="$(git describe --abbrev=0 $tag^)"
+    git shortlog -s -n $old_tag..
 
     Also thanks to patch reviewers:
 
-    git log $tag.. | grep -Ei '(reviewed|acked)-by:' | \
-        sed 's/.*by: //' | sort | uniq -c | sort -n -r
+    git log $old_tag.. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
 
     and testers:
 
-    git log $tag.. | grep -Ei 'tested-by:' | \
-        sed 's/.*by: //' | sort | uniq -c | sort -n -r
+    git log $old_tag.. | grep -Ei 'tested-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
 
 Choose the tag you just created.  Download the release files, compute sha256 hash:
 
