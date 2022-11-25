@@ -13,7 +13,7 @@ released December 15, 2021
   - tracepath (https://github.com/iputils/iputils/blob/master/tracepath.c)
 
   WARNING: More tools (ninfod, rarpd, rdisc) are going to be removed in next
-  release, see https://github.com/iputils/iputils/issues/363
+  release, see issue: #363
 
 * Meson build system
 - require version 0.40 (due multiple install_dir for custom_target; commit: 65941ab)
@@ -34,7 +34,7 @@ released December 15, 2021
 - fix: print reply from Subnet-Router anycast address (issue: #371)
 - fix: print reply with wrong source with warning (issue: #371)
 - fix: set mark (SO_MARK) on probe socket (PR: #340)
-- fix: man: update lowered minimum ping interval (PR: #367)
+- fix: man: update lowered minimum ping interval (issue: #367)
 - fix: mark is unsigned int, not signed (PR: #345)
 
 * rarpd
