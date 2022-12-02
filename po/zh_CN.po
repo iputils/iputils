@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
-"PO-Revision-Date: 2022-11-22 01:20+0000\n"
-"Last-Translator: yangyangdaji <1504305527@qq.com>\n"
+"PO-Revision-Date: 2022-12-04 05:20+0000\n"
+"Last-Translator: Yang Yulin <yylteam@icloud.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -39,10 +39,10 @@ msgid ""
 "  -I <device>   which ethernet device to use"
 msgstr ""
 "\n"
-"Usage:\n"
-"  arping [options] <destination>\n"
+"用法：\n"
+"  arping [选项] <目标>\n"
 "\n"
-"Options:\n"
+"选项：\n"
 "  -f             收到回复就退出\n"
 "  -q            不要打印信息\n"
 "  -b            始终使用广播而不是单拨\n"
@@ -50,10 +50,10 @@ msgstr ""
 "  -U           主动 ARP 模式, 更新邻居 ARP 表\n"
 "  -A            ARP 应答模式, 更新邻居 ARP 表\n"
 "  -V            显示版本号然后退出\n"
-"  -c <count>    指定发送多少个包\n"
-"  -w <timeout>  指定等待超时时间\n"
-"  -i <interval> 设置两个包之间的间隔时间 (默认: 1 秒)\n"
-"  -I <device>   指定使用的设备"
+"  -c <数目>    指定发送多少个包\n"
+"  -w <超时>  指定等待超时时间\n"
+"  -i <间隔> 设置两个包之间的间隔时间 (默认: 1 秒)\n"
+"  -I <设备>   指定使用的设备"
 
 #: arping.c:142
 #, c-format
@@ -225,10 +225,10 @@ msgid ""
 "For more details see clockdiff(8).\n"
 msgstr ""
 "\n"
-"Usage:\n"
-"  clockdiff [options] <destination>\n"
+"用法：\n"
+"  clockdiff [选项] <目标>\n"
 "\n"
-"Options:\n"
+"选项：\n"
 "                如不指定 -o，则仅使用 ICMP 时间缀 (参阅 RFC0792，第 16 页)\n"
 "  -o            使用 ip 时间缀和 ICMP 回复\n"
 "  -o1           使用 3-term ip 时间缀和 ICMP 回复\n"
@@ -237,9 +237,9 @@ msgstr ""
 "  -I            --time-format=iso 的别名\n"
 "  -h, --help    显示这个帮助\n"
 "  -V, --version 显示版本信息并退出\n"
-"  <destination> dns 名称或 ip 地址\n"
+"  <目标> dns 名称或 ip 地址\n"
 "\n"
-"需要更多信息请查看 clockdiff(8).\n"
+"如需更多信息请参考 clockdiff(8)。\n"
 
 #: clockdiff.c:592
 msgid "measure: unknown failure"
@@ -368,49 +368,49 @@ msgstr "多播 ping 不分片"
 
 #: ping/ping6_common.c:323
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr ""
+msgstr "setsockopt(RAW_CHECKSUM) 失败 - 尝试继续"
 
 #: ping/ping6_common.c:349
 msgid "can't disable multicast loopback"
-msgstr ""
+msgstr "无法禁用多播环回"
 
 #: ping/ping6_common.c:354
 msgid "can't set multicast hop limit"
-msgstr ""
+msgstr "无法设置组播跃点限制"
 
 #: ping/ping6_common.c:357
 msgid "can't set unicast hop limit"
-msgstr ""
+msgstr "无法设置单播跃点限制"
 
 #: ping/ping6_common.c:369
 msgid "can't receive hop limit"
-msgstr ""
+msgstr "无法接收跃点限制"
 
 #: ping/ping6_common.c:374
 msgid "setsockopt(IPV6_TCLASS)"
-msgstr ""
+msgstr "setsockopt(IPV6_TCLASS)"
 
 #: ping/ping6_common.c:376
 msgid "traffic class is not supported"
-msgstr ""
+msgstr "不支持流量类"
 
 #: ping/ping6_common.c:392
 msgid "can't set flowlabel"
-msgstr ""
+msgstr "无法设置流标签"
 
 #: ping/ping6_common.c:396
 msgid "can't send flowinfo"
-msgstr ""
+msgstr "无法发送流信息"
 
 #: ping/ping6_common.c:399
 #, c-format
 msgid "PING %s(%s) "
-msgstr ""
+msgstr "PING %s(%s) "
 
 #: ping/ping6_common.c:401
 #, c-format
 msgid ", flow 0x%05x, "
-msgstr ", flow 0x%05x, "
+msgstr "，流量 0x%05x， "
 
 #: ping/ping6_common.c:406 ping/ping.c:1000
 #, c-format
@@ -470,7 +470,7 @@ msgstr ", 代码=%d"
 #: ping/ping6_common.c:452
 #, c-format
 msgid "Time exceeded: "
-msgstr ""
+msgstr "超时： "
 
 #: ping/ping6_common.c:454
 #, c-format
@@ -485,7 +485,7 @@ msgstr "分段失败"
 #: ping/ping6_common.c:458
 #, c-format
 msgid "code %d"
-msgstr ""
+msgstr "代码 %d"
 
 #: ping/ping6_common.c:461
 #, c-format
@@ -495,7 +495,7 @@ msgstr "参数问题： "
 #: ping/ping6_common.c:463
 #, c-format
 msgid "Wrong header field "
-msgstr ""
+msgstr "错误的标头字段 "
 
 #: ping/ping6_common.c:465
 #, c-format
@@ -510,12 +510,12 @@ msgstr "未知选项 "
 #: ping/ping6_common.c:469
 #, c-format
 msgid "code %d "
-msgstr ""
+msgstr "代码 %d "
 
 #: ping/ping6_common.c:470
 #, c-format
 msgid "at %u"
-msgstr ""
+msgstr "在 %u"
 
 #: ping/ping6_common.c:473
 #, c-format
@@ -545,16 +545,16 @@ msgstr "组播组退出"
 #: ping/ping6_common.c:488
 #, c-format
 msgid "unknown icmp type: %u"
-msgstr ""
+msgstr "未知的 ICMP 类型： %u"
 
 #: ping/ping6_common.c:542
 msgid "local error"
-msgstr ""
+msgstr "本地错误"
 
 #: ping/ping6_common.c:544
 #, c-format
 msgid "local error: message too long, mtu: %u"
-msgstr ""
+msgstr "本地错误：消息太长，MTU：%u"
 
 #: ping/ping6_common.c:566 ping/ping.c:1453
 #, c-format
@@ -628,16 +628,16 @@ msgstr "警告：无法安装套接字过滤器"
 #: ping/ping.c:94 ping/ping.c:673
 #, c-format
 msgid "unknown protocol family: %d"
-msgstr ""
+msgstr "未知协议系列： %d"
 
 #: ping/ping.c:109
-#, fuzzy, c-format
+#, c-format
 msgid "unknown sock type: %d"
-msgstr "未知界面：%s"
+msgstr "未知套接字类型： %d"
 
 #: ping/ping.c:196
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "=> 缺少 cap_net_raw+p 功能或 setuid？"
 
 #: ping/ping.c:231
 #, c-format
@@ -873,7 +873,7 @@ msgstr ""
 #: ping/ping.c:1196
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
+msgstr "Vr HL TOS  Len   ID 标记  关闭 TTL Pro  cks      源位置      目标数据\n"
 
 #: ping/ping.c:1197
 #, c-format
@@ -893,7 +893,7 @@ msgstr "  %02x  %02x %04x"
 #: ping/ping.c:1217
 #, c-format
 msgid "Echo Reply\n"
-msgstr "Echo 应答\n"
+msgstr "回声应答\n"
 
 #: ping/ping.c:1223
 #, c-format
@@ -1365,19 +1365,19 @@ msgid ""
 "For more details see tracepath(8).\n"
 msgstr ""
 "\n"
-"用法\n"
-"  tracepath [options] <destination>\n"
+"用法:\n"
+"  tracepath [选项] <目标>\n"
 "\n"
-"可用的选项:\n"
+"选项:\n"
 "  -4             使用 IPv4\n"
 "  -6             使用 IPv6\n"
 "  -b             同时显示名称和 ip\n"
-"  -l <length>    指定包长度为 <length>\n"
-"  -m <hops>     指定最大跃点数为 <hops>\n"
+"  -l <长度>    指定包长度为 <长度>\n"
+"  -m <跃点数>     指定最大跃点数为 <跃点数>\n"
 "  -n             不进行名称解析\n"
-"  -p <port>      目标端口号 <port>\n"
+"  -p <端口号>      目标端口号 <端口号>\n"
 "  -V             显示版本信息并退出\n"
-"  <destination>  目标主机 dns 名称或 ip 地址\n"
+"  <目标>  目标主机 dns 名称或 ip 地址\n"
 "\n"
 "了解更多信息请参阅 tracepath(8).\n"
 
