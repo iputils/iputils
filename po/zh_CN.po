@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
-"PO-Revision-Date: 2022-12-04 05:20+0000\n"
+"PO-Revision-Date: 2023-01-19 10:20+0000\n"
 "Last-Translator: Yang Yulin <yylteam@icloud.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15.1\n"
 
 #: arping.c:123
 #, c-format
@@ -642,31 +642,31 @@ msgstr "=> 缺少 cap_net_raw+p 功能或 setuid？"
 #: ping/ping.c:231
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr ""
+msgstr "选项参数包含垃圾： %s"
 
 #: ping/ping.c:232
 msgid "this will become fatal error in the future"
-msgstr ""
+msgstr "这将在未来成为致命错误"
 
 #: ping/ping.c:266
 #, c-format
 msgid "bad value for flowinfo: %s"
-msgstr ""
+msgstr "流信息的错误值： %s"
 
 #: ping/ping.c:269
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
-msgstr ""
+msgstr "流值大于 20 位： %s"
 
 #: ping/ping.c:291
 #, c-format
 msgid "bad TOS value: %s"
-msgstr ""
+msgstr "错误的 TOS 值： %s"
 
 #: ping/ping.c:294
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr ""
+msgstr "TOS 位的十进制值必须在 0-255 范围内：%d"
 
 #: ping/ping.c:365 ping/ping.c:396
 msgid "only one -4 or -6 option may be specified"
@@ -674,21 +674,21 @@ msgstr "只接受参数 -4 或 -6 中的一个"
 
 #: ping/ping.c:377 ping/ping.c:382
 msgid "only one of -T or -R may be used"
-msgstr ""
+msgstr "只能使用 -T 或 -R 中的一个"
 
 #: ping/ping.c:391
 #, c-format
 msgid "invalid timestamp type: %s"
-msgstr ""
+msgstr "时间戳类型无效： %s"
 
 #: ping/ping.c:434
 msgid "bad timing interval"
-msgstr ""
+msgstr "时序间隔错误"
 
 #: ping/ping.c:436
 #, c-format
 msgid "bad timing interval: %s"
-msgstr ""
+msgstr "时序间隔错误：%s"
 
 #: ping/ping.c:447
 #, c-format
@@ -698,7 +698,7 @@ msgstr "无法打开：%s"
 #: ping/ping.c:456
 #, c-format
 msgid "invalid source address: %s"
-msgstr ""
+msgstr "源地址无效：%s"
 
 #: ping/ping.c:470
 #, c-format
@@ -712,16 +712,16 @@ msgstr "无效参数：%s"
 
 #: ping/ping.c:545
 msgid "bad linger time"
-msgstr ""
+msgstr "徘徊时间无效"
 
 #: ping/ping.c:547
 #, c-format
 msgid "bad linger time: %s"
-msgstr ""
+msgstr "徘徊时间无效：%s"
 
 #: ping/ping.c:585
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "警告：标识 0 => 强制使用原始套接字"
 
 #: ping/ping.c:641
 #, c-format
@@ -729,10 +729,12 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
+"警告：ICMP 数据报套接字上的 IPv6 链路本地地址可能需要 ifname 或作用域 ID => "
+"使用：地址%%<ifname|scope-id>"
 
 #: ping/ping.c:809
 msgid "warning: QOS sockopts"
-msgstr ""
+msgstr "警告：QOS 套接字选项"
 
 #: ping/ping.c:821
 msgid ""
@@ -751,36 +753,36 @@ msgstr "不能设置广播"
 
 #: ping/ping.c:846
 msgid "gatifaddrs failed"
-msgstr ""
+msgstr "gatifaddrs 失败"
 
 #: ping/ping.c:873
 #, c-format
 msgid "broadcast ping with too short interval: %d"
-msgstr ""
+msgstr "间隔太短的多播 ping：%d"
 
 #: ping/ping.c:875
 msgid "broadcast ping does not fragment"
-msgstr ""
+msgstr "广播 ping 不分段"
 
 #: ping/ping.c:904
 msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr ""
+msgstr "警告：setsockopt(ICMP_FILTER)"
 
 #: ping/ping.c:909
 msgid "WARNING: your kernel is veeery old. No problems."
-msgstr ""
+msgstr "警告：您的内核非常旧。没有其他问题。"
 
 #: ping/ping.c:913
 msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr ""
+msgstr "警告：setsockopt(IP_RECVTTL)"
 
 #: ping/ping.c:915
 msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr ""
+msgstr "警告：setsockopt(IP_RETOPTS)"
 
 #: ping/ping.c:982
 msgid "cannot disable multicast loopback"
-msgstr ""
+msgstr "无法禁用组播环回"
 
 #: ping/ping.c:987
 msgid "cannot set multicast time-to-live"
@@ -793,7 +795,7 @@ msgstr "不能设置单拨的 TTL"
 #: ping/ping.c:998
 #, c-format
 msgid "PING %s (%s) "
-msgstr ""
+msgstr "PING %s (%s) "
 
 #: ping/ping.c:1001
 #, c-format
@@ -923,7 +925,7 @@ msgstr "需要分段但是设置了 DF （mtu = %u）\n"
 #: ping/ping.c:1238
 #, c-format
 msgid "Source Route Failed\n"
-msgstr ""
+msgstr "源路由失败\n"
 
 #: ping/ping.c:1241
 #, c-format
@@ -938,7 +940,7 @@ msgstr "目标主机未知\n"
 #: ping/ping.c:1247
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr ""
+msgstr "源主机隔离\n"
 
 #: ping/ping.c:1250
 #, c-format
@@ -968,12 +970,12 @@ msgstr "数据包被过滤\n"
 #: ping/ping.c:1265
 #, c-format
 msgid "Precedence Violation\n"
-msgstr ""
+msgstr "优先级冲突\n"
 
 #: ping/ping.c:1268
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "优先级冲突\n"
 
 #: ping/ping.c:1271
 #, c-format
@@ -983,32 +985,32 @@ msgstr "目标不可达，错误代码：%d\n"
 #: ping/ping.c:1278
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "源淬火\n"
 
 #: ping/ping.c:1285
 #, c-format
 msgid "Redirect Network"
-msgstr ""
+msgstr "重定向网络"
 
 #: ping/ping.c:1288
 #, c-format
 msgid "Redirect Host"
-msgstr ""
+msgstr "重定向主机"
 
 #: ping/ping.c:1291
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "重定向服务和网络类型"
 
 #: ping/ping.c:1294
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "重定向服务和主机类型"
 
 #: ping/ping.c:1297
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "重定向，错误代码：%d"
 
 #: ping/ping.c:1308
 #, c-format
@@ -1023,7 +1025,7 @@ msgstr "Echo 请求\n"
 #: ping/ping.c:1320
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr ""
+msgstr "超过生存时间\n"
 
 #: ping/ping.c:1323
 #, c-format
@@ -1033,7 +1035,7 @@ msgstr "分段重建时间超时\n"
 #: ping/ping.c:1326
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
-msgstr ""
+msgstr "超时，错误代码： %d\n"
 
 #: ping/ping.c:1333
 #, c-format
@@ -1078,12 +1080,12 @@ msgstr "错误的 ICMP 类型：%d\n"
 #: ping/ping.c:1417
 #, c-format
 msgid "local error: %s"
-msgstr ""
+msgstr "本地错误：%s"
 
 #: ping/ping.c:1419
 #, c-format
 msgid "local error: message too long, mtu=%u"
-msgstr ""
+msgstr "本地错误：消息太长，mtu=%u"
 
 #: ping/ping.c:1592
 #, c-format
@@ -1108,21 +1110,21 @@ msgstr "(CHECKSUM 错误)\n"
 #: ping/ping_common.c:215
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
-msgstr ""
+msgstr "模式必须指定为十六进制数字：%s"
 
 #: ping/ping_common.c:232
 #, c-format
 msgid "PATTERN: 0x"
-msgstr ""
+msgstr "模式：0x"
 
 #: ping/ping_common.c:352
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
-msgstr ""
+msgstr "icmp_seq=%lu 未响应\n"
 
 #: ping/ping_common.c:452
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr ""
+msgstr "警告：RCVBUF 可能不足以保持预载"
 
 #: ping/ping_common.c:469
 #, c-format
@@ -1131,7 +1133,7 @@ msgstr "警告：无法安装套接字过滤器：%u"
 
 #: ping/ping_common.c:471
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "警告：不支持 SO_MARK"
 
 #: ping/ping_common.c:487
 #, c-format
@@ -1141,16 +1143,16 @@ msgstr "不能 ping flood，对于用户而言最小的 ping 间隔时间是 %d�
 #: ping/ping_common.c:490
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr ""
+msgstr "非法预紧和/或间隔：%d"
 
 #: ping/ping_common.c:502
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr ""
+msgstr "警告：不支持 SO_TIMESTAMP，回退到 SIOCGSTAMP"
 
 #: ping/ping_common.c:746
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr ""
+msgstr "警告：一天中的时间返回 （%ldus），采取对策"
 
 #: ping/ping_common.c:796
 #, c-format
@@ -1160,7 +1162,7 @@ msgstr "%d 字节，来自 %s:"
 #: ping/ping_common.c:802
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " 标识=%d"
 
 #: ping/ping_common.c:805
 #, c-format
@@ -1205,7 +1207,7 @@ msgstr " (CHECKSUM 错误)"
 #: ping/ping_common.c:830
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " （地址不同！）"
 
 #: ping/ping_common.c:837
 #, c-format
@@ -1288,6 +1290,8 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
+"cmsg6：%d\n"
+" "
 
 #: tracepath.c:229
 #, c-format
@@ -1295,15 +1299,17 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
+"cmsg4：%d\n"
+" "
 
 #: tracepath.c:234
 #, c-format
 msgid "no info\n"
-msgstr ""
+msgstr "没有信息\n"
 
 #: tracepath.c:238
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[本地主机]"
 
 #: tracepath.c:286
 #, c-format
@@ -1318,21 +1324,21 @@ msgstr "(这条损坏的路由返回了错误的数据) "
 #: tracepath.c:304
 #, c-format
 msgid "pmtu %d\n"
-msgstr ""
+msgstr "PMTU %d\n"
 
 #: tracepath.c:309
 #, c-format
 msgid "reached\n"
-msgstr ""
+msgstr "到达\n"
 
 #: tracepath.c:325 tracepath.c:328
 #, c-format
 msgid "asymm %2d "
-msgstr ""
+msgstr "不对称 %2d "
 
 #: tracepath.c:343
 msgid "NET ERROR"
-msgstr ""
+msgstr "网络错误"
 
 #: tracepath.c:388
 #, c-format
@@ -1398,17 +1404,17 @@ msgstr "     回程: 路径MTU %d "
 #: tracepath.c:615
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "跃点 %d "
 
 #: tracepath.c:617
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "返回 %d "
 
 #: tracepath.c:622
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr ""
+msgstr "PKTLEN 必须在以下范围内： %d < 值 <= %d"
 
 #, c-format
 #~ msgid ""
