@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
-"PO-Revision-Date: 2022-12-04 05:20+0000\n"
+"PO-Revision-Date: 2023-01-01 15:20+0000\n"
 "Last-Translator: Yang Yulin <yylteam@icloud.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15\n"
 
 #: arping.c:123
 #, c-format
@@ -642,11 +642,11 @@ msgstr "=> 缺少 cap_net_raw+p 功能或 setuid？"
 #: ping/ping.c:231
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr ""
+msgstr "选项参数包含垃圾： %s"
 
 #: ping/ping.c:232
 msgid "this will become fatal error in the future"
-msgstr ""
+msgstr "这将在未来成为致命错误"
 
 #: ping/ping.c:266
 #, c-format
