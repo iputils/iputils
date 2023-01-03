@@ -75,6 +75,16 @@
 #define MSG_CONFIRM 0
 #endif
 
+/* RFC 4443 addition not yet available in libc headers */
+#ifndef ICMP6_DST_UNREACH_POLICYFAIL
+#define ICMP6_DST_UNREACH_POLICYFAIL 5
+#endif
+
+/* RFC 4443 addition not yet available in libc headers */
+#ifndef ICMP6_DST_UNREACH_REJECTROUTE
+#define ICMP6_DST_UNREACH_REJECTROUTE 6
+#endif
+
 /*
  * MAX_DUP_CHK is the number of bits in received table, i.e. the maximum
  * number of received sequence numbers we can keep track of.
