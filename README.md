@@ -33,7 +33,7 @@ Build dependencies are listed in scripts in
 * If fixing a bug, please document how to reproduce it.
 * Finding the commit which introduced the problem helps (bisecting). Add `Fixme:` tag.
 * If adding a feature, please describe why it's useful to add it.
-* Commits should be signed: `Your Name <me@example.org>`, see
+* Commits should be signed: `Signed-off-by: Your Name <me@example.org>`, see
 https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin.
 * Although the coding style for most tools is ancient, new code should follow the Linux kernel coding style.
 See https://www.kernel.org/doc/html/latest/process/coding-style.html.
