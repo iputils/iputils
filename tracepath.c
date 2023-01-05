@@ -532,7 +532,7 @@ int main(int argc, char **argv)
 		if (ctl.mtu <= ctl.overhead)
 			goto pktlen_error;
 
-		on = IPV6_PMTUDISC_DO;
+		on = IPV6_PMTUDISC_PROBE;
 		if (setsockopt(ctl.socket_fd, SOL_IPV6, IPV6_MTU_DISCOVER, &on, sizeof(on)) &&
 		    (on = IPV6_PMTUDISC_DO, setsockopt(ctl.socket_fd, SOL_IPV6,
 		     IPV6_MTU_DISCOVER, &on, sizeof(on))))
@@ -557,7 +557,7 @@ int main(int argc, char **argv)
 		if (ctl.mtu <= ctl.overhead)
 			goto pktlen_error;
 
-		on = IP_PMTUDISC_DO;
+		on = IP_PMTUDISC_PROBE;
 		if (setsockopt(ctl.socket_fd, SOL_IP, IP_MTU_DISCOVER, &on, sizeof(on)))
 			error(1, errno, "IP_MTU_DISCOVER");
 		on = 1;
