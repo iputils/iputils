@@ -483,6 +483,8 @@ main(int argc, char **argv)
 				rts.pmtudisc = IP_PMTUDISC_DONT;
 			else if (strcmp(optarg, "want") == 0)
 				rts.pmtudisc = IP_PMTUDISC_WANT;
+			else if (strcmp(optarg, "probe") == 0)
+				rts.pmtudisc = IP_PMTUDISC_PROBE;
 			else
 				error(2, 0, _("invalid -M argument: %s"), optarg);
 			break;
@@ -599,7 +601,8 @@ main(int argc, char **argv)
 		 * since I don't know that, it's better to be safe than sorry. */
 		rts.pmtudisc = rts.pmtudisc == IP_PMTUDISC_DO	? IPV6_PMTUDISC_DO   :
 			       rts.pmtudisc == IP_PMTUDISC_DONT ? IPV6_PMTUDISC_DONT :
-			       rts.pmtudisc == IP_PMTUDISC_WANT ? IPV6_PMTUDISC_WANT : rts.pmtudisc;
+			       rts.pmtudisc == IP_PMTUDISC_WANT ? IPV6_PMTUDISC_WANT :
+			       rts.pmtudisc == IP_PMTUDISC_PROBE? IPV6_PMTUDISC_PROBE: rts.pmtudisc;
 	}
 
 	disable_capability_raw();

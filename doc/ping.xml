@@ -351,10 +351,13 @@ xml:id="man.ping">
           <para>Select Path MTU Discovery strategy.
           <emphasis remap="I">pmtudisc_option</emphasis> may be
           either
-          <emphasis remap="I">do</emphasis> (prohibit fragmentation,
-          even local one),
+          <emphasis remap="I">do</emphasis> (set DF flag but
+          subject to PMTU checks by kernel, packets too large will
+          be rejected),
           <emphasis remap="I">want</emphasis> (do PMTU discovery,
-          fragment locally when packet size is large), or
+          fragment locally when packet size is large),
+          <emphasis remap="I">probe</emphasis> (set DF flag and
+          bypass PMTU checks, useful for probing), or
           <emphasis remap="I">dont</emphasis> (do not set DF
           flag).</para>
         </listitem>
