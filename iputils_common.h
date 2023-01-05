@@ -55,6 +55,12 @@
 #ifndef IPV6_PMTUDISC_DO
 # define IPV6_PMTUDISC_DO	2
 #endif
+#ifndef IP_PMTUDISC_PROBE
+# define IP_PMTUDISC_PROBE	3
+#endif
+#ifndef IPV6_PMTUDISC_PROBE
+# define IPV6_PMTUDISC_PROBE	3
+#endif
 
 #ifdef HAVE_ERROR_H
 # include <error.h>
