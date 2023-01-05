@@ -67,7 +67,7 @@ void usage(void)
 		"  -L                 suppress loopback of multicast packets\n"
 		"  -l <preload>       send <preload> number of packages while waiting replies\n"
 		"  -m <mark>          tag the packets going out\n"
-		"  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want>\n"
+		"  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want|probe>\n"
 		"  -n                 no dns name resolution\n"
 		"  -O                 report outstanding replies\n"
 		"  -p <pattern>       contents of padding byte\n"
