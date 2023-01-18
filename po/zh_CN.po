@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 16:21+0100\n"
-"PO-Revision-Date: 2023-01-18 08:08+0000\n"
+"PO-Revision-Date: 2023-01-19 10:20+0000\n"
 "Last-Translator: Yang Yulin <yylteam@icloud.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 4.15.1\n"
 
 #: arping.c:123
 #, c-format
@@ -758,7 +758,7 @@ msgstr "gatifaddrs 失败"
 #: ping/ping.c:873
 #, c-format
 msgid "broadcast ping with too short interval: %d"
-msgstr ""
+msgstr "间隔太短的多播 ping：%d"
 
 #: ping/ping.c:875
 msgid "broadcast ping does not fragment"
@@ -925,7 +925,7 @@ msgstr "需要分段但是设置了 DF （mtu = %u）\n"
 #: ping/ping.c:1238
 #, c-format
 msgid "Source Route Failed\n"
-msgstr ""
+msgstr "源路由失败\n"
 
 #: ping/ping.c:1241
 #, c-format
@@ -940,7 +940,7 @@ msgstr "目标主机未知\n"
 #: ping/ping.c:1247
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr ""
+msgstr "源主机隔离\n"
 
 #: ping/ping.c:1250
 #, c-format
@@ -970,12 +970,12 @@ msgstr "数据包被过滤\n"
 #: ping/ping.c:1265
 #, c-format
 msgid "Precedence Violation\n"
-msgstr ""
+msgstr "优先级冲突\n"
 
 #: ping/ping.c:1268
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "优先级冲突\n"
 
 #: ping/ping.c:1271
 #, c-format
@@ -985,7 +985,7 @@ msgstr "目标不可达，错误代码：%d\n"
 #: ping/ping.c:1278
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "源淬火\n"
 
 #: ping/ping.c:1285
 #, c-format
@@ -1000,12 +1000,12 @@ msgstr "重定向主机"
 #: ping/ping.c:1291
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "重定向服务和网络类型"
 
 #: ping/ping.c:1294
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "重定向服务和主机类型"
 
 #: ping/ping.c:1297
 #, c-format
@@ -1290,7 +1290,7 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
-"cmsg6:%d\n"
+"cmsg6：%d\n"
 " "
 
 #: tracepath.c:229
@@ -1299,7 +1299,7 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
-"cmsg4:%d\n"
+"cmsg4：%d\n"
 " "
 
 #: tracepath.c:234
@@ -1329,12 +1329,12 @@ msgstr "PMTU %d\n"
 #: tracepath.c:309
 #, c-format
 msgid "reached\n"
-msgstr ""
+msgstr "到达\n"
 
 #: tracepath.c:325 tracepath.c:328
 #, c-format
 msgid "asymm %2d "
-msgstr ""
+msgstr "不对称 %2d "
 
 #: tracepath.c:343
 msgid "NET ERROR"
@@ -1404,12 +1404,12 @@ msgstr "     回程: 路径MTU %d "
 #: tracepath.c:615
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "跃点 %d "
 
 #: tracepath.c:617
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "返回 %d "
 
 #: tracepath.c:622
 #, c-format
