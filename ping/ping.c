@@ -214,6 +214,7 @@ static double ping_strtod(const char *str, const char *err_msg)
 {
 	double num;
 	char *end = NULL;
+	int strtod_errno = 0;
 
 	if (str == NULL || *str == '\0')
 		goto err;
@@ -225,7 +226,10 @@ static double ping_strtod(const char *str, const char *err_msg)
 	 */
 	setlocale(LC_ALL, "C");
 	num = strtod(str, &end);
+	strtod_errno = errno;
 	setlocale(LC_ALL, "");
+	/* Ignore setlocale() errno (e.g. invalid locale in env). */
+	errno = strtod_errno;
 
 	if (errno || str == end || (end && *end)) {
 		error(0, 0, _("option argument contains garbage: %s"), end);
