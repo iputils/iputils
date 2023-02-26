@@ -587,6 +587,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 		if (ctl->device.name != NULL) {
 			if (!ctl->quiet)
 				printf(_("Interface \"%s\" is down\n"), ctl->device.name);
+			freeifaddrs(ctl->ifa0);
 			exit(2);
 		}
 		return -1;
@@ -595,6 +596,7 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 		if (ctl->device.name != NULL) {
 			if (!ctl->quiet)
 				printf(_("Interface \"%s\" is not ARPable\n"), ctl->device.name);
+			freeifaddrs(ctl->ifa0);
 			exit(ctl->dad ? 0 : 2);
 		}
 		return -1;
