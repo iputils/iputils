@@ -609,6 +609,10 @@ int main(int argc, char **argv)
 
  done:
 	freeaddrinfo(result);
+	if(ctl.pktbuf) {
+		free(ctl.pktbuf);
+		ctl.pktbuf = NULL;
+	}
 
 	printf(_("     Resume: pmtu %d "), ctl.mtu);
 	if (ctl.hops_to >= 0)
