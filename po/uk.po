@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-06 21:32+0100\n"
-"PO-Revision-Date: 2022-11-25 22:34+0000\n"
+"PO-Revision-Date: 2023-03-08 18:20+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: arping.c:123
 #, c-format
@@ -466,12 +466,12 @@ msgstr "Недосяжний порт"
 #: ping/ping6_common.c:442
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "Початкова адреса не відповідає правилам для вхідних-вихідних адрес"
 
 #: ping/ping6_common.c:445
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "Відкинути маршрут до призначення"
 
 #: ping/ping6_common.c:448
 #, c-format
