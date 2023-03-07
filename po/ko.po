@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-06 21:32+0100\n"
-"PO-Revision-Date: 2022-11-24 00:20+0000\n"
+"PO-Revision-Date: 2023-03-07 10:59+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: arping.c:123
 #, c-format
@@ -456,12 +456,12 @@ msgstr "접근 할 수 없는 포트"
 #: ping/ping6_common.c:442
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "원천 주소가 수신/발신 정책에 실패함"
 
 #: ping/ping6_common.c:445
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "대상 경로까지 경로가 거부"
 
 #: ping/ping6_common.c:448
 #, c-format
