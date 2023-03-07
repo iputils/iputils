@@ -438,6 +438,12 @@ int print_icmp(uint8_t type, uint8_t code, uint32_t info)
 		case ICMP6_DST_UNREACH_NOPORT:
 			printf(_("Port unreachable"));
 			break;
+		case ICMP6_DST_UNREACH_POLICYFAIL:
+			printf(_("Source address failed ingress/egress policy"));
+			break;
+		case ICMP6_DST_UNREACH_REJECTROUTE:
+			printf(_("Reject route to destination"));
+			break;
 		default:
 			printf(_("Unknown code %d"), code);
 			break;
