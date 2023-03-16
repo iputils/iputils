@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-06 21:32+0100\n"
-"PO-Revision-Date: 2022-11-29 18:19+0000\n"
+"PO-Revision-Date: 2023-03-17 21:20+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: arping.c:123
 #, c-format
@@ -459,12 +459,12 @@ msgstr "პორტი მიუწვდომელია"
 #: ping/ping6_common.c:442
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "საწყისი მისამართის ingress/egress პოლიტიკის შეცდომა"
 
 #: ping/ping6_common.c:445
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "სამიზნემდე რაუტის უარყოფა"
 
 #: ping/ping6_common.c:448
 #, c-format
