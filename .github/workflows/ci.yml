@@ -40,7 +40,7 @@ jobs:
           - container: "debian:stable"
             env:
               CC: gcc
-              EXTRA_BUILD_OPTS: "-DUSE_CAP=false -DUSE_IDN=false -DBUILD_ARPING=false -DBUILD_CLOCKDIFF=false -DNO_SETCAP_OR_SUID=true -DUSE_GETTEXT=false"
+              EXTRA_BUILD_OPTS: "-DUSE_CAP=false -DUSE_IDN=false -DBUILD_ARPING=false -DBUILD_CLOCKDIFF=false -DUSE_GETTEXT=false"
 
           # other builds
           - container: "opensuse/leap"
@@ -77,6 +77,7 @@ jobs:
           - container: "debian:testing"
             env:
               CC: gcc
+              EXTRA_BUILD_OPTS: "-DNO_SETCAP_OR_SUID=false"
 
           - container: "debian:stable"
             env:
