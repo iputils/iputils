@@ -13,6 +13,7 @@ apk add \
 	iproute2 \
 	gettext-dev \
 	libcap-dev \
+	libcap-utils \
 	libxslt \
 	make \
 	meson \
