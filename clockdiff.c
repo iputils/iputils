@@ -210,7 +210,7 @@ static int measure_inner_loop(struct run_state *ctl, struct measure_vars *mv)
 	struct pollfd p = { .fd = ctl->sock_raw, .events = POLLIN | POLLHUP };
 
 	{
-		long tmo = ctl->rtt + ctl->rtt_sigma;
+		long tmo = MAX(ctl->rtt + ctl->rtt_sigma, 1);
 
 		mv->tout.tv_sec = tmo / 1000;
 		mv->tout.tv_nsec = (tmo - (tmo / 1000) * 1000) * 1000000;
