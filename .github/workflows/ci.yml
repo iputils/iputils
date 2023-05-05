@@ -12,19 +12,19 @@ jobs:
       matrix:
         include:
           # cross compilation builds
-          - container: "debian:testing"
+          - container: "debian:bookworm"
             env:
               ARCH: arm64
               CC: aarch64-linux-gnu-gcc
               VARIANT: cross-compile
 
-          - container: "debian:testing"
+          - container: "debian:bookworm"
             env:
               ARCH: ppc64el
               CC: powerpc64le-linux-gnu-gcc
               VARIANT: cross-compile
 
-          - container: "debian:testing"
+          - container: "debian:bookworm"
             env:
               ARCH: s390x
               CC: s390x-linux-gnu-gcc
@@ -37,7 +37,7 @@ jobs:
               EXTRA_BUILD_OPTS: "-DBUILD_HTML_MANS=false -DBUILD_MANS=false"
 
           # some non-default options
-          - container: "debian:stable"
+          - container: "debian:bullseye"
             env:
               CC: gcc
               EXTRA_BUILD_OPTS: "-DUSE_CAP=false -DUSE_IDN=false -DBUILD_ARPING=false -DBUILD_CLOCKDIFF=false -DUSE_GETTEXT=false"
@@ -74,18 +74,18 @@ jobs:
             env:
               CC: gcc
 
-          - container: "debian:testing"
+          - container: "debian:bookworm"
             env:
               CC: gcc
               EXTRA_BUILD_OPTS: "-DNO_SETCAP_OR_SUID=false"
 
-          - container: "debian:stable"
+          - container: "debian:bullseye"
             env:
               CC: gcc
 
-          - container: "debian:oldstable"
+          - container: "debian:buster"
             env:
-              CC: clang
+              CC: gcc
 
     container:
       image: ${{ matrix.container }}
