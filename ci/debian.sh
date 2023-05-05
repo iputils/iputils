@@ -2,13 +2,6 @@
 # Copyright (c) 2019-2021 Petr Vorel <petr.vorel@gmail.com>
 set -ex
 
-if [ "$DISTRO_VERSION" = "oldstable" ]; then
-	cat <<EOF | tee /etc/apt/sources.list.d/stretch-backports.list
-deb http://http.debian.net/debian stretch-backports main contrib non-free
-EOF
-	BACKPORT_REPO="stretch-backports"
-fi
-
 if [ "$DISTRO_VERSION" = "xenial" ]; then
 	cat <<EOF | tee /etc/apt/sources.list.d/xenial-backports.list
 deb http://archive.ubuntu.com/ubuntu xenial-backports main restricted universe multiverse
@@ -35,7 +28,3 @@ apt install -y --no-install-recommends \
 	meson \
 	pkg-config \
 	xsltproc
-
-if [ "$BACKPORT_REPO" ]; then
-	apt install -y --no-install-recommends -t $BACKPORT_REPO meson
-fi
