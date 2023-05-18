@@ -372,15 +372,6 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	   )
 		error(2, errno, _("can't receive hop limit"));
 
-	if (rts->opt_tclass) {
-#ifdef IPV6_TCLASS
-		if (setsockopt(sock->fd, IPPROTO_IPV6, IPV6_TCLASS, &rts->tclass, sizeof rts->tclass) == -1)
-			error(2, errno, _("setsockopt(IPV6_TCLASS)"));
-#else
-		error(0, 0, _("traffic class is not supported"));
-#endif
-	}
-
 	if (rts->opt_flowinfo) {
 		char freq_buf[CMSG_ALIGN(sizeof(struct in6_flowlabel_req)) + rts->cmsglen];
 		struct in6_flowlabel_req *freq = (struct in6_flowlabel_req *)freq_buf;
