@@ -182,6 +182,10 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			disable_capability_raw();
 		}
 
+		if (rts->tclass &&
+		    setsockopt(probe_fd, IPPROTO_IPV6, IPV6_TCLASS, &rts->tclass, sizeof (rts->tclass)) <0)
+			error(2, errno, "setsockopt(IPV6_TCLASS)");
+
 		if (!IN6_IS_ADDR_LINKLOCAL(&rts->firsthop.sin6_addr) &&
 		    !IN6_IS_ADDR_MC_LINKLOCAL(&rts->firsthop.sin6_addr))
 			rts->firsthop.sin6_family = AF_INET6;
