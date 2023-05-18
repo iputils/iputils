@@ -249,7 +249,6 @@ struct ping_rts {
 		opt_so_dontroute:1,
 		opt_sourceroute:1,
 		opt_strictsource:1,
-		opt_tclass:1,
 		opt_timestamp:1,
 		opt_ttl:1,
 		opt_verbose:1,
