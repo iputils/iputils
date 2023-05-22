@@ -174,12 +174,11 @@ root@mops:~ # tracepath -6 3ffe:2400:0:109::2
     the path to the corresponding network hop. It contains
     the value of RTT, and additionally it can show Path MTU when it
     changes. If the path is asymmetric or the probe finishes before
-    it reaches the prescribed hop, the difference between number of
-    hops in forward and return direction is shown next to the
-    keyword "async". This information is not reliable, e.g. the
-    third line shows asymmetry of 1. This is because the first probe
-    with TTL of 2 was rejected at the first hop due to Path MTU
-    Discovery.</para>
+    it reaches the prescribed hop, the number of hops in return
+    direction is shown next to the keyword "asymm". This information
+    is not reliable, e.g. the third line shows asymmetry of 1. This
+    is because the first probe with TTL of 2 was rejected at the
+    first hop due to Path MTU Discovery.</para>
     <para>The last line summarizes information about all the paths
     to the destination. It shows detected Path MTU, amount of hops
     to the destination and our guess about the number of hops from
