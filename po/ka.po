@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-06 21:32+0100\n"
+"POT-Creation-Date: 2023-05-24 10:45+0200\n"
 "PO-Revision-Date: 2023-03-17 21:20+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
@@ -149,8 +149,8 @@ msgstr "გაფრთხილება: გამოიყენება გ
 
 #: arping.c:902 arping.c:905 arping.c:908 ping/ping.c:376 ping/ping.c:423
 #: ping/ping.c:472 ping/ping.c:480 ping/ping.c:525 ping/ping.c:528
-#: ping/ping.c:531 ping/ping.c:545 tracepath.c:474 tracepath.c:477
-#: tracepath.c:480 tracepath.c:502
+#: ping/ping.c:531 ping/ping.c:545 tracepath.c:472 tracepath.c:475
+#: tracepath.c:478 tracepath.c:500
 msgid "invalid argument"
 msgstr "არასწორი არგუმენტი"
 
@@ -1355,26 +1355,26 @@ msgstr "PMTU %d\n"
 msgid "reached\n"
 msgstr "მიღწეულია\n"
 
-#: tracepath.c:325 tracepath.c:328
+#: tracepath.c:326
 #, c-format
 msgid "asymm %2d "
 msgstr "ასიმ %2d "
 
-#: tracepath.c:343
+#: tracepath.c:341
 msgid "NET ERROR"
 msgstr "ქსელის შეცდომა"
 
-#: tracepath.c:388
+#: tracepath.c:386
 #, c-format
 msgid "%2d?: reply received 8)\n"
 msgstr "%2d?: პაკეტი დაბრუნდა 8)\n"
 
-#: tracepath.c:394
+#: tracepath.c:392
 #, c-format
 msgid "%2d:  send failed\n"
 msgstr "%2d:  გაგზავნის შეცდომა\n"
 
-#: tracepath.c:401
+#: tracepath.c:399
 #, c-format
 msgid ""
 "\n"
@@ -1411,31 +1411,31 @@ msgstr ""
 "\n"
 "მეტი დეტალებისთვის იხილეთ tracepath(8).\n"
 
-#: tracepath.c:459 tracepath.c:464
+#: tracepath.c:457 tracepath.c:462
 msgid "Only one -4 or -6 option may be specified"
 msgstr "შეიძლება მიუთითოთ ერთერთი -4 ან -6"
 
-#: tracepath.c:606
+#: tracepath.c:604
 #, c-format
 msgid "%2d:  no reply\n"
 msgstr "%2d:  პასუხის გარეშე\n"
 
-#: tracepath.c:613
+#: tracepath.c:611
 #, c-format
 msgid "     Resume: pmtu %d "
 msgstr "     რეზიუმე: pmtu %d "
 
-#: tracepath.c:615
+#: tracepath.c:613
 #, c-format
 msgid "hops %d "
 msgstr "ჰოპები %d "
 
-#: tracepath.c:617
+#: tracepath.c:615
 #, c-format
 msgid "back %d "
 msgstr "უკან %d "
 
-#: tracepath.c:622
+#: tracepath.c:620
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "pktlen-ის დიაპაზონი: %d < მნიშვნელობა <=%d"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-06 21:32+0100\n"
+"POT-Creation-Date: 2023-05-24 10:45+0200\n"
 "PO-Revision-Date: 2023-03-07 10:59+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
@@ -148,8 +148,8 @@ msgstr "경고: 기본 광역 전송 주소를 사용합니다.\n"
 
 #: arping.c:902 arping.c:905 arping.c:908 ping/ping.c:376 ping/ping.c:423
 #: ping/ping.c:472 ping/ping.c:480 ping/ping.c:525 ping/ping.c:528
-#: ping/ping.c:531 ping/ping.c:545 tracepath.c:474 tracepath.c:477
-#: tracepath.c:480 tracepath.c:502
+#: ping/ping.c:531 ping/ping.c:545 tracepath.c:472 tracepath.c:475
+#: tracepath.c:478 tracepath.c:500
 msgid "invalid argument"
 msgstr "부적절한 인자"
 
@@ -1345,26 +1345,26 @@ msgstr "pmtu %d\n"
 msgid "reached\n"
 msgstr "도달함\n"
 
-#: tracepath.c:325 tracepath.c:328
+#: tracepath.c:326
 #, c-format
 msgid "asymm %2d "
 msgstr "asymm %2d "
 
-#: tracepath.c:343
+#: tracepath.c:341
 msgid "NET ERROR"
 msgstr "넷 오류"
 
-#: tracepath.c:388
+#: tracepath.c:386
 #, c-format
 msgid "%2d?: reply received 8)\n"
 msgstr "%2d?: 응답 8 받았습니다)\n"
 
-#: tracepath.c:394
+#: tracepath.c:392
 #, c-format
 msgid "%2d:  send failed\n"
 msgstr "%2d:  전송 실패함\n"
 
-#: tracepath.c:401
+#: tracepath.c:399
 #, c-format
 msgid ""
 "\n"
@@ -1401,31 +1401,31 @@ msgstr ""
 "\n"
 "보다 자세한 정보를 위하여 tracepath(8)를 참고하세요.\n"
 
-#: tracepath.c:459 tracepath.c:464
+#: tracepath.c:457 tracepath.c:462
 msgid "Only one -4 or -6 option may be specified"
 msgstr "-4 또는 -6 선택은 하나만 지정 할 수 있습니다"
 
-#: tracepath.c:606
+#: tracepath.c:604
 #, c-format
 msgid "%2d:  no reply\n"
 msgstr "%2d:  응답 없음\n"
 
-#: tracepath.c:613
+#: tracepath.c:611
 #, c-format
 msgid "     Resume: pmtu %d "
 msgstr "     재시도: pmtu %d "
 
-#: tracepath.c:615
+#: tracepath.c:613
 #, c-format
 msgid "hops %d "
 msgstr "건너뛰기 %d "
 
-#: tracepath.c:617
+#: tracepath.c:615
 #, c-format
 msgid "back %d "
 msgstr "%d 뒤로 "
 
-#: tracepath.c:622
+#: tracepath.c:620
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "pktlen은 다음 값 안에 있어야 합니다: %d < 값 <= %d"
