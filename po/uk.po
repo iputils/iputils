@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-06 21:32+0100\n"
+"POT-Creation-Date: 2023-05-24 10:45+0200\n"
 "PO-Revision-Date: 2023-03-08 18:20+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
@@ -151,8 +151,8 @@ msgstr "Попередження: використовуємо типову ад
 
 #: arping.c:902 arping.c:905 arping.c:908 ping/ping.c:376 ping/ping.c:423
 #: ping/ping.c:472 ping/ping.c:480 ping/ping.c:525 ping/ping.c:528
-#: ping/ping.c:531 ping/ping.c:545 tracepath.c:474 tracepath.c:477
-#: tracepath.c:480 tracepath.c:502
+#: ping/ping.c:531 ping/ping.c:545 tracepath.c:472 tracepath.c:475
+#: tracepath.c:478 tracepath.c:500
 msgid "invalid argument"
 msgstr "некоректний аргумент"
 
@@ -1364,26 +1364,26 @@ msgstr "pmtu %d\n"
 msgid "reached\n"
 msgstr "досягнуто\n"
 
-#: tracepath.c:325 tracepath.c:328
+#: tracepath.c:326
 #, c-format
 msgid "asymm %2d "
 msgstr "асим %2d "
 
-#: tracepath.c:343
+#: tracepath.c:341
 msgid "NET ERROR"
 msgstr "ПОМИЛКА МЕРЕЖІ"
 
-#: tracepath.c:388
+#: tracepath.c:386
 #, c-format
 msgid "%2d?: reply received 8)\n"
 msgstr "%2d?: отримано відповідь 8)\n"
 
-#: tracepath.c:394
+#: tracepath.c:392
 #, c-format
 msgid "%2d:  send failed\n"
 msgstr "%2d:  помилка надсилання\n"
 
-#: tracepath.c:401
+#: tracepath.c:399
 #, c-format
 msgid ""
 "\n"
@@ -1421,31 +1421,31 @@ msgstr ""
 "Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо "
 "tracepath(8).\n"
 
-#: tracepath.c:459 tracepath.c:464
+#: tracepath.c:457 tracepath.c:462
 msgid "Only one -4 or -6 option may be specified"
 msgstr "Можна вказувати лише один із параметрів — -4 або -6"
 
-#: tracepath.c:606
+#: tracepath.c:604
 #, c-format
 msgid "%2d:  no reply\n"
 msgstr "%2d:  немає відповіді\n"
 
-#: tracepath.c:613
+#: tracepath.c:611
 #, c-format
 msgid "     Resume: pmtu %d "
 msgstr "     Резюме: pmtu %d "
 
-#: tracepath.c:615
+#: tracepath.c:613
 #, c-format
 msgid "hops %d "
 msgstr "перестрибувань %d "
 
-#: tracepath.c:617
+#: tracepath.c:615
 #, c-format
 msgid "back %d "
 msgstr "назад %d "
 
-#: tracepath.c:622
+#: tracepath.c:620
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "pktlen має задовольняти таку нерівністю: %d < значення <= %d"
