@@ -321,10 +321,8 @@ static int recverr(struct run_state *const ctl)
 		     e->ee_type == ICMPV6_TIME_EXCEED &&
 		     e->ee_code == ICMPV6_EXC_HOPLIMIT)) {
 			if (rethops >= 0) {
-				if (sndhops >= 0 && rethops != sndhops)
-					printf(_("asymm %2d "), rethops);
-
-				if (sndhops < 0 && rethops != ctl->ttl)
+				if ((sndhops >= 0 && rethops != sndhops) ||
+					(sndhops < 0 && rethops != ctl->ttl))
 					printf(_("asymm %2d "), rethops);
 			}
 			printf("\n");
