@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-24 10:45+0200\n"
-"PO-Revision-Date: 2022-10-19 23:20+0000\n"
-"Last-Translator: Robert Scheck <redhat@linuxnetz.de>\n"
+"POT-Creation-Date: 2023-05-24 15:30+0200\n"
+"PO-Revision-Date: 2023-05-24 15:30+0200\n"
+"Last-Translator: Marek Küthe <m.k@mk16.de>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/de/>\n"
 "Language: de\n"
@@ -73,7 +73,7 @@ msgstr ""
 #: arping.c:305
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr ""
+msgstr "%d Sonden (%d Broadcast(s)) gesendet\n"
 
 #: arping.c:306
 #, c-format
@@ -199,7 +199,7 @@ msgstr "Falscher Zeitstempel %d\n"
 #: clockdiff.c:247
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr ""
+msgstr "Überlauf %d Hops\n"
 
 #: clockdiff.c:272
 #, c-format
@@ -247,7 +247,7 @@ msgstr ""
 
 #: clockdiff.c:592
 msgid "measure: unknown failure"
-msgstr ""
+msgstr "Maßnahme: unbekannter Fehler"
 
 #: clockdiff.c:597
 #, c-format
@@ -281,7 +281,7 @@ msgstr "Qtype-Konflikt\n"
 #: ping/node_info.c:220
 #, c-format
 msgid "Subject type conflict\n"
-msgstr ""
+msgstr "Konflikt beim Subjekt Typ\n"
 
 #: ping/node_info.c:311
 #, c-format
@@ -290,7 +290,7 @@ msgstr "IDN-Codierungsfehler: %s"
 
 #: ping/node_info.c:322
 msgid "too long scope name"
-msgstr ""
+msgstr "zu langer Bereichsname"
 
 #: ping/node_info.c:346 ping/node_info.c:388 ping/ping6_common.c:301
 #: ping/ping.c:512 ping/ping.c:576 ping/ping.c:1003
@@ -300,7 +300,7 @@ msgstr "Speicherzuweisung ist gescheitert"
 #: ping/node_info.c:358
 #, c-format
 msgid "inappropriate subject name: %s"
-msgstr ""
+msgstr "unpassender Subjektname: %s"
 
 #: ping/node_info.c:361
 msgid "dn_comp() returned too long result"
@@ -328,6 +328,24 @@ msgid ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 msgstr ""
+"ping -6 -N <Knoteninfo opt>\n"
+"Hilfe:\n"
+"  help\n"
+"Anfrage:\n"
+"  name\n"
+"  ipv6\n"
+"  ipv6-all\n"
+"  ipv6-compatible\n"
+"  ipv6-global\n"
+"  ipv6-linklocal\n"
+"  ipv6-sitelocal\n"
+"  ipv4\n"
+"  ipv4-all\n"
+"Subject:\n"
+"  subject-ipv6=addr\n"
+"  subject-ipv4=addr\n"
+"  subject-name=name\n"
+"  subject-fqdn=name\n"
 
 #: ping/ping6_common.c:99 ping/ping.c:704
 #, c-format
@@ -336,7 +354,7 @@ msgstr "unbekannte Schnittstelle: %s"
 
 #: ping/ping6_common.c:146
 msgid "scope discrepancy among the nodes"
-msgstr ""
+msgstr "Bereichsunstimmigkeit unter den Knoten"
 
 #: ping/ping6_common.c:222 ping/ping.c:865
 #, c-format
@@ -352,31 +370,31 @@ msgstr "Multicast-Ping mit zu kleinem Intervall: %d"
 
 #: ping/ping6_common.c:265
 msgid "multicast ping does not fragment"
-msgstr ""
+msgstr "Multicast Ping fragmentiert nicht"
 
 #: ping/ping6_common.c:323
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr ""
+msgstr "Fehler bei setsockopt(RAW_CHECKSUM) - versuche fortzufahren"
 
 #: ping/ping6_common.c:349
 msgid "can't disable multicast loopback"
-msgstr ""
+msgstr "kann Multicast Loopback nicht deaktivieren"
 
 #: ping/ping6_common.c:354
 msgid "can't set multicast hop limit"
-msgstr ""
+msgstr "kann Multicast Hop Limit nicht setzen"
 
 #: ping/ping6_common.c:357
 msgid "can't set unicast hop limit"
-msgstr ""
+msgstr "kann Unicast Hop Limit nicht setzen"
 
 #: ping/ping6_common.c:369
 msgid "can't receive hop limit"
-msgstr ""
+msgstr "kann Hop Limit nicht empfangen"
 
 #: ping/ping6_common.c:374
 msgid "setsockopt(IPV6_TCLASS)"
-msgstr ""
+msgstr "setsockopt(IPV6_TCLASS)"
 
 #: ping/ping6_common.c:376
 msgid "traffic class is not supported"
@@ -388,7 +406,7 @@ msgstr "kann Flowlabel nicht setzen"
 
 #: ping/ping6_common.c:396
 msgid "can't send flowinfo"
-msgstr ""
+msgstr "kann Flussinformationen nicht senden"
 
 #: ping/ping6_common.c:399
 #, c-format
@@ -443,12 +461,12 @@ msgstr "Port nicht erreichbar"
 #: ping/ping6_common.c:442
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "Quelladresse fehlgeschlagen Ingress/Egress Policy"
 
 #: ping/ping6_common.c:445
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "Route zum Ziel abgelehnt"
 
 #: ping/ping6_common.c:448
 #, c-format
@@ -629,13 +647,13 @@ msgid "unknown protocol family: %d"
 msgstr "unbekannte Protokollfamilie: %d"
 
 #: ping/ping.c:109
-#, fuzzy, c-format
+#, c-format
 msgid "unknown sock type: %d"
-msgstr "unbekannter icmp-Typ: %u"
+msgstr "unbekannter Sockel-Typ: %u"
 
 #: ping/ping.c:196
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "fehlende cap_net_raw+p Fähigkeit oder setuid?"
 
 #: ping/ping.c:235
 #, c-format
@@ -701,7 +719,7 @@ msgstr "ungültige Quell-Adresse: %s"
 #: ping/ping.c:474
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
-msgstr ""
+msgstr "kann preload nicht auf Wert größer als 3 setzen: %d"
 
 #: ping/ping.c:493
 #, c-format
@@ -719,7 +737,7 @@ msgstr "schlechte Verweildauer: %s"
 
 #: ping/ping.c:591
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "WARNING: ident 0 => erzwinge raw socket"
 
 #: ping/ping.c:648
 #, c-format
@@ -727,16 +745,20 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
+"Warnung: IPv6 link-local Adresse auf einem ICMP Datagrammsockel kann ifname "
+"or Bereichs-ID erfordern => benutzen Sie: Adresse%%<ifname|Bereichs-ID>"
 
 #: ping/ping.c:816
 msgid "warning: QOS sockopts"
-msgstr ""
+msgstr "Warnung: QOS sockopts"
 
 #: ping/ping.c:828
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
 msgstr ""
+"Möchten Sie broadcast pingen? Dann -b. Falls nicht, überprüfen Sie die "
+"lokalen Firewall Richtlinien"
 
 #: ping/ping.c:829
 #, c-format
@@ -745,7 +767,7 @@ msgstr "WARNUNG: Pinge Broadcast-Adresse\n"
 
 #: ping/ping.c:832 ping/ping.c:983
 msgid "cannot set broadcasting"
-msgstr ""
+msgstr "kann broadcasting nicht einstellen"
 
 #: ping/ping.c:853
 msgid "gatifaddrs failed"
@@ -758,7 +780,7 @@ msgstr "Broadcast-Ping mit zu kleinem Intervall: %d"
 
 #: ping/ping.c:882
 msgid "broadcast ping does not fragment"
-msgstr ""
+msgstr "Broadcast Ping fragmentiert nicht"
 
 #: ping/ping.c:911
 msgid "WARNING: setsockopt(ICMP_FILTER)"
@@ -782,11 +804,11 @@ msgstr "kann Multicast-Loopback nicht deaktivieren"
 
 #: ping/ping.c:994
 msgid "cannot set multicast time-to-live"
-msgstr ""
+msgstr "kann Multicast TTL nicht einstellen"
 
 #: ping/ping.c:996
 msgid "cannot set unicast time-to-live"
-msgstr ""
+msgstr "kann Unicast TTL nicht einstellen"
 
 #: ping/ping.c:1005
 #, c-format
@@ -857,7 +879,7 @@ msgstr "\t%ld absolut"
 #: ping/ping.c:1179
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr ""
+msgstr "Nicht aufgezeichnete Hops: %d\n"
 
 #: ping/ping.c:1183
 #, c-format
@@ -871,7 +893,7 @@ msgstr ""
 #: ping/ping.c:1203
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr ""
+msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 
 #: ping/ping.c:1204
 #, c-format
@@ -916,12 +938,12 @@ msgstr "Zielport nicht erreichbar\n"
 #: ping/ping.c:1242
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr ""
+msgstr "Fragmentierung benötigt und DF gesetzt (mtu=%u)\n"
 
 #: ping/ping.c:1245
 #, c-format
 msgid "Source Route Failed\n"
-msgstr ""
+msgstr "Fehler bei Quellroute\n"
 
 #: ping/ping.c:1248
 #, c-format
@@ -971,17 +993,17 @@ msgstr "Vorrangsverletzung\n"
 #: ping/ping.c:1275
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "Vorrang Cutoff\n"
 
 #: ping/ping.c:1278
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
-msgstr ""
+msgstr "Ziel nicht erreichbar, Fehlercode: %d\n"
 
 #: ping/ping.c:1285
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "Quellenlöschung\n"
 
 #: ping/ping.c:1292
 #, c-format
@@ -996,22 +1018,22 @@ msgstr "Host umleiten"
 #: ping/ping.c:1298
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "Leite Typ des Dienstes und Netzwerk um"
 
 #: ping/ping.c:1301
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "Leite Typ des Dienstes und Host um"
 
 #: ping/ping.c:1304
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "Leite um, Fehlercode: %d"
 
 #: ping/ping.c:1315
 #, c-format
 msgid "(New nexthop: %s)\n"
-msgstr ""
+msgstr "(Neuer Nexthop: %s)\n"
 
 #: ping/ping.c:1321
 #, c-format
@@ -1026,7 +1048,7 @@ msgstr "Lebenszeit überschritten\n"
 #: ping/ping.c:1330
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr ""
+msgstr "Fragmentierungs-Wiederherstellungszeit überschritten\n"
 
 #: ping/ping.c:1333
 #, c-format
@@ -1121,11 +1143,12 @@ msgstr "noch keine Antwort für icmp_seq=%lu\n"
 #: ping/ping_common.c:452
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr ""
+"WARNUNG: rcvbuf ist wahrscheinlich nicht groß genug, um preload zu halten"
 
 #: ping/ping_common.c:469
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "WARNUNG: Socket-Filter konnte nicht installiert werden"
+msgstr "WARNUNG: Markierung konnte nicht gesetzt werden: %u"
 
 #: ping/ping_common.c:471
 msgid "WARNING: SO_MARK not supported"
@@ -1134,21 +1157,21 @@ msgstr "WARNUNG: SO_MARK wird nicht unterstützt"
 #: ping/ping_common.c:487
 #, c-format
 msgid "cannot flood; minimal interval allowed for user is %dms"
-msgstr ""
+msgstr "kann nicht fluten; Mindestintervall erlaubt für Nutzer ist %dms"
 
 #: ping/ping_common.c:490
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr ""
+msgstr "unerlaubter Preload bzw. Intervall: %d"
 
 #: ping/ping_common.c:502
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr ""
+msgstr "Warnung: keine SO_TIMESTAMP Unterstützung, kehre zurück zu SIOCGSTAMP"
 
 #: ping/ping_common.c:746
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr ""
+msgstr "Warnung: Tageszeit liegt vor (%ldus), leite Gegenmaßnahmen ein"
 
 #: ping/ping_common.c:796
 #, c-format
@@ -1158,7 +1181,7 @@ msgstr "%d Bytes von %s:"
 #: ping/ping_common.c:802
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:805
 #, c-format
@@ -1257,7 +1280,7 @@ msgstr ", Zeit %ldms"
 #: ping/ping_common.c:916
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
+msgstr "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:924
 #, c-format
@@ -1314,7 +1337,7 @@ msgstr "%3ld.%03ldms "
 #: tracepath.c:289
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr ""
+msgstr "(Dieser kaputte Router hat beschädigte Daten zurückgegeben) "
 
 #: tracepath.c:304
 #, c-format
@@ -1329,7 +1352,7 @@ msgstr "erreicht\n"
 #: tracepath.c:326
 #, c-format
 msgid "asymm %2d "
-msgstr ""
+msgstr "asym. %2d "
 
 #: tracepath.c:341
 msgid "NET ERROR"
@@ -1394,22 +1417,22 @@ msgstr "%2d:  keine Antwort\n"
 #: tracepath.c:611
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr ""
+msgstr "     Zusammenfassung: pmtu %d "
 
 #: tracepath.c:613
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "hops %d "
 
 #: tracepath.c:615
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "zurück %d "
 
 #: tracepath.c:620
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr ""
+msgstr "pktlen muss innerhalb von %d < Wert <= %d liegen"
 
 #, c-format
 #~ msgid "  %.4f ms"
