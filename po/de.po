@@ -649,7 +649,7 @@ msgstr "unbekannte Protokollfamilie: %d"
 #: ping/ping.c:109
 #, c-format
 msgid "unknown sock type: %d"
-msgstr "unbekannter Sockel-Typ: %u"
+msgstr "unbekannter Sockel-Typ: %d"
 
 #: ping/ping.c:196
 msgid "=> missing cap_net_raw+p capability or setuid?"
