@@ -4,7 +4,6 @@ set -ex
 
 yum -y install \
 	clang \
-	docbook5-style-xsl \
 	gcc \
 	gettext \
 	iproute \
@@ -15,6 +14,7 @@ yum -y install \
 
 if [ "$(basename $0)" = "centos.sh" ] || [ "$(basename $0)" = "rockylinux.sh" ]; then
 	# CentOS Linux 7: libidn2-devel, meson, ninja-build are provided by EPEL
+	# CentOS/RHEL/Rocky 8: docbook5-style-xsl is provided by EPEL
 	yum -y install epel-release
 
 	# Enable CRB (formerly PowerTools) on CentOS/RHEL/Rocky >= 8 via EPEL
@@ -27,4 +27,4 @@ if [ "$(basename $0)" = "centos.sh" ] || [ "$(basename $0)" = "rockylinux.sh" ];
 	fi
 fi
 
-yum -y install libidn2-devel meson ninja-build
+yum -y install docbook5-style-xsl libidn2-devel meson ninja-build
