@@ -63,6 +63,8 @@
 /* FIXME: global_rts will be removed in future */
 struct ping_rts *global_rts;
 
+char *_pr_addr(struct ping_rts *rts, void *sa, socklen_t salen, int resolve_name);
+
 #ifndef ICMP_FILTER
 #define ICMP_FILTER	1
 struct icmp_filter {
@@ -1726,9 +1728,30 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 /*
  * pr_addr --
  *
- * Return an ascii host address optionally with a hostname.
+ * Return an ascii host address with reverse name resolution.
  */
 char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
+{
+	return _pr_addr(rts, sa, salen, 1);
+}
+
+/*
+ * pr_raw_addr --
+ *
+ * Return an ascii host address.  Reverse name resolution is not performed.
+ */
+
+char *pr_raw_addr(struct ping_rts *rts, void *sa, socklen_t salen)
+{
+	return _pr_addr(rts, sa, salen, 0);
+}
+
+/*
+ * _pr_addr --
+ *
+ * Return an ascii host address optionally with a hostname.
+ */
+char *_pr_addr(struct ping_rts *rts, void *sa, socklen_t salen, int resolve_name)
 {
 	static char buffer[4096] = "";
 	static struct sockaddr_storage last_sa;
@@ -1745,10 +1768,10 @@ char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 	rts->in_pr_addr = !setjmp(rts->pr_addr_jmp);
 
 	getnameinfo(sa, salen, address, sizeof address, NULL, 0, getnameinfo_flags | NI_NUMERICHOST);
-	if (!rts->exiting && !rts->opt_numeric)
+	if (!rts->exiting && resolve_name && !rts->opt_numeric)
 		getnameinfo(sa, salen, name, sizeof name, NULL, 0, getnameinfo_flags);
 
-	if (*name)
+	if (*name && strncmp(name, address, NI_MAXHOST))
 		snprintf(buffer, sizeof buffer, "%s (%s)", name, address);
 	else
 		snprintf(buffer, sizeof buffer, "%s", address);
