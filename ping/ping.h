@@ -388,6 +388,7 @@ static inline int disable_capability_admin(void)	{ return modify_capability(0); 
 extern void drop_capabilities(void);
 
 char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen);
+char *pr_raw_addr(struct ping_rts *rts, void *sa, socklen_t salen);
 
 int is_ours(struct ping_rts *rts, socket_st *sock, uint16_t id);
 extern int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock);
