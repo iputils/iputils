@@ -391,7 +391,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, _("can't send flowinfo"));
 	}
 
-	printf(_("PING %s(%s) "), rts->hostname, pr_addr(rts, &rts->whereto6, sizeof rts->whereto6));
+	printf(_("PING %s (%s) "), rts->hostname, pr_addr(rts, &rts->whereto6, sizeof rts->whereto6));
 	if (rts->flowlabel)
 		printf(_(", flow 0x%05x, "), (unsigned)ntohl(rts->flowlabel));
 	if (rts->device || rts->opt_strictsource) {
