@@ -68,7 +68,7 @@ Add there also credit for all contributors:
     Many thanks to the people contributing to this release:
 
     old_tag="$(git describe --abbrev=0 $tag^)"
-    git shortlog -s -n $old_tag..
+    git shortlog -sen $old_tag..
 
     Also thanks to patch reviewers:
 
