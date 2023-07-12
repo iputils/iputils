@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-26 08:19+0200\n"
-"PO-Revision-Date: 2023-05-27 09:58+0000\n"
+"PO-Revision-Date: 2023-07-13 19:21+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 
 #: arping.c:123
 #, c-format
@@ -368,12 +368,11 @@ msgstr ""
 #: ping/ping6_common.c:262
 #, c-format
 msgid "multicast ping with too short interval: %d"
-msgstr ""
-"луна-імпульс односпрямованої трансляції із надто коротким інтервалом: %d"
+msgstr "пінг односпрямованої трансляції із надто коротким інтервалом: %d"
 
 #: ping/ping6_common.c:265
 msgid "multicast ping does not fragment"
-msgstr "луна-імпульс односпрямованої трансляції не фрагментується"
+msgstr "пінг односпрямованої трансляції не фрагментується"
 
 #: ping/ping6_common.c:323
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
@@ -766,13 +765,13 @@ msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
 msgstr ""
-"Хочете надіслати луна-імпульс трансляції? Скористайтеся -b. Якщо ні, "
-"перевірте, чи правильно вказано правила вашого локального брандмауера"
+"Хочете надіслати пінг трансляції? Скористайтеся -b. Якщо ні, перевірте, чи "
+"правильно вказано правила вашого локального брандмауера"
 
 #: ping/ping.c:829
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
-msgstr "УВАГА: перевірка луна-імпульсом адреси трансляції\n"
+msgstr "УВАГА: перевірка пінгом адреси трансляції\n"
 
 #: ping/ping.c:832 ping/ping.c:983
 msgid "cannot set broadcasting"
@@ -785,11 +784,11 @@ msgstr "помилка gatifaddrs"
 #: ping/ping.c:880
 #, c-format
 msgid "broadcast ping with too short interval: %d"
-msgstr "луна-імпульс трансляції із надто коротким інтервалом: %d"
+msgstr "пінг трансляції із надто коротким інтервалом: %d"
 
 #: ping/ping.c:882
 msgid "broadcast ping does not fragment"
-msgstr "луна-імпульс трансляції не фрагментується"
+msgstr "пінг трансляції не фрагментується"
 
 #: ping/ping.c:911
 msgid "WARNING: setsockopt(ICMP_FILTER)"
@@ -823,7 +822,7 @@ msgstr ""
 #: ping/ping.c:1005
 #, c-format
 msgid "PING %s (%s) "
-msgstr "ЛУНА-ІМПУЛЬС %s (%s) "
+msgstr "ПІНГ %s (%s) "
 
 #: ping/ping.c:1008
 #, c-format
@@ -1373,7 +1372,7 @@ msgstr ""
 #: ping/ping_common.c:880
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr "--- Статистика луна-імпульсів %s ---\n"
+msgstr "--- Статистика пінгування %s ---\n"
 
 #: ping/ping_common.c:881
 #, c-format
