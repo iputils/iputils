@@ -787,8 +787,17 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 			memcpy(&rts->whereto, result->ai_addr, sizeof rts->whereto);
 			memset(hnamebuf, 0, sizeof hnamebuf);
+
+			/*
+			 * On certain network setup getaddrinfo() can return empty
+			 * ai_canonname. Instead of printing nothing in "PING"
+			 * line use the target.
+			 */
 			if (result->ai_canonname)
 				strncpy(hnamebuf, result->ai_canonname, sizeof hnamebuf - 1);
+			else
+				strncpy(hnamebuf, target, sizeof hnamebuf - 1);
+
 			rts->hostname = hnamebuf;
 
 			if (argc > 1)
