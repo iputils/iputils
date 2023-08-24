@@ -283,8 +283,8 @@ static inline void update_interval(struct ping_rts *rts)
 	int est = rts->rtt ? rts->rtt / 8 : rts->interval * 1000;
 
 	rts->interval = (est + rts->rtt_addend + 500) / 1000;
-	if (rts->uid && rts->interval < MINUSERINTERVAL)
-		rts->interval = MINUSERINTERVAL;
+	if (rts->uid && rts->interval < MIN_USER_INTERVAL_MS)
+		rts->interval = MIN_USER_INTERVAL_MS;
 }
 
 /*
@@ -332,8 +332,8 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 		if (!rts->interval) {
 			/* Case of unlimited flood is special;
 			 * if we see no reply, they are limited to 100pps */
-			if (ntokens < MININTERVAL && in_flight(rts) >= rts->preload)
-				return MININTERVAL - ntokens;
+			if (ntokens < MIN_INTERVAL_MS && in_flight(rts) >= rts->preload)
+				return MIN_INTERVAL_MS - ntokens;
 		}
 		ntokens += tokens;
 		tmp = (long)rts->interval * (long)rts->preload;
@@ -397,7 +397,7 @@ resend:
 	} else if (errno == EAGAIN) {
 		/* Socket buffer is full. */
 		tokens += rts->interval;
-		return MININTERVAL;
+		return MIN_INTERVAL_MS;
 	} else {
 		if ((i = fset->receive_error_msg(rts, sock)) > 0) {
 			/* An ICMP error arrived. In this case, we've received
@@ -483,8 +483,9 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	if (rts->opt_flood && !rts->opt_interval)
 		rts->interval = 0;
 
-	if (rts->uid && rts->interval < MINUSERINTERVAL)
-		error(2, 0, _("cannot flood; minimal interval allowed for user is %dms"), MINUSERINTERVAL);
+	if (rts->uid && rts->interval < MIN_USER_INTERVAL_MS)
+		error(2, 0, _("cannot flood; minimal interval allowed for user is %dms"),
+			  MIN_USER_INTERVAL_MS);
 
 	if (rts->interval >= INT_MAX / rts->preload)
 		error(2, 0, _("illegal preload and/or interval: %d"), rts->interval);
@@ -617,10 +618,10 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 			 * required timeout. */
 			if (1000 % HZ == 0 ? next <= 1000 / HZ : (next < INT_MAX / HZ && next * HZ <= 1000)) {
 				/* Very short timeout... So, if we wait for
-				 * something, we sleep for MININTERVAL.
+				 * something, we sleep for MIN_INTERVAL_MS.
 				 * Otherwise, spin! */
 				if (recv_expected) {
-					next = MININTERVAL;
+					next = MIN_INTERVAL_MS;
 				} else {
 					next = 0;
 					/* When spinning, no reasons to poll.

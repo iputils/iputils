@@ -63,11 +63,11 @@
 #define	DEFDATALEN	(64 - 8)	/* default data length */
 
 #define	MAXWAIT		10		/* max seconds to wait for response */
-#define MININTERVAL	10		/* Minimal interpacket gap */
-#define MINUSERINTERVAL	2		/* Minimal allowed interval for non-root */
+#define MIN_INTERVAL_MS	10		/* Minimal interpacket gap */
+#define MIN_USER_INTERVAL_MS	2		/* Minimal allowed interval for non-root */
 #define IDENTIFIER_MAX	0xFFFF		/* max unsigned 2-byte value */
 
-#define SCHINT(a)	(((a) <= MININTERVAL) ? MININTERVAL : (a))
+#define SCHINT(a)	(((a) <= MIN_INTERVAL_MS) ? MIN_INTERVAL_MS : (a))
 
 
 #ifndef MSG_CONFIRM
