@@ -389,6 +389,7 @@ extern void drop_capabilities(void);
 
 char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen);
 char *pr_raw_addr(struct ping_rts *rts, void *sa, socklen_t salen);
+char *str_interval(int interval);
 
 int is_ours(struct ping_rts *rts, socket_st *sock, uint16_t id);
 extern int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock);

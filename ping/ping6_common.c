@@ -264,8 +264,9 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 		if (rts->uid) {
 			if (rts->interval < MIN_MULTICAST_USER_INTERVAL_MS)
-				error(2, 0, _("multicast ping with too short interval: %d"),
-					    rts->interval);
+				error(2, 0, _("minimal interval for multicast ping for user must be >= %d ms, use -i %s (or higher)"),
+					  MIN_MULTICAST_USER_INTERVAL_MS,
+					  str_interval(MIN_MULTICAST_USER_INTERVAL_MS));
 
 			if (rts->pmtudisc >= 0 && rts->pmtudisc != IPV6_PMTUDISC_DO)
 				error(2, 0, _("multicast ping does not fragment"));

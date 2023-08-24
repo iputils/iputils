@@ -484,8 +484,8 @@ void setup(struct ping_rts *rts, socket_st *sock)
 		rts->interval = 0;
 
 	if (rts->uid && rts->interval < MIN_USER_INTERVAL_MS)
-		error(2, 0, _("cannot flood; minimal interval allowed for user is %dms"),
-			  MIN_USER_INTERVAL_MS);
+		error(2, 0, _("cannot flood, minimal interval for user must be >= %d ms, use -i %s (or higher)"),
+			  MIN_USER_INTERVAL_MS, str_interval(MIN_USER_INTERVAL_MS));
 
 	if (rts->interval >= INT_MAX / rts->preload)
 		error(2, 0, _("illegal preload and/or interval: %d"), rts->interval);
@@ -963,4 +963,20 @@ void status(struct ping_rts *rts)
 inline int is_ours(struct ping_rts *rts, socket_st * sock, uint16_t id)
 {
 	return sock->socktype == SOCK_DGRAM || id == rts->ident;
+}
+
+char *str_interval(int interval)
+{
+	static char buf[14];
+
+	/*
+	 * Avoid messing with locales and floating point due the different decimal
+	 * point depending on locales.
+	 */
+	if (interval % 1000)
+		snprintf(buf, sizeof(buf), "%1i.%03i", interval/1000, interval%1000);
+	else
+		snprintf(buf, sizeof(buf), "%i", interval/1000);
+
+	return buf;
 }
