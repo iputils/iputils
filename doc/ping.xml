@@ -280,7 +280,8 @@ xml:id="man.ping">
           The default is to wait for one second between each packet
           normally, or not to wait in flood mode.
           Only super-user may set interval to values
-          less than 2 ms.</para>
+          less than 2 ms. Broadcast and multicast ping have even
+          higher limitation for regular user: minimum is 1 sec.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
