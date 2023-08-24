@@ -877,12 +877,15 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	if (rts->broadcast_pings || IN_MULTICAST(ntohl(rts->whereto.sin_addr.s_addr))) {
 		rts->multicast = 1;
+
 		if (rts->uid) {
-			if (rts->interval < 1000)
+			if (rts->interval < MIN_MULTICAST_USER_INTERVAL_MS)
 				error(2, 0, _("broadcast ping with too short interval: %d"), rts->interval);
+
 			if (rts->pmtudisc >= 0 && rts->pmtudisc != IP_PMTUDISC_DO)
 				error(2, 0, _("broadcast ping does not fragment"));
 		}
+
 		if (rts->pmtudisc < 0)
 			rts->pmtudisc = IP_PMTUDISC_DO;
 	}

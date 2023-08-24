@@ -64,7 +64,8 @@
 
 #define	MAXWAIT		10		/* max seconds to wait for response */
 #define MIN_INTERVAL_MS	10		/* Minimal interpacket gap */
-#define MIN_USER_INTERVAL_MS	2		/* Minimal allowed interval for non-root */
+#define MIN_USER_INTERVAL_MS	2		/* Minimal allowed interval for non-root for single host ping */
+#define MIN_MULTICAST_USER_INTERVAL_MS	1000	/* Minimal allowed interval for non-root for broadcast/multicast ping */
 #define IDENTIFIER_MAX	0xFFFF		/* max unsigned 2-byte value */
 
 #define SCHINT(a)	(((a) <= MIN_INTERVAL_MS) ? MIN_INTERVAL_MS : (a))

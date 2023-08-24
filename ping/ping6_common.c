@@ -261,13 +261,16 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	if (IN6_IS_ADDR_MULTICAST(&rts->whereto6.sin6_addr)) {
 		rts->multicast = 1;
+
 		if (rts->uid) {
-			if (rts->interval < 1000)
+			if (rts->interval < MIN_MULTICAST_USER_INTERVAL_MS)
 				error(2, 0, _("multicast ping with too short interval: %d"),
 					    rts->interval);
+
 			if (rts->pmtudisc >= 0 && rts->pmtudisc != IPV6_PMTUDISC_DO)
 				error(2, 0, _("multicast ping does not fragment"));
 		}
+
 		if (rts->pmtudisc < 0)
 			rts->pmtudisc = IPV6_PMTUDISC_DO;
 	}
