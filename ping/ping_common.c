@@ -534,7 +534,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 			*p++ = i;
 	}
 
-	if (sock->socktype == SOCK_RAW && rts->ident == -1)
+	if (rts->ident == -1)
 		rts->ident = rand() & IDENTIFIER_MAX;
 
 	set_signal(SIGINT, sigexit);
