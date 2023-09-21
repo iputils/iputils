@@ -798,7 +798,7 @@ restamp:
 		if (pr_reply)
 			pr_reply(icmph, cc);
 
-		if (rts->opt_verbose && rts->ident != -1)
+		if (rts->opt_verbose)
 			printf(_(" ident=%d"), ntohs(rts->ident));
 
 		if (hops >= 0)
