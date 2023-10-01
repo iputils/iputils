@@ -214,6 +214,15 @@ xml:id="man.ping">
       </varlistentry>
       <varlistentry>
         <term>
+          <option>-D</option>
+        </term>
+        <listitem>
+          <para>Print timestamp (unix time + microseconds as in
+          gettimeofday) before each line.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
           <option>-e</option>
         </term>
         <listitem>
@@ -222,15 +231,6 @@ xml:id="man.ping">
           (not supported on <emphasis remap="I">ICMP datagram socket</emphasis>).
           The value of the field may be printed with <option>-v</option> option.
           </para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
-        <term>
-          <option>-D</option>
-        </term>
-        <listitem>
-          <para>Print timestamp (unix time + microseconds as in
-          gettimeofday) before each line.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
