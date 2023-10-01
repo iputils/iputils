@@ -24,11 +24,15 @@ xml:id="man.ping">
     <cmdsynopsis sepchar=" ">
       <command>ping</command>
       <arg choice="opt" rep="norepeat">
-        <option>-aAbBdCDefhLnOqrRUvV46</option>
+        <option>-aAbBdCDfhLnOqrRUvV46</option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-c
         <replaceable>count</replaceable></option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
+        <option>-e
+        <replaceable>identifier</replaceable></option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-F
@@ -224,6 +228,7 @@ xml:id="man.ping">
       <varlistentry>
         <term>
           <option>-e</option>
+          <emphasis remap="I">identifier</emphasis>
         </term>
         <listitem>
           <para>Set the identification field of ECHO_REQUEST.
