@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-06 23:38+0200\n"
-"PO-Revision-Date: 2023-08-06 17:21+0000\n"
+"PO-Revision-Date: 2023-10-09 12:36+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.18.2\n"
+"X-Generator: Weblate 5.0.2\n"
 
 #: arping.c:123
 #, c-format
@@ -363,7 +363,8 @@ msgstr "경고: 원천 주소는 다른 이외의 장치에서 선택될 수 있
 msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr ""
+msgstr "사용자의 멀티캐스트 핑을 위한 최소 간격은 %d ms이며, -i %s (또는 그 이상)를 "
+"사용합니다"
 
 #: ping/ping6_common.c:272
 msgid "multicast ping does not fragment"
@@ -767,7 +768,8 @@ msgstr "gatifaddrs 실패함"
 msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr ""
+msgstr "사용자의 브로드캐스팅 핑을 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 "
+"이상)를 사용합니다"
 
 #: ping/ping.c:888
 msgid "broadcast ping does not fragment"
@@ -1253,11 +1255,12 @@ msgid "WARNING: SO_MARK not supported"
 msgstr "경고: SO_MARK는 지원되지 않음"
 
 #: ping/ping_common.c:487
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr "패킷이 넘쳐 흐르지 않습니다; 사용자를 위한 최소 허용 간격은 %dms입니다"
+msgstr "넘쳐흐를 수 없고, 사용자를 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 "
+"이상)를 사용합니다"
 
 #: ping/ping_common.c:491
 #, c-format
