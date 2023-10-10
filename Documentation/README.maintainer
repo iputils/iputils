@@ -32,17 +32,16 @@ what was said in previous release message.  Draft release message - remember
 if you have nothing to say then you don't have good enough reason to publish
 release.
 
-Update iputils.pot:
-
-    meson . builddir && ninja iputils-pot -C builddir
-
-and push this change and ask translators to update translations.
-
+Update 'iputils.pot' and translated po files (use 'tools/update-po-files.sh'
+script) and push this change and ask translators to update translations.
 
 Update CHANGES file. It should list the most notable changes and important or
 security related fixes. Create pull request with these changes to give people
 chance to review and test upcoming release. Notify distro maintainers, ask
 community for testing.
+
+NOTE: There is 'tools/tag-release.sh' script, which automates the following
+steps of tagging git (it does also various sanity checks).
 
 Create release commit and tag.
 
@@ -63,7 +62,8 @@ Assuming things are great push to github.
 
 Go to github https://github.com/iputils/iputils/releases and paste
 the content of CHANGES file for upcoming release to the text box.
-Add there also credit for all contributors:
+Add there also credit for all contributors.
+NOTE: 'tools/create-tarballs.sh' script creates also skeleton of the credit.
 
     Many thanks to the people contributing to this release:
 
@@ -78,22 +78,12 @@ Add there also credit for all contributors:
 
     git log $old_tag.. | grep -Ei 'tested-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
 
+Create release tarballs (tar.xz, tar.gz and zip) and checksums with
+'tools/create-tarballs.sh' script.
+
+NOTE: github also produces tar.gz and zip files. We consider them unsecure, do
+not recommend to use them and don't produce checksums for it.
 Choose the tag you just created.  Download the release files, compute sha256 hash:
-
-    wget -c https://github.com/iputils/iputils/archive/$tag.zip \
-        https://github.com/iputils/iputils/archive/$tag.tar.gz
-
-    out="sha256sum"
-    for file in $tag.{zip,tar.gz}; do $out $file >> $out; done
-
-Sign tarballs and sha256 hash:
-
-    for file in $tag.{zip,tar.gz}; do gpg --sign --armor --detach-sign $file; done
-    gpg --clearsign $out
-
-and upload all these four files to the release as additional files.
-
-NOTE: if you use more keys, use -u KEY to specify which key should be used.
 
 The release should be ready.  People tend to react to releases, so expect bug
 reports and pull requests after release.  Assuming release has fatal flaw(s)
@@ -103,12 +93,12 @@ make another one sometime soon.
 
 All maintainers' GPG public keys used for signing tags, releases, commits, etc.
 are stored in Documentation/project-keys.gpg. When adding new maintainer, add
-his/her key into tools/update-project-keyring.sh, run it to update keyring and
+his/her key into 'tools/update-project-keyring.sh', run it to update keyring and
 push the result.
 
 # Branches in git
 
-The upstream repository has exactly one branch and it is `master`.  If a
+The upstream repository has exactly one branch and it is 'master'.  If a
 maintainer wants to use work in progress branches they need to be kept in
 personal clone.  There are two reasons to do this.  For contributors it is
 nice not to see random branches when cloning upstream repo.  Secondly when
