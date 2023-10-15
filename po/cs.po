@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-06 23:38+0200\n"
-"PO-Revision-Date: 2023-03-29 11:20+0000\n"
-"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
+"PO-Revision-Date: 2023-10-15 15:35+0000\n"
+"Last-Translator: Petr Vorel <petr.vorel@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
 "Language: cs\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.0.2\n"
 
 #: arping.c:123
 #, c-format
@@ -364,6 +364,8 @@ msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"Nejmenší interval pro multicastový ping musí být >=%d ms, použijte -i %s ("
+"nebo vyšší)"
 
 #: ping/ping6_common.c:272
 msgid "multicast ping does not fragment"
@@ -768,6 +770,8 @@ msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"Minimální interval pro všesměrový ping pro uživatele musí být >=%d ms, "
+"použijte -i%s (nebo vyšší)"
 
 #: ping/ping.c:888
 msgid "broadcast ping does not fragment"
