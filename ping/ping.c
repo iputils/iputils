@@ -363,7 +363,7 @@ main(int argc, char **argv)
 		hints.ai_family = AF_INET6;
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:CdDe:fi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -433,6 +433,9 @@ main(int argc, char **argv)
 		case 'D':
 			rts.opt_ptimeofday = 1;
 			break;
+		case 'H':
+			rts.opt_force_lookup = 1;
+			break;
 		case 'i':
 		{
 			double optval;
@@ -496,6 +499,7 @@ main(int argc, char **argv)
 			break;
 		case 'n':
 			rts.opt_numeric = 1;
+			rts.opt_force_lookup = 0;
 			break;
 		case 'O':
 			rts.opt_outstanding = 1;
@@ -1780,7 +1784,7 @@ char *_pr_addr(struct ping_rts *rts, void *sa, socklen_t salen, int resolve_name
 	rts->in_pr_addr = !setjmp(rts->pr_addr_jmp);
 
 	getnameinfo(sa, salen, address, sizeof address, NULL, 0, getnameinfo_flags | NI_NUMERICHOST);
-	if (!rts->exiting && resolve_name && !rts->opt_numeric)
+	if (!rts->exiting && resolve_name && (rts->opt_force_lookup || !rts->opt_numeric))
 		getnameinfo(sa, salen, name, sizeof name, NULL, 0, getnameinfo_flags);
 
 	if (*name && strncmp(name, address, NI_MAXHOST))

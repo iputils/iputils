@@ -236,6 +236,7 @@ struct ping_rts {
 		opt_flood:1,
 		opt_flood_poll:1,
 		opt_flowinfo:1,
+		opt_force_lookup:1,
 		opt_interval:1,
 		opt_latency:1,
 		opt_mark:1,

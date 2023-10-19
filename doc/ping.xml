@@ -24,7 +24,7 @@ xml:id="man.ping">
     <cmdsynopsis sepchar=" ">
       <command>ping</command>
       <arg choice="opt" rep="norepeat">
-        <option>-aAbBdCDfhLnOqrRUvV46</option>
+        <option>-aAbBdCDfhHLnOqrRUvV46</option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-c
@@ -270,6 +270,17 @@ xml:id="man.ping">
         </term>
         <listitem>
           <para>Show help.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-H</option>
+        </term>
+        <listitem>
+          <para>Force DNS name resolution for the output. Useful for numeric
+          destination, or <option>-f</option> option, which by default do not
+          perform it. Override previously defined <option>-n</option> option.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -526,7 +537,8 @@ xml:id="man.ping">
           <para>Numeric output only. No attempt will be made to lookup
           symbolic names for host addresses (no reverse DNS resolution).
           This is the default for numeric destination or <option>-f</option>
-          option.</para>
+          option.  Override previously defined <option>-H</option> option.
+          </para>
         </listitem>
       </varlistentry>
       <varlistentry>
