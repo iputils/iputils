@@ -186,6 +186,65 @@ root@mops:~ # tracepath -6 3ffe:2400:0:109::2
     asymmetric.</para>
   </refsect1>
 
+  <refsect1 id='handling_errors'>
+    <title>HANDLING ERRORS</title>
+	<para>In case of errors <command>tracepath</command> prints short
+	error code.</para>
+    <informaltable>
+    <tgroup cols="3">
+	<thead>
+	<row>
+	<entry>Output</entry>
+	<entry>Code</entry>
+	<entry>Meaning</entry>
+	</row>
+	</thead>
+	<tfoot>
+	<row>
+	<entry>!A</entry>
+	<entry>EACCES</entry>
+	<entry>Communication administratively prohibited</entry>
+	</row>
+	<row>
+	<entry>!H</entry>
+	<entry>EHOSTUNREACH</entry>
+	<entry>Destination host unreachable</entry>
+	</row>
+	<row>
+	<entry>!N</entry>
+	<entry>ENETUNREACH</entry>
+	<entry>Destination network unreachable</entry>
+	</row>
+	<row>
+	<entry>!P</entry>
+	<entry>EPROTO</entry>
+	<entry>Destination protocol unreachable</entry>
+	</row>
+	<row>
+	<entry>pmtu N</entry>
+	<entry>EMSGSIZE</entry>
+	<entry>Message too long</entry>
+	</row>
+	<row>
+	<entry>reached</entry>
+	<entry>ECONNREFUSED</entry>
+	<entry>Connection refused</entry>
+	</row>
+	<row>
+	<entry></entry>
+	<entry>ETIMEDOUT</entry>
+	<entry>Connection timed out</entry>
+	</row>
+	<row>
+	<entry>NET ERROR N</entry>
+	<entry></entry>
+	<entry>Any other error</entry>
+	</row>
+	</tfoot>
+	</tgroup>
+	</informaltable>
+  </refsect1>
+
   <refsect1 id='see_also'>
     <title>SEE ALSO</title>
     <para>
