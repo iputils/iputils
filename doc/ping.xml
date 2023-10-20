@@ -523,8 +523,10 @@ xml:id="man.ping">
           <option>-n</option>
         </term>
         <listitem>
-          <para>Numeric output only. No attempt will be made to
-          lookup symbolic names for host addresses.</para>
+          <para>Numeric output only. No attempt will be made to lookup
+          symbolic names for host addresses (no reverse DNS resolution).
+          This is the default for numeric destination or <option>-f</option>
+          option.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
