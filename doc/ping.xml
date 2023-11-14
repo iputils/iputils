@@ -873,25 +873,14 @@ xml:id="man.ping">
     being thrown away. In current practice you can expect each
     router in the Internet to decrement the TTL field by exactly
     one.</para>
-    <para>The TCP/IP specification states that the TTL field for
-    TCP packets should be set to 60, but many systems use smaller
-    values (4.3 BSD uses 30, 4.2 used 15).</para>
-    <para>The maximum possible value of this field is 255, and most
-    Unix systems set the TTL field of ICMP ECHO_REQUEST packets to
-    255. This is why you will find you can “ping” some hosts, but
-    not reach them with
-    <citerefentry>
-      <refentrytitle>telnet</refentrytitle>
-      <manvolnum>1</manvolnum>
-    </citerefentry> or
-    <citerefentry>
-      <refentrytitle>ftp</refentrytitle>
-      <manvolnum>1</manvolnum>
-    </citerefentry>.</para>
-    <para>In normal operation ping prints the TTL value from the
-    packet it receives. When a remote system receives a ping
-    packet, it can do one of three things with the TTL field in its
-    response:</para>
+    <para>The TTL field for TCP packets may take various values.
+    The maximum possible value of this field is 255, a recommended
+    initial value is 64. For more information, see the TCP/Lower-Level
+    Interface section of RFC9293.</para>
+    <para>In normal operation <command>ping</command> prints the TTL
+    value from the packet it receives. When a remote system receives
+    a ping packet, it can do one of three things with the TTL field in
+    its response:</para>
     <variablelist remap="TP">
       <varlistentry>
         <listitem>
