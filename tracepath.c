@@ -11,6 +11,7 @@
 
 #define _GNU_SOURCE
 
+#include <assert.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #include <limits.h>
@@ -510,6 +511,7 @@ int main(int argc, char **argv)
 	}
 
 	for (ctl.ai = result; ctl.ai; ctl.ai = ctl.ai->ai_next) {
+		assert(ctl.ai != NULL);
 		if (ctl.ai->ai_family != AF_INET6 && ctl.ai->ai_family != AF_INET)
 			continue;
 		ctl.socket_fd = socket(ctl.ai->ai_family, ctl.ai->ai_socktype, ctl.ai->ai_protocol);
