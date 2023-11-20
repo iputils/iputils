@@ -554,7 +554,7 @@ int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 		if ((size_t)res < sizeof(icmph) ||
 		    memcmp(&target.sin6_addr, &rts->whereto6.sin6_addr, 16) ||
 		    icmph.icmp6_type != ICMP6_ECHO_REQUEST ||
-		    !is_ours(rts, sock, icmph.icmp6_id)) {
+		    !is_ours(rts, sock, icmph.icmp6_id, icmph.icmp6_seq)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
@@ -858,7 +858,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	}
 
 	if (icmph->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (!is_ours(rts, sock, icmph->icmp6_id))
+		if (!is_ours(rts, sock, icmph->icmp6_id, icmph->icmp6_seq))
 			return 1;
 
 		if (!rts->multicast && !rts->subnet_router_anycast &&
@@ -910,7 +910,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 		}
 		if (nexthdr == IPPROTO_ICMPV6) {
 			if (icmph1->icmp6_type != ICMP6_ECHO_REQUEST ||
-			    !is_ours(rts, sock, icmph1->icmp6_id))
+			    !is_ours(rts, sock, icmph1->icmp6_id, icmph->icmp6_seq))
 				return 1;
 			acknowledge(rts, ntohs(icmph1->icmp6_seq));
 			return 0;

@@ -1014,6 +1014,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	if (rts->datalen >= (int)sizeof(struct timeval))	/* can we time transfer */
 		rts->timing = 1;
+
 	packlen = rts->datalen + MAXIPLEN + MAXICMPLEN;
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
@@ -1447,7 +1448,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 		if (res < (ssize_t) sizeof(icmph) ||
 		    target.sin_addr.s_addr != rts->whereto.sin_addr.s_addr ||
 		    icmph.type != ICMP_ECHO ||
-		    !is_ours(rts, sock, icmph.un.echo.id)) {
+		    !is_ours(rts, sock, icmph.un.echo.id, icmph.un.echo.sequence)) {
 			/* Not our error, not an error at all. Clear. */
 			saved_errno = 0;
 			goto out;
@@ -1645,7 +1646,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 	csfailed = in_cksum((unsigned short *)icp, cc, 0);
 
 	if (icp->type == ICMP_ECHOREPLY) {
-		if (!is_ours(rts, sock, icp->un.echo.id))
+		if (!is_ours(rts, sock, icp->un.echo.id, icp->un.echo.sequence))
 			return 1;			/* 'Twas not our ECHO */
 
 		if (!rts->broadcast_pings && !rts->multicast &&
@@ -1680,7 +1681,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 					return 1;
 				if (icp1->type != ICMP_ECHO ||
 				    iph->daddr != rts->whereto.sin_addr.s_addr ||
-				    !is_ours(rts, sock, icp1->un.echo.id))
+				    !is_ours(rts, sock, icp1->un.echo.id, icp1->un.echo.sequence))
 					return 1;
 				error_pkt = (icp->type != ICMP_REDIRECT &&
 					     icp->type != ICMP_SOURCE_QUENCH);

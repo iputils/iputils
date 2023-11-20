@@ -960,9 +960,10 @@ void status(struct ping_rts *rts)
 	fprintf(stderr, "\n");
 }
 
-inline int is_ours(struct ping_rts *rts, socket_st * sock, uint16_t id)
+inline int is_ours(struct ping_rts *rts, socket_st * sock, uint16_t id, uint16_t seq)
 {
-	return sock->socktype == SOCK_DGRAM || id == rts->ident;
+	return (sock->socktype == SOCK_DGRAM || id == rts->ident) &&
+		seq == ntohs(rts->ntransmitted);
 }
 
 char *str_interval(int interval)
