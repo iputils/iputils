@@ -321,7 +321,7 @@ int pinger(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock)
 		return 1000;
 
 	/* Check that packets < rate*time + preload */
-	if (rts->cur_time.tv_sec == 0) {
+	if (rts->cur_time.tv_sec == 0 && rts->cur_time.tv_nsec == 0) {
 		clock_gettime(CLOCK_MONOTONIC_RAW, &rts->cur_time);
 		tokens = rts->interval * (rts->preload - 1);
 	} else {
