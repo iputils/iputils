@@ -192,7 +192,7 @@ static int recverr(struct run_state *const ctl)
 		ctl->his[slot].hops = 0;
 	}
 	if (recv_size == sizeof(rcvbuf)) {
-		if (rcvbuf.ttl == 0 || rcvbuf.ts.tv_sec == 0)
+		if (rcvbuf.ttl == 0 || (rcvbuf.ts.tv_sec == 0 && rcvbuf.ts.tv_nsec == 0))
 			broken_router = 1;
 		else {
 			sndhops = rcvbuf.ttl;
