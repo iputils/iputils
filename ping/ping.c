@@ -1560,13 +1560,14 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
 
 	cc = rts->datalen + 8;			/* skips ICMP portion */
 
+	/* compute ICMP checksum here */
+	icp->checksum = in_cksum((unsigned short *)icp, cc, 0);
+
 	if (rts->timing && !rts->opt_latency) {
 		struct timeval tmp_tv;
 		gettimeofday(&tmp_tv, NULL);
 		memcpy(icp + 1, &tmp_tv, sizeof(tmp_tv));
 		icp->checksum = in_cksum((unsigned short *)&tmp_tv, sizeof(tmp_tv), ~icp->checksum);
-	} else {
-		icp->checksum = in_cksum((unsigned short *)icp, cc, 0);
 	}
 
 	i = sendto(sock->fd, icp, cc, 0, (struct sockaddr *)&rts->whereto, sizeof(rts->whereto));
