@@ -602,8 +602,7 @@ int build_echo(struct ping_rts *rts, uint8_t *_icmph,
 	icmph->icmp6_id = rts->ident;
 
 	if (rts->timing)
-		gettimeofday((struct timeval *)&_icmph[8],
-		    (struct timezone *)NULL);
+		gettimeofday((struct timeval *)&_icmph[8], NULL);
 
 	cc = rts->datalen + 8;			/* skips ICMP portion */
 
