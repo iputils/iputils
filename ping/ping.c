@@ -569,8 +569,6 @@ main(int argc, char **argv)
 	if (!argc)
 		error(1, EDESTADDRREQ, "usage error");
 
-	iputils_srand();
-
 	target = argv[argc - 1];
 
 	rts.outpack = malloc(rts.datalen + 28);
@@ -1527,7 +1525,7 @@ in_cksum(const unsigned short *addr, int len, unsigned short csum)
 /*
  * pinger --
  * 	Compose and transmit an ICMP ECHO REQUEST packet.  The IP packet
- * will be added on by the kernel.  The ID field is a random number,
+ * will be added on by the kernel.  The ID field is our UNIX process ID,
  * and the sequence number is an ascending integer.  The first several bytes
  * of the data portion are used to hold a UNIX "timeval" struct in VAX
  * byte-order, to compute the round-trip time.

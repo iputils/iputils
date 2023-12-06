@@ -91,6 +91,7 @@ int niquery_is_enabled(struct ping_ni *ni)
 void niquery_init_nonce(struct ping_ni *ni)
 {
 #if PING6_NONCE_MEMORY
+	iputils_srand();
 	ni->nonce_ptr = calloc(NI_NONCE_SIZE, MAX_DUP_CHK);
 	if (!ni->nonce_ptr)
 		error(2, errno, "calloc");
