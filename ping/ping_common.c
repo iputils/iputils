@@ -535,7 +535,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 			*p++ = i;
 	}
 
-	if (sock->socktype == SOCK_RAW && rts->ident == -1)
+	if (rts->ident == -1)
 		rts->ident = rand() & IDENTIFIER_MAX;
 
 	set_signal(SIGINT, sigexit);
@@ -799,7 +799,7 @@ restamp:
 		if (pr_reply)
 			pr_reply(icmph, cc);
 
-		if (rts->opt_verbose && rts->ident != -1)
+		if (rts->opt_verbose)
 			printf(_(" ident=%d"), ntohs(rts->ident));
 
 		if (hops >= 0)
