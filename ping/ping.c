@@ -1770,12 +1770,11 @@ char *pr_raw_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 char *_pr_addr(struct ping_rts *rts, void *sa, socklen_t salen, int resolve_name)
 {
 	static char buffer[4096] = "";
-	static struct sockaddr_storage last_sa;
+	static struct sockaddr_storage last_sa = {0};
 	static socklen_t last_salen = 0;
 	char name[NI_MAXHOST] = "";
 	char address[NI_MAXHOST] = "";
 
-	memset(&last_sa, 0, sizeof(last_sa));
 	if (salen == last_salen && !memcmp(sa, &last_sa, salen))
 		return buffer;
 
