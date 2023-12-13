@@ -851,6 +851,29 @@ xml:id="man.ping">
     hosts).</para>
   </refsection>
 
+  <refsection xml:id="id_collisions">
+    <info>
+      <title>ID COLLISIONS</title>
+    </info>
+    <para>
+    Unlike TCP and UDP, which use port to uniquely identify the recipient to
+    deliver data, ICMP uses identifier field (ID) for identification.
+    Therefore, if on the same machine, at the same time, two ping processes
+    use the same ID, echo reply can be delivered to a wrong recipient.
+    This is a known problem due to the limited size of the 16-bit ID field.
+    That is a historical limitation of the protocol that cannot be fixed
+    at the moment unless we encode an ID into the ping packet payload.
+    <command>ping</command> prints <emphasis remap="I">DIFFERENT ADDRESS</emphasis>
+    error and packet loss is negative.
+    </para>
+    <para>
+    <command>ping</command> uses PID to get unique number.  The default value of
+    <emphasis remap="I">/proc/sys/kernel/pid_max</emphasis> is 32768.
+    On the systems that use ping heavily and with <emphasis remap="I">pid_max</emphasis>
+    greater than 65535 collisions are bound to happen.
+    </para>
+  </refsection>
+
   <refsection xml:id="trying_different_data_patterns">
     <info>
       <title>TRYING DIFFERENT DATA PATTERNS</title>
