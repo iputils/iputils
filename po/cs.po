@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-06 23:38+0200\n"
-"PO-Revision-Date: 2023-10-15 15:35+0000\n"
+"PO-Revision-Date: 2023-12-18 15:55+0000\n"
 "Last-Translator: Petr Vorel <petr.vorel@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 5.0.2\n"
+"X-Generator: Weblate 5.3\n"
 
 #: arping.c:123
 #, c-format
@@ -450,9 +450,9 @@ msgid "Port unreachable"
 msgstr "Port nedosažitelný"
 
 #: ping/ping6_common.c:441
-#, c-format
+#, c-format, fuzzy
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "Zdrojová adresa nevyhovuje ingress/egress policy"
 
 #: ping/ping6_common.c:444
 #, c-format
@@ -1118,7 +1118,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(CHYBNÝ KONTROLNÍ SOUČET)\n"
 
 #: ping/ping_common.c:49
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "\n"
 "Usage\n"
@@ -1175,6 +1175,60 @@ msgid ""
 "\n"
 "For more details see ping(8).\n"
 msgstr ""
+"\n"
+"Usage\n"
+"  ping [options] <destination>\n"
+"\n"
+"Options:\n"
+"  <destination>      dns name or ip address\n"
+"  -a                 use audible ping\n"
+"  -A                 use adaptive ping\n"
+"  -B                 sticky source address\n"
+"  -c <count>         stop after <count> replies\n"
+"  -C                 call connect() syscall on socket creation\n"
+"  -D                 print timestamps\n"
+"  -d                 use SO_DEBUG socket option\n"
+"  -e <identifier>    define identifier for ping session, default is random "
+"for\n"
+"                     SOCK_RAW and kernel defined for SOCK_DGRAM\n"
+"                     Imply using SOCK_RAW (for IPv4 only for identifier 0)\n"
+"  -f                 flood ping\n"
+"  -h                 print help and exit\n"
+"  -I <interface>     either interface name or address\n"
+"  -i <interval>      seconds between sending each packet\n"
+"  -L                 suppress loopback of multicast packets\n"
+"  -l <preload>       send <preload> number of packages while waiting "
+"replies\n"
+"  -m <mark>          tag the packets going out\n"
+"  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want|probe>"
+"\n"
+"  -n                 no dns name resolution\n"
+"  -O                 report outstanding replies\n"
+"  -p <pattern>       contents of padding byte\n"
+"  -q                 quiet output\n"
+"  -Q <tclass>        use quality of service <tclass> bits\n"
+"  -s <size>          use <size> as number of data bytes to be sent\n"
+"  -S <size>          use <size> as SO_SNDBUF socket option value\n"
+"  -t <ttl>           define time to live\n"
+"  -U                 print user-to-user latency\n"
+"  -v                 verbose output\n"
+"  -V                 print version and exit\n"
+"  -w <deadline>      reply wait <deadline> in seconds\n"
+"  -W <timeout>       time to wait for response\n"
+"\n"
+"IPv4 options:\n"
+"  -4                 use IPv4\n"
+"  -b                 allow pinging broadcast\n"
+"  -R                 record route\n"
+"  -T <timestamp>     define timestamp, can be one of "
+"<tsonly|tsandaddr|tsprespec>\n"
+"\n"
+"IPv6 options:\n"
+"  -6                 use IPv6\n"
+"  -F <flowlabel>     define flow label, default is random\n"
+"  -N <nodeinfo opt>  use icmp6 node info query, try <help> as argument\n"
+"\n"
+"For more details see ping(8).\n"
 
 #: ping/ping_common.c:215
 #, c-format
@@ -1207,13 +1261,13 @@ msgid "WARNING: SO_MARK not supported"
 msgstr "Pozor: SO_MARK není podporováno"
 
 #: ping/ping_common.c:487
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"prevence zahlcování – uživatelům bez práva správy přístupné pouze intervaly "
-"delší než %d ms"
+"zahlcování zakázáno, minimální interval pro uživatel musí být >= %d ms, "
+"použijte -i %s (nebo vyšší)"
 
 #: ping/ping_common.c:491
 #, c-format
