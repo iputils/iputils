@@ -1,3 +1,64 @@
+===== 20231222 =====
+released December 22, 2023
+
+* arping
+- fix: Properly fix -Wpedantic warnings (commit: 80a580a, PR: #505)
+
+* clockdiff
+- fix: Set ppoll timeout minimum to 1ms (commit: 471942d, issue: #326, PR:
+  #459)
+
+* ping
+- feature: Add option -H to force reverse DNS resolution (commit: dd5a81a,
+  issue: #421, https://bugs.debian.org/650479, PR: #494)
+- feature: Decode unreachable codes added in RFC 4443 (commit: c4c7d52, PR:
+  #447)
+- feature: Allow over-PMTU-sized packets with DF set using PMTUDISC_PROBE
+  (commit: e123cab, PR: #448)
+- fix: Revert "ping: use random value for the identifier field" to use PID
+  again (commit: d466aab, issue: #489, PR: #503, regression from s20200821)
+- fix: Fix support for DSCP (Traffic Class, option -Q) (commit: 425f711, PR:
+  #468, broken since s20060425)
+- fix: Fix the errno handling for strtod (commit: 33e78be, PR: #450, regression
+  from s20190324)
+- fix: Drop redundant setsockopt(IPV6_TCLASS) call (commit: d38519a, PR: #468,
+  regression from s20150815)
+- fix: Fix overflow on negative -i (commit: 2a63b94, issue: #465)
+- fix: Fix sporadically missing DNS record on targets with multiple IP
+  addresses (commit: 80a580a, PR: #505, regression from s20200821)
+- fix: Handle interval correctly in the first second after booting (commit:
+  7448c33, PR: #499)
+- fix: Fix presentation of IPv6 addresses with no reverse DNS (commit: bc3f2e3,
+  issue: #455, PR: #478)
+- fix: Add missing whitespace in IPv6 output (commit: 14472fc, PR: #455)
+- fix: Allow to localize help (commit: e13508a)
+- fix: Use print target when empty ai_canonname (commit: c68afd5, issue: #421)
+- Improve interval error message (commit: fb75557, PR: #487)
+- man: Mention broadcast and multicast limit for non-root (commit: e7aafa7,
+  PR: #486)
+- man: Document collisions and pid_max (commit: c515a0d, PR: #507)
+- man: Add missing parameter for -e (commit: 2400215)
+- man: Update TTL details (commit: 2beff77, issue: #488, PR: #497)
+- man: Describe the defaults for -n option, reword (commit: a6e6d24)
+
+* tracepath
+- fix: Restore the MTU probing behavior") (commit: a75feb0, PR: #448,
+  regression from s20190709)
+- fix: Fix behavior during the first second after booting (commit: c64bcd8, PR:
+  #499)
+- Add NULL pointer assert() check (commit: 065daad, PR: #498)
+- man: Fix output related docs (commit: 40c7bc3, issue: #469, PR: #470)
+- man: Document error messages (commit: 90371d2, issue: #463, PR: #495)
+
+* CI
+- Add Add CentOS Stream 9 and Rocky Linux 8 and 9 (commit: 26edb41, 0ce30ae,
+  PR: #457, #476)
+
+* localization
+- 100% translated: Chinese (Simplified), Czech, English, French, Georgian,
+  German, Korean, Portuguese (Brazil), Ukrainian
+- > 90% Finnish, Turkish, Japanese, Indonesian
+
 ===== 20221126 =====
 released November 26, 2022
 
@@ -174,7 +235,7 @@ released February 2, 2021
 - fix infinite loop when getrandom fails (issue: #291)
 
 * arping
-- make update neighbours work again (issue: 298)
+- make update neighbours work again (issue: #298)
 
 * ping
 - fix dead loop problem (issue: #276)
