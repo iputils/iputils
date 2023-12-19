@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-19 08:21+0100\n"
-"PO-Revision-Date: 2023-12-18 15:55+0000\n"
+"PO-Revision-Date: 2023-12-19 07:21+0000\n"
 "Last-Translator: Petr Vorel <petr.vorel@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
@@ -56,7 +56,7 @@ msgstr ""
 "  -I <zařízení> které ethernetové zařízení se použije"
 
 #: arping.c:142
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "  -s <source>   source IP address\n"
@@ -205,7 +205,7 @@ msgid "wrong timestamps\n"
 msgstr "chybná časová značka\n"
 
 #: clockdiff.c:453
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -450,9 +450,9 @@ msgid "Port unreachable"
 msgstr "Port nedosažitelný"
 
 #: ping/ping6_common.c:441
-#, fuzzy, c-format
+#, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr "Zdrojová adresa nevyhovuje ingress/egress policy"
+msgstr "Zdrojová adresa nevyhovuje ingress/egress pravidlům"
 
 #: ping/ping6_common.c:444
 #, c-format
@@ -1182,7 +1182,7 @@ msgstr ""
 "  ping [options] <destination>\n"
 "\n"
 "Options:\n"
-"  <destination>      dns name or ip address\n"
+"  <destination>      DNS name or IP address\n"
 "  -a                 use audible ping\n"
 "  -A                 use adaptive ping\n"
 "  -B                 sticky source address\n"
@@ -1196,15 +1196,17 @@ msgstr ""
 "                     Imply using SOCK_RAW (for IPv4 only for identifier 0)\n"
 "  -f                 flood ping\n"
 "  -h                 print help and exit\n"
+"  -H                 force reverse DNS name resolution (useful for numeric\n"
+"                     destinations or for -f), override -n\n"
 "  -I <interface>     either interface name or address\n"
 "  -i <interval>      seconds between sending each packet\n"
 "  -L                 suppress loopback of multicast packets\n"
 "  -l <preload>       send <preload> number of packages while waiting "
 "replies\n"
 "  -m <mark>          tag the packets going out\n"
-"  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want|"
-"probe>\n"
-"  -n                 no dns name resolution\n"
+"  -M <pmtud opt>     define path MTU discovery, can be one of "
+"<do|dont|want|probe>\n"
+"  -n                 no reverse DNS name resolution, override -H\n"
 "  -O                 report outstanding replies\n"
 "  -p <pattern>       contents of padding byte\n"
 "  -q                 quiet output\n"
@@ -1222,13 +1224,13 @@ msgstr ""
 "  -4                 use IPv4\n"
 "  -b                 allow pinging broadcast\n"
 "  -R                 record route\n"
-"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|"
-"tsprespec>\n"
+"  -T <timestamp>     define timestamp, can be one of "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "IPv6 options:\n"
 "  -6                 use IPv6\n"
 "  -F <flowlabel>     define flow label, default is random\n"
-"  -N <nodeinfo opt>  use icmp6 node info query, try <help> as argument\n"
+"  -N <nodeinfo opt>  use IPv6 node info query, try <help> as argument\n"
 "\n"
 "For more details see ping(8).\n"
 
@@ -1481,7 +1483,7 @@ msgid "%2d:  send failed\n"
 msgstr "%2d: odeslání se nezdařilo\n"
 
 #: tracepath.c:400
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
