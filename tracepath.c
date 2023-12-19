@@ -402,13 +402,13 @@ static void usage(void)
 		"\nOptions:\n"
 		"  -4             use IPv4\n"
 		"  -6             use IPv6\n"
-		"  -b             print both name and ip\n"
+		"  -b             print both name and IP\n"
 		"  -l <length>    use packet <length>\n"
 		"  -m <hops>      use maximum <hops>\n"
-		"  -n             no dns name resolution\n"
+		"  -n             no reverse DNS name resolution\n"
 		"  -p <port>      use destination <port>\n"
 		"  -V             print version and exit\n"
-		"  <destination>  dns name or ip address\n"
+		"  <destination>  DNS name or IP address\n"
 		"\nFor more details see tracepath(8).\n"));
 	exit(-1);
 }

@@ -49,7 +49,7 @@ void usage(void)
 		"\nUsage\n"
 		"  ping [options] <destination>\n"
 		"\nOptions:\n"
-		"  <destination>      DNS name or ip address\n"
+		"  <destination>      DNS name or IP address\n"
 		"  -a                 use audible ping\n"
 		"  -A                 use adaptive ping\n"
 		"  -B                 sticky source address\n"

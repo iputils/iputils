@@ -140,8 +140,8 @@ static void usage(void)
 #endif
 	fprintf(stderr, _(
 				"\n"
-		"  -s <source>   source ip address\n"
-		"  <destination> dns name or ip address\n"
+		"  -s <source>   source IP address\n"
+		"  <destination> DNS name or IP address\n"
 		"\nFor more details see arping(8).\n"
 	));
 	exit(2);
