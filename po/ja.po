@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils 20161105\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-06 23:38+0200\n"
+"POT-Creation-Date: 2023-12-19 07:44+0100\n"
 "PO-Revision-Date: 2022-02-13 02:16+0000\n"
 "Last-Translator: Takuro Onoue <kusanaginoturugi@gmail.com>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
@@ -58,11 +58,11 @@ msgstr ""
 "  -I <デバイス>     使用するイーサネットデバイスを指定します"
 
 #: arping.c:142
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"  -s <source>   source ip address\n"
-"  <destination> dns name or ip address\n"
+"  -s <source>   source IP address\n"
+"  <destination> DNS name or IP address\n"
 "\n"
 "For more details see arping(8).\n"
 msgstr ""
@@ -148,49 +148,49 @@ msgstr "インタフェース \"%s\" ではARPを利用できません\n"
 msgid "WARNING: using default broadcast address.\n"
 msgstr "警告: 既定のブロードキャストアドレスを使用しています。\n"
 
-#: arping.c:902 arping.c:905 arping.c:908 ping/ping.c:378 ping/ping.c:425
-#: ping/ping.c:474 ping/ping.c:482 ping/ping.c:527 ping/ping.c:530
-#: ping/ping.c:533 ping/ping.c:547 tracepath.c:472 tracepath.c:475
-#: tracepath.c:478 tracepath.c:500
+#: arping.c:901 arping.c:904 arping.c:907 ping/ping.c:378 ping/ping.c:425
+#: ping/ping.c:477 ping/ping.c:485 ping/ping.c:531 ping/ping.c:534
+#: ping/ping.c:537 ping/ping.c:551 tracepath.c:473 tracepath.c:476
+#: tracepath.c:479 tracepath.c:501
 msgid "invalid argument"
 msgstr "無効な引数です"
 
-#: arping.c:975
+#: arping.c:974
 #, c-format
 msgid "Device %s not available."
 msgstr "デバイス %s は使用不能です。"
 
-#: arping.c:976
+#: arping.c:975
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr ""
 "arping: 適切なデバイスを検出できませんでした。-I オプションを使用してくださ"
 "い。"
 
-#: arping.c:996
+#: arping.c:995
 msgid "WARNING: interface is ignored"
 msgstr "警告: インタフェースは無視されます"
 
-#: arping.c:1015
+#: arping.c:1014
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
 msgstr "警告: setsockopt(SO_DONTROUTE)"
 
-#: arping.c:1039
+#: arping.c:1038
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr ""
 "インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)\n"
 
-#: arping.c:1048
+#: arping.c:1047
 #, c-format
 msgid "ARPING %s "
 msgstr "ARPING %s "
 
-#: arping.c:1049
+#: arping.c:1048
 #, c-format
 msgid "from %s %s\n"
 msgstr "送信元 %s %s\n"
 
-#: arping.c:1053
+#: arping.c:1052
 msgid "no source address in not-DAD mode"
 msgstr "非DADモードにおいてソースアドレスがありません"
 
@@ -210,7 +210,7 @@ msgid "wrong timestamps\n"
 msgstr "タイムスタンプが不正です\n"
 
 #: clockdiff.c:453
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -218,14 +218,14 @@ msgid ""
 "\n"
 "Options:\n"
 "                without -o, use icmp timestamp only (see RFC0792, page 16)\n"
-"  -o            use ip timestamp and icmp echo\n"
-"  -o1           use three-term ip timestamp and icmp echo\n"
+"  -o            use IP timestamp and icmp echo\n"
+"  -o1           use three-term IP timestamp and icmp echo\n"
 "  -T, --time-format <ctime|iso>\n"
 "                  specify display time format, ctime is the default\n"
 "  -I            alias of --time-format=iso\n"
 "  -h, --help    display this help\n"
 "  -V, --version print version and exit\n"
-"  <destination> dns name or ip address\n"
+"  <destination> DNS name or IP address\n"
 "\n"
 "For more details see clockdiff(8).\n"
 msgstr ""
@@ -274,43 +274,43 @@ msgstr ""
 "\n"
 "host=%s rtt=%ld(%ld)ミリ秒/%ldミリ秒 delta=%dミリ秒/%dミリ秒 %s\n"
 
-#: ping/node_info.c:168
+#: ping/node_info.c:169
 #, c-format
 msgid "Qtype conflict\n"
 msgstr "問い合わせ種別が衝突しています\n"
 
-#: ping/node_info.c:220
+#: ping/node_info.c:221
 #, c-format
 msgid "Subject type conflict\n"
 msgstr "対象の種別が重複しています\n"
 
-#: ping/node_info.c:311
+#: ping/node_info.c:312
 #, c-format
 msgid "IDN encoding error: %s"
 msgstr "IDN エンコーディング失敗: %s"
 
 #
-#: ping/node_info.c:322
+#: ping/node_info.c:323
 msgid "too long scope name"
 msgstr "スコープ名が長すぎます"
 
 #
-#: ping/node_info.c:346 ping/node_info.c:388 ping/ping6_common.c:309
-#: ping/ping.c:514 ping/ping.c:578 ping/ping.c:1010
+#: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:309
+#: ping/ping.c:518 ping/ping.c:580 ping/ping.c:1021
 msgid "memory allocation failed"
 msgstr "メモリ確保に失敗しました"
 
-#: ping/node_info.c:358
+#: ping/node_info.c:359
 #, c-format
 msgid "inappropriate subject name: %s"
 msgstr "不適切な名前です: %s"
 
 #
-#: ping/node_info.c:361
+#: ping/node_info.c:362
 msgid "dn_comp() returned too long result"
 msgstr "dn_comp()の結果が長すぎます"
 
-#: ping/node_info.c:401
+#: ping/node_info.c:402
 #, c-format
 msgid ""
 "ping -6 -N <nodeinfo opt>\n"
@@ -351,7 +351,7 @@ msgstr ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 
-#: ping/ping6_common.c:99 ping/ping.c:706
+#: ping/ping6_common.c:99 ping/ping.c:708
 #, c-format
 msgid "unknown iface: %s"
 msgstr "不明なインタフェースです: %s"
@@ -361,7 +361,7 @@ msgstr "不明なインタフェースです: %s"
 msgid "scope discrepancy among the nodes"
 msgstr "ノード間のスコープが一致していません"
 
-#: ping/ping6_common.c:226 ping/ping.c:867
+#: ping/ping6_common.c:226 ping/ping.c:878
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr "警告: ソースアドレスは %s 以外のデバイスから選択される可能性があります"
@@ -406,7 +406,7 @@ msgstr "フローラベルを設定できません"
 msgid "can't send flowinfo"
 msgstr "フロー情報を送信できません"
 
-#: ping/ping6_common.c:398 ping/ping.c:1012
+#: ping/ping6_common.c:398 ping/ping.c:1023
 #, c-format
 msgid "PING %s (%s) "
 msgstr "PING %s (%s) "
@@ -416,7 +416,7 @@ msgstr "PING %s (%s) "
 msgid ", flow 0x%05x, "
 msgstr ", フロー 0x%05x, "
 
-#: ping/ping6_common.c:405 ping/ping.c:1014
+#: ping/ping6_common.c:405 ping/ping.c:1025
 #, c-format
 msgid "from %s %s: "
 msgstr "送信元 %s %s: "
@@ -571,77 +571,77 @@ msgstr "内部エラー"
 msgid "local error: message too long, mtu: %u"
 msgstr "内部エラー: メッセージが長すぎます: mtu=%u"
 
-#: ping/ping6_common.c:571 ping/ping.c:1467
+#: ping/ping6_common.c:571 ping/ping.c:1478
 #, c-format
 msgid "From %s icmp_seq=%u "
 msgstr "送信元 %s icmp_seq=%u "
 
-#: ping/ping6_common.c:678 ping/ping.c:1581
+#: ping/ping6_common.c:677 ping/ping.c:1592
 #, c-format
 msgid " icmp_seq=%u"
 msgstr " icmp_seq=%u"
 
-#: ping/ping6_common.c:702 ping/ping6_common.c:763
+#: ping/ping6_common.c:701 ping/ping6_common.c:762
 #, c-format
 msgid " parse error (too short)"
 msgstr " 解析エラー (短すぎます)"
 
-#: ping/ping6_common.c:716 ping/ping6_common.c:772
+#: ping/ping6_common.c:715 ping/ping6_common.c:771
 #, c-format
 msgid " parse error (truncated)"
 msgstr " 解析エラー (切り詰められました)"
 
-#: ping/ping6_common.c:776
+#: ping/ping6_common.c:775
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
 msgstr " inet_ntop(%s) で予期せぬエラーが発生しました"
 
-#: ping/ping6_common.c:785
+#: ping/ping6_common.c:784
 #, c-format
 msgid " (truncated)"
 msgstr " (切り詰められました)"
 
-#: ping/ping6_common.c:804
+#: ping/ping6_common.c:803
 #, c-format
 msgid " unknown qtype(0x%02x)"
 msgstr " 未知の qtype (0x%02x)"
 
-#: ping/ping6_common.c:808
+#: ping/ping6_common.c:807
 #, c-format
 msgid " refused"
 msgstr " 拒絶"
 
-#: ping/ping6_common.c:811
+#: ping/ping6_common.c:810
 #, c-format
 msgid " unknown"
 msgstr " 不明"
 
-#: ping/ping6_common.c:814
+#: ping/ping6_common.c:813
 #, c-format
 msgid " unknown code(%02x)"
 msgstr " 未知のコード(%02x)"
 
-#: ping/ping6_common.c:816
+#: ping/ping6_common.c:815
 #, c-format
 msgid "; seq=%u;"
 msgstr "; seq=%u;"
 
-#: ping/ping6_common.c:857
+#: ping/ping6_common.c:856
 #, c-format
 msgid "packet too short: %d bytes"
 msgstr "パケットが短すぎます: %d バイト"
 
-#: ping/ping6_common.c:924 ping/ping.c:1710
+#: ping/ping6_common.c:923 ping/ping.c:1721
 #, c-format
 msgid "From %s: "
 msgstr "送信元 %s: "
 
 #
-#: ping/ping6_common.c:965 ping/ping.c:1816
+#: ping/ping6_common.c:964 ping/ping.c:1826
 msgid "WARNING: failed to install socket filter"
 msgstr "警告: ソケットフィルタのインストールに失敗しました"
 
-#: ping/ping.c:96 ping/ping.c:682
+#: ping/ping.c:96 ping/ping.c:684
 #, c-format
 msgid "unknown protocol family: %d"
 msgstr "プロトコルファミリーが不明です: %d"
@@ -700,50 +700,50 @@ msgid "invalid timestamp type: %s"
 msgstr "無効なタイムスタンプ種別です: %s"
 
 #
-#: ping/ping.c:440
+#: ping/ping.c:443
 msgid "bad timing interval"
 msgstr "不正な間隔です"
 
-#: ping/ping.c:442
+#: ping/ping.c:445
 #, c-format
 msgid "bad timing interval: %s"
 msgstr "は不正な間隔です: %s"
 
-#: ping/ping.c:453
+#: ping/ping.c:456
 #, c-format
 msgid "cannot copy: %s"
 msgstr "コピーできません: %s"
 
-#: ping/ping.c:462
+#: ping/ping.c:465
 #, c-format
 msgid "invalid source address: %s"
 msgstr "無効なソースアドレスです: %s"
 
-#: ping/ping.c:476
+#: ping/ping.c:479
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
 msgstr "preloadの値は 3 以上に設定できません: %d"
 
-#: ping/ping.c:495
+#: ping/ping.c:498
 #, c-format
 msgid "invalid -M argument: %s"
 msgstr "不正な -M オプション値です: %s"
 
 #
-#: ping/ping.c:553
+#: ping/ping.c:557
 msgid "bad linger time"
 msgstr "応答待ち時間が正しくありません"
 
-#: ping/ping.c:555
+#: ping/ping.c:559
 #, c-format
 msgid "bad linger time: %s"
 msgstr "応答待ち時間が正しくありません: %s"
 
-#: ping/ping.c:593
+#: ping/ping.c:595
 msgid "WARNING: ident 0 => forcing raw socket"
 msgstr ""
 
-#: ping/ping.c:650
+#: ping/ping.c:652
 #, c-format
 msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
@@ -751,12 +751,12 @@ msgid ""
 msgstr ""
 
 #
-#: ping/ping.c:818
+#: ping/ping.c:829
 msgid "warning: QOS sockopts"
 msgstr "警告: QOSソケットオプションの設定エラーが発生しました"
 
 #
-#: ping/ping.c:830
+#: ping/ping.c:841
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
@@ -764,22 +764,22 @@ msgstr ""
 "ブロードキャストpingを行う場合は -b オプション、違う場合はファイアウォールを"
 "確認してください"
 
-#: ping/ping.c:831
+#: ping/ping.c:842
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
 msgstr "警告: ブロードキャストアドレスにpingしています\n"
 
 #
-#: ping/ping.c:834 ping/ping.c:990
+#: ping/ping.c:845 ping/ping.c:1001
 msgid "cannot set broadcasting"
 msgstr "ブロードキャストを設定できません"
 
 #
-#: ping/ping.c:855
+#: ping/ping.c:866
 msgid "gatifaddrs failed"
 msgstr "gatifaddrsに失敗しました"
 
-#: ping/ping.c:883
+#: ping/ping.c:894
 #, c-format
 msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
@@ -787,71 +787,71 @@ msgid ""
 msgstr ""
 
 #
-#: ping/ping.c:888
+#: ping/ping.c:899
 msgid "broadcast ping does not fragment"
 msgstr "ブロードキャストpingパケットは断片化しません"
 
-#: ping/ping.c:918
+#: ping/ping.c:929
 msgid "WARNING: setsockopt(ICMP_FILTER)"
 msgstr "警告: setsockopt(ICMP_FILTER)"
 
 #
-#: ping/ping.c:923
+#: ping/ping.c:934
 msgid "WARNING: your kernel is veeery old. No problems."
 msgstr "警告: kernelが非常に古いです。問題ありません。"
 
-#: ping/ping.c:927
+#: ping/ping.c:938
 msgid "WARNING: setsockopt(IP_RECVTTL)"
 msgstr "警告: setsockopt(IP_RECVTTL)"
 
-#: ping/ping.c:929
+#: ping/ping.c:940
 msgid "WARNING: setsockopt(IP_RETOPTS)"
 msgstr "警告: setsockopt(IP_RETOPTS)"
 
 #
-#: ping/ping.c:996
+#: ping/ping.c:1007
 msgid "cannot disable multicast loopback"
 msgstr "マルチキャスト・ループバックを無効にできません"
 
 #
-#: ping/ping.c:1001
+#: ping/ping.c:1012
 msgid "cannot set multicast time-to-live"
 msgstr "マルチキャストTTLを設定できません"
 
 #
-#: ping/ping.c:1003
+#: ping/ping.c:1014
 msgid "cannot set unicast time-to-live"
 msgstr "ユニキャストTTLを設定できません"
 
-#: ping/ping.c:1015
+#: ping/ping.c:1026
 #, c-format
 msgid "%zu(%zu) bytes of data.\n"
 msgstr "%zu(%zu) バイトのデータ\n"
-
-#: ping/ping.c:1047
-#, c-format
-msgid ""
-"\n"
-"NOP"
-msgstr ""
-"\n"
-"NOP"
 
 #: ping/ping.c:1058
 #, c-format
 msgid ""
 "\n"
+"NOP"
+msgstr ""
+"\n"
+"NOP"
+
+#: ping/ping.c:1069
+#, c-format
+msgid ""
+"\n"
 "%cSRR: "
 msgstr ""
 "\n"
 "%cSRR: "
 
-#: ping/ping.c:1096
+#: ping/ping.c:1107
 #, c-format
 msgid "\t(same route)"
 msgstr "\t(同一経路)"
 
-#: ping/ping.c:1101
+#: ping/ping.c:1112
 #, c-format
 msgid ""
 "\n"
@@ -860,7 +860,7 @@ msgstr ""
 "\n"
 "RR: "
 
-#: ping/ping.c:1137
+#: ping/ping.c:1148
 #, c-format
 msgid ""
 "\n"
@@ -869,27 +869,27 @@ msgstr ""
 "\n"
 "TS: "
 
-#: ping/ping.c:1169
+#: ping/ping.c:1180
 #, c-format
 msgid "\t%ld absolute not-standard"
 msgstr ""
 
-#: ping/ping.c:1171
+#: ping/ping.c:1182
 #, c-format
 msgid "\t%ld not-standard"
 msgstr ""
 
-#: ping/ping.c:1175
+#: ping/ping.c:1186
 #, c-format
 msgid "\t%ld absolute"
 msgstr ""
 
-#: ping/ping.c:1186
+#: ping/ping.c:1197
 #, c-format
 msgid "Unrecorded hops: %d\n"
 msgstr "記録されていないホップ数: %d\n"
 
-#: ping/ping.c:1190
+#: ping/ping.c:1201
 #, c-format
 msgid ""
 "\n"
@@ -898,237 +898,237 @@ msgstr ""
 "\n"
 "%x は不明なオプションです"
 
-#: ping/ping.c:1210
+#: ping/ping.c:1221
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 msgstr ""
 
-#: ping/ping.c:1211
+#: ping/ping.c:1222
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
 msgstr " %1x  %1x  %02x %04x %04x"
 
-#: ping/ping.c:1213
+#: ping/ping.c:1224
 #, c-format
 msgid "   %1x %04x"
 msgstr "   %1x %04x"
 
-#: ping/ping.c:1215
+#: ping/ping.c:1226
 #, c-format
 msgid "  %02x  %02x %04x"
 msgstr "  %02x  %02x %04x"
 
-#: ping/ping.c:1231
+#: ping/ping.c:1242
 #, c-format
 msgid "Echo Reply\n"
 msgstr "エコー応答\n"
 
-#: ping/ping.c:1237
+#: ping/ping.c:1248
 #, c-format
 msgid "Destination Net Unreachable\n"
 msgstr "目的のネットワークへ届きません。\n"
 
-#: ping/ping.c:1240
+#: ping/ping.c:1251
 #, c-format
 msgid "Destination Host Unreachable\n"
 msgstr "目的のホストへ届きません。\n"
 
-#: ping/ping.c:1243
+#: ping/ping.c:1254
 #, c-format
 msgid "Destination Protocol Unreachable\n"
 msgstr "目的のプロトコルへ届きません。\n"
 
-#: ping/ping.c:1246
+#: ping/ping.c:1257
 #, c-format
 msgid "Destination Port Unreachable\n"
 msgstr "目的のポートへ届きません。\n"
 
-#: ping/ping.c:1249
+#: ping/ping.c:1260
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
 msgstr "断片化が必要ですがDFフラグがセットされています (mtu = %u)。\n"
 
-#: ping/ping.c:1252
+#: ping/ping.c:1263
 #, c-format
 msgid "Source Route Failed\n"
 msgstr "ソースルーティングに失敗しました。\n"
 
-#: ping/ping.c:1255
+#: ping/ping.c:1266
 #, c-format
 msgid "Destination Net Unknown\n"
 msgstr "目的のネットワークが不明です。\n"
 
-#: ping/ping.c:1258
+#: ping/ping.c:1269
 #, c-format
 msgid "Destination Host Unknown\n"
 msgstr "目的のホストが不明です。\n"
 
-#: ping/ping.c:1261
+#: ping/ping.c:1272
 #, c-format
 msgid "Source Host Isolated\n"
 msgstr "送信元ホストが孤立しています。\n"
 
-#: ping/ping.c:1264
+#: ping/ping.c:1275
 #, c-format
 msgid "Destination Net Prohibited\n"
 msgstr "目的のネットワークは禁止されています。\n"
 
-#: ping/ping.c:1267
+#: ping/ping.c:1278
 #, c-format
 msgid "Destination Host Prohibited\n"
 msgstr "目的のホストは禁止されています。\n"
 
-#: ping/ping.c:1270
+#: ping/ping.c:1281
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
 msgstr "このtosでは目的のネットワークへ届きません。\n"
 
-#: ping/ping.c:1273
+#: ping/ping.c:1284
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
 msgstr "このtosでは目的のホストへ届きません。\n"
 
-#: ping/ping.c:1276
+#: ping/ping.c:1287
 #, c-format
 msgid "Packet filtered\n"
 msgstr "パケットがフィルタリングされました。\n"
 
-#: ping/ping.c:1279
+#: ping/ping.c:1290
 #, c-format
 msgid "Precedence Violation\n"
 msgstr "優先度違反\n"
 
-#: ping/ping.c:1282
+#: ping/ping.c:1293
 #, c-format
 msgid "Precedence Cutoff\n"
 msgstr "優先度に基づく遮断\n"
 
-#: ping/ping.c:1285
+#: ping/ping.c:1296
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
 msgstr "目的サイトへ届きません, 不正なコード: %d\n"
 
-#: ping/ping.c:1292
+#: ping/ping.c:1303
 #, c-format
 msgid "Source Quench\n"
 msgstr "発信抑制\n"
 
-#: ping/ping.c:1299
+#: ping/ping.c:1310
 #, c-format
 msgid "Redirect Network"
 msgstr "ネットワークのリダイレクト"
 
-#: ping/ping.c:1302
+#: ping/ping.c:1313
 #, c-format
 msgid "Redirect Host"
 msgstr "ホストのリダイレクト"
 
-#: ping/ping.c:1305
+#: ping/ping.c:1316
 #, c-format
 msgid "Redirect Type of Service and Network"
 msgstr "TOSのためのネットワークリダイレクト"
 
-#: ping/ping.c:1308
+#: ping/ping.c:1319
 #, c-format
 msgid "Redirect Type of Service and Host"
 msgstr "TOSのためのホストリダイレクト"
 
-#: ping/ping.c:1311
+#: ping/ping.c:1322
 #, c-format
 msgid "Redirect, Bad Code: %d"
 msgstr "リダイレクト, 不正なコード: %d"
 
-#: ping/ping.c:1322
+#: ping/ping.c:1333
 #, c-format
 msgid "(New nexthop: %s)\n"
 msgstr "(新しい次ホップ: %s)\n"
 
-#: ping/ping.c:1328
+#: ping/ping.c:1339
 #, c-format
 msgid "Echo Request\n"
 msgstr "エコー要求\n"
 
-#: ping/ping.c:1334
+#: ping/ping.c:1345
 #, c-format
 msgid "Time to live exceeded\n"
 msgstr "TTLを超過しました。\n"
 
-#: ping/ping.c:1337
+#: ping/ping.c:1348
 #, c-format
 msgid "Frag reassembly time exceeded\n"
 msgstr "断片化パケットの再構築時間を超過しました。\n"
 
-#: ping/ping.c:1340
+#: ping/ping.c:1351
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
 msgstr "時間超過です。不正なコード: %d\n"
 
-#: ping/ping.c:1347
+#: ping/ping.c:1358
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
 msgstr "パラメータの問題: ポインタ = %u\n"
 
-#: ping/ping.c:1353
+#: ping/ping.c:1364
 #, c-format
 msgid "Timestamp\n"
 msgstr "タイムスタンプ\n"
 
-#: ping/ping.c:1357
+#: ping/ping.c:1368
 #, c-format
 msgid "Timestamp Reply\n"
 msgstr "タイムスタンプ応答\n"
 
-#: ping/ping.c:1361
+#: ping/ping.c:1372
 #, c-format
 msgid "Information Request\n"
 msgstr "情報要求\n"
 
-#: ping/ping.c:1365
+#: ping/ping.c:1376
 #, c-format
 msgid "Information Reply\n"
 msgstr "情報応答\n"
 
-#: ping/ping.c:1370
+#: ping/ping.c:1381
 #, c-format
 msgid "Address Mask Request\n"
 msgstr "アドレスマスク要求\n"
 
-#: ping/ping.c:1375
+#: ping/ping.c:1386
 #, c-format
 msgid "Address Mask Reply\n"
 msgstr "アドレスマスク応答\n"
 
-#: ping/ping.c:1379
+#: ping/ping.c:1390
 #, c-format
 msgid "Bad ICMP type: %d\n"
 msgstr "不正なICMP種別です: %d\n"
 
-#: ping/ping.c:1431
+#: ping/ping.c:1442
 #, c-format
 msgid "local error: %s"
 msgstr "内部エラー: %s"
 
-#: ping/ping.c:1433
+#: ping/ping.c:1444
 #, c-format
 msgid "local error: message too long, mtu=%u"
 msgstr "内部エラー: メッセージが長すぎます: mtu=%u"
 
-#: ping/ping.c:1606
+#: ping/ping.c:1617
 #, c-format
 msgid "packet too short (%d bytes) from %s"
 msgstr "パケットが短すぎます (%d バイト)。送信元 %s"
 
-#: ping/ping.c:1685
+#: ping/ping.c:1696
 #, c-format
 msgid "From %s: icmp_seq=%u "
 msgstr "送信元 %s: icmp_seq=%u "
 
-#: ping/ping.c:1688
+#: ping/ping.c:1699
 #, c-format
 msgid "(BAD CHECKSUM)"
 msgstr "(チェックサム異常)"
 
-#: ping/ping.c:1712
+#: ping/ping.c:1723
 #, c-format
 msgid "(BAD CHECKSUM)\n"
 msgstr "(チェックサム異常)\n"
@@ -1141,7 +1141,7 @@ msgid ""
 "  ping [options] <destination>\n"
 "\n"
 "Options:\n"
-"  <destination>      dns name or ip address\n"
+"  <destination>      DNS name or IP address\n"
 "  -a                 use audible ping\n"
 "  -A                 use adaptive ping\n"
 "  -B                 sticky source address\n"
@@ -1155,6 +1155,8 @@ msgid ""
 "                     Imply using SOCK_RAW (for IPv4 only for identifier 0)\n"
 "  -f                 flood ping\n"
 "  -h                 print help and exit\n"
+"  -H                 force reverse DNS name resolution (useful for numeric\n"
+"                     destinations or for -f), override -n\n"
 "  -I <interface>     either interface name or address\n"
 "  -i <interval>      seconds between sending each packet\n"
 "  -L                 suppress loopback of multicast packets\n"
@@ -1163,7 +1165,7 @@ msgid ""
 "  -m <mark>          tag the packets going out\n"
 "  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want|"
 "probe>\n"
-"  -n                 no dns name resolution\n"
+"  -n                 no reverse DNS name resolution, override -H\n"
 "  -O                 report outstanding replies\n"
 "  -p <pattern>       contents of padding byte\n"
 "  -q                 quiet output\n"
@@ -1192,115 +1194,115 @@ msgid ""
 "For more details see ping(8).\n"
 msgstr ""
 
-#: ping/ping_common.c:215
+#: ping/ping_common.c:217
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
 msgstr "パターン値 %s は16進数値でなければなりません"
 
-#: ping/ping_common.c:232
+#: ping/ping_common.c:234
 #, c-format
 msgid "PATTERN: 0x"
 msgstr "パターン: 0x"
 
-#: ping/ping_common.c:352
+#: ping/ping_common.c:354
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
 msgstr "icmp_seq=%lu が未応答です\n"
 
 #
-#: ping/ping_common.c:452
+#: ping/ping_common.c:454
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "警告: おそらく preload のために充分な受信バッファがありません"
 
-#: ping/ping_common.c:469
+#: ping/ping_common.c:471
 #, fuzzy, c-format
 msgid "WARNING: failed to set mark: %u"
 msgstr "警告: マーク %d の設定に失敗しました"
 
-#: ping/ping_common.c:471
+#: ping/ping_common.c:473
 msgid "WARNING: SO_MARK not supported"
 msgstr "警告: SO_MARKはサポートされていません"
 
-#: ping/ping_common.c:487
+#: ping/ping_common.c:489
 #, fuzzy, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr "ping floodはできません。インターバルの最低値は %d ミリ秒です"
 
-#: ping/ping_common.c:491
+#: ping/ping_common.c:493
 #, c-format
 msgid "illegal preload and/or interval: %d"
 msgstr "preloadまたはintervalの値 %d が不正です"
 
 #
-#: ping/ping_common.c:503
+#: ping/ping_common.c:505
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr ""
 "警告: SO_TIMESTAMPはサポートされていないため、SIOCGSTAMPにフォールバックしま"
 "す"
 
-#: ping/ping_common.c:747
+#: ping/ping_common.c:749
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
 msgstr "警告: 時刻が巻き戻りました (%ldus)。対策を行います"
 
-#: ping/ping_common.c:797
+#: ping/ping_common.c:799
 #, c-format
 msgid "%d bytes from %s:"
 msgstr "%d バイト応答 送信元 %s:"
 
-#: ping/ping_common.c:803
+#: ping/ping_common.c:805
 #, c-format
 msgid " ident=%d"
 msgstr ""
 
-#: ping/ping_common.c:806
+#: ping/ping_common.c:808
 #, c-format
 msgid " ttl=%d"
 msgstr " ttl=%d"
 
-#: ping/ping_common.c:809
+#: ping/ping_common.c:811
 #, c-format
 msgid " (truncated)\n"
 msgstr " (切り詰められました)\n"
 
-#: ping/ping_common.c:814
+#: ping/ping_common.c:816
 #, c-format
 msgid " time=%ld ms"
 msgstr " 時間=%ld ミリ秒"
 
-#: ping/ping_common.c:816
+#: ping/ping_common.c:818
 #, c-format
 msgid " time=%ld.%01ld ms"
 msgstr " 時間=%ld.%01ldミリ秒"
 
-#: ping/ping_common.c:819
+#: ping/ping_common.c:821
 #, c-format
 msgid " time=%ld.%02ld ms"
 msgstr " 時間=%ld.%02ldミリ秒"
 
-#: ping/ping_common.c:822
+#: ping/ping_common.c:824
 #, c-format
 msgid " time=%ld.%03ld ms"
 msgstr " 時間=%ld.%03ldミリ秒"
 
-#: ping/ping_common.c:827
+#: ping/ping_common.c:829
 #, c-format
 msgid " (DUP!)"
 msgstr " (重複!)"
 
-#: ping/ping_common.c:829
+#: ping/ping_common.c:831
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (チェックサム異常!)"
 
-#: ping/ping_common.c:831
+#: ping/ping_common.c:833
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " (アドレス相違!)"
 
-#: ping/ping_common.c:838
+#: ping/ping_common.c:840
 #, c-format
 msgid ""
 "\n"
@@ -1309,73 +1311,73 @@ msgstr ""
 "\n"
 "誤りデータバイト #%zu. 正しい値: 0x%x 返り値: 0x%x"
 
-#: ping/ping_common.c:881
+#: ping/ping_common.c:883
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr "--- %s ping 統計 ---\n"
 
-#: ping/ping_common.c:882
+#: ping/ping_common.c:884
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr "送信パケット数 %ld, "
 
-#: ping/ping_common.c:883
+#: ping/ping_common.c:885
 #, c-format
 msgid "%ld received"
 msgstr "受信パケット数 %ld"
 
-#: ping/ping_common.c:885
+#: ping/ping_common.c:887
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ", +%ld 重複"
 
-#: ping/ping_common.c:887
+#: ping/ping_common.c:889
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ", +%ld 破損"
 
-#: ping/ping_common.c:889
+#: ping/ping_common.c:891
 #, c-format
 msgid ", +%ld errors"
 msgstr ", +%ld エラー"
 
-#: ping/ping_common.c:895
+#: ping/ping_common.c:897
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ", パケット損失 %g%%"
 
-#: ping/ping_common.c:897
+#: ping/ping_common.c:899
 #, c-format
 msgid ", time %ldms"
 msgstr ", 時間 %ldミリ秒"
 
-#: ping/ping_common.c:917
+#: ping/ping_common.c:919
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr ""
 "rtt 最小/平均/最大/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ldミリ秒"
 
-#: ping/ping_common.c:925
+#: ping/ping_common.c:927
 #, c-format
 msgid "%spipe %d"
 msgstr "%spipe %d"
 
-#: ping/ping_common.c:932
+#: ping/ping_common.c:934
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr "%sipg/ewma %d.%03d/%d.%03dミリ秒"
 
-#: ping/ping_common.c:950
+#: ping/ping_common.c:952
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld パケット, パケット損失 %d%%"
 
-#: ping/ping_common.c:955
+#: ping/ping_common.c:957
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", 最小/平均/ewma/最大 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ldミリ秒"
 
-#: tracepath.c:217
+#: tracepath.c:218
 #, c-format
 msgid ""
 "cmsg6:%d\n"
@@ -1384,7 +1386,7 @@ msgstr ""
 "cmsg6:%d\n"
 " "
 
-#: tracepath.c:229
+#: tracepath.c:230
 #, c-format
 msgid ""
 "cmsg4:%d\n"
@@ -1393,56 +1395,56 @@ msgstr ""
 "cmsg4:%d\n"
 " "
 
-#: tracepath.c:234
+#: tracepath.c:235
 #, c-format
 msgid "no info\n"
 msgstr "情報なし\n"
 
-#: tracepath.c:238
+#: tracepath.c:239
 msgid "[LOCALHOST]"
 msgstr "[LOCALHOST]"
 
-#: tracepath.c:286
+#: tracepath.c:287
 #, c-format
 msgid "%3ld.%03ldms "
 msgstr "%3ld.%03ldミリ秒 "
 
-#: tracepath.c:289
+#: tracepath.c:290
 #, c-format
 msgid "(This broken router returned corrupted payload) "
 msgstr "(不完全なルーターが破損したデータを返しました) "
 
-#: tracepath.c:304
+#: tracepath.c:305
 #, c-format
 msgid "pmtu %d\n"
 msgstr "pmtu %d\n"
 
-#: tracepath.c:309
+#: tracepath.c:310
 #, c-format
 msgid "reached\n"
 msgstr "到達しました\n"
 
-#: tracepath.c:326
+#: tracepath.c:327
 #, c-format
 msgid "asymm %2d "
 msgstr "asymm %2d "
 
-#: tracepath.c:341
+#: tracepath.c:342
 msgid "NET ERROR"
 msgstr "ネットワークエラー"
 
-#: tracepath.c:386
+#: tracepath.c:387
 #, c-format
 msgid "%2d?: reply received 8)\n"
 msgstr "%2d?: 応答受信 8)\n"
 
-#: tracepath.c:392
+#: tracepath.c:393
 #, c-format
 msgid "%2d:  send failed\n"
 msgstr "%2d:  送信失敗\n"
 
-#: tracepath.c:399
-#, c-format
+#: tracepath.c:400
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1451,13 +1453,13 @@ msgid ""
 "Options:\n"
 "  -4             use IPv4\n"
 "  -6             use IPv6\n"
-"  -b             print both name and ip\n"
+"  -b             print both name and IP\n"
 "  -l <length>    use packet <length>\n"
 "  -m <hops>      use maximum <hops>\n"
-"  -n             no dns name resolution\n"
+"  -n             no reverse DNS name resolution\n"
 "  -p <port>      use destination <port>\n"
 "  -V             print version and exit\n"
-"  <destination>  dns name or ip address\n"
+"  <destination>  DNS name or IP address\n"
 "\n"
 "For more details see tracepath(8).\n"
 msgstr ""
@@ -1479,31 +1481,31 @@ msgstr ""
 "詳細は tracepath(8) を参照してください。\n"
 
 #
-#: tracepath.c:457 tracepath.c:462
+#: tracepath.c:458 tracepath.c:463
 msgid "Only one -4 or -6 option may be specified"
 msgstr "-4 か -6 のどちらか一方のみを使うことができます"
 
-#: tracepath.c:604
+#: tracepath.c:606
 #, c-format
 msgid "%2d:  no reply\n"
 msgstr "%2d:  応答なし\n"
 
-#: tracepath.c:611
+#: tracepath.c:613
 #, c-format
 msgid "     Resume: pmtu %d "
 msgstr "     要約: pmtu %d "
 
-#: tracepath.c:613
+#: tracepath.c:615
 #, c-format
 msgid "hops %d "
 msgstr "ホップ数 %d "
 
-#: tracepath.c:615
+#: tracepath.c:617
 #, c-format
 msgid "back %d "
 msgstr "戻りホップ数 %d "
 
-#: tracepath.c:620
+#: tracepath.c:622
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "エラー: pktlenは %d < pktlen <= %d の範囲内でなければいけません"
