@@ -385,7 +385,7 @@ xml:id="man.ping">
           <emphasis remap="I">nodeinfo_option</emphasis>
         </term>
         <listitem>
-          <para>IPv6 only. Send ICMPv6 Node Information Queries
+          <para>IPv6 only. Send IPv6 Node Information Queries
           (RFC4620), instead of Echo Request. CAP_NET_RAW
           capability is required.</para>
           <variablelist remap="TP">
