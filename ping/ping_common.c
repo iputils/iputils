@@ -69,7 +69,7 @@ void usage(void)
 		"  -L                 suppress loopback of multicast packets\n"
 		"  -l <preload>       send <preload> number of packages while waiting replies\n"
 		"  -m <mark>          tag the packets going out\n"
-		"  -M <pmtud opt>     define mtu discovery, can be one of <do|dont|want|probe>\n"
+		"  -M <pmtud opt>     define path MTU discovery, can be one of <do|dont|want|probe>\n"
 		"  -n                 no reverse DNS name resolution, override -H\n"
 		"  -O                 report outstanding replies\n"
 		"  -p <pattern>       contents of padding byte\n"
@@ -91,7 +91,7 @@ void usage(void)
 		"\nIPv6 options:\n"
 		"  -6                 use IPv6\n"
 		"  -F <flowlabel>     define flow label, default is random\n"
-		"  -N <nodeinfo opt>  use icmp6 node info query, try <help> as argument\n"
+		"  -N <nodeinfo opt>  use IPv6 node info query, try <help> as argument\n"
 		"\nFor more details see ping(8).\n"
 	));
 	exit(2);
