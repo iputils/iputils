@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-19 08:21+0100\n"
-"PO-Revision-Date: 2023-10-09 12:36+0000\n"
+"PO-Revision-Date: 2023-12-20 15:03+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0.2\n"
+"X-Generator: Weblate 5.3\n"
 
 #: arping.c:123
 #, c-format
@@ -57,7 +57,7 @@ msgstr ""
 "  -l <მოწყობილობა>    გამოყენებადი ქსელის ინტერფეისის სახელი"
 
 #: arping.c:142
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "  -s <source>   source IP address\n"
@@ -66,7 +66,7 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <წყარო>   წყარო IP მისამართი\n"
+"  -s <წყარო>   წყაროს IP მისამართი\n"
 "  <დანიშნულება> DNS სახელი ან IP მისამართი\n"
 "\n"
 "მეტი დეტალების სანახავად იხილეთ arping (8).\n"
@@ -207,7 +207,7 @@ msgid "wrong timestamps\n"
 msgstr "დროის არასწორი სანიშნი\n"
 
 #: clockdiff.c:453
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -231,10 +231,10 @@ msgstr ""
 "  clockdiff [პარამეტრები] <დანიშნულება>\n"
 "\n"
 "პარამეტრები:\n"
-"       -o -ის გარეშე გამოიყენება მხოლოდ icmp დროის სანიშნი (იხ RFC0792, გვ "
-"16)\n"
-"  -o      ipდროის სანიშნისა და icp ექოს გამოყენება\n"
-"  -o1     3 ip დროის სანიშნისა და icmp ექოს გამოყენება\n"
+"                -o -ის გარეშე გამოიყენება მხოლოდ icmp დროის სანიშნი (იხ "
+"RFC0792, გვ 16)\n"
+"  -o            IP დროის შტამპისა და icmp ექოს გამოყენება\n"
+"  -o1     3 IP დროის შტამპისა და icmp ექოს გამოყენება\n"
 "  -T, --time-format <ctime|iso>\n"
 "                  მიუთითეთ დროის საჩვენებელი ფორმატი. ნაგულისხმევად ctime\n"
 "  -I          იგივე, რაც --time-format=iso\n"
@@ -242,7 +242,7 @@ msgstr ""
 "  -V, --version ვერსიის გამოტანა და მუშაობის დასრულება\n"
 "  <დანიშნულება> dns სახელი ან ip მისამართი\n"
 "\n"
-"ეტი დეტალებისთვის იხილეთ clockdiff(8).\n"
+"მეტი დეტალებისთვის იხილეთ clockdiff(8).\n"
 
 #: clockdiff.c:592
 msgid "measure: unknown failure"
@@ -1123,7 +1123,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(არასწორი საკონტროლო ჯამი)\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1205,6 +1205,9 @@ msgstr ""
 "იდენტიფიკატორისთვის 0)\n"
 "  -f                 უსასრულო ping\n"
 "  -h                 დახმარების გამოტანა და გასვლა\n"
+"  -H                 უკუDNS-ის ნაძალადევი ამოხსნა. (სასარგებლოა რიცხვითი IP "
+"მისამართებისთვის\n"
+"                       და პარამეტრისთვის -f). გადაფარავს პარამეტრს -n\n"
 "  -I <ინტერფეისი>      ინტერფეისის სახელი ან მისამართი\n"
 "  -i <ინტერვალი>       წამები პაკეტების გაგზანის შორის\n"
 "  -L                 მულტიკასტის პაკეტებისთვის loopback ინტერფეისის "
@@ -1495,7 +1498,7 @@ msgid "%2d:  send failed\n"
 msgstr "%2d:  გაგზავნის შეცდომა\n"
 
 #: tracepath.c:400
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
