@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-19 08:21+0100\n"
-"PO-Revision-Date: 2023-12-20 15:03+0000\n"
+"PO-Revision-Date: 2023-12-21 18:14+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -885,7 +885,7 @@ msgstr ""
 #: ping/ping.c:1221
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr ""
+msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 
 #: ping/ping.c:1222
 #, c-format
@@ -995,7 +995,7 @@ msgstr "Destino inalcançável, código inválido: %d\n"
 #: ping/ping.c:1303
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "Source Quench\n"
 
 #: ping/ping.c:1310
 #, c-format
@@ -1204,16 +1204,16 @@ msgstr "Aviso: Falha ao definir marca: %d"
 
 #: ping/ping_common.c:473
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "AVISO: Sem suporte a SO_MARK"
 
 #: ping/ping_common.c:489
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"não foi possível fazer flood; o intervalo mínimo permitido para o usuário é "
-"%dms"
+"não foi possível fazer flood; o intervalo mínimo para o usuário deve ser %d "
+"ms, use -i %s (ou mais)"
 
 #: ping/ping_common.c:493
 #, c-format
@@ -1237,7 +1237,7 @@ msgstr "%d bytes de %s:"
 #: ping/ping_common.c:805
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:808
 #, c-format
@@ -1282,7 +1282,7 @@ msgstr " (SOMA DE VERIFICAÇÃO INVÁLIDA!)"
 #: ping/ping_common.c:833
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (ENDEREÇO DIFERENTE!)"
 
 #: ping/ping_common.c:840
 #, c-format
@@ -1425,7 +1425,7 @@ msgid "%2d:  send failed\n"
 msgstr "%2d:  falha no envio\n"
 
 #: tracepath.c:400
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1451,13 +1451,13 @@ msgstr ""
 "Opções:\n"
 "  -4             use IPv4\n"
 "  -6             use IPv6\n"
-"  -b             imprime o nome e o ip\n"
+"  -b             imprime o nome e o IP\n"
 "  -l <tam>       usa tamanho <tam> de pacotes\n"
 "  -m <saltos>    usa <saltos> no máximo\n"
-"  -n             sem resolução de nomes de dns\n"
+"  -n             sem resolução reversa de nomes de dns\n"
 "  -p <porta>     usa <porta> de destino\n"
 "  -V             imprime a versão e sai\n"
-"  <destino>      nome de dns ou endereço ip\n"
+"  <destino>      nome de dns ou endereço IP\n"
 "\n"
 "Para mais detalhes, consulte tracepath(8).\n"
 
