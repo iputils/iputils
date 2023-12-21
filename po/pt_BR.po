@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-19 08:21+0100\n"
-"PO-Revision-Date: 2023-12-21 18:14+0000\n"
+"PO-Revision-Date: 2023-12-22 15:22+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -1000,27 +1000,27 @@ msgstr "Source Quench\n"
 #: ping/ping.c:1310
 #, c-format
 msgid "Redirect Network"
-msgstr ""
+msgstr "Redirecionamento de rede"
 
 #: ping/ping.c:1313
 #, c-format
 msgid "Redirect Host"
-msgstr ""
+msgstr "Redirecionamento de host"
 
 #: ping/ping.c:1316
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "Redirecionamento de tipo de serviço e rede"
 
 #: ping/ping.c:1319
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "Redirecionamento de tipo de serviço e host"
 
 #: ping/ping.c:1322
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "Redirecionamento, código inválido: %d"
 
 #: ping/ping.c:1333
 #, c-format
@@ -1198,9 +1198,9 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "AVISO: provavelmente rcvbuf não é suficiente para manter a pré-carga"
 
 #: ping/ping_common.c:471
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "Aviso: Falha ao definir marca: %d"
+msgstr "AVISO: falha ao definir marca: %u"
 
 #: ping/ping_common.c:473
 msgid "WARNING: SO_MARK not supported"
