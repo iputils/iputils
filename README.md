@@ -45,7 +45,7 @@ See https://www.kernel.org/doc/html/latest/process/coding-style.html.
 ### Translators
 Localization is hosted on [Fedora Weblate](https://translate.fedoraproject.org/projects/iputils/iputils/).
 
-## Tools are included in iputils
+## Tools included in iputils
 - [arping](https://github.com/iputils/iputils/blob/master/arping.c)
 - [clockdiff](https://github.com/iputils/iputils/blob/master/clockdiff.c)
 - [ping](https://github.com/iputils/iputils/tree/master/ping)
@@ -65,7 +65,8 @@ Some obsolete tools has been removed (see
 
 ## History
 ### Alexey Kuznetsov (1999–2002)
-- first release (1999-04-16):  [`iputils-ss990417.tar.gz`](http://ftp.icm.edu.pl/packages/linux-iproute/ip-routing/iputils-ss990417.tar.gz)
+- first release (1999-01-07): `iputils-ss990107.tar.gz` (source code not available)
+- first downloadable release (1999-04-16): [`iputils-ss990417.tar.gz`](http://ftp.icm.edu.pl/packages/linux-iproute/ip-routing/iputils-ss990417.tar.gz)
 - latest release (2002-09-26): [`iputils-ss020927.tar.gz`](http://ftp.icm.edu.pl/packages/linux-iproute/ip-routing/iputils-ss020927.tar.gz)
 
 ### Hideaki Yoshifuji (2006–2015)
