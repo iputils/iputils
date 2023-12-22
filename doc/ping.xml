@@ -159,8 +159,9 @@ xml:id="man.ping">
           <para>Adaptive ping. Interpacket interval adapts to
           round-trip time, so that effectively not more than one
           (or more, if preload is set) unanswered probe is present
-          in the network. Minimal interval is 200msec unless
-          super-user. On networks with low RTT this mode is
+          in the network. The default interval is 2 ms,
+          for more info see option <option>-i</option>.
+          On networks with low RTT this mode is
           essentially equivalent to flood mode.</para>
         </listitem>
       </varlistentry>
