@@ -55,7 +55,7 @@ Many thanks to the people contributing to this release:
 \`\`\`
     $ git shortlog -sen $old_tag..
 EOF
-git shortlog -s -n "$old_tag".. >> "$credit"
+git shortlog -sen "$old_tag".. >> "$credit"
 
 cat >> "$credit" <<EOF
 \`\`\`
