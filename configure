@@ -14,4 +14,4 @@ if [ $# -ne 0 ]; then
 	# See also: http://mesonbuild.com/howtox.html
 fi
 
-meson $DIR
+meson setup $DIR
