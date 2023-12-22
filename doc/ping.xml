@@ -756,6 +756,17 @@ xml:id="man.ping">
     brief summary is displayed. Shorter current statistics can be
     obtained without termination of process with signal
     SIGQUIT.</para>
+    <para>This program is intended for use in network testing,
+    measurement and management. Because of the load it can impose
+    on the network, it is unwise to use
+    <command>ping</command> during normal operations or from
+    automated scripts.</para>
+  </refsection>
+
+  <refsection xml:id="exit_status">
+    <info>
+      <title>EXIT STATUS</title>
+    </info>
     <para>If
     <command>ping</command> does not receive any reply packets at
     all it will exit with code 1. If a packet
@@ -768,11 +779,6 @@ xml:id="man.ping">
     also exit with code 1. On other error it exits with code 2.
     Otherwise it exits with code 0. This makes it possible to use
     the exit code to see if a host is alive or not.</para>
-    <para>This program is intended for use in network testing,
-    measurement and management. Because of the load it can impose
-    on the network, it is unwise to use
-    <command>ping</command> during normal operations or from
-    automated scripts.</para>
   </refsection>
 
   <refsection>
