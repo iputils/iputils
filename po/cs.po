@@ -44,7 +44,7 @@ msgstr ""
 "\n"
 "Přepínače:\n"
 "  -f            skončí s první odpovědí\n"
-"  -q            bude potichu\n"
+"  -q            potlačí obvyklý výstup\n"
 "  -b            pokračuje ve všesměrovém vysílání, žádný unicast\n"
 "  -D            režim zjišťování duplicitních adres\n"
 "  -U            režim nevyžádaného ARP, aktualizuje sousedy\n"
@@ -53,7 +53,7 @@ msgstr ""
 "  -c <počet>    kolik paketů se má odeslat\n"
 "  -w <čas>      jak dlouho čekat na odpověď\n"
 "  -i <interval> nastaví interval mezi pakety (výchozí: 1 sekunda)\n"
-"  -I <zařízení> které ethernetové zařízení se použije"
+"  -I <rozhraní> které ethernetové rozhraní se použije"
 
 #: arping.c:142
 #, c-format
@@ -164,7 +164,7 @@ msgstr "Vhodné zařízení nebylo možné určit. Prosím, použijte přepína�
 
 #: arping.c:995
 msgid "WARNING: interface is ignored"
-msgstr "POZOR: zařízení je ignorováno"
+msgstr "POZOR: rozhraní je ignorováno"
 
 #: arping.c:1014
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
@@ -173,7 +173,7 @@ msgstr "POZOR: setsockopt(SO_DONTROUTE)"
 #: arping.c:1038
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr "Zařízení „%s“ nepodporuje protokol ARP (chybí linková adresa)\n"
+msgstr "Rozhraní „%s“ nepodporuje protokol ARP (chybí linková adresa)\n"
 
 #: arping.c:1047
 #, c-format
@@ -229,15 +229,15 @@ msgstr ""
 "  clockdiff [přepínače] <cíl>\n"
 "\n"
 "Přepínače:\n"
-"                bez -o použít pouze ICMP časovou značku (viz str. 16 normy "
+"                bez -o použije pouze ICMP časovou značku (viz str. 16 normy "
 "RFC0792)\n"
-"  -o            použít časovou značku IP a ICMP echo\n"
-"  -o1           použít třízáznamovou časovou značku IP a ICMP echo\n"
+"  -o            použije časovou značku IP a ICMP echo\n"
+"  -o1           použije třízáznamovou časovou značku IP a ICMP echo\n"
 "  -T, --time-format <ctime|iso>\n"
 "                určuje formát zobrazování času – výchozí je ctime\n"
 "  -I            stejné jako --time-format=iso\n"
-"  -h, --help    zobrazit tuto nápovědu\n"
-"  -V, --version zobrazit verzi a skončit\n"
+"  -h, --help    vypíše tuto nápovědu a skončí\n"
+"  -V, --version vypíše údaje o verzi a skončí\n"
 "  <cíl>         doménové jméno nebo IP adresa\n"
 "\n"
 "Podrobnosti naleznete v clockdiff(8).\n"
@@ -1507,21 +1507,21 @@ msgstr ""
 "  tracepath [přepínače] <cíl>\n"
 "\n"
 "Přepínače:\n"
-"  -4             použít IPv4\n"
-"  -6             použít IPv6\n"
-"  -b             vypsat jak jméno, tak IP adresu\n"
-"  -l <délka>     použít paket o <délce>\n"
-"  -m <skoky>     použít nejvýše <skoků>\n"
-"  -n             nepřekládat doménová jména\n"
-"  -p <port>      použít cílový <port>\n"
-"  -V             vypsat verzi a ukončit\n"
+"  -4             použije IPv4\n"
+"  -6             použije IPv6\n"
+"  -b             vypíše doménové jméno i IP adresu\n"
+"  -l <délka>     použije paket o <délce>\n"
+"  -m <skoky>     použije nejvýše <skoků>\n"
+"  -n             nepřeloží doménová jména\n"
+"  -p <port>      použije cílový <port>\n"
+"  -V             vypíše verzi a skončí\n"
 "  <cíl>          doménové jméno nebo IP adresa\n"
 "\n"
 "Podrobnosti naleznete v manuálu tracepath(8).\n"
 
 #: tracepath.c:458 tracepath.c:463
 msgid "Only one -4 or -6 option may be specified"
-msgstr "Není možné použít souběžně oba přepínače -4 a -6"
+msgstr "Není možné použije souběžně oba přepínače -4 a -6"
 
 #: tracepath.c:606
 #, c-format
