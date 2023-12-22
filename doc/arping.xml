@@ -49,7 +49,7 @@ xml:id="man.arping">
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsection>
+  <refsection xml:id="description">
     <info>
       <title>DESCRIPTION</title>
     </info>
@@ -65,7 +65,7 @@ xml:id="man.arping">
     </citerefentry>.</para>
   </refsection>
 
-  <refsection>
+  <refsection xml:id="options">
     <info>
       <title>OPTIONS</title>
     </info>

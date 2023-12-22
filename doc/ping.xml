@@ -99,7 +99,7 @@ xml:id="man.ping">
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsection>
+  <refsection xml:id="description">
     <info>
       <title>DESCRIPTION</title>
     </info>
@@ -122,7 +122,7 @@ xml:id="man.ping">
     IPv6 source routing was deprecated (RFC5095).</para>
   </refsection>
 
-  <refsection>
+  <refsection xml:id="options">
     <info>
       <title>OPTIONS</title>
     </info>
@@ -781,7 +781,7 @@ xml:id="man.ping">
     the exit code to see if a host is alive or not.</para>
   </refsection>
 
-  <refsection>
+  <refsection xml:id="ipv6_link_local_destinations">
     <info>
       <title>IPV6 LINK-LOCAL DESTINATIONS</title>
     </info>

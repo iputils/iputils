@@ -39,7 +39,7 @@ xml:id="man.clockdiff">
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsection>
+  <refsection xml:id="description">
     <info>
       <title>DESCRIPTION</title>
     </info>
@@ -51,7 +51,7 @@ xml:id="man.clockdiff">
     TIMESTAMP option [3] added to ICMP ECHO. [1]</para>
   </refsection>
 
-  <refsection>
+  <refsection xml:id="options">
     <info>
       <title>OPTIONS</title>
     </info>
