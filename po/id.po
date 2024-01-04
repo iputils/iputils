@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-19 08:21+0100\n"
-"PO-Revision-Date: 2021-07-16 13:31+0000\n"
-"Last-Translator: Didik Supriadi <didiksupriadi41@gmail.com>\n"
+"PO-Revision-Date: 2024-01-05 07:36+0000\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/id/>\n"
 "Language: id\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.7.1\n"
+"X-Generator: Weblate 5.3.1\n"
 
 #: arping.c:123
 #, c-format
@@ -56,7 +56,7 @@ msgstr ""
 "  -I <device>   perangkat ethernet"
 
 #: arping.c:142
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "  -s <source>   source IP address\n"
@@ -65,8 +65,8 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <asal>   alamat IP asal\n"
-"  <tujuan> nama DNS atau alamat IP\n"
+"  -s <asal>          alamat IP asal\n"
+"  <tujuan>           nama DNS atau alamat IP\n"
 "\n"
 "Untuk lebih jelasnya lihat arping(8).\n"
 
@@ -364,6 +364,8 @@ msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"interval minimum bagi ping multicast untuk pengguna harus >= %d ms, gunakan -"
+"i %s (atau lebih tinggi)"
 
 #: ping/ping6_common.c:272
 msgid "multicast ping does not fragment"
@@ -450,12 +452,12 @@ msgstr "Port tidak dapat dijangkau"
 #: ping/ping6_common.c:441
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "Alamat sumber tidak patuh kebijakan ingress/egress"
 
 #: ping/ping6_common.c:444
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "Tolak route ke tujuan"
 
 #: ping/ping6_common.c:447
 #, c-format
@@ -636,9 +638,9 @@ msgid "unknown protocol family: %d"
 msgstr "protocol family tidak diketahui: %d"
 
 #: ping/ping.c:111
-#, fuzzy, c-format
+#, c-format
 msgid "unknown sock type: %d"
-msgstr "tipe icmp tidak diketahui: %u"
+msgstr "tipe sock tidak diketahui: %d"
 
 #: ping/ping.c:198
 msgid "=> missing cap_net_raw+p capability or setuid?"
@@ -726,7 +728,7 @@ msgstr "waktu berlama-lama yang buruk: %s"
 
 #: ping/ping.c:595
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "PERINGATAN: ident 0 => memaksa soket mentah"
 
 #: ping/ping.c:652
 #, c-format
