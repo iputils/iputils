@@ -844,8 +844,8 @@ static int event_loop(struct run_state *ctl)
 	close(sfd);
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
-	if (err < 0)
-                return err;
+	if (err == -1)
+		error(2, errno, "sendto failed: %s", strerror(errno));
 	rc |= finish(ctl);
 	if (ctl->unsolicited)
 		/* nothing */;
