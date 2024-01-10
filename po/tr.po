@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-19 08:21+0100\n"
-"PO-Revision-Date: 2023-12-11 14:44+0000\n"
+"PO-Revision-Date: 2024-01-11 16:35+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.2.1\n"
+"X-Generator: Weblate 5.3.1\n"
 
 #: arping.c:123
 #, c-format
@@ -56,7 +56,7 @@ msgstr ""
 "  -I <aygıt>    hangi ethernet aygıtı kullanılacak"
 
 #: arping.c:142
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "  -s <source>   source IP address\n"
@@ -205,7 +205,7 @@ msgid "wrong timestamps\n"
 msgstr "yanlış zaman damgaları\n"
 
 #: clockdiff.c:453
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -1118,7 +1118,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(YANLIŞ SAĞLAMA TOPLAMI)\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1484,7 +1484,7 @@ msgid "%2d:  send failed\n"
 msgstr "%2d:  gönderme başarısız\n"
 
 #: tracepath.c:400
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
