@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) Iputils Project, 2018-2021
+# Copyright (c) Iputils Project, 2018-2024
 # Meson install script to setcap or setuid to an executable.
 
 exec_path="$1/$2"
@@ -17,15 +17,23 @@ _log() {
 case "$perm_type" in
 	caps)
 		params="cap_net_raw+p"
+
 		[ "$2" = "clockdiff" ] && params="cap_net_raw,cap_sys_nice+ep"
+
+		# cap_net_admin is needed for ping -m even on ICMP datagram socket
+		# (or cap_net_raw since Linux kernel 5.17).
+		[ "$2" = "ping" ] && params="cap_net_admin,cap_net_raw+p"
+
 		_log "calling: $setcap $params $exec_path"
 		"$setcap" $params "$exec_path"
 	;;
+
 	setuid)
 		_log "changing '$exec_path' to be setuid root executable"
 		chown -v root "$exec_path"
 		chmod -v u+s "$exec_path"
 	;;
+
 	*)
 		_log "unexpected argument: '$perm_type'"
 		exit 1
