@@ -828,8 +828,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		    setsockopt(probe_fd, IPPROTO_IP, IP_TOS, (char *)&rts->settos, sizeof(int)) < 0)
 			error(0, errno, _("warning: QOS sockopts"));
 
-		if (rts->opt_mark)
-			sock_setmark(rts->mark, probe_fd);
+		sock_setmark(rts, probe_fd);
 
 		dst.sin_port = htons(1025);
 		if (rts->nroute)

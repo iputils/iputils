@@ -455,20 +455,28 @@ void sock_setbufs(struct ping_rts *rts, socket_st *sock, int alloc)
 	}
 }
 
-void sock_setmark(unsigned int mark, int fd)
+void sock_setmark(struct ping_rts *rts, int fd)
 {
 #ifdef SO_MARK
 	int ret;
 	int errno_save;
 
+	if (!rts->opt_mark)
+		return;
+
 	enable_capability_admin();
-	ret = setsockopt(fd, SOL_SOCKET, SO_MARK, &mark, sizeof(mark));
+	ret = setsockopt(fd, SOL_SOCKET, SO_MARK, &(rts->mark), sizeof(rts->mark));
 	errno_save = errno;
 	disable_capability_admin();
 
-	/* Do not exit, old kernels do not support mark. */
-	if (ret == -1)
-		error(0, errno_save, _("WARNING: failed to set mark: %u"), mark);
+	if (ret == -1) {
+		error(0, errno_save, _("WARNING: failed to set mark: %u"), rts->mark);
+
+		if (errno_save == EPERM)
+			error(0, 0, _("=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"));
+
+		rts->opt_mark = 0;
+	}
 #else
 		error(0, errno_save, _("WARNING: SO_MARK not supported"));
 #endif
@@ -506,8 +514,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	}
 #endif
 
-	if (rts->opt_mark)
-		sock_setmark(rts->mark, sock->fd);
+	sock_setmark(rts, sock->fd);
 
 	/* Set some SNDTIMEO to prevent blocking forever
 	 * on sends, when device is too slow or stalls. Just put limit
