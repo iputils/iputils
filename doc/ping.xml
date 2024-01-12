@@ -357,7 +357,12 @@ xml:id="man.ping">
           <emphasis remap="I">mark</emphasis> to tag the packets
           going out. This is useful for variety of reasons within
           the kernel such as using policy routing to select
-          specific outbound processing.</para>
+          specific outbound processing. CAP_NET_ADMIN or CAP_NET_RAW
+          (since Linux 5.17) capability is required, see
+          <citerefentry>
+            <refentrytitle>socket</refentrytitle>
+            <manvolnum>7</manvolnum>
+          </citerefentry>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
