@@ -441,7 +441,7 @@ main(int argc, char **argv)
 			double optval;
 
 			optval = ping_strtod(optarg, _("bad timing interval"));
-			if (islessequal(optval, 0) || isgreater(optval, (double)INT_MAX / 1000))
+			if (isless(optval, 0) || isgreater(optval, (double)INT_MAX / 1000))
 				error(2, 0, _("bad timing interval: %s"), optarg);
 			rts.interval = (int)(optval * 1000);
 			rts.opt_interval = 1;
