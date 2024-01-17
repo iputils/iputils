@@ -1,5 +1,17 @@
+===== 20240117 =====
+Released January 17, 2024
+
+* ping
+- fix: Restore -i0 (commit: 7a51494, PR: #519, regression from 2a63b94)
+
+* localization
+- Updated Turkish and Indonesian
+- 100% translated: Chinese (Simplified), Czech, French, Georgian, German,
+  Korean, Portuguese (Brazil), Turkish, Ukrainian
+- > 90% translated: Finnish, Indonesian, Japanese
+
 ===== 20231222 =====
-released December 22, 2023
+Released December 22, 2023
 
 * arping
 - fix: Properly fix -Wpedantic warnings (commit: 80a580a, PR: #505)
@@ -55,12 +67,12 @@ released December 22, 2023
   PR: #457, #476)
 
 * localization
-- 100% translated: Chinese (Simplified), Czech, English, French, Georgian,
-  German, Korean, Portuguese (Brazil), Ukrainian
-- > 90% Finnish, Turkish, Japanese, Indonesian
+- 100% translated: Chinese (Simplified), Czech, French, Georgian, German,
+  Korean, Portuguese (Brazil), Ukrainian
+- > 90% translated: Finnish, Turkish, Indonesian, Japanese
 
 ===== 20221126 =====
-released November 26, 2022
+Released November 26, 2022
 
 * removed tools (issue: #363)
 - ninfod (commit: 8f0d897, reason: experimental unused protocol)
@@ -118,7 +130,7 @@ released November 26, 2022
 - don't fail when ip binary missing (issue: #383, PR: #390)
 
 ===== 20211215 =====
-released December 15, 2021
+Released December 15, 2021
 
 * removed tools (issue: #363)
 - tftpd: removing commit: 341975a, PR: #369
@@ -178,7 +190,7 @@ released December 15, 2021
 - make tests optional with -DSKIP_TESTS=true (PR: #359)
 
 ===== 20210722 =====
-released July 22, 2021
+Released July 22, 2021
 
 * Meson build system
 - enable NO_SETCAP_OR_SUID by default
@@ -223,7 +235,7 @@ released July 22, 2021
 - fix: flood ping test should pass on root (commit: 3dff080)
 
 ===== 20210202 =====
-released February 2, 2021
+Released February 2, 2021
 
 * version scheme change: dropped leading 's' (issue: #269)
 
@@ -257,7 +269,7 @@ released February 2, 2021
 - Use Ubuntu 20.10 groovy instead of Eoan
 
 ===== s20200821 =====
-released August 21, 2020
+Released August 21, 2020
 
 * incompatible changes
 Handling numeric options changed
