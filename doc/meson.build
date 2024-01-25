@@ -20,6 +20,30 @@ if build_tracepath == true
 	manpages += ['tracepath']
 endif
 
+if meson.version().version_compare('>=0.58.0')
+	# Use the docs included in a dist tarball if available
+	fs = import('fs')
+	out_man_pages = []
+	out_html_pages = []
+	generated_docs_exist = true
+	foreach page : manpages
+		man_page_name = page.replace('.xml', '.8')
+		html_page_name = page.replace('.xml', '.html')
+		out_man_pages += man_page_name
+		out_html_pages += html_page_name
+		if not fs.exists(man_page_name) or not fs.exists(html_page_name)
+			generated_docs_exist = false
+		endif
+	endforeach
+	if generated_docs_exist
+		install_man(out_man_pages)
+	        install_data(out_html_pages, install_dir : join_paths(get_option('datadir'), meson.project_name()))
+		subdir_done()
+	endif
+else
+	warning('Will not attempt to use pre-generated man pages with <0.58.0')
+endif
+
 xsltproc = find_program('xsltproc', required : build_mans or build_html_mans)
 xsltproc_args = [
 	'--nonet',

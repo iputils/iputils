@@ -220,6 +220,10 @@ endif
 
 if build_mans == true or build_html_mans == true
 	subdir ('doc')
+
+	if meson.version().version_compare('>=0.48.0')
+		meson.add_dist_script('tools/meson-build-dist-man.sh')
+	endif
 endif
 
 if run_tests
