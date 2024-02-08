@@ -811,6 +811,9 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		argv++;
 	}
 
+	if (rts->device)
+		bind_to_device(rts, sock->fd, dst.sin_addr.s_addr);
+
 	if (rts->source.sin_addr.s_addr == 0) {
 		socklen_t alen;
 		int probe_fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -819,10 +822,8 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		if (probe_fd < 0)
 			error(2, errno, "socket");
 
-		if (rts->device) {
+		if (rts->device)
 			bind_to_device(rts, probe_fd, dst.sin_addr.s_addr);
-			bind_to_device(rts, sock->fd, dst.sin_addr.s_addr);
-		}
 
 		if (rts->settos &&
 		    setsockopt(probe_fd, IPPROTO_IP, IP_TOS, (char *)&rts->settos, sizeof(int)) < 0)
