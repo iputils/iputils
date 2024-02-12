@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-12-19 08:21+0100\n"
-"PO-Revision-Date: 2024-01-05 07:36+0000\n"
+"PO-Revision-Date: 2024-02-13 08:36+0000\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/id/>\n"
@@ -237,7 +237,7 @@ msgstr ""
 "                  tentukan tampilan format waktu, bawaannya adalah ctime\n"
 "  -I            alias dari --time-format=iso\n"
 "  -h, --help    tampilkan bantuan\n"
-"  -V, --version tampilkan versi\n"
+"  -V, --version tampilkan versi dan keluar\n"
 "  <destination> nama DNS atau alamat IP\n"
 "\n"
 "Untuk lebih jelasnya lihat clockdiff(8).\n"
@@ -644,7 +644,7 @@ msgstr "tipe sock tidak diketahui: %d"
 
 #: ping/ping.c:198
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "=> kurang kapabilitas cap_net_raw+p atau setuid?"
 
 #: ping/ping.c:237
 #, c-format
@@ -736,6 +736,8 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
+"Peringatan: Alamat link-local IPv6 pada soket datagram ICMP mungkin "
+"memerlukan ifname atau scope-id => gunakan: address%%<ifname|scope-id>"
 
 #: ping/ping.c:829
 msgid "warning: QOS sockopts"
@@ -768,6 +770,8 @@ msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"internval minimum untuk ping broadcast bagi pengguna harus >= %d ms, gunakan "
+"-i %s (atau lebih tinggi)"
 
 #: ping/ping.c:899
 msgid "broadcast ping does not fragment"
@@ -989,7 +993,7 @@ msgstr "Tujuan Tidak Terjangkau, Kode Buruk: %d\n"
 #: ping/ping.c:1303
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "Source Quench\n"
 
 #: ping/ping.c:1310
 #, c-format
@@ -1014,7 +1018,7 @@ msgstr "Alihkan TOS dan Host"
 #: ping/ping.c:1322
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "Redirect, Kode Buruk: %d"
 
 #: ping/ping.c:1333
 #, c-format
@@ -1112,7 +1116,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(BAD CHECKSUM)\n"
 
 #: ping/ping_common.c:49
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "\n"
 "Usage\n"
@@ -1171,6 +1175,62 @@ msgid ""
 "\n"
 "For more details see ping(8).\n"
 msgstr ""
+"\n"
+"Usage\n"
+"  ping [options] <destination>\n"
+"\n"
+"Options:\n"
+"  <destination>      DNS name or IP address\n"
+"  -a                 use audible ping\n"
+"  -A                 use adaptive ping\n"
+"  -B                 sticky source address\n"
+"  -c <count>         stop after <count> replies\n"
+"  -C                 call connect() syscall on socket creation\n"
+"  -D                 print timestamps\n"
+"  -d                 use SO_DEBUG socket option\n"
+"  -e <identifier>    define identifier for ping session, default is random "
+"for\n"
+"                     SOCK_RAW and kernel defined for SOCK_DGRAM\n"
+"                     Imply using SOCK_RAW (for IPv4 only for identifier 0)\n"
+"  -f                 flood ping\n"
+"  -h                 print help and exit\n"
+"  -H                 force reverse DNS name resolution (useful for numeric\n"
+"                     destinations or for -f), override -n\n"
+"  -I <interface>     either interface name or address\n"
+"  -i <interval>      seconds between sending each packet\n"
+"  -L                 suppress loopback of multicast packets\n"
+"  -l <preload>       send <preload> number of packages while waiting "
+"replies\n"
+"  -m <mark>          tag the packets going out\n"
+"  -M <pmtud opt>     define path MTU discovery, can be one of "
+"<do|dont|want|probe>\n"
+"  -n                 no reverse DNS name resolution, override -H\n"
+"  -O                 report outstanding replies\n"
+"  -p <pattern>       contents of padding byte\n"
+"  -q                 quiet output\n"
+"  -Q <tclass>        use quality of service <tclass> bits\n"
+"  -s <size>          use <size> as number of data bytes to be sent\n"
+"  -S <size>          use <size> as SO_SNDBUF socket option value\n"
+"  -t <ttl>           define time to live\n"
+"  -U                 print user-to-user latency\n"
+"  -v                 verbose output\n"
+"  -V                 print version and exit\n"
+"  -w <deadline>      reply wait <deadline> in seconds\n"
+"  -W <timeout>       time to wait for response\n"
+"\n"
+"IPv4 options:\n"
+"  -4                 use IPv4\n"
+"  -b                 allow pinging broadcast\n"
+"  -R                 record route\n"
+"  -T <timestamp>     define timestamp, can be one of "
+"<tsonly|tsandaddr|tsprespec>\n"
+"\n"
+"IPv6 options:\n"
+"  -6                 use IPv6\n"
+"  -F <flowlabel>     define flow label, default is random\n"
+"  -N <nodeinfo opt>  use IPv6 node info query, try <help> as argument\n"
+"\n"
+"For more details see ping(8).\n"
 
 #: ping/ping_common.c:217
 #, c-format
@@ -1192,13 +1252,13 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "WARNING: mungkin, rcvbuf tidak cukup untuk menahan preload"
 
 #: ping/ping_common.c:471
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "Warning: Gagal untuk mengatur tanda: %d"
+msgstr "PERINGATAN: gagal menata tanda: %u"
 
 #: ping/ping_common.c:473
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "PERINGATAN: SO_MARK tidak didukung"
 
 #: ping/ping_common.c:489
 #, c-format
@@ -1206,6 +1266,8 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"tidak bisa mem-flood, interval minimum untuk pengguna harus >= %d ms, "
+"gunakan -i %s (atau lebih tinggi)"
 
 #: ping/ping_common.c:493
 #, c-format
@@ -1221,7 +1283,7 @@ msgstr ""
 #: ping/ping_common.c:749
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr ""
+msgstr "Peringatan: time of day mundur (%ldus), melakukan upaya perlawanan"
 
 #: ping/ping_common.c:799
 #, c-format
@@ -1231,7 +1293,7 @@ msgstr "%d byte dari %s:"
 #: ping/ping_common.c:805
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:808
 #, c-format
@@ -1276,7 +1338,7 @@ msgstr " (BAD CHECKSUM!)"
 #: ping/ping_common.c:833
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (ALAMAT LAIN!)"
 
 #: ping/ping_common.c:840
 #, c-format
@@ -1467,7 +1529,7 @@ msgstr "%2d:  tidak ada balasan\n"
 #: tracepath.c:613
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr ""
+msgstr "     Resume: pmtu %d "
 
 #: tracepath.c:615
 #, c-format
