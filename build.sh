@@ -77,6 +77,22 @@ install()
 	run "make install"
 }
 
+dist()
+{
+	local formats="xztar,gztar,zip"
+	local f
+
+	echo "=== dist ($formats) ==="
+	run "meson dist -C $BUILD_DIR --formats $formats"
+
+	for f in $(echo "$formats" | sed 's/,/ /g'); do
+		f=$(echo "$f" | sed 's/\(.*\)tar/tar.\1/')
+		f=$BUILD_DIR/meson-dist/iputils-20240117.$f
+		ls -lah $f
+		file $f | grep -E '(compressed|archive) data'
+	done
+}
+
 run_tests()
 {
 	local ret
@@ -111,7 +127,7 @@ cd `dirname $0`
 
 cmd=
 case "${1:-}" in
-	dependencies|info|configure|build|build-log|install|install-log|test|test-log|"") cmd="${1:-}";;
+	build|build-log|configure|dependencies|dist|info|install|install-log|test|test-log|"") cmd="${1:-}";;
 	*) echo "ERROR: wrong command '$1'" >&2; exit 1;;
 esac
 
@@ -137,6 +153,10 @@ fi
 
 if [ -z "$cmd" -o "$cmd" = "install" ]; then
 	install
+fi
+
+if [ -z "$cmd" -o "$cmd" = "dist" ]; then
+	dist
 fi
 
 if [ "$cmd" = "install-log" ]; then
