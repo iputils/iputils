@@ -1,13 +1,13 @@
-#!/bin/sh
-# Copyright (c) 2019-2021 Petr Vorel <pvorel@suse.cz>
+#!/bin/sh -eux
+# Copyright (c) 2019-2024 Petr Vorel <pvorel@suse.cz>
 
 CFLAGS="${CFLAGS:--Wformat -Werror=format-security -Werror=implicit-function-declaration -Werror=return-type -fno-common}"
 CC="${CC:-gcc}"
 BUILD_DIR="${BUILD_DIR:-builddir}"
 PREFIX="${PREFIX:-$HOME/iputils-install}"
 
+[ -z "${EXTRA_BUILD_OPTS:-}" ] && EXTRA_BUILD_OPTS="-DBUILD_HTML_MANS=true"
 BUILD_OPTS="-Dprefix=$PREFIX $EXTRA_BUILD_OPTS"
-[ -z "$EXTRA_BUILD_OPTS" ] && BUILD_OPTS="$BUILD_OPTS -DBUILD_HTML_MANS=true"
 [ -f "meson.cross" ] && BUILD_OPTS="--cross-file $PWD/meson.cross $BUILD_OPTS"
 
 # NOTE: meson iself checkes for minimal version
@@ -110,8 +110,8 @@ print_log()
 cd `dirname $0`
 
 cmd=
-case "$1" in
-	dependencies|info|configure|build|build-log|install|install-log|test|test-log|"") cmd="$1";;
+case "${1:-}" in
+	dependencies|info|configure|build|build-log|install|install-log|test|test-log|"") cmd="${1:-}";;
 	*) echo "ERROR: wrong command '$1'" >&2; exit 1;;
 esac
 
