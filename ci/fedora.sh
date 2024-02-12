@@ -1,11 +1,13 @@
 #!/bin/sh
-# Copyright (c) 2019-2021 Petr Vorel <petr.vorel@gmail.com>
+# Copyright (c) 2019-2024 Petr Vorel <petr.vorel@gmail.com>
 set -ex
 
 yum -y install \
 	clang \
+	file \
 	gcc \
 	gettext \
+	git \
 	iproute \
 	libcap-devel \
 	libxslt \
