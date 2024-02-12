@@ -79,7 +79,8 @@ NOTE: 'tools/create-tarballs.sh' script creates also skeleton of the credit.
     git log $old_tag.. | grep -Ei 'tested-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
 
 Create release tarballs (tar.xz, tar.gz and zip) and checksums with
-'tools/create-tarballs.sh' script.
+'tools/create-tarballs.sh' script. Run it with a reasonably new meson
+to avoid failures on old version (see minimal version in the file).
 
 NOTE: github also produces tar.gz and zip files. We consider them unsecure, do
 not recommend to use them and don't produce checksums for it.

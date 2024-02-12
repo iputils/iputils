@@ -1,6 +1,8 @@
 #!/bin/sh -eu
 # Copyright (c) 2023 Petr Vorel <pvorel@suse.cz>
 # Create tarballs and checksums for uploading after tagging a new release.
+# NOTE: 0.58.0 (at least) is required (for meson dist --formats "$formats")
+# Run release with a reasonably new meson.
 
 basedir="$(dirname "$0")"
 . "$basedir/lib.sh"
