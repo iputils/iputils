@@ -62,7 +62,7 @@ configure()
 
 	export CFLAGS
 
-	run "meson $BUILD_DIR $BUILD_OPTS"
+	run "meson setup $BUILD_DIR $BUILD_OPTS"
 }
 
 build()
