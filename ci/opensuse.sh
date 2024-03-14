@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2018-2024 Petr Vorel <pvorel@suse.cz>
 set -ex
 

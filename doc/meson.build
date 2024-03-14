@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) Iputils Project, 2017-2024
 
 manpages = []
