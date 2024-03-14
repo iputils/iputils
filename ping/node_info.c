@@ -320,7 +320,7 @@ static int niquery_option_subject_name_handler(struct ping_ni *ni, int index, co
 	if (p) {
 		*p = '\0';
 		if (strlen(p + 1) >= IFNAMSIZ)
-			error(1, 0, _("too long scope name"));
+			error(2, 0, _("too long scope name"));
 	}
 
 	namelen = strlen(idn);
@@ -391,7 +391,7 @@ errexit:
 	free(buf);
 	free(canonname);
 	free(idn);
-	exit(1);
+	exit(2);
 }
 
 int niquery_option_help_handler(struct ping_ni *ni __attribute__((__unused__)),
