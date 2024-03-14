@@ -1,7 +1,7 @@
 # Georgian translation for iputils
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) Iputils Project, 2022
 # Copyright (c) Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022
-# This file is distributed under the same license as the iputils package.
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"

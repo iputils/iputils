@@ -1,7 +1,7 @@
 # Korean translation for iputils
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) Seong-ho Cho <darkcircle.0426@gmail.com>
 # Copyright (c) Iputils Project, 2021
-# This file is distributed under the same license as the iputils package.
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"

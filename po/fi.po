@@ -1,6 +1,6 @@
 # Base po file for iputils translations
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) Iputils Project, 2018-2021
-# This file is distributed under the same license as the iputils package.
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"

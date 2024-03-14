@@ -1,7 +1,7 @@
 # Chinese (Simplified) translation for iputils
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) Qiyu Yan <yanqiyu01@gmail.com>, 2020
 # Copyright (c) Iputils Project, 2020-2021
-# This file is distributed under the same license as the iputils package.
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"

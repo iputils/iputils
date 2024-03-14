@@ -1,4 +1,5 @@
 # Japanese translation for iputils
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) Jun Nishii <jun@vinelinux.org>, 2000
 # Copyright (c) Daisuke SUZUKI <daisuke@linux.or.jp>, 2004
 # Copyright (c) Tomohiro "Tomo-p" KATO <tomop@teamgedoh.net>, 2018-2021
