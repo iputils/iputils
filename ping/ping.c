@@ -571,7 +571,7 @@ main(int argc, char **argv)
 	argv += optind;
 
 	if (!argc)
-		error(1, EDESTADDRREQ, "usage error");
+		error(2, EDESTADDRREQ, "usage error");
 
 	target = argv[argc - 1];
 
