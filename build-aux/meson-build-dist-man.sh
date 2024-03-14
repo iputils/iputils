@@ -5,6 +5,14 @@
 # This script should be invoked by meson itself on 'meson dist'
 # (invoked by tools/create-tarballs.sh).
 
+if [ "${CC:-}" ]; then
+	echo "$0: CC=$CC"
+	if ! $CC -dumpmachine | grep $(uname -m); then
+		echo "$0: CC ($CC) is probably cross compile toolchain, unset it for man page generating"
+		unset CC
+	fi
+fi
+
 cd "$MESON_DIST_ROOT"
 DIR=$(mktemp -d)
 

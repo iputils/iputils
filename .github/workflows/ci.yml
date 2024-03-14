@@ -139,7 +139,7 @@ jobs:
       run: ./build.sh build-log
 
     - name: Dist
-      run: if [ ! "$SKIP_DISC" ]; then unset CC; ./build.sh dist; else echo "meson dist skipped"; fi
+      run: if [ ! "$SKIP_DISC" ]; then ./build.sh dist; else echo "meson dist skipped"; fi
 
     - name: Install
       run: ./build.sh install
