@@ -903,7 +903,7 @@ int finish(struct ping_rts *rts)
 #endif
 		printf(_(", %g%% packet loss"),
 		       (float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
-		printf(_(", time %ldms"), 1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000);
+		printf(_(", time %llums"), (unsigned long long)(1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000));
 	}
 
 	putchar('\n');
