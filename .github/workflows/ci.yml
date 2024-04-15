@@ -12,6 +12,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # 32bit build
+          - container: "debian:stable"
+            env:
+              CC: gcc
+              VARIANT: i386
+              BUILD_32: 1
+
           # cross compilation builds
           - container: "debian:testing"
             env:
