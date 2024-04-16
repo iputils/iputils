@@ -136,6 +136,7 @@ jobs:
       run: ./build.sh build
 
     - name: Show build log
+      if: always()
       run: ./build.sh build-log
 
     - name: Dist
@@ -145,10 +146,12 @@ jobs:
       run: ./build.sh install
 
     - name: Show install log
+      if: always()
       run: ./build.sh install-log
 
     - name: Tests
       run: if [ ! "$SKIP_TESTS" ]; then ./build.sh test; else echo "tests skipped"; fi
 
     - name: Show test log
+      if: always()
       run: ./build.sh test-log
