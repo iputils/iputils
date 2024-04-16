@@ -41,19 +41,6 @@ print_versions()
 	ninja --version
 }
 
-run()
-{
-	local ret
-
-	eval "$@"
-	ret=$?
-
-	if [ $ret -ne 0 ]; then
-		echo "ERROR: '$@' failed, exit code: $ret" >&2
-		exit $ret
-	fi
-}
-
 configure()
 {
 	echo "=== configure ==="
@@ -62,19 +49,19 @@ configure()
 
 	export CFLAGS
 
-	run "meson setup $BUILD_DIR $BUILD_OPTS"
+	meson setup $BUILD_DIR $BUILD_OPTS
 }
 
 build()
 {
 	echo "=== build ==="
-	run "make -j$(getconf _NPROCESSORS_ONLN)"
+	make -j$(getconf _NPROCESSORS_ONLN)
 }
 
 install()
 {
 	echo "=== install ==="
-	run "make install"
+	make install
 }
 
 dist()
@@ -83,7 +70,7 @@ dist()
 	local f
 
 	echo "=== dist ($formats) ==="
-	run "meson dist -C $BUILD_DIR --formats $formats"
+	meson dist -C $BUILD_DIR --formats $formats
 
 	for f in $(echo "$formats" | sed 's/,/ /g'); do
 		f=$(echo "$f" | sed 's/\(.*\)tar/tar.\1/')
