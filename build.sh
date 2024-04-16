@@ -41,8 +41,41 @@ print_versions()
 	ninja --version
 }
 
+configure_32()
+{
+	echo "=== configure_32 ==="
+
+	local arch="$(uname -m)"
+	local dir
+
+	CFLAGS="-m32 $CFLAGS"
+
+	if [ -z "${PKG_CONFIG_LIBDIR:-}" ]; then
+		if [ "$arch" != "x86_64" ]; then
+			echo "ERROR: auto-detection not supported platform $arch, export PKG_CONFIG_LIBDIR!"
+			exit 1
+		fi
+
+		for dir in /usr/lib/i386-linux-gnu/pkgconfig \
+			/usr/lib32/pkgconfig /usr/lib/pkgconfig; do
+			if [ -d "$dir" ]; then
+				PKG_CONFIG_LIBDIR="$dir"
+				break
+			fi
+		done
+		if [ -z "$PKG_CONFIG_LIBDIR" ]; then
+			echo "WARNING: PKG_CONFIG_LIBDIR not found, build might fail"
+		fi
+		export PKG_CONFIG_LIBDIR
+	fi
+}
+
 configure()
 {
+	if [ "${BUILD_32:-}" ]; then
+		configure_32
+	fi
+
 	echo "=== configure ==="
 	echo "Build options: $BUILD_OPTS"
 	echo "CFLAGS: $CFLAGS"
