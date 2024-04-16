@@ -623,7 +623,7 @@ int main(int argc, char **argv)
 				ctl.hisname, ctl.rtt, ctl.rtt_sigma, ctl.min_rtt,
 				ctl.measure_delta, ctl.measure_delta1, s);
 		} else {
-			printf("%ld %d %d\n", now, ctl.measure_delta, ctl.measure_delta1);
+			printf("%lld %d %d\n", (long long)now, ctl.measure_delta, ctl.measure_delta1);
 		}
 	}
 	exit(0);
