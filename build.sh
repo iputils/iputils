@@ -10,6 +10,8 @@ PREFIX="${PREFIX:-$HOME/iputils-install}"
 BUILD_OPTS="-Dprefix=$PREFIX $EXTRA_BUILD_OPTS"
 [ -f "meson.cross" ] && BUILD_OPTS="--cross-file $PWD/meson.cross $BUILD_OPTS"
 
+BINARIES='arping clockdiff ping/ping tracepath'
+
 # NOTE: meson iself checkes for minimal version
 # see meson_version in meson.build, it fails if not required
 # Meson version is 0.37.1 but project requires >=0.40.
@@ -91,6 +93,37 @@ build()
 	make -j$(getconf _NPROCESSORS_ONLN)
 }
 
+check_binaries()
+{
+
+	echo "=== check_binaries ==="
+
+	local arch i
+	local bits="64"
+
+	case "${ARCH:-}" in
+		'') arch='x86-64';;
+		arm64) arch='aarch64';;
+		ppc64el) arch='PowerPC';;
+		s390x) arch='S/390';;
+	esac
+
+	if [ "${BUILD_32:-}" ]; then
+		bits=32
+		arch='80386'
+	fi
+
+	for i in $BINARIES; do
+		if echo "$EXTRA_BUILD_OPTS" | grep -i -q -- "-DBUILD_${i}=false"; then
+			echo "$i should not be build"
+			[ ! -x "$BUILD_DIR/$i" ]
+			continue
+		fi
+		[ -x "$BUILD_DIR/$i" ]
+		file "$BUILD_DIR/$i" | grep -E "$i.*${bits}-bit .*(executable|shared object).*$arch.*dynamically linked"
+	done
+}
+
 install()
 {
 	echo "=== install ==="
@@ -147,7 +180,7 @@ cd `dirname $0`
 
 cmd=
 case "${1:-}" in
-	build|build-log|configure|dependencies|dist|info|install|install-log|test|test-log|"") cmd="${1:-}";;
+	build|build-log|check-binaries|configure|dependencies|dist|info|install|install-log|test|test-log|"") cmd="${1:-}";;
 	*) echo "ERROR: wrong command '$1'" >&2; exit 1;;
 esac
 
@@ -165,6 +198,10 @@ fi
 
 if [ -z "$cmd" -o "$cmd" = "build" ]; then
 	build
+fi
+
+if [ -z "$cmd" -o "$cmd" = "check-binaries" ]; then
+	check_binaries
 fi
 
 if [ "$cmd" = "build-log" ]; then

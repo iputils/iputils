@@ -6,6 +6,7 @@ set -ex
 yum -y install \
 	clang \
 	file \
+	findutils \
 	gcc \
 	gettext \
 	git \

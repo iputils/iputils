@@ -142,6 +142,9 @@ jobs:
       if: always()
       run: ./build.sh build-log
 
+    - name: Check binaries
+      run: ./build.sh check-binaries
+
     - name: Dist
       run: if [ ! "$SKIP_DISC" ]; then ./build.sh dist; else echo "meson dist skipped"; fi
 
