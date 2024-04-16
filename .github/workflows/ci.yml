@@ -73,6 +73,10 @@ jobs:
             env:
               CC: clang
 
+          - container: "quay.io/centos/centos:stream9"
+            env:
+              CC: gcc
+
           - container: "rockylinux:9"
             env:
               CC: gcc
