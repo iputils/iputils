@@ -32,8 +32,7 @@ apt install -y --no-install-recommends \
 	gcc-${gcc_arch}-linux-gnu \
 	libc6-dev-${ARCH}-cross \
 	libcap-dev:$ARCH \
-	libidn2-0-dev:$ARCH \
-	libssl-dev:$ARCH
+	libidn2-0-dev:$ARCH
 
 cat <<EOF > meson.cross
 [binaries]

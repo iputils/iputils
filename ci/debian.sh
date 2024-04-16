@@ -25,7 +25,6 @@ apt install -y --no-install-recommends \
 	iproute2 \
 	libcap-dev \
 	libidn2-0-dev \
-	libssl-dev \
 	make \
 	meson \
 	pkg-config \
