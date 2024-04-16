@@ -284,8 +284,9 @@ static int recverr(struct run_state *const ctl)
 		struct timespec res;
 
 		timespecsub(&ts, retts, &res);
-		printf(_("%3ld.%03ldms "), res.tv_sec * 1000 + res.tv_nsec / 1000000,
-					   (res.tv_nsec % 1000000) / 1000);
+		printf(_("%3lld.%03ldms "), (long long int)res.tv_sec * 1000
+			   + res.tv_nsec / 1000000, (res.tv_nsec % 1000000) / 1000);
+
 		if (broken_router)
 			printf(_("(This broken router returned corrupted payload) "));
 	}
