@@ -24,7 +24,7 @@ xml:id="man.ping">
     <cmdsynopsis sepchar=" ">
       <command>ping</command>
       <arg choice="opt" rep="norepeat">
-        <option>-aAbBdCDfhHLnOqrRUvV46</option>
+        <option>-aAbBdCDfhHLnOqrRUvV346</option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-c
@@ -127,6 +127,14 @@ xml:id="man.ping">
       <title>OPTIONS</title>
     </info>
     <variablelist remap="TP">
+      <varlistentry>
+        <term>
+          <option>-3</option>
+        </term>
+        <listitem>
+          <para>RTT precision (do not round up the result time).</para>
+        </listitem>
+      </varlistentry>
       <varlistentry>
         <term>
           <option>-4</option>

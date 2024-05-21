@@ -233,6 +233,7 @@ struct ping_rts {
 	unsigned int
 		opt_adaptive:1,
 		opt_audible:1,
+		opt_connect_sk:1,
 		opt_flood:1,
 		opt_flood_poll:1,
 		opt_flowinfo:1,
@@ -245,6 +246,7 @@ struct ping_rts {
 		opt_outstanding:1,
 		opt_pingfilled:1,
 		opt_ptimeofday:1,
+		opt_rtt_precision:1,
 		opt_quiet:1,
 		opt_rroute:1,
 		opt_so_debug:1,
@@ -253,8 +255,7 @@ struct ping_rts {
 		opt_strictsource:1,
 		opt_timestamp:1,
 		opt_ttl:1,
-		opt_verbose:1,
-		opt_connect_sk:1;
+		opt_verbose:1;
 };
 /* FIXME: global_rts will be removed in future */
 extern struct ping_rts *global_rts;

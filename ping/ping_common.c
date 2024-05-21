@@ -50,6 +50,7 @@ void usage(void)
 		"  ping [options] <destination>\n"
 		"\nOptions:\n"
 		"  <destination>      DNS name or IP address\n"
+		"  -3                 RTT precision (do not round up the result time)\n"
 		"  -a                 use audible ping\n"
 		"  -A                 use adaptive ping\n"
 		"  -B                 sticky source address\n"
@@ -819,7 +820,9 @@ restamp:
 			return 1;
 		}
 		if (rts->timing) {
-			if (triptime >= 100000 - 50)
+			if (rts->opt_rtt_precision)
+				printf(_(" time=%ld.%03ld ms"), triptime / 1000, triptime % 1000);
+			else if (triptime >= 100000 - 50)
 				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
 			else if (triptime >= 10000 - 5)
 				printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,

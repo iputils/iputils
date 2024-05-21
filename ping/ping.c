@@ -363,13 +363,16 @@ main(int argc, char **argv)
 		hints.ai_family = AF_INET6;
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
 			if (hints.ai_family == AF_INET6)
 				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET;
+			break;
+		case '3':
+			rts.opt_rtt_precision = 1;
 			break;
 		case 'b':
 			rts.broadcast_pings = 1;
