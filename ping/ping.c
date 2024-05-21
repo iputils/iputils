@@ -337,6 +337,7 @@ main(int argc, char **argv)
 		.source6.sin6_family = AF_INET6,
 		.ni.query = -1,
 		.ni.subject_type = -1,
+    .rri_precision = 0
 	};
 	/* FIXME: global_rts will be removed in future */
 	global_rts = &rts;
@@ -363,13 +364,17 @@ main(int argc, char **argv)
 		hints.ai_family = AF_INET6;
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
 			if (hints.ai_family == AF_INET6)
 				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET;
+			break;
+    /* Do not round up the result time. (RRI/Huawei) */
+		case '3':
+			rts.rri_precision = 1;
 			break;
 		case 'b':
 			rts.broadcast_pings = 1;

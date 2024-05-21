@@ -83,6 +83,8 @@ void usage(void)
 		"  -V                 print version and exit\n"
 		"  -w <deadline>      reply wait <deadline> in seconds\n"
 		"  -W <timeout>       time to wait for response\n"
+		"\nRRI options (Huawei):\n"
+		"  -3                 RRI precision. Do not round up the result time.\n"
 		"\nIPv4 options:\n"
 		"  -4                 use IPv4\n"
 		"  -b                 allow pinging broadcast\n"
@@ -818,7 +820,7 @@ restamp:
 			printf(_(" (truncated)\n"));
 			return 1;
 		}
-		if (rts->timing) {
+		if (rts->timing && !rts->rri_precision) {
 			if (triptime >= 100000 - 50)
 				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
 			else if (triptime >= 10000 - 5)
@@ -831,6 +833,9 @@ restamp:
 				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
 				       triptime % 1000);
 		}
+
+    if (rts->rri_precision)
+      printf(_(" time=%ld.%03ld ms"), triptime / 1000, triptime % 1000);
 
 		if (dupflag && (!multicast || rts->opt_verbose))
 			printf(_(" (DUP!)"));

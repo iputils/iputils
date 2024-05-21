@@ -229,6 +229,9 @@ struct ping_rts {
 	size_t cmsglen;
 	struct ping_ni ni;
 
+  /* Do not round up the result time. (RRI/Huawei) */
+	int rri_precision;
+
 	/* boolean option bits */
 	unsigned int
 		opt_adaptive:1,
