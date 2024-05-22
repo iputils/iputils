@@ -337,7 +337,7 @@ main(int argc, char **argv)
 		.source6.sin6_family = AF_INET6,
 		.ni.query = -1,
 		.ni.subject_type = -1,
-    .rri_precision = 0
+		.rtt_precision = 0
 	};
 	/* FIXME: global_rts will be removed in future */
 	global_rts = &rts;
@@ -372,9 +372,9 @@ main(int argc, char **argv)
 				error(2, 0, _("only one -4 or -6 option may be specified"));
 			hints.ai_family = AF_INET;
 			break;
-    /* Do not round up the result time. (RRI/Huawei) */
+		/* Don't round up the rtt result */
 		case '3':
-			rts.rri_precision = 1;
+			rts.rtt_precision = 1;
 			break;
 		case 'b':
 			rts.broadcast_pings = 1;
