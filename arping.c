@@ -776,7 +776,7 @@ static int event_loop(struct run_state *ctl)
 	pfds[POLLFD_SOCKET].events = POLLIN | POLLERR | POLLHUP;
 	send_pack(ctl);
 
-	while (!exit_loop) {
+	while (!(exit_loop || ctl->unsolicited)) {
 		int ret;
 		size_t i;
 
