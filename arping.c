@@ -776,9 +776,14 @@ static int event_loop(struct run_state *ctl)
 	pfds[POLLFD_SOCKET].events = POLLIN | POLLERR | POLLHUP;
 	send_pack(ctl);
 
-	while (!(exit_loop || ctl->unsolicited)) {
+	while (!exit_loop) {
 		int ret;
 		size_t i;
+
+		if ((ctl->sent == ctl->count) && ctl->unsolicited) {
+			exit_loop = 1;
+			continue;
+		}
 
 		ret = poll(pfds, POLLFD_COUNT, -1);
 		if (ret <= 0) {
@@ -840,6 +845,7 @@ static int event_loop(struct run_state *ctl)
 			}
 		}
 	}
+
 	close(sfd);
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
