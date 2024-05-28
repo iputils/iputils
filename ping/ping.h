@@ -290,8 +290,12 @@ static inline void write_stdout(const char *str, size_t len)
 	ssize_t cc;
 	do {
 		cc = write(STDOUT_FILENO, str + o, len - o);
-		o += cc;
-	} while (len > o || cc < 0);
+
+		if (cc < 0)
+			break;
+
+		o += (size_t) cc;
+	} while (len > o);
 }
 
 /*
