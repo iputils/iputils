@@ -693,7 +693,7 @@ static void find_broadcast_address(struct run_state *ctl)
 
 static int event_loop(struct run_state *ctl)
 {
-	int exit_loop = 0, rc = 0;
+	int exit_loop = 0, rc = 0, err = 0;
 	ssize_t s;
 	enum {
 		POLLFD_SIGNAL = 0,
@@ -774,7 +774,7 @@ static int event_loop(struct run_state *ctl)
 	/* socket */
 	pfds[POLLFD_SOCKET].fd = ctl->socketfd;
 	pfds[POLLFD_SOCKET].events = POLLIN | POLLERR | POLLHUP;
-	send_pack(ctl);
+	err = send_pack(ctl);
 
 	while (!exit_loop) {
 		int ret;
@@ -822,7 +822,7 @@ static int event_loop(struct run_state *ctl)
 					exit_loop = 1;
 					continue;
 				}
-				send_pack(ctl);
+				err = send_pack(ctl);
 				break;
 			case POLLFD_TIMEOUT:
 				exit_loop = 1;
@@ -849,6 +849,8 @@ static int event_loop(struct run_state *ctl)
 	close(sfd);
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
+	if (err == -1)
+		error(2, errno, "sendto failed: %s", strerror(errno));
 	rc |= finish(ctl);
 	if (ctl->unsolicited)
 		/* nothing */;
