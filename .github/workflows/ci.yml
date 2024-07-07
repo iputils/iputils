@@ -85,10 +85,6 @@ jobs:
             env:
               CC: gcc
 
-          - container: "centos:7"
-            env:
-              CC: gcc
-
           - container: "debian:testing"
             env:
               CC: gcc
