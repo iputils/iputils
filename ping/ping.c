@@ -756,6 +756,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	unsigned char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 	uint32_t *tmp_rspace;
 	struct sockaddr_in dst;
+	int ret;
 
 	if (argc > 1) {
 		if (rts->opt_rroute)
@@ -1034,10 +1035,10 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 	drop_capabilities();
 
-	hold = main_loop(rts, &ping4_func_set, sock, packet, packlen);
+	ret = main_loop(rts, &ping4_func_set, sock, packet, packlen);
 	free(packet);
 
-	return hold;
+	return ret;
 }
 
 static void pr_options(struct ping_rts *rts, unsigned char *cp, int hlen)
