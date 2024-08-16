@@ -1,3 +1,72 @@
+===== 20240905 =====
+Released September 05, 2024
+
+Mostly ping fixes release.
+
+* Notable changes (for details see below)
+- Allow to disable reverse DNS resolution (PTR lookup) with with environment
+  variable IPUTILS_PING_PTR_LOOKUP=0
+- Lower max allowed -s value to 65507 (IPv4) or 65527 (IPv6). That is the
+  maximum the Linux kernel supports.
+- Include pre-generated man pages & HTML docs in dist tarballs. This allows to
+  avoid libxslt, docbook, ... as a build dependencies.
+- require meson >= 0.44
+- ping has new option -3
+
+* ping
+- Allow to disable reverse DNS resolution (PTR lookup) with with environment
+  variable IPUTILS_PING_PTR_LOOKUP=0 (commit: 6fc68b1, PR: #553, issue: #531)
+- Add option -3 (don't round up the RTT time) (commit: 48ae5c9, PR: #540)
+- fix: Fix IPv4 checksum check always succeeding once again (commit: bacf1b7,
+  PR: #534)
+- fix: Lower max allowed -s value to 65507 (IPv4) or 65527 (IPv6) (commit:
+  1e24c5b, issue: #542, PR: #550)
+- fix: Fix node info exit code (commit: 3840637, issue: #528)
+- fix: Fix integer overflow for high -s values (commit: aaa3dc3, issue: #542, PR:
+  #550)
+- fix: Fix EMSGSIZE on -s > 65527 on ICMP datagram socket (commit: aaa3dc3,
+  issue: #542, PR: #550)
+- fix: Fix print time_t problem on 32 bits platform (commit: 0fd2db7, PR: #533)
+- fix: Fix exit code on missing target (commit: 294a65f, issue: #528)
+- fix: check return value of write() to avoid integer overflow (commit: 0f12e6d,
+  PR: #545)
+- setcap-setuid.sh: Add cap_net_admin for ping (commit: 19718b0, issue: #515)
+- man: Document CAP_NET_ADMIN for -m (commit: 5b7ba7d, issue: #515)
+- reduce duplicity in warnings (commit: 0c08152, issue: #515)
+
+* arping
+- fix: Fix exit code if receive more replies than sent (commit: b589819, issue:
+  #538, PR: #546)
+- fix: Fix unsolicited ARP regressions on -c > 1 (commit: 5de892d, issue: #536,
+  PR: #543)
+- fix: Fix 1s delay on exit for unsolicited arpings (commit: 4db1de6, issue:
+  #536, PR: #541)
+
+* clockdiff
+- fix: Fix print time_t problem on 32 bits musl (commit: f2c322a)
+- fix: Fix loading localization on clockdiff (commit: c1b0e28)
+
+* tracepath
+- fix: Fix print time_t problem on 32 bits musl (commit: 536d40e)
+
+* Meson build system
+- include pre-generated man pages & HTML docs in dist tarballs (commit:
+  535f6de, issue: #479, PR: #520, https://bugs.gentoo.org/908817
+  https://bugs.gentoo.org/920901)
+- require meson >= 0.44 (released 2017, commit: c4bed6d)
+
+* CI
+- test 'meson dist' (commit: 2e8b3b2, b698ef6)
+- add 32bit build (commit: 22debcf)
+- build.sh: Configure with meson properly (commit: 01434a6)
+- remove Centos 7 (EOL, commit: 8037de5)
+
+* Localization
+- 100% translated: Czech, Finnish, Georgian, German, Indonesian, Japanese,
+  Korean, Portuguese (Brazil), Turkish, Ukrainian
+- Mostly translated: Chinese (Simplified), French
+- Fix loading localization on clockdiff
+
 ===== 20240117 =====
 Released January 17, 2024
 
