@@ -59,6 +59,7 @@
 #include <ifaddrs.h>
 #include <math.h>
 #include <locale.h>
+#include <sys/param.h>
 
 /* FIXME: global_rts will be removed in future */
 struct ping_rts *global_rts;
@@ -83,6 +84,12 @@ ping_func_set_st ping4_func_set = {
 #define	MAXICMPLEN	76
 #define	NROUTES		9		/* number of record route slots */
 #define TOS_MAX		255		/* 8-bit TOS field */
+
+/* max. IPv4 packet size - IPv4 header size - ICMP header size */
+#define ICMP_MAX_DATALEN (MAXPACKET - 20 - 8)
+
+/* max. IPv6 payload size - ICMPv6 Echo Reply Header */
+#define ICMPV6_MAX_DATALEN (MAXPACKET - sizeof (struct icmp6_hdr))
 
 #define CASE_TYPE(x) case x: return #x;
 
@@ -345,6 +352,8 @@ main(int argc, char **argv)
 		.ni.query = -1,
 		.ni.subject_type = -1,
 	};
+	unsigned char buf[sizeof(struct in6_addr)];
+
 	/* FIXME: global_rts will be removed in future */
 	global_rts = &rts;
 
@@ -535,7 +544,8 @@ main(int argc, char **argv)
 			rts.opt_so_dontroute = 1;
 			break;
 		case 's':
-			rts.datalen = strtol_or_err(optarg, _("invalid argument"), 0, MAXPACKET - 8);
+			/* real validation is done later */
+			rts.datalen = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'S':
 			rts.sndbuf = strtol_or_err(optarg, _("invalid argument"), 1, INT_MAX);
@@ -622,6 +632,24 @@ main(int argc, char **argv)
 			hints.ai_family = AF_INET;
 	}
 
+	int max_s = MAX(ICMP_MAX_DATALEN, ICMPV6_MAX_DATALEN);
+
+	/* Detect based on -4 / -6 */
+	if (hints.ai_family == AF_INET)
+		max_s = ICMP_MAX_DATALEN - get_ipv4_optlen(&rts);
+	else if (hints.ai_family == AF_INET6)
+		max_s = ICMPV6_MAX_DATALEN;
+
+	/* Force limit on IPv4/IPv6 adresses */
+	if (inet_pton(AF_INET, target, buf))
+		max_s = ICMP_MAX_DATALEN - get_ipv4_optlen(&rts);
+	else if (inet_pton(AF_INET6, target, buf))
+		max_s = ICMPV6_MAX_DATALEN;
+
+	if (rts.datalen > max_s)
+		error(EXIT_FAILURE, 0, "invalid -s value: '%d': out of range: 0 <= value <= %d",
+		      rts.datalen, max_s);
+
 	if (rts.opt_verbose)
 		error(0, 0, "sock4.fd: %d (socktype: %s), sock6.fd: %d (socktype: %s),"
 			   " hints.ai_family: %s\n",
@@ -643,7 +671,6 @@ main(int argc, char **argv)
 	int target_ai_family = hints.ai_family;
 	hints.ai_family = AF_UNSPEC;
 
-	unsigned char buf[sizeof(struct in6_addr)];
 	if (!strchr(target, '%') && sock6.socktype == SOCK_DGRAM &&
 		inet_pton(AF_INET6, target, buf) > 0 &&
 		(IN6_IS_ADDR_LINKLOCAL(buf) || IN6_IS_ADDR_MC_LINKLOCAL(buf))) {
@@ -1010,11 +1037,6 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_TTL, &ittl, sizeof ittl) == -1)
 			error(2, errno, _("cannot set unicast time-to-live"));
 	}
-
-
-	if (rts->datalen > 0xFFFF - 8 - rts->optlen - 20)
-		error(2, 0, _("packet size %d is too large. Maximum is %d"),
-		      rts->datalen, 0xFFFF - 8 - 20 - rts->optlen);
 
 	if (rts->datalen >= (int)sizeof(struct timeval))	/* can we time transfer */
 		rts->timing = 1;

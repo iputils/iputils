@@ -107,7 +107,8 @@ typedef uint32_t	bitmap_t;
 # error Please MAX_DUP_CHK and/or BITMAP_SHIFT
 #endif
 
-#define	MAXPACKET	128000		/* max packet size */
+/* IPv4 packet size / IPv6 payload size */
+#define	MAXPACKET	65535
 
 struct rcvd_table {
 	bitmap_t bitmap[MAX_DUP_CHK / (sizeof(bitmap_t) * 8)];

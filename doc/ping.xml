@@ -646,7 +646,10 @@ xml:id="man.ping">
           <para>Specifies the number of data bytes to be sent. The
           default is 56, which translates into 64 ICMP data bytes
           when combined with the 8 bytes of ICMP header data.
-          Maximum allowed value is 127992, but though most systems
+          The maximum allowed value is 65507 for IPv4
+          (65467 when <option>-R</option> or <option>-T</option>
+          or Intermediate <emphasis remap="I">hop</emphasis>s)
+          or 65527 for IPv6, but most systems
           limit this to a smaller, system-dependent number.</para>
         </listitem>
       </varlistentry>
