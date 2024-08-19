@@ -404,7 +404,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		printf(_("from %s %s: "), pr_addr(rts, &rts->source6, sizeof rts->source6), rts->device ? rts->device : "");
 		rts->opt_numeric = saved_opt_numeric;
 	}
-	printf(_("%zu data bytes\n"), rts->datalen);
+	printf(_("%d data bytes\n"), rts->datalen);
 
 	setup(rts, sock);
 

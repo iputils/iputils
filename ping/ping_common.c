@@ -202,7 +202,7 @@ void drop_capabilities(void)
 /* Fills all the outpack, excluding ICMP header, but _including_
  * timestamp area with supplied pattern.
  */
-void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet_size)
+void fill(struct ping_rts *rts, char *patp, unsigned char *packet, unsigned packet_size)
 {
 	int ii, jj;
 	unsigned int pat[16];
@@ -224,10 +224,8 @@ void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet
 		    &pat[12], &pat[13], &pat[14], &pat[15]);
 
 	if (ii > 0) {
-		size_t kk;
-		size_t max = packet_size < (size_t)ii + 8 ? 0 : packet_size - (size_t)ii + 8;
-
-		for (kk = 0; kk <= max; kk += ii)
+		unsigned kk;
+		for (kk = 0; kk <= packet_size - (8 + ii); kk += ii)
 			for (jj = 0; jj < ii; ++jj)
 				bp[jj + kk] = pat[jj];
 	}
@@ -541,7 +539,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 		rts->opt_flood_poll = 1;
 
 	if (!rts->opt_pingfilled) {
-		size_t i;
+		int i;
 		unsigned char *p = rts->outpack + 8;
 
 		/* Do not forget about case of small datalen, fill timestamp area too! */
@@ -804,7 +802,7 @@ restamp:
 		else
 			write_stdout("\bC", 2);
 	} else {
-		size_t i;
+		int i;
 		uint8_t *cp, *dp;
 
 		print_timestamp(rts);
@@ -819,7 +817,7 @@ restamp:
 		if (hops >= 0)
 			printf(_(" ttl=%d"), hops);
 
-		if ((size_t)cc < rts->datalen + 8) {
+		if (cc < rts->datalen + 8) {
 			printf(_(" (truncated)\n"));
 			return 1;
 		}
@@ -851,12 +849,12 @@ restamp:
 		dp = &rts->outpack[8 + sizeof(struct timeval)];
 		for (i = sizeof(struct timeval); i < rts->datalen; ++i, ++cp, ++dp) {
 			if (*cp != *dp) {
-				printf(_("\nwrong data byte #%zu should be 0x%x but was 0x%x"),
+				printf(_("\nwrong data byte #%d should be 0x%x but was 0x%x"),
 				       i, *dp, *cp);
 				cp = (unsigned char *)ptr + sizeof(struct timeval);
 				for (i = sizeof(struct timeval); i < rts->datalen; ++i, ++cp) {
 					if ((i % 32) == sizeof(struct timeval))
-						printf("\n#%zu\t", i);
+						printf("\n#%d\t", i);
 					printf("%x ", *cp);
 				}
 				break;

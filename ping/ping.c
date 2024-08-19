@@ -317,7 +317,6 @@ main(int argc, char **argv)
 	socket_st sock4 = { .fd = -1 };
 	socket_st sock6 = { .fd = -1 };
 	char *target;
-	char *outpack_fill = NULL;
 	static struct ping_rts rts = {
 		.interval = 1000,
 		.preload = 1,
@@ -515,10 +514,7 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			rts.opt_pingfilled = 1;
-			free(outpack_fill);
-			outpack_fill = strdup(optarg);
-			if (!outpack_fill)
-				error(2, errno, _("memory allocation failed"));
+			fill(&rts, optarg, rts.outpack, sizeof(rts.outpack));
 			break;
 		case 'q':
 			rts.opt_quiet = 1;
@@ -531,7 +527,7 @@ main(int argc, char **argv)
 			rts.opt_so_dontroute = 1;
 			break;
 		case 's':
-			rts.datalen = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
+			rts.datalen = strtol_or_err(optarg, _("invalid argument"), 0, MAXPACKET - 8);
 			break;
 		case 'S':
 			rts.sndbuf = strtol_or_err(optarg, _("invalid argument"), 1, INT_MAX);
@@ -577,14 +573,6 @@ main(int argc, char **argv)
 		error(2, EDESTADDRREQ, "usage error");
 
 	target = argv[argc - 1];
-
-	rts.outpack = malloc(rts.datalen + 28);
-	if (!rts.outpack)
-		error(2, errno, _("memory allocation failed"));
-	if (outpack_fill) {
-		fill(&rts, outpack_fill, rts.outpack, rts.datalen);
-		free(outpack_fill);
-	}
 
 	/* Create sockets */
 	enable_capability_raw();
@@ -695,7 +683,6 @@ main(int argc, char **argv)
 	}
 
 	freeaddrinfo(result);
-	free(rts.outpack);
 
 	return ret_val;
 }
@@ -1017,6 +1004,11 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, _("cannot set unicast time-to-live"));
 	}
 
+
+	if (rts->datalen > 0xFFFF - 8 - rts->optlen - 20)
+		error(2, 0, _("packet size %d is too large. Maximum is %d"),
+		      rts->datalen, 0xFFFF - 8 - 20 - rts->optlen);
+
 	if (rts->datalen >= (int)sizeof(struct timeval))	/* can we time transfer */
 		rts->timing = 1;
 	packlen = rts->datalen + MAXIPLEN + MAXICMPLEN;
@@ -1026,7 +1018,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	printf(_("PING %s (%s) "), rts->hostname, inet_ntoa(rts->whereto.sin_addr));
 	if (rts->device || rts->opt_strictsource)
 		printf(_("from %s %s: "), inet_ntoa(rts->source.sin_addr), rts->device ? rts->device : "");
-	printf(_("%zu(%zu) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
+	printf(_("%d(%d) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
 
 	setup(rts, sock);
 	if (rts->opt_connect_sk &&

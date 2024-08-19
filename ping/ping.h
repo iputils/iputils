@@ -107,6 +107,8 @@ typedef uint32_t	bitmap_t;
 # error Please MAX_DUP_CHK and/or BITMAP_SHIFT
 #endif
 
+#define	MAXPACKET	128000		/* max packet size */
+
 struct rcvd_table {
 	bitmap_t bitmap[MAX_DUP_CHK / (sizeof(bitmap_t) * 8)];
 };
@@ -152,11 +154,11 @@ struct ping_ni {
 /*ping runtime state */
 struct ping_rts {
 	unsigned int mark;
-	unsigned char *outpack;
+	unsigned char outpack[MAXPACKET];
 
 	struct rcvd_table rcvd_tbl;
 
-	size_t datalen;
+	int datalen;
 	char *hostname;
 	uid_t uid;
 	int ident;			/* process id to identify our packets */
@@ -413,7 +415,7 @@ extern int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast,
 			     int wrong_source);
 extern void print_timestamp(struct ping_rts *rts);
-void fill(struct ping_rts *rts, char *patp, unsigned char *packet, size_t packet_size);
+void fill(struct ping_rts *rts, char *patp, unsigned char *packet, unsigned packet_size);
 
 /* IPv6 */
 
