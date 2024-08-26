@@ -114,6 +114,14 @@ static char *str_socktype(int socktype)
 	return "";
 }
 
+static int get_ipv4_optlen(struct ping_rts *rts)
+{
+	if (rts->opt_rroute || rts->opt_timestamp || rts->opt_sourceroute)
+		return 40;
+
+	return 0;
+}
+
 static void create_socket(struct ping_rts *rts, socket_st *sock, int family,
 			  int socktype, int protocol, int requisite)
 {
@@ -937,7 +945,6 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		rspace[1 + IPOPT_OPTVAL] = IPOPT_RR;
 		rspace[1 + IPOPT_OLEN] = sizeof(rspace) - 1;
 		rspace[1 + IPOPT_OFFSET] = IPOPT_MINOFF;
-		rts->optlen = 40;
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, sizeof rspace) < 0)
 			error(2, errno, "record route");
 	}
@@ -960,7 +967,6 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, rspace[1]) < 0)
 				error(2, errno, "ts option");
 		}
-		rts->optlen = 40;
 	}
 	if (rts->opt_sourceroute) {
 		int i;
@@ -976,8 +982,9 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 
 		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + rts->nroute * 4) < 0)
 			error(2, errno, "record route");
-		rts->optlen = 40;
 	}
+
+	rts->optlen = get_ipv4_optlen(rts);
 
 	/* Estimate memory eaten by single packet. It is rough estimate.
 	 * Actually, for small datalen's it depends on kernel side a lot. */
