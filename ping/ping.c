@@ -1463,7 +1463,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 		if (rts->opt_flood)
 			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
-			error(0, 0, _("local error: %s"), strerror(e->ee_errno));
+			error(0, e->ee_errno, _("local error"));
 		else
 			error(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
 		rts->nerrors++;
