@@ -401,6 +401,10 @@ resend:
 		/* Socket buffer is full. */
 		tokens += rts->interval;
 		return MIN_INTERVAL_MS;
+	} else if (errno == EMSGSIZE) {
+		/* For example, sendto with len > 65527 on SOCK_DGRAM fails with this errno. */
+		rts->nerrors++;
+		i = 0;
 	} else {
 		if ((i = fset->receive_error_msg(rts, sock)) > 0) {
 			/* An ICMP error arrived. In this case, we've received
