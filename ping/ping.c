@@ -378,6 +378,17 @@ main(int argc, char **argv)
 	else if (argv[0][strlen(argv[0]) - 1] == '6')
 		hints.ai_family = AF_INET6;
 
+	/*
+	 * Optionally disable reverse DNS resolution (PTR lookup) by default.
+	 * -n/-H override the variable. Warn below if disabled due this.
+	 */
+	char *env = getenv("IPUTILS_PING_PTR_LOOKUP");
+	int force_numeric = 0;
+	if (env && !strcmp(env, "0")) {
+		rts.opt_numeric = 1;
+		force_numeric = 1;
+	}
+
 	/* Parse command line options */
 	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
@@ -583,6 +594,9 @@ main(int argc, char **argv)
 			break;
 		}
 	}
+
+	if (rts.opt_numeric && force_numeric && !rts.opt_quiet)
+		error(0, 0, _("WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"));
 
 	argc -= optind;
 	argv += optind;
