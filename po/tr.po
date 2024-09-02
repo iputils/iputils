@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2024-01-11 16:35+0000\n"
+"PO-Revision-Date: 2024-09-02 19:15+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.7.1\n"
 
 #: arping.c:123
 #, c-format
@@ -729,7 +729,7 @@ msgstr "hatalı yanıt bekleme süresi: %s"
 
 #: ping/ping.c:599
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
-msgstr ""
+msgstr "UYARI: ters DNS çözümlemesi (PTR araması) devre dışı, -H ile zorlayın"
 
 #: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
@@ -814,7 +814,7 @@ msgstr "tek noktaya yayın yaşam süresi ayarlanamıyor"
 #: ping/ping.c:1064
 #, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%zu(%zu) bayt veri.\n"
+msgstr "%d(%d) bayt veri.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1117,7 +1117,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(YANLIŞ SAĞLAMA TOPLAMI)\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1183,6 +1183,7 @@ msgstr ""
 "\n"
 "Seçenekler:\n"
 "  <hedef>            DNS adı veya IP adresi\n"
+"  -3                 RTT hassasiyeti (sonuç süresi yuvarlanmasın)\n"
 "  -a                 duyulabilir ping kullan\n"
 "  -A                 uyarlanabilir ping kullan\n"
 "  -B                 yapışkan kaynak adresi\n"
@@ -1198,6 +1199,8 @@ msgstr ""
 "tanımlayıcısı için)\n"
 "  -f                 flood ping\n"
 "  -h                 yardımı yazdır ve çık\n"
+"  -H                 ters DNS ad çözümlemesini zorla (sayısal hedefler veya\n"
+"                     -f için kullanışlıdır), -n seçeneğini geçersiz kılar\n"
 "  -I <arayüz>        arayüz adı veya adresi\n"
 "  -i <aralık>        her paketin gönderilmesi arasında geçen saniye\n"
 "  -L                 çok noktaya yayın paketlerinin geri döngüsünü engelle\n"
@@ -1205,7 +1208,8 @@ msgstr ""
 "  -m <işaret>        giden paketleri etiketle\n"
 "  -M <pmtud seç>     mtu keşfi tanımla, <do|dont|want|probe> seçeneklerinden "
 "biri olabilir\n"
-"  -n                 DNS ad çözümlemesi yapılmasın\n"
+"  -n                 ters DNS ad çözümlemesi yapılmasın, -H seçeneğini "
+"geçersiz kılar\n"
 "  -O                 bekleyen yanıtları bildir\n"
 "  -p <kalıp>         dolgu baytının içeriği\n"
 "  -q                 sessiz çıktı\n"
@@ -1259,10 +1263,11 @@ msgid "WARNING: failed to set mark: %u"
 msgstr "UYARI: işaret ayarlanamadı: %u"
 
 #: ping/ping_common.c:479
-#, fuzzy
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr "=> eksik cap_net_raw+p özelliği veya setuid?"
+msgstr ""
+"=> eksik cap_net_admin+p veya cap_net_raw+p (Linux 5.17'den itibaren) "
+"özelliği?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
