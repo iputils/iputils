@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2023-12-20 15:03+0000\n"
+"PO-Revision-Date: 2024-09-02 19:16+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.3\n"
+"X-Generator: Weblate 5.7.1\n"
 
 #: arping.c:123
 #, c-format
@@ -728,7 +728,7 @@ msgstr "나쁜 체류시간: %s"
 
 #: ping/ping.c:599
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
-msgstr ""
+msgstr "경고: 역방향 DNS 확인 (PTR 조회)은 비활성화 되었고, -H와 함께 강제합니다"
 
 #: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
@@ -1115,7 +1115,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(잘못된 검사합)\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1177,10 +1177,11 @@ msgid ""
 msgstr ""
 "\n"
 "사용법\n"
-"  ping [옵션] <대상>\n"
+"  ping [options] <destination>\n"
 "\n"
 "옵션:\n"
-"  <대상>      DNS 이름 또는 IP 주소\n"
+"  <destination>      DNS 이름 또는 IP 주소\n"
+"  -3                 RTT precision (do not round up the result time)\n"
 "  -a                 use audible ping\n"
 "  -A                 use adaptive ping\n"
 "  -B                 sticky source address\n"
@@ -1202,8 +1203,8 @@ msgstr ""
 "  -l <preload>       send <preload> number of packages while waiting "
 "replies\n"
 "  -m <mark>          tag the packets going out\n"
-"  -M <pmtud opt>     define path MTU discovery, can be one of <do|dont|want|"
-"probe>\n"
+"  -M <pmtud opt>     define path MTU discovery, can be one of "
+"<do|dont|want|probe>\n"
 "  -n                 no reverse DNS name resolution, override -H\n"
 "  -O                 report outstanding replies\n"
 "  -p <pattern>       contents of padding byte\n"
@@ -1222,15 +1223,15 @@ msgstr ""
 "  -4                 use IPv4\n"
 "  -b                 allow pinging broadcast\n"
 "  -R                 record route\n"
-"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|"
-"tsprespec>\n"
+"  -T <timestamp>     define timestamp, can be one of "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "IPv6 옵션:\n"
 "  -6                 use IPv6\n"
 "  -F <flowlabel>     define flow label, default is random\n"
 "  -N <nodeinfo opt>  use IPv6 node info query, try <help> as argument\n"
 "\n"
-"더 자세한 정보를 위해 ping(8)을 참고하세요\n"
+"더 자세한 사항은 ping(8)을 참조하세요.\n"
 
 #: ping/ping_common.c:218
 #, c-format
@@ -1257,10 +1258,9 @@ msgid "WARNING: failed to set mark: %u"
 msgstr "경고: 표시 설정에 실패함: %u"
 
 #: ping/ping_common.c:479
-#, fuzzy
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr "=> cap_net_raw+p 기능 또는 setuid가 빠졌습니까?"
+msgstr "=> 누락된 cap_net_admin+p 또는 cap_net_raw+p (리눅스 5.17 이후에) 기능?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
