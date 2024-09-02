@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2024-05-15 12:36+0000\n"
-"Last-Translator: Sebastian E <sighunter@gmx.de>\n"
+"PO-Revision-Date: 2024-09-02 17:24+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/de/>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5.5\n"
+"X-Generator: Weblate 5.7.1\n"
 
 #: arping.c:123
 #, c-format
@@ -248,7 +248,7 @@ msgstr ""
 
 #: clockdiff.c:592
 msgid "measure: unknown failure"
-msgstr "Maßnahme: unbekannter Fehler"
+msgstr "messen: unbekannter Fehler"
 
 #: clockdiff.c:597
 #, c-format
@@ -258,7 +258,7 @@ msgstr "%s ist ausgefallen"
 #: clockdiff.c:600
 #, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr "%s Zeit in einem nicht standardkonformen Format übertragen"
+msgstr "%s Zeit in einem nicht standardisierten Format übertragen"
 
 #: clockdiff.c:603
 #, c-format
@@ -735,6 +735,7 @@ msgstr "schlechte Verweildauer: %s"
 #: ping/ping.c:599
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
 msgstr ""
+"WARNUNG: Umgekehrte DNS-Auflösung (PTR-Lookup) deaktiviert, mit -H erzwingen"
 
 #: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
@@ -1121,7 +1122,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(FALSCHE PRÜFSUMME)\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1182,11 +1183,12 @@ msgid ""
 "For more details see ping(8).\n"
 msgstr ""
 "\n"
-"Verwendung\n"
+"Aufruf\n"
 "  ping [Optionen] <Ziel>\n"
 "\n"
 "Options:\n"
 "  <Ziel>      DNS-Name oder IP-Adresse\n"
+"  -3                 RTT-Genauigkeit (die Ergebniszeit nicht aufrunden)\n"
 "  -a                 Verwende akustischen Ping\n"
 "  -A                Verwende adaptiven Ping\n"
 "  -B                 Sticky Quell-Adresse\n"
@@ -1203,7 +1205,8 @@ msgstr ""
 "  -f                 Flutender Ping\n"
 "  -h                 Hilfe ausgeben und beenden\n"
 "  -H                 Erzwinge Rückwärts-DNS-Namensauflösung (nützlich für "
-"numerische Ziele oder bei -f), überschreibt -n\n"
+"numerische\n"
+"                     Ziele oder bei -f), überschreibt -n\n"
 "  -I <Schnittstelle>     Entweder Schnittstellennamen oder Adresse\n"
 "  -i <Intervall>      Sekunden zwischen dem Senden jedes Pakets\n"
 "  -L                 Unterdrückt Loopback für Multicast-Pakete\n"
@@ -1268,10 +1271,10 @@ msgid "WARNING: failed to set mark: %u"
 msgstr "WARNUNG: Markierung konnte nicht gesetzt werden: %u"
 
 #: ping/ping_common.c:479
-#, fuzzy
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr "fehlende cap_net_raw+p Fähigkeit oder setuid?"
+msgstr ""
+"=> fehlende Fähigkeit cap_net_admin+p oder cap_net_raw+p (seit Linux 5.17)?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
@@ -1549,7 +1552,7 @@ msgstr "     Zusammenfassung: pmtu %d "
 #: tracepath.c:616
 #, c-format
 msgid "hops %d "
-msgstr "hops %d "
+msgstr "Hops %d "
 
 #: tracepath.c:618
 #, c-format
