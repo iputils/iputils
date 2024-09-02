@@ -812,9 +812,9 @@ msgid "cannot set unicast time-to-live"
 msgstr "délku životnosti nelze u unicastu nastavit"
 
 #: ping/ping.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%zu (%zu) datových bajtů.\n"
+msgstr "%d (%d) datových bajtů.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1352,13 +1352,13 @@ msgid " (DIFFERENT ADDRESS!)"
 msgstr " (ODLIŠNÁ ADRESA!)"
 
 #: ping/ping_common.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"nesprávná data na bajtu č. %zu – měla by být 0x%x, ale jsou 0x%x"
+"nesprávná data na bajtu č. %d – měla by být 0x%x, ale jsou 0x%x"
 
 #: ping/ping_common.c:895
 #, c-format

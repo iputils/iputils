@@ -810,9 +810,9 @@ msgid "cannot set unicast time-to-live"
 msgstr "단일전송 유효기간(ttl)을 설정 할 수 없습니다"
 
 #: ping/ping.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "자료의 %zu(%zu) 바이트.\n"
+msgstr "자료의 %d(%d) 바이트.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1345,13 +1345,13 @@ msgid " (DIFFERENT ADDRESS!)"
 msgstr " (다른 주소!)"
 
 #: ping/ping_common.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"잘못된 자료 바이트 #%zu는 0x%x이어야 하지만 0x%x입니다"
+"잘못된 자료 바이트 #%d는 0x%x이어야 하지만 0x%x입니다"
 
 #: ping/ping_common.c:895
 #, c-format

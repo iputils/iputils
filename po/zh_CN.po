@@ -803,9 +803,9 @@ msgid "cannot set unicast time-to-live"
 msgstr "不能设置单拨的 TTL"
 
 #: ping/ping.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%zu(%zu) 字节的数据。\n"
+msgstr "%d(%d) 字节的数据。\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1332,13 +1332,13 @@ msgid " (DIFFERENT ADDRESS!)"
 msgstr " （地址不同！）"
 
 #: ping/ping_common.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"错误的数据字节 #%zu 预期为 0x%x 但实际接收到 0x%x"
+"错误的数据字节 #%d 预期为 0x%x 但实际接收到 0x%x"
 
 #: ping/ping_common.c:895
 #, c-format

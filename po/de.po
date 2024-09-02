@@ -816,9 +816,9 @@ msgid "cannot set unicast time-to-live"
 msgstr "kann Unicast TTL nicht einstellen"
 
 #: ping/ping.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%zu(%zu) Bytes an Daten.\n"
+msgstr "%d(%d) Bytes an Daten.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1356,13 +1356,13 @@ msgid " (DIFFERENT ADDRESS!)"
 msgstr " (ANDERE ADRESSE!)"
 
 #: ping/ping_common.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"falsches Datenbyte #%zu sollte 0x%x sein, aber war 0x%x"
+"falsches Datenbyte #%d sollte 0x%x sein, aber war 0x%x"
 
 #: ping/ping_common.c:895
 #, c-format

@@ -809,9 +809,9 @@ msgid "cannot set unicast time-to-live"
 msgstr "yksi-lähetyksen elon aikaa (TTL) ei voi asettaa"
 
 #: ping/ping.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%zu(%zu) tavua dataa.\n"
+msgstr "%d(%d) tavua dataa.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1344,13 +1344,13 @@ msgid " (DIFFERENT ADDRESS!)"
 msgstr " (Eri osoite!)"
 
 #: ping/ping_common.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"väärän datatavun #%zu pitäisi olla 0x%x, mutta oli 0x%x"
+"väärän datatavun #%d pitäisi olla 0x%x, mutta oli 0x%x"
 
 #: ping/ping_common.c:895
 #, c-format

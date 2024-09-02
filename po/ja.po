@@ -829,9 +829,9 @@ msgid "cannot set unicast time-to-live"
 msgstr "ユニキャストTTLを設定できません"
 
 #: ping/ping.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%zu(%zu) バイトのデータ\n"
+msgstr "%d(%d) バイトのデータ\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1309,13 +1309,13 @@ msgid " (DIFFERENT ADDRESS!)"
 msgstr " (アドレス相違!)"
 
 #: ping/ping_common.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"誤りデータバイト #%zu. 正しい値: 0x%x 返り値: 0x%x"
+"誤りデータバイト #%d. 正しい値: 0x%x 返り値: 0x%x"
 
 #: ping/ping_common.c:895
 #, c-format

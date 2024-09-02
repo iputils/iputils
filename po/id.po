@@ -810,9 +810,9 @@ msgid "cannot set unicast time-to-live"
 msgstr "tidak bisa mengatur time-to-live unicast"
 
 #: ping/ping.c:1064
-#, fuzzy, c-format
+#, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%zu(%zu) byte data.\n"
+msgstr "%d(%d) byte data.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -1347,13 +1347,13 @@ msgid " (DIFFERENT ADDRESS!)"
 msgstr " (ALAMAT LAIN!)"
 
 #: ping/ping_common.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"kesalahan byte data #%zu harusnya 0x%x bukan 0x%x"
+"kesalahan byte data #%d harusnya 0x%x bukan 0x%x"
 
 #: ping/ping_common.c:895
 #, c-format
