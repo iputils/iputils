@@ -423,9 +423,9 @@ msgid "from %s %s: "
 msgstr "送信元 %s %s: "
 
 #: ping/ping6_common.c:407
-#, fuzzy, c-format
+#, c-format
 msgid "%d data bytes\n"
-msgstr "%zu データ長(byte)\n"
+msgstr "%d データ長(byte)\n"
 
 #: ping/ping6_common.c:423
 #, c-format

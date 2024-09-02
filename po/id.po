@@ -415,9 +415,9 @@ msgid "from %s %s: "
 msgstr "dari %s %s: "
 
 #: ping/ping6_common.c:407
-#, fuzzy, c-format
+#, c-format
 msgid "%d data bytes\n"
-msgstr "%zu byte data\n"
+msgstr "%d byte data\n"
 
 #: ping/ping6_common.c:423
 #, c-format

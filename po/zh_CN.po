@@ -412,9 +412,9 @@ msgid "from %s %s: "
 msgstr "来自 %s %s "
 
 #: ping/ping6_common.c:407
-#, fuzzy, c-format
+#, c-format
 msgid "%d data bytes\n"
-msgstr "%zu 字节的数据\n"
+msgstr "%d 字节的数据\n"
 
 #: ping/ping6_common.c:423
 #, c-format
