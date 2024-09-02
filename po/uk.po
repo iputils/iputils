@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2024-09-02 16:52+0000\n"
+"PO-Revision-Date: 2024-09-02 17:04+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
@@ -1283,10 +1283,11 @@ msgid "WARNING: failed to set mark: %u"
 msgstr "Попередження: не вдалося встановити позначку: %u"
 
 #: ping/ping_common.c:479
-#, fuzzy
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr "=> пропущено можливість cap_net_raw+p або setuid?"
+msgstr ""
+"=> пропущено можливість cap_net_admin+p або cap_net_raw+p (з часу Linux 5."
+"17)?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
