@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2024-09-02 17:24+0000\n"
+"PO-Revision-Date: 2024-09-02 19:15+0000\n"
 "Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/de/>\n"
@@ -403,7 +403,7 @@ msgstr "kann Flowlabel nicht setzen"
 
 #: ping/ping6_common.c:394
 msgid "can't send flowinfo"
-msgstr "kann Flussinformationen nicht senden"
+msgstr "kann Flussinfo nicht senden"
 
 #: ping/ping6_common.c:397 ping/ping.c:1061
 #, c-format
@@ -533,7 +533,7 @@ msgstr "bei %u"
 #: ping/ping6_common.c:478
 #, c-format
 msgid "Echo request"
-msgstr "Echo-Anforderung"
+msgstr "Echo-Anfrage"
 
 #: ping/ping6_common.c:481
 #, c-format
@@ -1370,7 +1370,7 @@ msgstr ""
 #: ping/ping_common.c:895
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr "--- %s ping-Statistik ---\n"
+msgstr "--- %s Ping-Statistiken ---\n"
 
 #: ping/ping_common.c:896
 #, c-format
@@ -1547,7 +1547,7 @@ msgstr "%2d:  keine Antwort\n"
 #: tracepath.c:614
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr "     Zusammenfassung: pmtu %d "
+msgstr "     Fazit: pmtu %d "
 
 #: tracepath.c:616
 #, c-format
