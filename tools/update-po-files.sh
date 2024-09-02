@@ -3,6 +3,6 @@
 
 DIR=builddir
 
-meson . $DIR
+meson setup $DIR
 ninja iputils-pot -C $DIR
 ninja iputils-update-po -C $DIR
