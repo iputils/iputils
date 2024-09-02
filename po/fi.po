@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-19 08:21+0100\n"
+"POT-Creation-Date: 2024-09-02 18:28+0200\n"
 "PO-Revision-Date: 2024-02-20 20:35+0000\n"
 "Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/iputils/"
@@ -89,102 +89,102 @@ msgstr "%d pyyntöä"
 msgid "%s%d broadcast(s)"
 msgstr "%s%d kaikkilähetys(tä)"
 
-#: arping.c:415
+#: arping.c:422
 msgid "Unicast"
 msgstr "Yksilähetys"
 
-#: arping.c:415
+#: arping.c:422
 msgid "Broadcast"
 msgstr "Kaikkilähetys"
 
-#: arping.c:416
+#: arping.c:423
 #, c-format
 msgid "%s from "
 msgstr "%s lähteestä "
 
-#: arping.c:416
+#: arping.c:423
 msgid "reply"
 msgstr "vastaus"
 
-#: arping.c:416
+#: arping.c:423
 msgid "request"
 msgstr "pyyntö"
 
-#: arping.c:421
+#: arping.c:428
 #, c-format
 msgid "for %s "
 msgstr "kohteelle %s "
 
-#: arping.c:426
+#: arping.c:433
 #, c-format
 msgid "for "
 msgstr "kohteelle "
 
-#: arping.c:436
+#: arping.c:443
 #, c-format
 msgid " %ld.%03ldms\n"
 msgstr " %ld.%03ldms\n"
 
-#: arping.c:438
+#: arping.c:445
 #, c-format
 msgid " UNSOLICITED?\n"
 msgstr " PYYTÄMÄTTÄ?\n"
 
-#: arping.c:589
+#: arping.c:596
 #, c-format
 msgid "Interface \"%s\" is down\n"
 msgstr "Liitäntä \"%s\" on poissa käytöstä\n"
 
-#: arping.c:597
+#: arping.c:604
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
 msgstr "Liitäntä \"%s\" ei ole ARP-kysyttävä\n"
 
-#: arping.c:690
+#: arping.c:697
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
 msgstr "VAROITUS: käytetään oletuskaikkilähetysosoitetta.\n"
 
-#: arping.c:901 arping.c:904 arping.c:907 ping/ping.c:378 ping/ping.c:425
-#: ping/ping.c:477 ping/ping.c:485 ping/ping.c:531 ping/ping.c:534
-#: ping/ping.c:537 ping/ping.c:551 tracepath.c:473 tracepath.c:476
-#: tracepath.c:479 tracepath.c:501
+#: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:408 ping/ping.c:455
+#: ping/ping.c:507 ping/ping.c:515 ping/ping.c:559 ping/ping.c:562
+#: ping/ping.c:565 ping/ping.c:579 tracepath.c:474 tracepath.c:477
+#: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
 msgstr "virheellinen argumentti"
 
-#: arping.c:974
+#: arping.c:978
 #, c-format
 msgid "Device %s not available."
 msgstr "Laite %s ei ole käytettävissä."
 
-#: arping.c:975
+#: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr "Sopivaa laitetta ei voitu määrittää. Ole hyvä ja käytä vaihtoehtoa -I."
 
-#: arping.c:995
+#: arping.c:999
 msgid "WARNING: interface is ignored"
 msgstr "VAROITUS: liitäntää ei huomioida"
 
-#: arping.c:1014
+#: arping.c:1018
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
 msgstr "VAROITUS: setsockopt(SO_DONTROUTE)"
 
-#: arping.c:1038
+#: arping.c:1042
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr "Liitäntä \"%s\" ei ole ARP-kelpoinen (ei ll-osoitetta)\n"
 
-#: arping.c:1047
+#: arping.c:1051
 #, c-format
 msgid "ARPING %s "
 msgstr "ARPING %s "
 
-#: arping.c:1048
+#: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
 msgstr "%s %s:lta\n"
 
-#: arping.c:1052
+#: arping.c:1056
 msgid "no source address in not-DAD mode"
 msgstr "ei lähdeosoitetta ei-DAD-tilassa"
 
@@ -288,8 +288,8 @@ msgstr "IDN-koodausvirhe: %s"
 msgid "too long scope name"
 msgstr "liian pitkä laajuuden nimi"
 
-#: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:309
-#: ping/ping.c:518 ping/ping.c:580 ping/ping.c:1021
+#: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:308
+#: ping/ping.c:1059
 msgid "memory allocation failed"
 msgstr "muistin varaus ei onnistunut"
 
@@ -343,7 +343,7 @@ msgstr ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 
-#: ping/ping6_common.c:99 ping/ping.c:708
+#: ping/ping6_common.c:99 ping/ping.c:747
 #, c-format
 msgid "unknown iface: %s"
 msgstr "tuntematon iface: %s"
@@ -352,12 +352,12 @@ msgstr "tuntematon iface: %s"
 msgid "scope discrepancy among the nodes"
 msgstr "laajuuden ero solmujen joukossa"
 
-#: ping/ping6_common.c:226 ping/ping.c:878
+#: ping/ping6_common.c:225 ping/ping.c:917
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr "Varoitus: lähdeosoite on saatettu valita muusta laitteesta kuin: %s"
 
-#: ping/ping6_common.c:267
+#: ping/ping6_common.c:266
 #, c-format
 msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
@@ -366,56 +366,56 @@ msgstr ""
 "minimiväli käyttäjän monilähetyspingille on oltava >= %d ms, käytä -i %s "
 "(tai suurempi)"
 
-#: ping/ping6_common.c:272
+#: ping/ping6_common.c:271
 msgid "multicast ping does not fragment"
 msgstr "moni-lähetyksen ping ei pirstoudu"
 
-#: ping/ping6_common.c:331
+#: ping/ping6_common.c:330
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
 msgstr "setsockopt(RAW_CHECKSUM) epäonnistui - yritä jatkaa"
 
-#: ping/ping6_common.c:357
+#: ping/ping6_common.c:356
 msgid "can't disable multicast loopback"
 msgstr "ei voi poistaa moni-lähetyssilmukaa käytöstä"
 
-#: ping/ping6_common.c:362
+#: ping/ping6_common.c:361
 msgid "can't set multicast hop limit"
 msgstr "ei voi asettaa moni-lähetyksen hyppyrajaa"
 
-#: ping/ping6_common.c:365
+#: ping/ping6_common.c:364
 msgid "can't set unicast hop limit"
 msgstr "ei voi asettaa yksi-lähetyksen hyppyrajaa"
 
-#: ping/ping6_common.c:377
+#: ping/ping6_common.c:376
 msgid "can't receive hop limit"
 msgstr "ei voi vastaanottaa hyppyrajaa"
 
-#: ping/ping6_common.c:391
+#: ping/ping6_common.c:390
 msgid "can't set flowlabel"
 msgstr "virtausnimiötä ei voi asettaa"
 
-#: ping/ping6_common.c:395
+#: ping/ping6_common.c:394
 msgid "can't send flowinfo"
 msgstr "ei voi lähettää virtaustietoja"
 
-#: ping/ping6_common.c:398 ping/ping.c:1023
+#: ping/ping6_common.c:397 ping/ping.c:1061
 #, c-format
 msgid "PING %s (%s) "
 msgstr "PING %s (%s) "
 
-#: ping/ping6_common.c:400
+#: ping/ping6_common.c:399
 #, c-format
 msgid ", flow 0x%05x, "
 msgstr ", virtaus 0x%05x, "
 
-#: ping/ping6_common.c:405 ping/ping.c:1025
+#: ping/ping6_common.c:404 ping/ping.c:1063
 #, c-format
 msgid "from %s %s: "
 msgstr "%s %s:lta : "
 
-#: ping/ping6_common.c:408
-#, c-format
-msgid "%zu data bytes\n"
+#: ping/ping6_common.c:407
+#, fuzzy, c-format
+msgid "%d data bytes\n"
 msgstr "%zu data-tavut\n"
 
 #: ping/ping6_common.c:423
@@ -553,7 +553,7 @@ msgstr "MLD-vähennys"
 msgid "unknown icmp type: %u"
 msgstr "tuntematon icmp-tyyppi: %u"
 
-#: ping/ping6_common.c:547
+#: ping/ping6_common.c:547 ping/ping.c:1480
 msgid "local error"
 msgstr "paikallinen virhe"
 
@@ -562,12 +562,12 @@ msgstr "paikallinen virhe"
 msgid "local error: message too long, mtu: %u"
 msgstr "paikallinen virhe: viesti liian pitkä, mtu: %u"
 
-#: ping/ping6_common.c:571 ping/ping.c:1478
+#: ping/ping6_common.c:571 ping/ping.c:1516
 #, c-format
 msgid "From %s icmp_seq=%u "
 msgstr "%s:lta icmp_seq=%u "
 
-#: ping/ping6_common.c:677 ping/ping.c:1592
+#: ping/ping6_common.c:677 ping/ping.c:1630
 #, c-format
 msgid " icmp_seq=%u"
 msgstr " icmp_seq=%u"
@@ -622,114 +622,118 @@ msgstr "; seq=%u;"
 msgid "packet too short: %d bytes"
 msgstr "paketti liian lyhyt: %d tavua"
 
-#: ping/ping6_common.c:923 ping/ping.c:1721
+#: ping/ping6_common.c:923 ping/ping.c:1759
 #, c-format
 msgid "From %s: "
 msgstr "%s:lta: "
 
-#: ping/ping6_common.c:964 ping/ping.c:1826
+#: ping/ping6_common.c:964 ping/ping.c:1864
 msgid "WARNING: failed to install socket filter"
 msgstr "VAROITUS: pistorasiasuodattimen asennus epäonnistui"
 
-#: ping/ping.c:96 ping/ping.c:684
+#: ping/ping.c:103 ping/ping.c:724
 #, c-format
 msgid "unknown protocol family: %d"
 msgstr "tuntematon protokollaperhe: %d"
 
-#: ping/ping.c:111
+#: ping/ping.c:118
 #, c-format
 msgid "unknown sock type: %d"
 msgstr "tuntematon sock-tyyppi: %d"
 
-#: ping/ping.c:198
+#: ping/ping.c:213
 msgid "=> missing cap_net_raw+p capability or setuid?"
 msgstr "=> puuttuu cap_net_raw+p-ominaisuus tai setuid?"
 
-#: ping/ping.c:237
+#: ping/ping.c:252
 #, c-format
 msgid "option argument contains garbage: %s"
 msgstr "option-argumentti sisältää roskaa: %s"
 
-#: ping/ping.c:238
+#: ping/ping.c:253
 msgid "this will become fatal error in the future"
 msgstr "tästä tulee vakava virhe tulevaisuudessa"
 
-#: ping/ping.c:272
+#: ping/ping.c:287
 #, c-format
 msgid "bad value for flowinfo: %s"
 msgstr "huono arvo virtaustiedolle: %s"
 
-#: ping/ping.c:275
+#: ping/ping.c:290
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
 msgstr "virtausarvo on suurempi kuin 20 bittiä: %s"
 
-#: ping/ping.c:297
+#: ping/ping.c:312
 #, c-format
 msgid "bad TOS value: %s"
 msgstr "virheellinen TOS-arvo: %s"
 
-#: ping/ping.c:300
+#: ping/ping.c:315
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
 msgstr "TOS-bittien desimaaliarvon on oltava välillä 0–255: %d"
 
-#: ping/ping.c:371 ping/ping.c:402
+#: ping/ping.c:398 ping/ping.c:432
 msgid "only one -4 or -6 option may be specified"
 msgstr "vain yksi vaihtoehto '-4' tai '-6' voidaan määrittää"
 
-#: ping/ping.c:383 ping/ping.c:388
+#: ping/ping.c:413 ping/ping.c:418
 msgid "only one of -T or -R may be used"
 msgstr "vain toista '-T':sta tai '-R':sta voidaan käyttää"
 
-#: ping/ping.c:397
+#: ping/ping.c:427
 #, c-format
 msgid "invalid timestamp type: %s"
 msgstr "virheellinen aikaleimatyyppi: %s"
 
-#: ping/ping.c:443
+#: ping/ping.c:473
 msgid "bad timing interval"
 msgstr "huono ajoitusväli"
 
-#: ping/ping.c:445
+#: ping/ping.c:475
 #, c-format
 msgid "bad timing interval: %s"
 msgstr "huono ajoitusväli: %s"
 
-#: ping/ping.c:456
+#: ping/ping.c:486
 #, c-format
 msgid "cannot copy: %s"
 msgstr "'%s':ta ei voi kopioida"
 
-#: ping/ping.c:465
+#: ping/ping.c:495
 #, c-format
 msgid "invalid source address: %s"
 msgstr "virheellinen lähdeosoite: %s"
 
-#: ping/ping.c:479
+#: ping/ping.c:509
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
 msgstr "ei voi asettaa esikuormitusta arvoon, joka on suurempi kuin kolme: %d"
 
-#: ping/ping.c:498
+#: ping/ping.c:528
 #, c-format
 msgid "invalid -M argument: %s"
 msgstr "virheellinen -M argumentti: %s"
 
-#: ping/ping.c:557
+#: ping/ping.c:585
 msgid "bad linger time"
 msgstr "huono viipymäaika"
 
-#: ping/ping.c:559
+#: ping/ping.c:587
 #, c-format
 msgid "bad linger time: %s"
 msgstr "huono viipymäaika: %s"
 
-#: ping/ping.c:595
+#: ping/ping.c:599
+msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
+msgstr ""
+
+#: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
 msgstr "VAROITUS: ident 0 => pakotetaan raakapistoke"
 
-#: ping/ping.c:652
+#: ping/ping.c:692
 #, c-format
 msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
@@ -738,11 +742,11 @@ msgstr ""
 "Varoitus: IPv6-linkki-paikallinen osoite ICMP-datagrammiliitännässä saattaa "
 "vaatia ifnamen tai scope-id:n => use: address%%<ifname|scope-id>"
 
-#: ping/ping.c:829
+#: ping/ping.c:869
 msgid "warning: QOS sockopts"
 msgstr "varoitus: QOS sockopts"
 
-#: ping/ping.c:841
+#: ping/ping.c:880
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
@@ -750,20 +754,20 @@ msgstr ""
 "Haluatko toteuta ping laaja-lähetyksellä? Sitten '-b'. Jos ei, tarkista "
 "paikalliset palomuurisäännöt"
 
-#: ping/ping.c:842
+#: ping/ping.c:881
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
 msgstr "VAROITUS: laaja-lähetysosoitteen pingaaminen\n"
 
-#: ping/ping.c:845 ping/ping.c:1001
+#: ping/ping.c:884 ping/ping.c:1039
 msgid "cannot set broadcasting"
 msgstr "laaja-lähetystä ei voi asettaa"
 
-#: ping/ping.c:866
+#: ping/ping.c:905
 msgid "gatifaddrs failed"
 msgstr "gatifaddrs epäonnistui"
 
-#: ping/ping.c:894
+#: ping/ping.c:933
 #, c-format
 msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
@@ -772,44 +776,44 @@ msgstr ""
 "minimiväli käyttäjän kaikkilähetyspingille on oltava >= %d ms, käytä -i %s "
 "(tai suurempi)"
 
-#: ping/ping.c:899
+#: ping/ping.c:938
 msgid "broadcast ping does not fragment"
 msgstr "laaja-lähetyksen ping ei pirstoudu"
 
-#: ping/ping.c:929
+#: ping/ping.c:968
 msgid "WARNING: setsockopt(ICMP_FILTER)"
 msgstr "VAROITUS: setsockopt(ICMP_FILTER)"
 
-#: ping/ping.c:934
+#: ping/ping.c:973
 msgid "WARNING: your kernel is veeery old. No problems."
 msgstr "VAROITUS: Linux-ytimesi on erittäin vanha. Ei ongelmia."
 
-#: ping/ping.c:938
+#: ping/ping.c:977
 msgid "WARNING: setsockopt(IP_RECVTTL)"
 msgstr "VAROITUS: setsockopt(IP_RECVTTL)"
 
-#: ping/ping.c:940
+#: ping/ping.c:979
 msgid "WARNING: setsockopt(IP_RETOPTS)"
 msgstr "VAROITUS: setsockopt(IP_RETOPTS)"
 
-#: ping/ping.c:1007
+#: ping/ping.c:1045
 msgid "cannot disable multicast loopback"
 msgstr "ei voi poistaa monilähetyksen takaisin-silmukkaa käytöstä"
 
-#: ping/ping.c:1012
+#: ping/ping.c:1050
 msgid "cannot set multicast time-to-live"
 msgstr "ei voi asettaa monilähetyksen elon aikaa (TTL)"
 
-#: ping/ping.c:1014
+#: ping/ping.c:1052
 msgid "cannot set unicast time-to-live"
 msgstr "yksi-lähetyksen elon aikaa (TTL) ei voi asettaa"
 
-#: ping/ping.c:1026
-#, c-format
-msgid "%zu(%zu) bytes of data.\n"
+#: ping/ping.c:1064
+#, fuzzy, c-format
+msgid "%d(%d) bytes of data.\n"
 msgstr "%zu(%zu) tavua dataa.\n"
 
-#: ping/ping.c:1058
+#: ping/ping.c:1096
 #, c-format
 msgid ""
 "\n"
@@ -817,22 +821,22 @@ msgid ""
 msgstr ""
 "\n"
 "NOP"
-
-#: ping/ping.c:1069
-#, c-format
-msgid ""
-"\n"
-"%cSRR: "
-msgstr ""
-"\n"
-"%cSRR: "
 
 #: ping/ping.c:1107
+#, c-format
+msgid ""
+"\n"
+"%cSRR: "
+msgstr ""
+"\n"
+"%cSRR: "
+
+#: ping/ping.c:1145
 #, c-format
 msgid "\t(same route)"
 msgstr "\t(sama reitti)"
 
-#: ping/ping.c:1112
+#: ping/ping.c:1150
 #, c-format
 msgid ""
 "\n"
@@ -841,7 +845,7 @@ msgstr ""
 "\n"
 "RR: "
 
-#: ping/ping.c:1148
+#: ping/ping.c:1186
 #, c-format
 msgid ""
 "\n"
@@ -850,27 +854,27 @@ msgstr ""
 "\n"
 "TS: "
 
-#: ping/ping.c:1180
+#: ping/ping.c:1218
 #, c-format
 msgid "\t%ld absolute not-standard"
 msgstr "\t%ld absoluuttinen ei-standardi"
 
-#: ping/ping.c:1182
+#: ping/ping.c:1220
 #, c-format
 msgid "\t%ld not-standard"
 msgstr "\t%ld ei-standardi"
 
-#: ping/ping.c:1186
+#: ping/ping.c:1224
 #, c-format
 msgid "\t%ld absolute"
 msgstr "\t%ld absoluuttinen"
 
-#: ping/ping.c:1197
+#: ping/ping.c:1235
 #, c-format
 msgid "Unrecorded hops: %d\n"
 msgstr "Tallentamattomat hyppyt: %d\n"
 
-#: ping/ping.c:1201
+#: ping/ping.c:1239
 #, c-format
 msgid ""
 "\n"
@@ -879,243 +883,238 @@ msgstr ""
 "\n"
 "tuntematon vaihtoehto %x"
 
-#: ping/ping.c:1221
+#: ping/ping.c:1259
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 
-#: ping/ping.c:1222
+#: ping/ping.c:1260
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
 msgstr " %1x  %1x  %02x %04x %04x"
 
-#: ping/ping.c:1224
+#: ping/ping.c:1262
 #, c-format
 msgid "   %1x %04x"
 msgstr "   %1x %04x"
 
-#: ping/ping.c:1226
+#: ping/ping.c:1264
 #, c-format
 msgid "  %02x  %02x %04x"
 msgstr "  %02x  %02x %04x"
 
-#: ping/ping.c:1242
+#: ping/ping.c:1280
 #, c-format
 msgid "Echo Reply\n"
 msgstr "Kaiun vastaus\n"
 
-#: ping/ping.c:1248
+#: ping/ping.c:1286
 #, c-format
 msgid "Destination Net Unreachable\n"
 msgstr "Tavoittamaton kohdeverkko\n"
 
-#: ping/ping.c:1251
+#: ping/ping.c:1289
 #, c-format
 msgid "Destination Host Unreachable\n"
 msgstr "Tavoittamaton kohdeisäntä\n"
 
-#: ping/ping.c:1254
+#: ping/ping.c:1292
 #, c-format
 msgid "Destination Protocol Unreachable\n"
 msgstr "Tavoittamaton kohdeprotokolla\n"
 
-#: ping/ping.c:1257
+#: ping/ping.c:1295
 #, c-format
 msgid "Destination Port Unreachable\n"
 msgstr "Tavoittamaton kohdeportti\n"
 
-#: ping/ping.c:1260
+#: ping/ping.c:1298
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
 msgstr "Frag:ta tarvitaan ja DF asetettu (mtu = %u)\n"
 
-#: ping/ping.c:1263
+#: ping/ping.c:1301
 #, c-format
 msgid "Source Route Failed\n"
 msgstr "Lähteen reitti epäonnistui\n"
 
-#: ping/ping.c:1266
+#: ping/ping.c:1304
 #, c-format
 msgid "Destination Net Unknown\n"
 msgstr "Tuntematon kohdeverkko\n"
 
-#: ping/ping.c:1269
+#: ping/ping.c:1307
 #, c-format
 msgid "Destination Host Unknown\n"
 msgstr "Tuntematon kohdeisäntä\n"
 
-#: ping/ping.c:1272
+#: ping/ping.c:1310
 #, c-format
 msgid "Source Host Isolated\n"
 msgstr "Lähdeisäntä eristettynä\n"
 
-#: ping/ping.c:1275
+#: ping/ping.c:1313
 #, c-format
 msgid "Destination Net Prohibited\n"
 msgstr "Kielletty kohdeverkko\n"
 
-#: ping/ping.c:1278
+#: ping/ping.c:1316
 #, c-format
 msgid "Destination Host Prohibited\n"
 msgstr "Kielletty kohdeisäntä\n"
 
-#: ping/ping.c:1281
+#: ping/ping.c:1319
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
 msgstr "Tavoittamaton kohdeverkko palvelutyypille\n"
 
-#: ping/ping.c:1284
+#: ping/ping.c:1322
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
 msgstr "Tavoittamaton kohdeisäntä palvelutyypille\n"
 
-#: ping/ping.c:1287
+#: ping/ping.c:1325
 #, c-format
 msgid "Packet filtered\n"
 msgstr "Paketti suodatettu\n"
 
-#: ping/ping.c:1290
+#: ping/ping.c:1328
 #, c-format
 msgid "Precedence Violation\n"
 msgstr "Ensisijaisuuden rikkominen\n"
 
-#: ping/ping.c:1293
+#: ping/ping.c:1331
 #, c-format
 msgid "Precedence Cutoff\n"
 msgstr "Ensisijaisuuden raja\n"
 
-#: ping/ping.c:1296
+#: ping/ping.c:1334
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
 msgstr "Kohde tavoittamaton; huono koodi: %d\n"
 
-#: ping/ping.c:1303
+#: ping/ping.c:1341
 #, c-format
 msgid "Source Quench\n"
 msgstr "Lähde-Quench\n"
 
-#: ping/ping.c:1310
+#: ping/ping.c:1348
 #, c-format
 msgid "Redirect Network"
 msgstr "Ohjaa uudelleen verkko"
 
-#: ping/ping.c:1313
+#: ping/ping.c:1351
 #, c-format
 msgid "Redirect Host"
 msgstr "Ohjaa uudelleen isäntä"
 
-#: ping/ping.c:1316
+#: ping/ping.c:1354
 #, c-format
 msgid "Redirect Type of Service and Network"
 msgstr "Ohjaa uudelleen palvelun tyyppi ja verkko"
 
-#: ping/ping.c:1319
+#: ping/ping.c:1357
 #, c-format
 msgid "Redirect Type of Service and Host"
 msgstr "Ohjaa uudelleen palvelun tyyppi ja isäntä"
 
-#: ping/ping.c:1322
+#: ping/ping.c:1360
 #, c-format
 msgid "Redirect, Bad Code: %d"
 msgstr "Ohjaa uudelleen; kelvoton koodi: %d"
 
-#: ping/ping.c:1333
+#: ping/ping.c:1371
 #, c-format
 msgid "(New nexthop: %s)\n"
 msgstr "(Uusi seuraava hyppy: %s)\n"
 
-#: ping/ping.c:1339
+#: ping/ping.c:1377
 #, c-format
 msgid "Echo Request\n"
 msgstr "Kaikupyyntö\n"
 
-#: ping/ping.c:1345
+#: ping/ping.c:1383
 #, c-format
 msgid "Time to live exceeded\n"
 msgstr "Elinaika (TTL) ylitetty\n"
 
-#: ping/ping.c:1348
+#: ping/ping.c:1386
 #, c-format
 msgid "Frag reassembly time exceeded\n"
 msgstr "Frag:n uudelleenkokoamisaika ylitetty\n"
 
-#: ping/ping.c:1351
+#: ping/ping.c:1389
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
 msgstr "Aika ylitetty, kelvoton koodi: %d\n"
 
-#: ping/ping.c:1358
+#: ping/ping.c:1396
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
 msgstr "Parametriongelma: osoitin = %u\n"
 
-#: ping/ping.c:1364
+#: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
 msgstr "Aikaleima\n"
 
-#: ping/ping.c:1368
+#: ping/ping.c:1406
 #, c-format
 msgid "Timestamp Reply\n"
 msgstr "Aikaleiman vastaus\n"
 
-#: ping/ping.c:1372
+#: ping/ping.c:1410
 #, c-format
 msgid "Information Request\n"
 msgstr "Tietopyyntö\n"
 
-#: ping/ping.c:1376
+#: ping/ping.c:1414
 #, c-format
 msgid "Information Reply\n"
 msgstr "Tietovastaus\n"
 
-#: ping/ping.c:1381
+#: ping/ping.c:1419
 #, c-format
 msgid "Address Mask Request\n"
 msgstr "Osoitepeitepyyntö\n"
 
-#: ping/ping.c:1386
+#: ping/ping.c:1424
 #, c-format
 msgid "Address Mask Reply\n"
 msgstr "Osoitepeitevastaus\n"
 
-#: ping/ping.c:1390
+#: ping/ping.c:1428
 #, c-format
 msgid "Bad ICMP type: %d\n"
 msgstr "Kelvoton ICMP-tyyppi: %d\n"
 
-#: ping/ping.c:1442
-#, c-format
-msgid "local error: %s"
-msgstr "paikallinen virhe: %s"
-
-#: ping/ping.c:1444
+#: ping/ping.c:1482
 #, c-format
 msgid "local error: message too long, mtu=%u"
 msgstr "paikallinen virhe: viesti liian pitkä; mtu=%u"
 
-#: ping/ping.c:1617
+#: ping/ping.c:1655
 #, c-format
 msgid "packet too short (%d bytes) from %s"
 msgstr "paketti liian lyhyt (%d tavua) %s:sta"
 
-#: ping/ping.c:1696
+#: ping/ping.c:1734
 #, c-format
 msgid "From %s: icmp_seq=%u "
 msgstr "%s:sta: icmp_seq=%u "
 
-#: ping/ping.c:1699
+#: ping/ping.c:1737
 #, c-format
 msgid "(BAD CHECKSUM)"
 msgstr "(Kelvoton tarkistussumma)"
 
-#: ping/ping.c:1723
+#: ping/ping.c:1761
 #, c-format
 msgid "(BAD CHECKSUM)\n"
 msgstr "(Kelvoton tarkistussumma)\n"
 
 #: ping/ping_common.c:49
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1123,6 +1122,7 @@ msgid ""
 "\n"
 "Options:\n"
 "  <destination>      DNS name or IP address\n"
+"  -3                 RTT precision (do not round up the result time)\n"
 "  -a                 use audible ping\n"
 "  -A                 use adaptive ping\n"
 "  -B                 sticky source address\n"
@@ -1200,8 +1200,8 @@ msgstr ""
 "   -l <esilataus> lähettää <esilataus> pakettien määrä odottaessaan "
 "vastauksia\n"
 "   -m <merkki> merkitsee lähtevät paketit\n"
-"   -M <pmtud opt> määrittää mtu-etsinnän, voi olla yksi seuraavista: "
-"<do|dont|want|probe>\n"
+"   -M <pmtud opt> määrittää mtu-etsinnän, voi olla yksi seuraavista: <do|"
+"dont|want|probe>\n"
 "   -n ei DNS-nimen selvittämistä\n"
 "   -O ilmoita odottamattomista vastauksista\n"
 "   -p <pattern> täytetavun sisältö\n"
@@ -1220,8 +1220,8 @@ msgstr ""
 "   -4 käyttää IPv4:ää\n"
 "   -b salli ping-yleislähetyksen\n"
 "   -R tallenna reitti\n"
-"   -T <timestamp> määrittää aikaleiman, voi olla jokin seuraavista: "
-"<tsonly|tsandaddr|tsprespec>\n"
+"   -T <timestamp> määrittää aikaleiman, voi olla jokin seuraavista: <tsonly|"
+"tsandaddr|tsprespec>\n"
 "\n"
 "IPv6-vaihtoehdot:\n"
 "   -6 käyttää IPv6:ta\n"
@@ -1231,35 +1231,41 @@ msgstr ""
 "\n"
 "Katso lisätietoja ping(8).\n"
 
-#: ping/ping_common.c:217
+#: ping/ping_common.c:218
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
 msgstr "lausekkeet on määritettävä heksadesimaalilukuina: %s"
 
-#: ping/ping_common.c:234
+#: ping/ping_common.c:233
 #, c-format
 msgid "PATTERN: 0x"
 msgstr "Lauseke: 0x"
 
-#: ping/ping_common.c:354
+#: ping/ping_common.c:353
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
 msgstr "ei vielä vastausta icmp_seq=%lu:lle\n"
 
-#: ping/ping_common.c:454
+#: ping/ping_common.c:457
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "VAROITUS: luultavasti rcvbuf ei riitä esilatauksen säilyttämiseen"
 
-#: ping/ping_common.c:471
+#: ping/ping_common.c:476
 #, c-format
 msgid "WARNING: failed to set mark: %u"
 msgstr "VAROITUS: merkin asettaminen epäonnistui: %u"
 
-#: ping/ping_common.c:473
+#: ping/ping_common.c:479
+#, fuzzy
+msgid ""
+"=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
+msgstr "=> puuttuu cap_net_raw+p-ominaisuus tai setuid?"
+
+#: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
 msgstr "VAROITUS: SO_MARK ei tueta"
 
-#: ping/ping_common.c:489
+#: ping/ping_common.c:500
 #, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
@@ -1268,146 +1274,146 @@ msgstr ""
 "ei saa tulvia, käyttäjän vähimmäisvälin on oltava >= %d ms, käytä -i %s (tai "
 "suurempi)"
 
-#: ping/ping_common.c:493
+#: ping/ping_common.c:504
 #, c-format
 msgid "illegal preload and/or interval: %d"
 msgstr "laiton esilataus ja/tai välli: %d"
 
-#: ping/ping_common.c:505
+#: ping/ping_common.c:516
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr "Varoitus: ei SO_TIMESTAMP-tukea, palataan SIOCGSTAMP:een"
 
-#: ping/ping_common.c:749
+#: ping/ping_common.c:759
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
 msgstr "Varoitus: vuorokaudenaika palautuu (%ldus); ryhdytään vastatoimiin"
 
-#: ping/ping_common.c:799
+#: ping/ping_common.c:809
 #, c-format
 msgid "%d bytes from %s:"
 msgstr "%d tavua %s:sta:"
 
-#: ping/ping_common.c:805
+#: ping/ping_common.c:815
 #, c-format
 msgid " ident=%d"
 msgstr " ident=%d"
 
-#: ping/ping_common.c:808
+#: ping/ping_common.c:818
 #, c-format
 msgid " ttl=%d"
 msgstr " ttl=%d"
 
-#: ping/ping_common.c:811
+#: ping/ping_common.c:821
 #, c-format
 msgid " (truncated)\n"
 msgstr " (typistetty)\n"
 
-#: ping/ping_common.c:816
-#, c-format
-msgid " time=%ld ms"
-msgstr " aika=%ld ms"
-
-#: ping/ping_common.c:818
-#, c-format
-msgid " time=%ld.%01ld ms"
-msgstr " aika=%ld.%01ld ms"
-
-#: ping/ping_common.c:821
-#, c-format
-msgid " time=%ld.%02ld ms"
-msgstr " aika=%ld.%02ld ms"
-
-#: ping/ping_common.c:824
+#: ping/ping_common.c:826 ping/ping_common.c:836
 #, c-format
 msgid " time=%ld.%03ld ms"
 msgstr " aika=%ld.%03ld ms"
 
-#: ping/ping_common.c:829
+#: ping/ping_common.c:828
+#, c-format
+msgid " time=%ld ms"
+msgstr " aika=%ld ms"
+
+#: ping/ping_common.c:830
+#, c-format
+msgid " time=%ld.%01ld ms"
+msgstr " aika=%ld.%01ld ms"
+
+#: ping/ping_common.c:833
+#, c-format
+msgid " time=%ld.%02ld ms"
+msgstr " aika=%ld.%02ld ms"
+
+#: ping/ping_common.c:841
 #, c-format
 msgid " (DUP!)"
 msgstr " (Kaksoiskappale!)"
 
-#: ping/ping_common.c:831
+#: ping/ping_common.c:843
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (Kelvoton tarkistussumma!)"
 
-#: ping/ping_common.c:833
+#: ping/ping_common.c:845
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " (Eri osoite!)"
 
-#: ping/ping_common.c:840
-#, c-format
+#: ping/ping_common.c:852
+#, fuzzy, c-format
 msgid ""
 "\n"
-"wrong data byte #%zu should be 0x%x but was 0x%x"
+"wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
 "väärän datatavun #%zu pitäisi olla 0x%x, mutta oli 0x%x"
 
-#: ping/ping_common.c:883
+#: ping/ping_common.c:895
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr "-- %s ping-tilastot --\n"
 
-#: ping/ping_common.c:884
+#: ping/ping_common.c:896
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr "%ld paketteja lähetetty, "
 
-#: ping/ping_common.c:885
+#: ping/ping_common.c:897
 #, c-format
 msgid "%ld received"
 msgstr "%ld otettu vastaan"
 
-#: ping/ping_common.c:887
+#: ping/ping_common.c:899
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ", +%ld kaksoiskappaletta"
 
-#: ping/ping_common.c:889
+#: ping/ping_common.c:901
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ", +%ld vioittuneet"
 
-#: ping/ping_common.c:891
+#: ping/ping_common.c:903
 #, c-format
 msgid ", +%ld errors"
 msgstr ", +%ld virhettä"
 
-#: ping/ping_common.c:897
+#: ping/ping_common.c:909
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ", %g%% paketin menetys"
 
-#: ping/ping_common.c:899
-#, c-format
-msgid ", time %ldms"
+#: ping/ping_common.c:911
+#, fuzzy, c-format
+msgid ", time %llums"
 msgstr ", aika %ld ms"
 
-#: ping/ping_common.c:919
+#: ping/ping_common.c:931
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr ""
 "rtt min/keskiarvo/maks/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
-#: ping/ping_common.c:927
+#: ping/ping_common.c:939
 #, c-format
 msgid "%spipe %d"
 msgstr "%spipe %d"
 
-#: ping/ping_common.c:934
+#: ping/ping_common.c:946
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
-#: ping/ping_common.c:952
+#: ping/ping_common.c:964
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld pakettia, %d %% menetystä"
 
-#: ping/ping_common.c:957
+#: ping/ping_common.c:969
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", min/keskiarvo/ewma/maks = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
@@ -1440,45 +1446,45 @@ msgid "[LOCALHOST]"
 msgstr "[Paikallinen isäntä]"
 
 #: tracepath.c:287
-#, c-format
-msgid "%3ld.%03ldms "
+#, fuzzy, c-format
+msgid "%3lld.%03ldms "
 msgstr "%3ld.%03ld ms "
 
-#: tracepath.c:290
+#: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
 msgstr "(Tämä rikkinäinen reititin palautti vioittuneen hyötykuorman) "
 
-#: tracepath.c:305
+#: tracepath.c:306
 #, c-format
 msgid "pmtu %d\n"
 msgstr "pmtu %d\n"
 
-#: tracepath.c:310
+#: tracepath.c:311
 #, c-format
 msgid "reached\n"
 msgstr "saavuttanut\n"
 
-#: tracepath.c:327
+#: tracepath.c:328
 #, c-format
 msgid "asymm %2d "
 msgstr "asymm %2d "
 
-#: tracepath.c:342
+#: tracepath.c:343
 msgid "NET ERROR"
 msgstr "Verkkovirhe"
 
-#: tracepath.c:387
+#: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
 msgstr "%2d?: vastaus vastaanotettu 8)\n"
 
-#: tracepath.c:393
+#: tracepath.c:394
 #, c-format
 msgid "%2d:  send failed\n"
 msgstr "%2d: lähetys epäonnistui\n"
 
-#: tracepath.c:400
+#: tracepath.c:401
 #, c-format
 msgid ""
 "\n"
@@ -1515,34 +1521,38 @@ msgstr ""
 "\n"
 "Katso lisätietoja kohdasta tracepath(8).\n"
 
-#: tracepath.c:458 tracepath.c:463
+#: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
 msgstr "Vain yksi vaihtoehto '-4' tai '-6' voidaan määrittää"
 
-#: tracepath.c:606
+#: tracepath.c:607
 #, c-format
 msgid "%2d:  no reply\n"
 msgstr "%2d:  ei vastausta\n"
 
-#: tracepath.c:613
+#: tracepath.c:614
 #, c-format
 msgid "     Resume: pmtu %d "
 msgstr "     Jatkaa: pmtu %d "
 
-#: tracepath.c:615
+#: tracepath.c:616
 #, c-format
 msgid "hops %d "
 msgstr "hypyt %d "
 
-#: tracepath.c:617
+#: tracepath.c:618
 #, c-format
 msgid "back %d "
 msgstr "takaisin %d "
 
-#: tracepath.c:622
+#: tracepath.c:623
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "pktlenin on oltava sisällä: %d < arvo <= %d"
+
+#, c-format
+#~ msgid "local error: %s"
+#~ msgstr "paikallinen virhe: %s"
 
 #, c-format
 #~ msgid "multicast ping with too short interval: %d"

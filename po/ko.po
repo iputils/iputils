@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-19 08:21+0100\n"
+"POT-Creation-Date: 2024-09-02 18:28+0200\n"
 "PO-Revision-Date: 2023-12-20 15:03+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
@@ -90,102 +90,102 @@ msgstr "요청 %d개"
 msgid "%s%d broadcast(s)"
 msgstr "%s%d건 광역 전송"
 
-#: arping.c:415
+#: arping.c:422
 msgid "Unicast"
 msgstr "단일 전송"
 
-#: arping.c:415
+#: arping.c:422
 msgid "Broadcast"
 msgstr "광역 전송"
 
-#: arping.c:416
+#: arping.c:423
 #, c-format
 msgid "%s from "
 msgstr "%s 출신 "
 
-#: arping.c:416
+#: arping.c:423
 msgid "reply"
 msgstr "응답"
 
-#: arping.c:416
+#: arping.c:423
 msgid "request"
 msgstr "요청"
 
-#: arping.c:421
+#: arping.c:428
 #, c-format
 msgid "for %s "
 msgstr "%s 목적 "
 
-#: arping.c:426
+#: arping.c:433
 #, c-format
 msgid "for "
 msgstr "목적 "
 
-#: arping.c:436
+#: arping.c:443
 #, c-format
 msgid " %ld.%03ldms\n"
 msgstr " %ld.%03ldms\n"
 
-#: arping.c:438
+#: arping.c:445
 #, c-format
 msgid " UNSOLICITED?\n"
 msgstr " 자발적 신호?\n"
 
-#: arping.c:589
+#: arping.c:596
 #, c-format
 msgid "Interface \"%s\" is down\n"
 msgstr "\"%s\" 인터페이스가 꺼졌습니다\n"
 
-#: arping.c:597
+#: arping.c:604
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
 msgstr "\"%s\" 인터페이스는 주소 변환을 할 수 없습니다\n"
 
-#: arping.c:690
+#: arping.c:697
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
 msgstr "경고: 기본 광역 전송 주소를 사용합니다.\n"
 
-#: arping.c:901 arping.c:904 arping.c:907 ping/ping.c:378 ping/ping.c:425
-#: ping/ping.c:477 ping/ping.c:485 ping/ping.c:531 ping/ping.c:534
-#: ping/ping.c:537 ping/ping.c:551 tracepath.c:473 tracepath.c:476
-#: tracepath.c:479 tracepath.c:501
+#: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:408 ping/ping.c:455
+#: ping/ping.c:507 ping/ping.c:515 ping/ping.c:559 ping/ping.c:562
+#: ping/ping.c:565 ping/ping.c:579 tracepath.c:474 tracepath.c:477
+#: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
 msgstr "부적절한 인자"
 
-#: arping.c:974
+#: arping.c:978
 #, c-format
 msgid "Device %s not available."
 msgstr "장치 %s를 사용 할 수 없습니다."
 
-#: arping.c:975
+#: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr "알맞은 장치를 결정 할 수 없습니다. 옵션 -l을 사용하세요."
 
-#: arping.c:995
+#: arping.c:999
 msgid "WARNING: interface is ignored"
 msgstr "경고: 연결장치를 무시합니다"
 
-#: arping.c:1014
+#: arping.c:1018
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
 msgstr "경고: setsockopt(SO_DONTROUTE)"
 
-#: arping.c:1038
+#: arping.c:1042
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
 msgstr "\"%s\" 인터페이스는 주소 변환할 수 없습니다 (연결 주소 없음)\n"
 
-#: arping.c:1047
+#: arping.c:1051
 #, c-format
 msgid "ARPING %s "
 msgstr "ARPING %s "
 
-#: arping.c:1048
+#: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
 msgstr "%s %s에서\n"
 
-#: arping.c:1052
+#: arping.c:1056
 msgid "no source address in not-DAD mode"
 msgstr "비-DAD 방식에서 원시 주소가 없습니다"
 
@@ -289,8 +289,8 @@ msgstr "IDN 인코딩 오류: %s"
 msgid "too long scope name"
 msgstr "너무 긴 범위 이름"
 
-#: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:309
-#: ping/ping.c:518 ping/ping.c:580 ping/ping.c:1021
+#: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:308
+#: ping/ping.c:1059
 msgid "memory allocation failed"
 msgstr "메모리 할당에 실패했습니다"
 
@@ -344,7 +344,7 @@ msgstr ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 
-#: ping/ping6_common.c:99 ping/ping.c:708
+#: ping/ping6_common.c:99 ping/ping.c:747
 #, c-format
 msgid "unknown iface: %s"
 msgstr "알 수 없는 iface: %s"
@@ -353,12 +353,12 @@ msgstr "알 수 없는 iface: %s"
 msgid "scope discrepancy among the nodes"
 msgstr "노드 사이의 범위 불일치"
 
-#: ping/ping6_common.c:226 ping/ping.c:878
+#: ping/ping6_common.c:225 ping/ping.c:917
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr "경고: 원천 주소는 다른 이외의 장치에서 선택될 수 있습니다: %s"
 
-#: ping/ping6_common.c:267
+#: ping/ping6_common.c:266
 #, c-format
 msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
@@ -367,56 +367,56 @@ msgstr ""
 "사용자의 멀티캐스트 핑을 위한 최소 간격은 %d ms이며, -i %s (또는 그 이상)를 "
 "사용합니다"
 
-#: ping/ping6_common.c:272
+#: ping/ping6_common.c:271
 msgid "multicast ping does not fragment"
 msgstr "다중 전송 ping이 조각화되지 않음"
 
-#: ping/ping6_common.c:331
+#: ping/ping6_common.c:330
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
 msgstr "setsockopt(RAW_CHECKSUM) 실패함 - 계속 시도"
 
-#: ping/ping6_common.c:357
+#: ping/ping6_common.c:356
 msgid "can't disable multicast loopback"
 msgstr "다중 전송 루프백을 비활성화 할 수 없습니다"
 
-#: ping/ping6_common.c:362
+#: ping/ping6_common.c:361
 msgid "can't set multicast hop limit"
 msgstr "다중 전송 건너뛰기 한계 값을 설정 할 수 없습니다"
 
-#: ping/ping6_common.c:365
+#: ping/ping6_common.c:364
 msgid "can't set unicast hop limit"
 msgstr "단일 전송 건너뛰기 한계값을 설정 할 수 없습니다"
 
-#: ping/ping6_common.c:377
+#: ping/ping6_common.c:376
 msgid "can't receive hop limit"
 msgstr "건너뛰기 제한을 받을 수 없습니다"
 
-#: ping/ping6_common.c:391
+#: ping/ping6_common.c:390
 msgid "can't set flowlabel"
 msgstr "흐름부호(flowlabel)를 설정 할 수 없습니다"
 
-#: ping/ping6_common.c:395
+#: ping/ping6_common.c:394
 msgid "can't send flowinfo"
 msgstr "흐름 정보를 보낼 수 없습니다"
 
-#: ping/ping6_common.c:398 ping/ping.c:1023
+#: ping/ping6_common.c:397 ping/ping.c:1061
 #, c-format
 msgid "PING %s (%s) "
 msgstr "PING %s (%s) "
 
-#: ping/ping6_common.c:400
+#: ping/ping6_common.c:399
 #, c-format
 msgid ", flow 0x%05x, "
 msgstr ", flow 0x%05x, "
 
-#: ping/ping6_common.c:405 ping/ping.c:1025
+#: ping/ping6_common.c:404 ping/ping.c:1063
 #, c-format
 msgid "from %s %s: "
 msgstr "%s %s에서: "
 
-#: ping/ping6_common.c:408
-#, c-format
-msgid "%zu data bytes\n"
+#: ping/ping6_common.c:407
+#, fuzzy, c-format
+msgid "%d data bytes\n"
 msgstr "%zu 자료 바이트\n"
 
 #: ping/ping6_common.c:423
@@ -554,7 +554,7 @@ msgstr "MLD 축소"
 msgid "unknown icmp type: %u"
 msgstr "알 수 없는 icmp 형식: %u"
 
-#: ping/ping6_common.c:547
+#: ping/ping6_common.c:547 ping/ping.c:1480
 msgid "local error"
 msgstr "로컬 오류"
 
@@ -563,12 +563,12 @@ msgstr "로컬 오류"
 msgid "local error: message too long, mtu: %u"
 msgstr "로컬 오류: 메시지가 너무 길음, mtu: %u"
 
-#: ping/ping6_common.c:571 ping/ping.c:1478
+#: ping/ping6_common.c:571 ping/ping.c:1516
 #, c-format
 msgid "From %s icmp_seq=%u "
 msgstr "%s에서 icmp_seq=%u "
 
-#: ping/ping6_common.c:677 ping/ping.c:1592
+#: ping/ping6_common.c:677 ping/ping.c:1630
 #, c-format
 msgid " icmp_seq=%u"
 msgstr " icmp_seq=%u"
@@ -623,114 +623,118 @@ msgstr "; seq=%u;"
 msgid "packet too short: %d bytes"
 msgstr "패킷이 너무 짧음: %d 바이트"
 
-#: ping/ping6_common.c:923 ping/ping.c:1721
+#: ping/ping6_common.c:923 ping/ping.c:1759
 #, c-format
 msgid "From %s: "
 msgstr "%s에서: "
 
-#: ping/ping6_common.c:964 ping/ping.c:1826
+#: ping/ping6_common.c:964 ping/ping.c:1864
 msgid "WARNING: failed to install socket filter"
 msgstr "경고: 소켓 필터를 설치하는데 실패함"
 
-#: ping/ping.c:96 ping/ping.c:684
+#: ping/ping.c:103 ping/ping.c:724
 #, c-format
 msgid "unknown protocol family: %d"
 msgstr "알 수 없는 프로토콜 계열: %d"
 
-#: ping/ping.c:111
+#: ping/ping.c:118
 #, c-format
 msgid "unknown sock type: %d"
 msgstr "알 수 없는 소켓 형식: %d"
 
-#: ping/ping.c:198
+#: ping/ping.c:213
 msgid "=> missing cap_net_raw+p capability or setuid?"
 msgstr "=> cap_net_raw+p 기능 또는 setuid가 빠졌습니까?"
 
-#: ping/ping.c:237
+#: ping/ping.c:252
 #, c-format
 msgid "option argument contains garbage: %s"
 msgstr "선택 인수에 쓰레기가 포함되었습니다: %s"
 
-#: ping/ping.c:238
+#: ping/ping.c:253
 msgid "this will become fatal error in the future"
 msgstr "이는 미래에 치명적인 오류가 발생 할 것입니다"
 
-#: ping/ping.c:272
+#: ping/ping.c:287
 #, c-format
 msgid "bad value for flowinfo: %s"
 msgstr "흐름정보에 잘못된 값: %s"
 
-#: ping/ping.c:275
+#: ping/ping.c:290
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
 msgstr "흐름 값은 20 비트보다 커야 합니다: %s"
 
-#: ping/ping.c:297
+#: ping/ping.c:312
 #, c-format
 msgid "bad TOS value: %s"
 msgstr "잘못된 TOS 값: %s"
 
-#: ping/ping.c:300
+#: ping/ping.c:315
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
 msgstr "TOS 비트의 십진수 값은 범위가 0-255 이어야 합니다: %d"
 
-#: ping/ping.c:371 ping/ping.c:402
+#: ping/ping.c:398 ping/ping.c:432
 msgid "only one -4 or -6 option may be specified"
 msgstr "-4 또는 -6 선택은 하나만 지정 할 수 있습니다"
 
-#: ping/ping.c:383 ping/ping.c:388
+#: ping/ping.c:413 ping/ping.c:418
 msgid "only one of -T or -R may be used"
 msgstr "-T 또는 -R 중의 하나만 사용 될 수 있습니다"
 
-#: ping/ping.c:397
+#: ping/ping.c:427
 #, c-format
 msgid "invalid timestamp type: %s"
 msgstr "부적절한 타임스탬프 형식: %s"
 
-#: ping/ping.c:443
+#: ping/ping.c:473
 msgid "bad timing interval"
 msgstr "나쁜 시간 간격"
 
-#: ping/ping.c:445
+#: ping/ping.c:475
 #, c-format
 msgid "bad timing interval: %s"
 msgstr "나쁜 시간 간격: %s"
 
-#: ping/ping.c:456
+#: ping/ping.c:486
 #, c-format
 msgid "cannot copy: %s"
 msgstr "복사 할 수 없음: %s"
 
-#: ping/ping.c:465
+#: ping/ping.c:495
 #, c-format
 msgid "invalid source address: %s"
 msgstr "부적절한 원시 주소: %s"
 
-#: ping/ping.c:479
+#: ping/ping.c:509
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
 msgstr "미리 적재된 값이 3보다 크게 설정 할 수 없습니다: %d"
 
-#: ping/ping.c:498
+#: ping/ping.c:528
 #, c-format
 msgid "invalid -M argument: %s"
 msgstr "부적절한 -M 인자: %s"
 
-#: ping/ping.c:557
+#: ping/ping.c:585
 msgid "bad linger time"
 msgstr "나쁜 체류시간"
 
-#: ping/ping.c:559
+#: ping/ping.c:587
 #, c-format
 msgid "bad linger time: %s"
 msgstr "나쁜 체류시간: %s"
 
-#: ping/ping.c:595
+#: ping/ping.c:599
+msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
+msgstr ""
+
+#: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
 msgstr "경고: ident 0 => 원시 소켓으로 강제합니다"
 
-#: ping/ping.c:652
+#: ping/ping.c:692
 #, c-format
 msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
@@ -739,11 +743,11 @@ msgstr ""
 "경고: ICMP 데이타그램에서 IPv6 연결-로컬 주소는 ifname 또는 scope-id가 요구 "
 "될 수 있습니다 => use: address%%<ifname|scope-id>"
 
-#: ping/ping.c:829
+#: ping/ping.c:869
 msgid "warning: QOS sockopts"
 msgstr "경고: QOS sockopts"
 
-#: ping/ping.c:841
+#: ping/ping.c:880
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
@@ -751,20 +755,20 @@ msgstr ""
 "ping 광역전송을 할까요? 그런 다음 -b. 만약 그렇지 않으면, 로컬 방화벽 규칙을 "
 "점검하세요"
 
-#: ping/ping.c:842
+#: ping/ping.c:881
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
 msgstr "경고: 핑하는 광역전송 주소\n"
 
-#: ping/ping.c:845 ping/ping.c:1001
+#: ping/ping.c:884 ping/ping.c:1039
 msgid "cannot set broadcasting"
 msgstr "광역전송 중에 설정 할 수 없습니다"
 
-#: ping/ping.c:866
+#: ping/ping.c:905
 msgid "gatifaddrs failed"
 msgstr "gatifaddrs 실패함"
 
-#: ping/ping.c:894
+#: ping/ping.c:933
 #, c-format
 msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
@@ -773,44 +777,44 @@ msgstr ""
 "사용자의 브로드캐스팅 핑을 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 이"
 "상)를 사용합니다"
 
-#: ping/ping.c:899
+#: ping/ping.c:938
 msgid "broadcast ping does not fragment"
 msgstr "광역전송 핑이 조각화되지 않음"
 
-#: ping/ping.c:929
+#: ping/ping.c:968
 msgid "WARNING: setsockopt(ICMP_FILTER)"
 msgstr "경고: setsockopt(ICMP_FILTER)"
 
-#: ping/ping.c:934
+#: ping/ping.c:973
 msgid "WARNING: your kernel is veeery old. No problems."
 msgstr "경고: 당신의 커널은 아주~ 오래되었습니다. 문제 없습니다."
 
-#: ping/ping.c:938
+#: ping/ping.c:977
 msgid "WARNING: setsockopt(IP_RECVTTL)"
 msgstr "경고: setsockopt(IP_RECVTTL)"
 
-#: ping/ping.c:940
+#: ping/ping.c:979
 msgid "WARNING: setsockopt(IP_RETOPTS)"
 msgstr "경고: setsockopt(IP_RETOPTS)"
 
-#: ping/ping.c:1007
+#: ping/ping.c:1045
 msgid "cannot disable multicast loopback"
 msgstr "광역전송 루프백을 비활성화 할 수 없습니다"
 
-#: ping/ping.c:1012
+#: ping/ping.c:1050
 msgid "cannot set multicast time-to-live"
 msgstr "광역전송 유효기간(ttl)을 설정 할 수 없습니다"
 
-#: ping/ping.c:1014
+#: ping/ping.c:1052
 msgid "cannot set unicast time-to-live"
 msgstr "단일전송 유효기간(ttl)을 설정 할 수 없습니다"
 
-#: ping/ping.c:1026
-#, c-format
-msgid "%zu(%zu) bytes of data.\n"
+#: ping/ping.c:1064
+#, fuzzy, c-format
+msgid "%d(%d) bytes of data.\n"
 msgstr "자료의 %zu(%zu) 바이트.\n"
 
-#: ping/ping.c:1058
+#: ping/ping.c:1096
 #, c-format
 msgid ""
 "\n"
@@ -818,22 +822,22 @@ msgid ""
 msgstr ""
 "\n"
 "NOP"
-
-#: ping/ping.c:1069
-#, c-format
-msgid ""
-"\n"
-"%cSRR: "
-msgstr ""
-"\n"
-"%cSRR: "
 
 #: ping/ping.c:1107
+#, c-format
+msgid ""
+"\n"
+"%cSRR: "
+msgstr ""
+"\n"
+"%cSRR: "
+
+#: ping/ping.c:1145
 #, c-format
 msgid "\t(same route)"
 msgstr "\t(동일 경로)"
 
-#: ping/ping.c:1112
+#: ping/ping.c:1150
 #, c-format
 msgid ""
 "\n"
@@ -842,7 +846,7 @@ msgstr ""
 "\n"
 "RR: "
 
-#: ping/ping.c:1148
+#: ping/ping.c:1186
 #, c-format
 msgid ""
 "\n"
@@ -851,27 +855,27 @@ msgstr ""
 "\n"
 "TS: "
 
-#: ping/ping.c:1180
+#: ping/ping.c:1218
 #, c-format
 msgid "\t%ld absolute not-standard"
 msgstr "\t%ld 절대 비-표준"
 
-#: ping/ping.c:1182
+#: ping/ping.c:1220
 #, c-format
 msgid "\t%ld not-standard"
 msgstr "\t%ld 비-표준"
 
-#: ping/ping.c:1186
+#: ping/ping.c:1224
 #, c-format
 msgid "\t%ld absolute"
 msgstr "\t%ld 절대의"
 
-#: ping/ping.c:1197
+#: ping/ping.c:1235
 #, c-format
 msgid "Unrecorded hops: %d\n"
 msgstr "기록되지 않는 건너뛰기: %d\n"
 
-#: ping/ping.c:1201
+#: ping/ping.c:1239
 #, c-format
 msgid ""
 "\n"
@@ -880,243 +884,238 @@ msgstr ""
 "\n"
 "알지 못하는 옵션 %x"
 
-#: ping/ping.c:1221
+#: ping/ping.c:1259
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst 자료\n"
 
-#: ping/ping.c:1222
+#: ping/ping.c:1260
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
 msgstr " %1x  %1x  %02x %04x %04x"
 
-#: ping/ping.c:1224
+#: ping/ping.c:1262
 #, c-format
 msgid "   %1x %04x"
 msgstr "   %1x %04x"
 
-#: ping/ping.c:1226
+#: ping/ping.c:1264
 #, c-format
 msgid "  %02x  %02x %04x"
 msgstr "  %02x  %02x %04x"
 
-#: ping/ping.c:1242
+#: ping/ping.c:1280
 #, c-format
 msgid "Echo Reply\n"
 msgstr "반향 응답\n"
 
-#: ping/ping.c:1248
+#: ping/ping.c:1286
 #, c-format
 msgid "Destination Net Unreachable\n"
 msgstr "대상 넷에 도달 할 수 없음\n"
 
-#: ping/ping.c:1251
+#: ping/ping.c:1289
 #, c-format
 msgid "Destination Host Unreachable\n"
 msgstr "대상 호스트에 도달 할 수 없음\n"
 
-#: ping/ping.c:1254
+#: ping/ping.c:1292
 #, c-format
 msgid "Destination Protocol Unreachable\n"
 msgstr "대상 통신규악에 도달 할 수 없음\n"
 
-#: ping/ping.c:1257
+#: ping/ping.c:1295
 #, c-format
 msgid "Destination Port Unreachable\n"
 msgstr "대상 포트에 도달 할 수 없음\n"
 
-#: ping/ping.c:1260
+#: ping/ping.c:1298
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
 msgstr "조각화가 필요하고 DF 설정(mtu = %u)\n"
 
-#: ping/ping.c:1263
+#: ping/ping.c:1301
 #, c-format
 msgid "Source Route Failed\n"
 msgstr "원천 경로에 실패함\n"
 
-#: ping/ping.c:1266
+#: ping/ping.c:1304
 #, c-format
 msgid "Destination Net Unknown\n"
 msgstr "대상 넷을 알지 못함\n"
 
-#: ping/ping.c:1269
+#: ping/ping.c:1307
 #, c-format
 msgid "Destination Host Unknown\n"
 msgstr "대상 호스트를 알지 못함\n"
 
-#: ping/ping.c:1272
+#: ping/ping.c:1310
 #, c-format
 msgid "Source Host Isolated\n"
 msgstr "원천 호스트가 격리됨\n"
 
-#: ping/ping.c:1275
+#: ping/ping.c:1313
 #, c-format
 msgid "Destination Net Prohibited\n"
 msgstr "대상 넷이 금지됨\n"
 
-#: ping/ping.c:1278
+#: ping/ping.c:1316
 #, c-format
 msgid "Destination Host Prohibited\n"
 msgstr "대상 호스트가 금지됨\n"
 
-#: ping/ping.c:1281
+#: ping/ping.c:1319
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
 msgstr "서비스 형식으로 대상 네트워크에 도달할 수 없습니다\n"
 
-#: ping/ping.c:1284
+#: ping/ping.c:1322
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
 msgstr "서비스 유형을 위해 대상 호스트에 도달 할 수 없습니다\n"
 
-#: ping/ping.c:1287
+#: ping/ping.c:1325
 #, c-format
 msgid "Packet filtered\n"
 msgstr "패킷이 필터링됨\n"
 
-#: ping/ping.c:1290
+#: ping/ping.c:1328
 #, c-format
 msgid "Precedence Violation\n"
 msgstr "우선 순위 위반\n"
 
-#: ping/ping.c:1293
+#: ping/ping.c:1331
 #, c-format
 msgid "Precedence Cutoff\n"
 msgstr "우선순위 효력 차단\n"
 
-#: ping/ping.c:1296
+#: ping/ping.c:1334
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
 msgstr "대상에 도달 할 수 없으며, 잘못된 코드: %d\n"
 
-#: ping/ping.c:1303
+#: ping/ping.c:1341
 #, c-format
 msgid "Source Quench\n"
 msgstr "발신 제한\n"
 
-#: ping/ping.c:1310
+#: ping/ping.c:1348
 #, c-format
 msgid "Redirect Network"
 msgstr "네트워크 넘겨주기"
 
-#: ping/ping.c:1313
+#: ping/ping.c:1351
 #, c-format
 msgid "Redirect Host"
 msgstr "호스트 넘겨주기"
 
-#: ping/ping.c:1316
+#: ping/ping.c:1354
 #, c-format
 msgid "Redirect Type of Service and Network"
 msgstr "서비스 및 네트워크의 경로 재지정 형식"
 
-#: ping/ping.c:1319
+#: ping/ping.c:1357
 #, c-format
 msgid "Redirect Type of Service and Host"
 msgstr "서비스 및 호스트의 경로 재지정 형식"
 
-#: ping/ping.c:1322
+#: ping/ping.c:1360
 #, c-format
 msgid "Redirect, Bad Code: %d"
 msgstr "넘겨주기, 잘못된 코드: %d"
 
-#: ping/ping.c:1333
+#: ping/ping.c:1371
 #, c-format
 msgid "(New nexthop: %s)\n"
 msgstr "(신규 다음 건너뛰기: %s)\n"
 
-#: ping/ping.c:1339
+#: ping/ping.c:1377
 #, c-format
 msgid "Echo Request\n"
 msgstr "반향 요청\n"
 
-#: ping/ping.c:1345
+#: ping/ping.c:1383
 #, c-format
 msgid "Time to live exceeded\n"
 msgstr "유효기간(ttl)이 초과됨\n"
 
-#: ping/ping.c:1348
+#: ping/ping.c:1386
 #, c-format
 msgid "Frag reassembly time exceeded\n"
 msgstr "조각 재결합 시간이 초과됨\n"
 
-#: ping/ping.c:1351
+#: ping/ping.c:1389
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
 msgstr "시간이 초과되었으며, 잘못된 코드: %d\n"
 
-#: ping/ping.c:1358
+#: ping/ping.c:1396
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
 msgstr "매개변수 문제: pointer = %u\n"
 
-#: ping/ping.c:1364
+#: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
 msgstr "시간표기\n"
 
-#: ping/ping.c:1368
+#: ping/ping.c:1406
 #, c-format
 msgid "Timestamp Reply\n"
 msgstr "시간표기 응답\n"
 
-#: ping/ping.c:1372
+#: ping/ping.c:1410
 #, c-format
 msgid "Information Request\n"
 msgstr "정보 요청\n"
 
-#: ping/ping.c:1376
+#: ping/ping.c:1414
 #, c-format
 msgid "Information Reply\n"
 msgstr "정보 응답\n"
 
-#: ping/ping.c:1381
+#: ping/ping.c:1419
 #, c-format
 msgid "Address Mask Request\n"
 msgstr "주소 매스크 요청\n"
 
-#: ping/ping.c:1386
+#: ping/ping.c:1424
 #, c-format
 msgid "Address Mask Reply\n"
 msgstr "주소 매스크 응답\n"
 
-#: ping/ping.c:1390
+#: ping/ping.c:1428
 #, c-format
 msgid "Bad ICMP type: %d\n"
 msgstr "잘못된 ICMP 형식: %d\n"
 
-#: ping/ping.c:1442
-#, c-format
-msgid "local error: %s"
-msgstr "로컬 오류: %s"
-
-#: ping/ping.c:1444
+#: ping/ping.c:1482
 #, c-format
 msgid "local error: message too long, mtu=%u"
 msgstr "로컬 오류: 메시지가 너무 김, mtu=%u"
 
-#: ping/ping.c:1617
+#: ping/ping.c:1655
 #, c-format
 msgid "packet too short (%d bytes) from %s"
 msgstr "패킷이 너무 짧음(%d 바이트) (%s에서)"
 
-#: ping/ping.c:1696
+#: ping/ping.c:1734
 #, c-format
 msgid "From %s: icmp_seq=%u "
 msgstr "%s에서: icmp_seq=%u "
 
-#: ping/ping.c:1699
+#: ping/ping.c:1737
 #, c-format
 msgid "(BAD CHECKSUM)"
 msgstr "(잘못된 검사합)"
 
-#: ping/ping.c:1723
+#: ping/ping.c:1761
 #, c-format
 msgid "(BAD CHECKSUM)\n"
 msgstr "(잘못된 검사합)\n"
 
 #: ping/ping_common.c:49
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1124,6 +1123,7 @@ msgid ""
 "\n"
 "Options:\n"
 "  <destination>      DNS name or IP address\n"
+"  -3                 RTT precision (do not round up the result time)\n"
 "  -a                 use audible ping\n"
 "  -A                 use adaptive ping\n"
 "  -B                 sticky source address\n"
@@ -1202,8 +1202,8 @@ msgstr ""
 "  -l <preload>       send <preload> number of packages while waiting "
 "replies\n"
 "  -m <mark>          tag the packets going out\n"
-"  -M <pmtud opt>     define path MTU discovery, can be one of "
-"<do|dont|want|probe>\n"
+"  -M <pmtud opt>     define path MTU discovery, can be one of <do|dont|want|"
+"probe>\n"
 "  -n                 no reverse DNS name resolution, override -H\n"
 "  -O                 report outstanding replies\n"
 "  -p <pattern>       contents of padding byte\n"
@@ -1222,8 +1222,8 @@ msgstr ""
 "  -4                 use IPv4\n"
 "  -b                 allow pinging broadcast\n"
 "  -R                 record route\n"
-"  -T <timestamp>     define timestamp, can be one of "
-"<tsonly|tsandaddr|tsprespec>\n"
+"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|"
+"tsprespec>\n"
 "\n"
 "IPv6 옵션:\n"
 "  -6                 use IPv6\n"
@@ -1232,35 +1232,41 @@ msgstr ""
 "\n"
 "더 자세한 정보를 위해 ping(8)을 참고하세요\n"
 
-#: ping/ping_common.c:217
+#: ping/ping_common.c:218
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
 msgstr "패턴은 16진수로 지정해야 합니다: %s"
 
-#: ping/ping_common.c:234
+#: ping/ping_common.c:233
 #, c-format
 msgid "PATTERN: 0x"
 msgstr "패턴: 0x"
 
-#: ping/ping_common.c:354
+#: ping/ping_common.c:353
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
 msgstr "아직 응답이 없습니다(icmp_seq=%lu)\n"
 
-#: ping/ping_common.c:454
+#: ping/ping_common.c:457
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "경고: 아마도, rcvbuf는 사전적재를 유지하기에 충분치 않습니다"
 
-#: ping/ping_common.c:471
+#: ping/ping_common.c:476
 #, c-format
 msgid "WARNING: failed to set mark: %u"
 msgstr "경고: 표시 설정에 실패함: %u"
 
-#: ping/ping_common.c:473
+#: ping/ping_common.c:479
+#, fuzzy
+msgid ""
+"=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
+msgstr "=> cap_net_raw+p 기능 또는 setuid가 빠졌습니까?"
+
+#: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
 msgstr "경고: SO_MARK는 지원되지 않음"
 
-#: ping/ping_common.c:489
+#: ping/ping_common.c:500
 #, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
@@ -1269,146 +1275,146 @@ msgstr ""
 "넘쳐흐를 수 없고, 사용자를 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 이"
 "상)를 사용합니다"
 
-#: ping/ping_common.c:493
+#: ping/ping_common.c:504
 #, c-format
 msgid "illegal preload and/or interval: %d"
 msgstr "잘못된 사전 적재와/또는 간격: %d"
 
-#: ping/ping_common.c:505
+#: ping/ping_common.c:516
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr "경고: SO_TIMESTAMP를 지원하지 않아서, SIOCGSTAMP로 되바꿉니다"
 
-#: ping/ping_common.c:749
+#: ping/ping_common.c:759
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
 msgstr "경고: 시간을 (%ldus)로 되돌리고, 대책을 강구합니다"
 
-#: ping/ping_common.c:799
+#: ping/ping_common.c:809
 #, c-format
 msgid "%d bytes from %s:"
 msgstr "%d 바이트 (%s에서):"
 
-#: ping/ping_common.c:805
+#: ping/ping_common.c:815
 #, c-format
 msgid " ident=%d"
 msgstr " ident=%d"
 
-#: ping/ping_common.c:808
+#: ping/ping_common.c:818
 #, c-format
 msgid " ttl=%d"
 msgstr " ttl=%d"
 
-#: ping/ping_common.c:811
+#: ping/ping_common.c:821
 #, c-format
 msgid " (truncated)\n"
 msgstr " (잘림)\n"
 
-#: ping/ping_common.c:816
-#, c-format
-msgid " time=%ld ms"
-msgstr " 시간=%ld ms"
-
-#: ping/ping_common.c:818
-#, c-format
-msgid " time=%ld.%01ld ms"
-msgstr " 시간=%ld.%01ld ms"
-
-#: ping/ping_common.c:821
-#, c-format
-msgid " time=%ld.%02ld ms"
-msgstr " 시간=%ld.%02ld ms"
-
-#: ping/ping_common.c:824
+#: ping/ping_common.c:826 ping/ping_common.c:836
 #, c-format
 msgid " time=%ld.%03ld ms"
 msgstr " 시간=%ld.%03ld ms"
 
-#: ping/ping_common.c:829
+#: ping/ping_common.c:828
+#, c-format
+msgid " time=%ld ms"
+msgstr " 시간=%ld ms"
+
+#: ping/ping_common.c:830
+#, c-format
+msgid " time=%ld.%01ld ms"
+msgstr " 시간=%ld.%01ld ms"
+
+#: ping/ping_common.c:833
+#, c-format
+msgid " time=%ld.%02ld ms"
+msgstr " 시간=%ld.%02ld ms"
+
+#: ping/ping_common.c:841
 #, c-format
 msgid " (DUP!)"
 msgstr " (중복!)"
 
-#: ping/ping_common.c:831
+#: ping/ping_common.c:843
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (잘못된 검사합!)"
 
-#: ping/ping_common.c:833
+#: ping/ping_common.c:845
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " (다른 주소!)"
 
-#: ping/ping_common.c:840
-#, c-format
+#: ping/ping_common.c:852
+#, fuzzy, c-format
 msgid ""
 "\n"
-"wrong data byte #%zu should be 0x%x but was 0x%x"
+"wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
 "잘못된 자료 바이트 #%zu는 0x%x이어야 하지만 0x%x입니다"
 
-#: ping/ping_common.c:883
+#: ping/ping_common.c:895
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr "--- %s ping 통계 ---\n"
 
-#: ping/ping_common.c:884
+#: ping/ping_common.c:896
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr "%ld 패킷이 전송됨, "
 
-#: ping/ping_common.c:885
+#: ping/ping_common.c:897
 #, c-format
 msgid "%ld received"
 msgstr "%ld 수신됨"
 
-#: ping/ping_common.c:887
+#: ping/ping_common.c:899
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ", +%ld 중복되었습니다"
 
-#: ping/ping_common.c:889
+#: ping/ping_common.c:901
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ", +%ld 손상됨"
 
-#: ping/ping_common.c:891
+#: ping/ping_common.c:903
 #, c-format
 msgid ", +%ld errors"
 msgstr ", +%ld 오류"
 
-#: ping/ping_common.c:897
+#: ping/ping_common.c:909
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ", %g%% 패킷 손실"
 
-#: ping/ping_common.c:899
-#, c-format
-msgid ", time %ldms"
+#: ping/ping_common.c:911
+#, fuzzy, c-format
+msgid ", time %llums"
 msgstr ", 시간 %ldms"
 
-#: ping/ping_common.c:919
+#: ping/ping_common.c:931
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr ""
 "rtt 최소/평균/최대/표준편차 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
-#: ping/ping_common.c:927
+#: ping/ping_common.c:939
 #, c-format
 msgid "%spipe %d"
 msgstr "%s파이프 %d"
 
-#: ping/ping_common.c:934
+#: ping/ping_common.c:946
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr "%sipg/지수가중평균 %d.%03d/%d.%03d ms"
 
-#: ping/ping_common.c:952
+#: ping/ping_common.c:964
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld 패킷, %d%% 손실"
 
-#: ping/ping_common.c:957
+#: ping/ping_common.c:969
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ""
@@ -1442,45 +1448,45 @@ msgid "[LOCALHOST]"
 msgstr "[로컬호스트]"
 
 #: tracepath.c:287
-#, c-format
-msgid "%3ld.%03ldms "
+#, fuzzy, c-format
+msgid "%3lld.%03ldms "
 msgstr "%3ld.%03ldms "
 
-#: tracepath.c:290
+#: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
 msgstr "(이 고장난 라우터는 손상된 전송자료를 반환했습니다) "
 
-#: tracepath.c:305
+#: tracepath.c:306
 #, c-format
 msgid "pmtu %d\n"
 msgstr "pmtu %d\n"
 
-#: tracepath.c:310
+#: tracepath.c:311
 #, c-format
 msgid "reached\n"
 msgstr "도달함\n"
 
-#: tracepath.c:327
+#: tracepath.c:328
 #, c-format
 msgid "asymm %2d "
 msgstr "asymm %2d "
 
-#: tracepath.c:342
+#: tracepath.c:343
 msgid "NET ERROR"
 msgstr "넷 오류"
 
-#: tracepath.c:387
+#: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
 msgstr "%2d?: 응답 8 받았습니다)\n"
 
-#: tracepath.c:393
+#: tracepath.c:394
 #, c-format
 msgid "%2d:  send failed\n"
 msgstr "%2d:  전송 실패함\n"
 
-#: tracepath.c:400
+#: tracepath.c:401
 #, c-format
 msgid ""
 "\n"
@@ -1517,34 +1523,38 @@ msgstr ""
 "\n"
 "보다 자세한 정보를 위하여 tracepath(8)를 참고하세요.\n"
 
-#: tracepath.c:458 tracepath.c:463
+#: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
 msgstr "-4 또는 -6 선택은 하나만 지정 할 수 있습니다"
 
-#: tracepath.c:606
+#: tracepath.c:607
 #, c-format
 msgid "%2d:  no reply\n"
 msgstr "%2d:  응답 없음\n"
 
-#: tracepath.c:613
+#: tracepath.c:614
 #, c-format
 msgid "     Resume: pmtu %d "
 msgstr "     재시도: pmtu %d "
 
-#: tracepath.c:615
+#: tracepath.c:616
 #, c-format
 msgid "hops %d "
 msgstr "건너뛰기 %d "
 
-#: tracepath.c:617
+#: tracepath.c:618
 #, c-format
 msgid "back %d "
 msgstr "%d 뒤로 "
 
-#: tracepath.c:622
+#: tracepath.c:623
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "pktlen은 다음 값 안에 있어야 합니다: %d < 값 <= %d"
+
+#, c-format
+#~ msgid "local error: %s"
+#~ msgstr "로컬 오류: %s"
 
 #, c-format
 #~ msgid "multicast ping with too short interval: %d"
