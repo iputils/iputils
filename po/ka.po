@@ -1408,9 +1408,9 @@ msgid ", %g%% packet loss"
 msgstr ", %g%% პაკეტი დაიკარგა"
 
 #: ping/ping_common.c:911
-#, fuzzy, c-format
+#, c-format
 msgid ", time %llums"
-msgstr ", დრო %ldმწმ"
+msgstr ", დრო %lluმწმ"
 
 #: ping/ping_common.c:931
 #, c-format
@@ -1465,9 +1465,9 @@ msgid "[LOCALHOST]"
 msgstr "[LOCALHOST]"
 
 #: tracepath.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "%3lld.%03ldms "
-msgstr "%3ld.%03ldმწმ "
+msgstr "%3lld.%03ldმწმ "
 
 #: tracepath.c:291
 #, c-format

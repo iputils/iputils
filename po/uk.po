@@ -1414,9 +1414,9 @@ msgid ", %g%% packet loss"
 msgstr ", втрачено %g%% пакетів"
 
 #: ping/ping_common.c:911
-#, fuzzy, c-format
+#, c-format
 msgid ", time %llums"
-msgstr ", час %ld мс"
+msgstr ", час %llu мс"
 
 #: ping/ping_common.c:931
 #, c-format
@@ -1471,9 +1471,9 @@ msgid "[LOCALHOST]"
 msgstr "[ЛОКАЛЬНИЙ_ВУЗОЛ]"
 
 #: tracepath.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "%3lld.%03ldms "
-msgstr "%3ld.%03ldмс "
+msgstr "%3lld.%03ldмс "
 
 #: tracepath.c:291
 #, c-format
