@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: iputils 20161105\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2022-02-13 02:16+0000\n"
-"Last-Translator: Takuro Onoue <kusanaginoturugi@gmail.com>\n"
+"PO-Revision-Date: 2024-09-03 06:23+0000\n"
+"Last-Translator: Tomohiro KATO <tomop@teamgedoh.net>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ja/>\n"
 "Language: ja\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 5.7.1\n"
 
 #: arping.c:123
 #, c-format
@@ -59,7 +59,7 @@ msgstr ""
 "  -I <デバイス>     使用するイーサネットデバイスを指定します"
 
 #: arping.c:142
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "  -s <source>   source IP address\n"
@@ -68,8 +68,8 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <送信元>  送信元IPアドレス\n"
-"  <送信先>       DNS名またはIPアドレス\n"
+"  -s <送信元>       送信元IPアドレス\n"
+"  <送信先>          DNS名またはIPアドレス\n"
 "\n"
 "詳細は arping(8) を参照してください。\n"
 
@@ -211,7 +211,7 @@ msgid "wrong timestamps\n"
 msgstr "タイムスタンプが不正です\n"
 
 #: clockdiff.c:453
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -372,7 +372,8 @@ msgstr "警告: ソースアドレスは %s 以外のデバイスから選択さ
 msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr ""
+msgstr "ユーザーのマルチキャストpingの最小の間隔は %d ms以上です。 -i %s "
+"（以上）を使用してください"
 
 #
 #: ping/ping6_common.c:271
@@ -460,12 +461,12 @@ msgstr "ポートに届きません"
 #: ping/ping6_common.c:441
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "送信元アドレスが送受信ポリシーに違反しています"
 
 #: ping/ping6_common.c:444
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "送信先へのルーティングが拒否されました"
 
 #: ping/ping6_common.c:447
 #, c-format
@@ -648,13 +649,13 @@ msgid "unknown protocol family: %d"
 msgstr "プロトコルファミリーが不明です: %d"
 
 #: ping/ping.c:118
-#, fuzzy, c-format
+#, c-format
 msgid "unknown sock type: %d"
-msgstr "未知のicmpの種別です: %u"
+msgstr "未知のソケット種別です: %d"
 
 #: ping/ping.c:213
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "=> cap_net_raw+p ケーパビリティが未セットまたはsetuidされていない?"
 
 #: ping/ping.c:252
 #, c-format
@@ -742,11 +743,11 @@ msgstr "応答待ち時間が正しくありません: %s"
 
 #: ping/ping.c:599
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
-msgstr ""
+msgstr "警告: DNS逆引き (PTR取得) は無効化されており、-Hで有効化可能です"
 
 #: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "警告: ident 0 => 強制的にrawソケットを使用します"
 
 #: ping/ping.c:692
 #, c-format
@@ -754,6 +755,9 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
+"警告: ICMPデータグラムソケットではIPv6リンクローカルアドレスにインタフェース"
+"名またはスコープIDが必要かもしれません => アドレス%%<ifname|scope-id> "
+"形式を用いてください"
 
 #
 #: ping/ping.c:869
@@ -789,7 +793,8 @@ msgstr "gatifaddrsに失敗しました"
 msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr ""
+msgstr "ユーザーのブロードキャストpingの最小の間隔は %d ms以上です。 -i %s "
+"（以上）を使用してください"
 
 #
 #: ping/ping.c:938
@@ -877,17 +882,17 @@ msgstr ""
 #: ping/ping.c:1218
 #, c-format
 msgid "\t%ld absolute not-standard"
-msgstr ""
+msgstr "\t%ld 非標準の絶対値"
 
 #: ping/ping.c:1220
 #, c-format
 msgid "\t%ld not-standard"
-msgstr ""
+msgstr "\t%ld 非標準"
 
 #: ping/ping.c:1224
 #, c-format
 msgid "\t%ld absolute"
-msgstr ""
+msgstr "\t%ld 絶対値"
 
 #: ping/ping.c:1235
 #, c-format
@@ -1194,6 +1199,71 @@ msgid ""
 "\n"
 "For more details see ping(8).\n"
 msgstr ""
+"\n"
+"使用法\n"
+"  ping [オプション] <送信先>\n"
+"\n"
+"オプション:\n"
+"  <送信先>           DNS名またはIPアドレス\n"
+"  -3                 正確なRTTを表示します (結果を丸めません)\n"
+"  -a                 pingへの応答時にベルを鳴らします\n"
+"  -A                 adaptive pingを行います\n"
+"  -B                 送信元IPアドレスを固定します\n"
+"  -c <count>         <count> 回の応答の後に終了します\n"
+"  -C                 ソケット生成にconnect()システムコールを使用します\n"
+"  -D                 タイムスタンプを表示します\n"
+"  -d                 SO_DEBUGソケットオプションを使用します\n"
+"  -e <identifier>    "
+"pingセッションの識別子を定義します。SOCK_RAWではランダム、\n"
+"                     SOCK_DGRAMではkernelによる定義値がデフォルトで使用され、"
+"\n"
+"                     "
+"IPv4で識別子に0が指定された場合はSOCK_RAWが暗黙的に使用さ\n"
+"                     れます\n"
+"  -f                 flood pingを実行します\n"
+"  -h                 ヘルプを表示して終了します\n"
+"  -H                 DNS逆引きを強制します (IPアドレス表記の送信先や、-"
+"fの使用\n"
+"                     時に有用です)。-n で上書き可能です\n"
+"  -I <interface>     送信元のインターフェイス名かIPアドレスを指定します\n"
+"  -i <interval>      パケットの送信間隔を秒単位で指定します\n"
+"  -L                 マルチキャストパケットのループバックを隠蔽します\n"
+"  -l <preload>       応答待ちの間に<preload>個のパケットを送信します\n"
+"  -m <mark>          送信パケットにマークを付与します\n"
+"  -M <pmtud opt>     path MTU "
+"discoveryの動作を定義します。<do|dont|want|probe>\n"
+"                     のうちいずれか1つを指定します\n"
+"  -n                 DNS逆引きを行いません。-H で上書き可能です\n"
+"  -O                 未応答のパケットを表示します\n"
+"  -p <pattern>       パケットのパディング内容を指定します\n"
+"  -q                 表示を抑制します\n"
+"  -Q <tclass>        TOS/TCLASSの値を設定します\n"
+"  -s <size>          送信パケットのサイズを<size>バイトに設定します\n"
+"  -S <size>          ソケットオプションSO_SNDBUFの値を<size>に設定します\n"
+"  -t <ttl>           TTL (Time To Live) の値を設定します\n"
+"  -U                 送信から受信までの遅延を表示します\n"
+"  -v                 表示を冗長にします\n"
+"  -V                 バージョンを表示して終了します\n"
+"  -w <deadline>      コマンド終了までのタイムアウトを<deadline>"
+"秒に設定します\n"
+"  -W <timeout>       応答待ちの時間を設定します\n"
+"  \n"
+"IPv4オプション:\n"
+"  -4                 IPv4を使用します\n"
+"  -b                 ブロードキャストpingを許可します\n"
+"  -R                 経路を記録します\n"
+"  -T <timestamp>     タイムスタンプのオプションを<tsonly|tsandaddr|tsprespec>"
+"\n"
+"                     のいずれかに設定します\n"
+"\n"
+"IPv6オプション:\n"
+"  -6                 IPv6を使用します\n"
+"  -F <flowlabel>     フローラベルを定義します。デフォルトはランダムです\n"
+"  -N <nodeinfo opt>  ICMPv6 Node Information Queriesを送信します。"
+"詳細は引数に\n"
+"                     <help>を指定することで表示されます\n"
+"\n"
+"詳細は ping(8) を参照してください。\n"
 
 #: ping/ping_common.c:218
 #, c-format
@@ -1216,25 +1286,27 @@ msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "警告: おそらく preload のために充分な受信バッファがありません"
 
 #: ping/ping_common.c:476
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "警告: マーク %d の設定に失敗しました"
+msgstr "警告: マーク %u の設定に失敗しました"
 
 #: ping/ping_common.c:479
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr ""
+msgstr "=> cap_net_admin+p or cap_net_raw+p (Linux 5.17以降) "
+"ケーパビリティが未セット?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
 msgstr "警告: SO_MARKはサポートされていません"
 
 #: ping/ping_common.c:500
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr "ping floodはできません。インターバルの最低値は %d ミリ秒です"
+msgstr "ping floodはできません。インターバルの最低値は %d ミリ秒です。 -i %s (以上) "
+"を使用してください"
 
 #: ping/ping_common.c:504
 #, c-format
@@ -1261,7 +1333,7 @@ msgstr "%d バイト応答 送信元 %s:"
 #: ping/ping_common.c:815
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:818
 #, c-format
