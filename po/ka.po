@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2023-12-20 15:03+0000\n"
+"PO-Revision-Date: 2024-09-03 06:23+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3\n"
+"X-Generator: Weblate 5.7.1\n"
 
 #: arping.c:123
 #, c-format
@@ -733,6 +733,8 @@ msgstr "დაყოვნების არასწორი დრო: %s"
 #: ping/ping.c:599
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
 msgstr ""
+"გაფრთხილება: შებრუნებული DNS ამოხსნა (PTR-ის ძებნა) გამორთულია. ჩართეთ ის "
+"ძალით პარამეტრით -H"
 
 #: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
@@ -1122,7 +1124,7 @@ msgid "(BAD CHECKSUM)\n"
 msgstr "(არასწორი საკონტროლო ჯამი)\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1188,6 +1190,8 @@ msgstr ""
 "\n"
 "პარამეტრები:\n"
 "  <სამიზნე>      \t\t DNS სახელი ან IP მისამართი\n"
+"  -3                 RTT-ის სიზუსტე (პაკეტის მოგზაურობის დრო არ დამრგვალდება)"
+"\n"
 "  -a                 audible ping-ის გამოყენება\n"
 "  -A                 adaptive ping-ის გამოყენება\n"
 "  -B                 წებოვანი წყაროს მისამართი\n"
@@ -1275,10 +1279,9 @@ msgid "WARNING: failed to set mark: %u"
 msgstr "გაფრთხილება: ნიშნულის დასმის შეცდომა: %u"
 
 #: ping/ping_common.c:479
-#, fuzzy
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr "=> აკლია cap_net_raw+p შესაძლებლობა ან setuid-ი?"
+msgstr "=> აკლია cap_net_raw+p ან cap_net_raw+p (Linux 5.17+) შესაძლებლობა?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
