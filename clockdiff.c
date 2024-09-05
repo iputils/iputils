@@ -526,6 +526,12 @@ int main(int argc, char **argv)
 	struct addrinfo *result;
 	int status;
 
+#ifdef ENABLE_NLS
+	setlocale(LC_ALL, "");
+	bindtextdomain (PACKAGE_NAME, LOCALEDIR);
+	textdomain (PACKAGE_NAME);
+#endif
+
 	atexit(close_stdout);
 
 	parse_opts(&ctl, argc, argv);
