@@ -133,6 +133,7 @@ install()
 dist()
 {
 	local formats="xztar,gztar,zip"
+	local tag="$(date +%Y%m%d)"
 	local f
 
 	echo "=== dist ($formats) ==="
@@ -140,7 +141,7 @@ dist()
 
 	for f in $(echo "$formats" | sed 's/,/ /g'); do
 		f=$(echo "$f" | sed 's/\(.*\)tar/tar.\1/')
-		f=$BUILD_DIR/meson-dist/iputils-20240117.$f
+		f=$BUILD_DIR/meson-dist/iputils-$tag.$f
 		ls -lah $f
 		file $f | grep -E '(compressed|archive) data'
 	done
