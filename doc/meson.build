@@ -28,8 +28,8 @@ if meson.version().version_compare('>=0.58.0')
 	out_html_pages = []
 	generated_docs_exist = true
 	foreach page : manpages
-		man_page_name = page.replace('.xml', '.8')
-		html_page_name = page.replace('.xml', '.html')
+		man_page_name = page + '.8'
+		html_page_name = page + '.html'
 		out_man_pages += man_page_name
 		out_html_pages += html_page_name
 		if not fs.exists(man_page_name) or not fs.exists(html_page_name)
