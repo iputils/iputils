@@ -7,13 +7,16 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2024-10-03 15:38+0000\n"
+"Last-Translator: ButterflyOfFire <butterflyoffire@protonmail.com>\n"
+"Language-Team: Kabyle <https://translate.fedoraproject.org/projects/iputils/"
+"iputils/kab/>\n"
 "Language: kab\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: arping.c:123
 #, c-format
@@ -77,11 +80,11 @@ msgstr ""
 #: arping.c:423
 #, c-format
 msgid "%s from "
-msgstr ""
+msgstr "%s seg "
 
 #: arping.c:423
 msgid "reply"
-msgstr ""
+msgstr "tiririt"
 
 #: arping.c:423
 msgid "request"
@@ -90,17 +93,17 @@ msgstr ""
 #: arping.c:428
 #, c-format
 msgid "for %s "
-msgstr ""
+msgstr "i %s "
 
 #: arping.c:433
 #, c-format
 msgid "for "
-msgstr ""
+msgstr "i "
 
 #: arping.c:443
 #, c-format
 msgid " %ld.%03ldms\n"
-msgstr ""
+msgstr " %ld.%03ldmts\n"
 
 #: arping.c:445
 #, c-format
@@ -154,7 +157,7 @@ msgstr ""
 #: arping.c:1051
 #, c-format
 msgid "ARPING %s "
-msgstr ""
+msgstr "ARPING %s "
 
 #: arping.c:1052
 #, c-format
@@ -226,6 +229,8 @@ msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
+"\n"
+"host=%s rtt=%ld(%ld)mts/%ldmts delta=%dmts/%dmts %s\n"
 
 #: ping/node_info.c:169
 #, c-format
@@ -364,7 +369,7 @@ msgstr ""
 #: ping/ping6_common.c:426
 #, c-format
 msgid "No route"
-msgstr ""
+msgstr "Ula d yiwen n webrid"
 
 #: ping/ping6_common.c:429
 #, c-format
@@ -459,7 +464,7 @@ msgstr ""
 #: ping/ping6_common.c:475
 #, c-format
 msgid "at %u"
-msgstr ""
+msgstr "ɣef %u"
 
 #: ping/ping6_common.c:478
 #, c-format
@@ -493,7 +498,7 @@ msgstr ""
 
 #: ping/ping6_common.c:547 ping/ping.c:1480
 msgid "local error"
-msgstr ""
+msgstr "tuccḍa tadigant"
 
 #: ping/ping6_common.c:549
 #, c-format
@@ -543,7 +548,7 @@ msgstr ""
 #: ping/ping6_common.c:810
 #, c-format
 msgid " unknown"
-msgstr ""
+msgstr " arussin"
 
 #: ping/ping6_common.c:813
 #, c-format
@@ -563,7 +568,7 @@ msgstr ""
 #: ping/ping6_common.c:923 ping/ping.c:1759
 #, c-format
 msgid "From %s: "
-msgstr ""
+msgstr "Seg %s: "
 
 #: ping/ping6_common.c:964 ping/ping.c:1864
 msgid "WARNING: failed to install socket filter"
@@ -743,7 +748,7 @@ msgstr ""
 #: ping/ping.c:1064
 #, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr ""
+msgstr "%d(%d) itamḍanen n yifeska.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -762,7 +767,7 @@ msgstr ""
 #: ping/ping.c:1145
 #, c-format
 msgid "\t(same route)"
-msgstr ""
+msgstr "\t(abrid-is yiwen)"
 
 #: ping/ping.c:1150
 #, c-format
@@ -818,7 +823,7 @@ msgstr ""
 #: ping/ping.c:1262
 #, c-format
 msgid "   %1x %04x"
-msgstr ""
+msgstr "   %1x %04x"
 
 #: ping/ping.c:1264
 #, c-format
@@ -1154,7 +1159,7 @@ msgstr ""
 #: ping/ping_common.c:809
 #, c-format
 msgid "%d bytes from %s:"
-msgstr ""
+msgstr "%d itamḍanen seg %s:"
 
 #: ping/ping_common.c:815
 #, c-format
@@ -1174,22 +1179,22 @@ msgstr ""
 #: ping/ping_common.c:826 ping/ping_common.c:836
 #, c-format
 msgid " time=%ld.%03ld ms"
-msgstr ""
+msgstr " time=%ld.%03ld mts"
 
 #: ping/ping_common.c:828
 #, c-format
 msgid " time=%ld ms"
-msgstr ""
+msgstr " akud=%ld mts"
 
 #: ping/ping_common.c:830
 #, c-format
 msgid " time=%ld.%01ld ms"
-msgstr ""
+msgstr " akud=%ld.%01ld mts"
 
 #: ping/ping_common.c:833
 #, c-format
 msgid " time=%ld.%02ld ms"
-msgstr ""
+msgstr " akud=%ld.%02ld mts"
 
 #: ping/ping_common.c:841
 #, c-format
@@ -1216,17 +1221,17 @@ msgstr ""
 #: ping/ping_common.c:895
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr ""
+msgstr "--- %s tidaddanin n ping ---\n"
 
 #: ping/ping_common.c:896
 #, c-format
 msgid "%ld packets transmitted, "
-msgstr ""
+msgstr "%ld ikemmas yettwaṭfen, "
 
 #: ping/ping_common.c:897
 #, c-format
 msgid "%ld received"
-msgstr ""
+msgstr "%ld yettwaṭṭfen"
 
 #: ping/ping_common.c:899
 #, c-format
@@ -1246,17 +1251,17 @@ msgstr ""
 #: ping/ping_common.c:909
 #, c-format
 msgid ", %g%% packet loss"
-msgstr ""
+msgstr ", %g%% d akemmus iruḥen"
 
 #: ping/ping_common.c:911
 #, c-format
 msgid ", time %llums"
-msgstr ""
+msgstr ", akud %llumts"
 
 #: ping/ping_common.c:931
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
+msgstr "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld mts"
 
 #: ping/ping_common.c:939
 #, c-format
@@ -1271,7 +1276,7 @@ msgstr ""
 #: ping/ping_common.c:964
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
-msgstr ""
+msgstr "%ld/%ld ikemmas, %d%% iruḥen"
 
 #: ping/ping_common.c:969
 #, c-format
@@ -1284,6 +1289,8 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
+"cmsg6:%d\n"
+" "
 
 #: tracepath.c:230
 #, c-format
@@ -1291,6 +1298,8 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
+"cmsg4:%d\n"
+" "
 
 #: tracepath.c:235
 #, c-format
@@ -1299,12 +1308,12 @@ msgstr ""
 
 #: tracepath.c:239
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[LOCALHOST]"
 
 #: tracepath.c:287
 #, c-format
 msgid "%3lld.%03ldms "
-msgstr ""
+msgstr "%3lld.%03ldmts "
 
 #: tracepath.c:291
 #, c-format
