@@ -1,21 +1,22 @@
-# French translation for iputils
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) Julien Humbert <julroy67@gmail.com>, 2020-2021
-# Copyright (c) Iputils Project, 2020-2021
+# iputils project translation
+# Copyright (C) iputils project, 2018-2024
+# This file is distributed under the same license as the iputils package.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2024-09-21 08:38+0000\n"
-"Last-Translator: Léane GRASSER <leane.grasser@proton.me>\n"
-"Language-Team: French <https://translate.fedoraproject.org/projects/iputils/"
-"iputils/fr/>\n"
-"Language: fr\n"
+"PO-Revision-Date: 2024-10-03 15:38+0000\n"
+"Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
+"Language-Team: Romanian <https://translate.fedoraproject.org/projects/"
+"iputils/iputils/ro/>\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
 "X-Generator: Weblate 5.7.2\n"
 
 #: arping.c:123
@@ -39,22 +40,23 @@ msgid ""
 "  -I <device>   which ethernet device to use"
 msgstr ""
 "\n"
-"Utilisation :\n"
-"  arping [options] <destination>\n"
+"Utilizare:\n"
+"  arping [opțiuni] <destinație>\n"
 "\n"
-"Options :\n"
-"  -f            quitter dès la première réponse\n"
-"  -q            être silencieux\n"
-"  -b            continuer à diffuser, ne pas diffuser en monodiffusion\n"
-"  -D            mode de détection d’adresses dupliquées\n"
-"  -U            mode ARP non sollicité, met à jour vos voisins\n"
-"  -A            mode réponse ARP, met à jour vos voisins\n"
-"  -V            afficher la version et quitter\n"
-"  -c <count>    nombre de paquets à envoyer\n"
-"  -w <timeout>  temps à attendre la réponse\n"
-"  -i <interval> définir l’intervalle entre les paquets (par défaut : "
-"1 seconde)\n"
-"  -I <device>   périphérique Ethernet à utiliser"
+"Opțiuni:\n"
+"  -f               iese la primul răspuns\n"
+"  -q               intră în modul silențios\n"
+"  -b               continuă difuzarea în modul „multicast”, nu în modul "
+"„unicast”\n"
+"  -D               modul de detectare a adreselor duplicate\n"
+"  -U               modul ARP nesolicitat, actualizează vecinii\n"
+"  -A               modul răspuns ARP, actualizează vecinii\n"
+"  -V               imprimă versiunea și iese\n"
+"  -c <număr>       câte pachete să se trimită\n"
+"  -w <timp de așteptare>  cât timp să aștepte un răspuns\n"
+"  -i <interval>    stabilește intervalul dintre pachete (implicit: 1 secundă)"
+"\n"
+"  -I <dispozitiv>  ce dispozitiv ethernet să se utilizeze"
 
 #: arping.c:142
 #, c-format
@@ -66,146 +68,150 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <source>   adresse IP source\n"
-"  <destination> nom DNS ou adresse IP\n"
+"  -s <sursa>       adresa IP sursă\n"
+"  <destinație>     nume DNS sau adresă IP\n"
 "\n"
-"Pour plus de détails, consultez arping(8).\n"
+"Pentru mai multe detalii, consultați arping(8).\n"
 
 #: arping.c:305
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr "%d sondes envoyées (%d diffusion(s))\n"
+msgstr "S-au trimis %d sondări (%d difuzare/difuzări)\n"
 
 #: arping.c:306
 #, c-format
 msgid "Received %d response(s)"
-msgstr "%d réponse(s) reçue(s)"
+msgstr "S-au primit %d răspuns(uri)"
 
 #: arping.c:310
 #, c-format
 msgid "%d request(s)"
-msgstr "%d requête(s)"
+msgstr "%d răspuns(uri)"
 
 #: arping.c:312
 #, c-format
 msgid "%s%d broadcast(s)"
-msgstr "%s%d diffusion(s)"
+msgstr "%s%d difuzare/difuzări"
 
 #: arping.c:422
 msgid "Unicast"
-msgstr "Monodiffusion"
+msgstr "Modul „unicast”"
 
 #: arping.c:422
 msgid "Broadcast"
-msgstr "Diffusion"
+msgstr "Modul „multicast”"
 
 #: arping.c:423
 #, c-format
 msgid "%s from "
-msgstr "%s de "
+msgstr "%s de la "
 
 #: arping.c:423
 msgid "reply"
-msgstr "réponse"
+msgstr "răspuns"
 
 #: arping.c:423
 msgid "request"
-msgstr "requête"
+msgstr "cerere"
 
 #: arping.c:428
 #, c-format
 msgid "for %s "
-msgstr "pour %s "
+msgstr "pentru %s "
 
 #: arping.c:433
 #, c-format
 msgid "for "
-msgstr "pour "
+msgstr "pentru "
 
 #: arping.c:443
 #, c-format
 msgid " %ld.%03ldms\n"
-msgstr " %ld.%03ld ms\n"
+msgstr " %ld.%03ldms\n"
 
 #: arping.c:445
 #, c-format
 msgid " UNSOLICITED?\n"
-msgstr " NON SOLLICITÉ ?\n"
+msgstr " NESOLICITAT?\n"
 
 #: arping.c:596
 #, c-format
 msgid "Interface \"%s\" is down\n"
-msgstr "L’interface « %s » est inactive\n"
+msgstr "Interfața „%s” este inactivă\n"
 
 #: arping.c:604
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
-msgstr "L’interface « %s » n’est pas ARPable\n"
+msgstr ""
+"Interfața „%s” nu este ARPable (aptă pentru a utiliza protocolul de "
+"rezolvare a adreselor)\n"
 
 #: arping.c:697
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
-msgstr "AVERTISSEMENT : utilisation de l’adresse de diffusion par défaut.\n"
+msgstr "AVERTISMENT: se utilizează adresa de difuzare implicită.\n"
 
 #: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:408 ping/ping.c:455
 #: ping/ping.c:507 ping/ping.c:515 ping/ping.c:559 ping/ping.c:562
 #: ping/ping.c:565 ping/ping.c:579 tracepath.c:474 tracepath.c:477
 #: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
-msgstr "paramètre invalide"
+msgstr "argument nevalid"
 
 #: arping.c:978
 #, c-format
 msgid "Device %s not available."
-msgstr "Périphérique %s non disponible."
+msgstr "Dispozitivul %s nu este disponibil."
 
 #: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr ""
-"Le périphérique approprié n'a pas pu être déterminé. Veuillez utiliser "
-"l'option -l."
+"Dispozitivul adecvat nu a putut fi determinat. Vă rugăm să utilizați "
+"opțiunea „-I”."
 
 #: arping.c:999
 msgid "WARNING: interface is ignored"
-msgstr "AVERTISSEMENT : l’interface est ignorée"
+msgstr "AVERTISMENT: interfața este ignorată"
 
 #: arping.c:1018
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr "AVERTISSEMENT : setsockopt(SO_DONTROUTE)"
+msgstr "AVERTISMENT: setsockopt(SO_DONTROUTE)"
 
 #: arping.c:1042
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr "L’interface « %s » n’est pas ARPable (pas d’adresse ll)\n"
+msgstr ""
+"Interfața „%s” nu este aptă pentru a utiliza protocolul de rezolvare a "
+"adreselor „ARPable” (nicio adresă ll)\n"
 
 #: arping.c:1051
 #, c-format
 msgid "ARPING %s "
-msgstr "ARPING %s "
+msgstr "Se analizează ARP %s "
 
 #: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
-msgstr "de %s %s\n"
+msgstr "de la %s %s\n"
 
 #: arping.c:1056
 msgid "no source address in not-DAD mode"
-msgstr "il n'y a pas d'adresse source en mode non-DAD"
+msgstr "nicio adresă sursă în modul non-DAD"
 
 #: clockdiff.c:242
 #, c-format
 msgid "Wrong timestamp %d\n"
-msgstr "Mauvais timestamp %d\n"
+msgstr "Marcă de timp greșită %d\n"
 
 #: clockdiff.c:247
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr "Dépasse %d sauts\n"
+msgstr "Depășire %d salturi\n"
 
 #: clockdiff.c:272
 #, c-format
 msgid "wrong timestamps\n"
-msgstr "mauvais timestamps\n"
+msgstr "marcă de timp greșită\n"
 
 #: clockdiff.c:453
 #, c-format
@@ -228,42 +234,42 @@ msgid ""
 "For more details see clockdiff(8).\n"
 msgstr ""
 "\n"
-"Utilisation :\n"
-"  clockdiff [options] <destination>\n"
+"Utilizare:\n"
+"  clockdiff [opțiuni] <destinație>\n"
 "\n"
-"Options :\n"
-"                sans -o, utilise uniquement le timestamp ICMP (voir RFC0792, "
-"page 16)\n"
-"  -o            utiliser le timestamp IP et ICMP echo\n"
-"  -o1           utiliser le timestamp IP three-term et ICMP echo\n"
+"Opțiuni:\n"
+"                 fără -o, utilizează doar marca de timp icmp (a se vedea\n"
+"                 RFC0792, pagina 16)\n"
+"  -o             utilizează marca de timp IP și ecou icmp\n"
+"  -o1            utilizează marca de timp IP cu trei termene și ecou icmp\n"
 "  -T, --time-format <ctime|iso>\n"
-"                  spécifier le format d’affichage du temps, par défaut ctime "
-"est utilisé\n"
-"  -I            alias de --time-format=iso\n"
-"  -h, --help    afficher cette aide\n"
-"  -V, --version afficher la version et quitter\n"
-"  <destination> nom DNS ou adresse IP\n"
+"                 specifică formatul timpului de afișare, ctime este "
+"implicit\n"
+"  -I             alias al opțiunii „--time-format=iso”\n"
+"  -h, --help     afișează acest ajutor\n"
+"  -V, --version  afișează versiunea și iese\n"
+"  <destinație>   nume DNS sau adresă IP\n"
 "\n"
-"Pour plus de détails, consultez clockdiff(8).\n"
+"Pentru mai multe detalii, consultați clockdiff(8).\n"
 
 #: clockdiff.c:592
 msgid "measure: unknown failure"
-msgstr "mesure : échec inconnu"
+msgstr "măsură: eșec necunoscut"
 
 #: clockdiff.c:597
 #, c-format
 msgid "%s is down"
-msgstr "%s est inactif"
+msgstr "%s este inactivă"
 
 #: clockdiff.c:600
 #, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr "temps %s transmis est dans un format non standard"
+msgstr "%s timp transmis într-un format nestandard"
 
 #: clockdiff.c:603
 #, c-format
 msgid "%s is unreachable"
-msgstr "%s est injoignable"
+msgstr "%s este inaccesibilă"
 
 #: clockdiff.c:622
 #, c-format
@@ -272,40 +278,40 @@ msgid ""
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 "\n"
-"hôte=%s rtt=%ld (%ld) ms/%ld ms delta=%d ms/%d ms %s\n"
+"gazdă=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 
 #: ping/node_info.c:169
 #, c-format
 msgid "Qtype conflict\n"
-msgstr "Conflit de qtype\n"
+msgstr "Conflict Qtype\n"
 
 #: ping/node_info.c:221
 #, c-format
 msgid "Subject type conflict\n"
-msgstr "Conflit de type de sujet\n"
+msgstr "Conflict de tip de subiect\n"
 
 #: ping/node_info.c:312
 #, c-format
 msgid "IDN encoding error: %s"
-msgstr "Erreur d’encodage IDN : %s"
+msgstr "Eroare de codificare IDN: %s"
 
 #: ping/node_info.c:323
 msgid "too long scope name"
-msgstr "le nom d'étendue est trop long"
+msgstr "nume de domeniu de aplicare prea lung"
 
 #: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:308
 #: ping/ping.c:1059
 msgid "memory allocation failed"
-msgstr "échec de l’allocation de mémoire"
+msgstr "alocarea memoriei a eșuat"
 
 #: ping/node_info.c:359
 #, c-format
 msgid "inappropriate subject name: %s"
-msgstr "le nom sur sujet est inapproprié : %s"
+msgstr "nume inadecvat al subiectului: %s"
 
 #: ping/node_info.c:362
 msgid "dn_comp() returned too long result"
-msgstr "dn_comp() a renvoyé un résultat trop long"
+msgstr "dn_comp() a returnat un rezultat prea lung"
 
 #: ping/node_info.c:402
 #, c-format
@@ -329,40 +335,39 @@ msgid ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 msgstr ""
-"ping -6 -N <nodeinfo opt>\n"
-"Aide :\n"
+"ping -6 -N <opțiuni nodeinfo>\n"
+"Ajutor:\n"
 "  help\n"
-"Requête :\n"
-"  name\n"
+"Interogare:\n"
+"  nume\n"
 "  ipv6\n"
 "  ipv6-all\n"
-"  ipv6-compatible\n"
+"  ipv6-compatibil\n"
 "  ipv6-global\n"
 "  ipv6-linklocal\n"
 "  ipv6-sitelocal\n"
 "  ipv4\n"
 "  ipv4-all\n"
-"Sujet :\n"
-"  subject-ipv6=addr\n"
-"  subject-ipv4=addr\n"
-"  subject-name=nom\n"
-"  subject-fqdn=nom\n"
+"Subiect:\n"
+"  subject-ipv6=adresă\n"
+"  subject-ipv4=adresă\n"
+"  subject-name=nume\n"
+"  subject-fqdn=nume\n"
 
 #: ping/ping6_common.c:99 ping/ping.c:747
 #, c-format
 msgid "unknown iface: %s"
-msgstr "interface inconnue : %s"
+msgstr "interfață necunoscută: %s"
 
 #: ping/ping6_common.c:146
 msgid "scope discrepancy among the nodes"
-msgstr "écart d'étendue entre les nœuds"
+msgstr "discrepanță de domeniu de aplicare între noduri"
 
 #: ping/ping6_common.c:225 ping/ping.c:917
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
 msgstr ""
-"Avertissement : l'adresse source pourrait être sélectionnée sur un "
-"périphérique autre que : %s"
+"Avertizare: adresa sursă ar putea fi selectată pe alt dispozitiv decât: %s"
 
 #: ping/ping6_common.c:266
 #, c-format
@@ -370,40 +375,40 @@ msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"l'intervalle minimal de ping multidiffusion pour l'utilisateur doit être "
-">=%d ms, utilisez -i %s (ou plus)"
+"intervalul minim pentru ping-ul multi-difuzare pentru utilizator trebuie să "
+"fie >= %d ms, utilizați „-i %s” (sau mai mare)"
 
 #: ping/ping6_common.c:271
 msgid "multicast ping does not fragment"
-msgstr "le ping multidiffusion ne fragmente pas"
+msgstr "ping-ul multi-difuziune nu se fragmentează"
 
 #: ping/ping6_common.c:330
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr "setsockopt(RAW_CHECKSUM) a échoué - essayez de continuer"
+msgstr "setsockopt(RAW_CHECKSUM) a eșuat - se încearcă să se continue"
 
 #: ping/ping6_common.c:356
 msgid "can't disable multicast loopback"
-msgstr "impossible de désactiver la boucle de retour pour la multidiffusion"
+msgstr "nu se poate dezactiva bucla de retur multi-difuzare"
 
 #: ping/ping6_common.c:361
 msgid "can't set multicast hop limit"
-msgstr "impossible de définir la limite de saut de multidiffusion"
+msgstr "nu se poate defini limita de salturi pentru multi-difuzare"
 
 #: ping/ping6_common.c:364
 msgid "can't set unicast hop limit"
-msgstr "impossible de définir de limite de saut de monodiffusion"
+msgstr "nu se poate defini limita de salturi pentru uni-difuzare (unicast)"
 
 #: ping/ping6_common.c:376
 msgid "can't receive hop limit"
-msgstr "impossible de recevoir la limite de saut"
+msgstr "nu se poate recepționa limita de salturi"
 
 #: ping/ping6_common.c:390
 msgid "can't set flowlabel"
-msgstr "impossible de définir le label de flux"
+msgstr "nu se poate defini eticheta fluxului"
 
 #: ping/ping6_common.c:394
 msgid "can't send flowinfo"
-msgstr "impossible d'envoyer l'information de flux"
+msgstr "nu se pot trimite informațiile privind fluxul"
 
 #: ping/ping6_common.c:397 ping/ping.c:1061
 #, c-format
@@ -418,161 +423,161 @@ msgstr ", flux 0x%05x, "
 #: ping/ping6_common.c:404 ping/ping.c:1063
 #, c-format
 msgid "from %s %s: "
-msgstr "de %s %s : "
+msgstr "de la %s %s: "
 
 #: ping/ping6_common.c:407
 #, c-format
 msgid "%d data bytes\n"
-msgstr "%d octets de données\n"
+msgstr "%d octeți de date\n"
 
 #: ping/ping6_common.c:423
 #, c-format
 msgid "Destination unreachable: "
-msgstr "Destination injoignable : "
+msgstr "Destinație inaccesibilă: "
 
 #: ping/ping6_common.c:426
 #, c-format
 msgid "No route"
-msgstr "Aucune route"
+msgstr "Nicio rută"
 
 #: ping/ping6_common.c:429
 #, c-format
 msgid "Administratively prohibited"
-msgstr "Interdit administrativement"
+msgstr "Interzis administrativ"
 
 #: ping/ping6_common.c:432
 #, c-format
 msgid "Beyond scope of source address"
-msgstr "Dépassement de l’étendue de l’adresse source"
+msgstr "Dincolo de domeniul de aplicare al adresei sursă"
 
 #: ping/ping6_common.c:435
 #, c-format
 msgid "Address unreachable"
-msgstr "Adresse injoignable"
+msgstr "Adresă inaccesibilă"
 
 #: ping/ping6_common.c:438
 #, c-format
 msgid "Port unreachable"
-msgstr "Port injoignable"
+msgstr "Port inaccesibil"
 
 #: ping/ping6_common.c:441
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr "Échec de la stratégie d'entrée/sortie de l'adresse source"
+msgstr "Politica de intrare/ieșire a adresei sursă a eșuat"
 
 #: ping/ping6_common.c:444
 #, c-format
 msgid "Reject route to destination"
-msgstr "Rejeter la route vers la destination"
+msgstr "Respinge ruta către destinație"
 
 #: ping/ping6_common.c:447
 #, c-format
 msgid "Unknown code %d"
-msgstr "Code %d inconnu"
+msgstr "Cod necunoscut %d"
 
 #: ping/ping6_common.c:452
 #, c-format
 msgid "Packet too big: mtu=%u"
-msgstr "Le paquet est trop gros : mtu=%u"
+msgstr "Pachet prea mare: mtu=%u"
 
 #: ping/ping6_common.c:454
 #, c-format
 msgid ", code=%d"
-msgstr ", code=%d"
+msgstr ", cod=%d"
 
 #: ping/ping6_common.c:457
 #, c-format
 msgid "Time exceeded: "
-msgstr "Temps dépassé : "
+msgstr "Timp depășit: "
 
 #: ping/ping6_common.c:459
 #, c-format
 msgid "Hop limit"
-msgstr "Limite de saut"
+msgstr "Limita de salturi"
 
 #: ping/ping6_common.c:461
 #, c-format
 msgid "Defragmentation failure"
-msgstr "Échec de la défragmentation"
+msgstr "Defragmentare eșuată"
 
 #: ping/ping6_common.c:463
 #, c-format
 msgid "code %d"
-msgstr "code %d"
+msgstr "cod %d"
 
 #: ping/ping6_common.c:466
 #, c-format
 msgid "Parameter problem: "
-msgstr "Problème de paramètre : "
+msgstr "Problemă de parametri: "
 
 #: ping/ping6_common.c:468
 #, c-format
 msgid "Wrong header field "
-msgstr "Champ d'entête incorrect "
+msgstr "Câmp de antet greșit "
 
 #: ping/ping6_common.c:470
 #, c-format
 msgid "Unknown header "
-msgstr "Entête inconnu "
+msgstr "Antet necunoscut "
 
 #: ping/ping6_common.c:472
 #, c-format
 msgid "Unknown option "
-msgstr "Option inconnue "
+msgstr "Opțiune necunoscută "
 
 #: ping/ping6_common.c:474
 #, c-format
 msgid "code %d "
-msgstr "code %d "
+msgstr "cod %d "
 
 #: ping/ping6_common.c:475
 #, c-format
 msgid "at %u"
-msgstr "à %u"
+msgstr "la %u"
 
 #: ping/ping6_common.c:478
 #, c-format
 msgid "Echo request"
-msgstr "Requête Echo"
+msgstr "Cerere de Ecou"
 
 #: ping/ping6_common.c:481
 #, c-format
 msgid "Echo reply"
-msgstr "Réponse Echo"
+msgstr "Răspuns Ecou"
 
 #: ping/ping6_common.c:484
 #, c-format
 msgid "MLD Query"
-msgstr "Requête MLD"
+msgstr "Interogare MLD"
 
 #: ping/ping6_common.c:487
 #, c-format
 msgid "MLD Report"
-msgstr "Rapport MLD"
+msgstr "Raport MLD"
 
 #: ping/ping6_common.c:490
 #, c-format
 msgid "MLD Reduction"
-msgstr "Réduction MLD"
+msgstr "Reducere MLD"
 
 #: ping/ping6_common.c:493
 #, c-format
 msgid "unknown icmp type: %u"
-msgstr "type ICMP inconnu : %u"
+msgstr "tip de icmp necunoscut: %u"
 
 #: ping/ping6_common.c:547 ping/ping.c:1480
 msgid "local error"
-msgstr "erreur locale"
+msgstr "eroare locală"
 
 #: ping/ping6_common.c:549
 #, c-format
 msgid "local error: message too long, mtu: %u"
-msgstr "erreur locale : le message est trop long : %u"
+msgstr "eroare locală: mesaj prea lung, mtu: %u"
 
 #: ping/ping6_common.c:571 ping/ping.c:1516
 #, c-format
 msgid "From %s icmp_seq=%u "
-msgstr "De %s icmp_seq=%u "
+msgstr "De la %s icmp_seq=%u "
 
 #: ping/ping6_common.c:677 ping/ping.c:1630
 #, c-format
@@ -582,166 +587,165 @@ msgstr " icmp_seq=%u"
 #: ping/ping6_common.c:701 ping/ping6_common.c:762
 #, c-format
 msgid " parse error (too short)"
-msgstr " erreur d’analyse (trop court)"
+msgstr " eroare de analizare (date prea scurte)"
 
 #: ping/ping6_common.c:715 ping/ping6_common.c:771
 #, c-format
 msgid " parse error (truncated)"
-msgstr " erreur d’analyse (tronqué)"
+msgstr " eroare de analizare (date trunchiate)"
 
 #: ping/ping6_common.c:775
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
-msgstr " erreur inattendue dans inet_ntop (%s)"
+msgstr " eroare neașteptată în inet_ntop(%s)"
 
 #: ping/ping6_common.c:784
 #, c-format
 msgid " (truncated)"
-msgstr " (tronqué)"
+msgstr " (trunchiat)"
 
 #: ping/ping6_common.c:803
 #, c-format
 msgid " unknown qtype(0x%02x)"
-msgstr " qtype inconnu (0x%02x)"
+msgstr " qtype necunoscut(0x%02x)"
 
 #: ping/ping6_common.c:807
 #, c-format
 msgid " refused"
-msgstr " refusé"
+msgstr " refuzat"
 
 #: ping/ping6_common.c:810
 #, c-format
 msgid " unknown"
-msgstr " inconnu"
+msgstr " necunoscut"
 
 #: ping/ping6_common.c:813
 #, c-format
 msgid " unknown code(%02x)"
-msgstr " code inconnu (%02x)"
+msgstr " cod necunoscut(%02x)"
 
 #: ping/ping6_common.c:815
 #, c-format
 msgid "; seq=%u;"
-msgstr "; seq=%u ;"
+msgstr "; seq=%u;"
 
 #: ping/ping6_common.c:856
 #, c-format
 msgid "packet too short: %d bytes"
-msgstr "paquet trop court : %d bytes"
+msgstr "pachet prea scurt: %d octeți"
 
 #: ping/ping6_common.c:923 ping/ping.c:1759
 #, c-format
 msgid "From %s: "
-msgstr "De %s : "
+msgstr "De la %s: "
 
 #: ping/ping6_common.c:964 ping/ping.c:1864
 msgid "WARNING: failed to install socket filter"
-msgstr "AVERTISSEMENT : échec de l’installation du filtre de socket"
+msgstr "AVERTISMENT: Instalarea filtrului de soclu a eșuat"
 
 #: ping/ping.c:103 ping/ping.c:724
 #, c-format
 msgid "unknown protocol family: %d"
-msgstr "famille de protocole inconnue : %d"
+msgstr "familie de protocoale necunoscută: %d"
 
 #: ping/ping.c:118
 #, c-format
 msgid "unknown sock type: %d"
-msgstr "Type de socket inconnu : %d"
+msgstr "tip de soclu necunoscut: %d"
 
 #: ping/ping.c:213
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr "=> capacité cap_net_raw+p ou setuid manquante ?"
+msgstr "=> lipsește capacitatea cap_net_raw+p sau setuid?"
 
 #: ping/ping.c:252
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr "le paramètre d'option contient des déchets : %s"
+msgstr "argumentul opțiunii conține gunoi: %s"
 
 #: ping/ping.c:253
 msgid "this will become fatal error in the future"
-msgstr "cela deviendra une erreur fatale dans le future"
+msgstr "aceasta va deveni o eroare fatală în viitor"
 
 #: ping/ping.c:287
 #, c-format
 msgid "bad value for flowinfo: %s"
-msgstr "mauvaise valeur pour les information de flux : %s"
+msgstr "valoare greșită pentru informațiile privind fluxul (flowinfo): %s"
 
 #: ping/ping.c:290
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
-msgstr "la valeur de flux est plus grande que 20 bits : %s"
+msgstr "valoarea fluxului este mai mare de 20 de biți: %s"
 
 #: ping/ping.c:312
 #, c-format
 msgid "bad TOS value: %s"
-msgstr "mauvaise valeur de TOS : %s"
+msgstr "valoare TOS greșită: %s"
 
 #: ping/ping.c:315
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr "la valeur décimale des bits TOS doit être entre 0 et 255 : %d"
+msgstr "valoarea zecimală a biților TOS trebuie să fie în intervalul 0-255: %d"
 
 #: ping/ping.c:398 ping/ping.c:432
 msgid "only one -4 or -6 option may be specified"
-msgstr "une seule option -4 ou -6 peut être renseignée"
+msgstr "poate fi specificată o singură opțiune „-4” sau „-6”"
 
 #: ping/ping.c:413 ping/ping.c:418
 msgid "only one of -T or -R may be used"
-msgstr "un seul parmi -T ou -R peut être utilisé"
+msgstr "poate fi utilizată doar una dintre opțiunile „-T” sau „-R”"
 
 #: ping/ping.c:427
 #, c-format
 msgid "invalid timestamp type: %s"
-msgstr "type de timestamp invalide : %s"
+msgstr "tip de marcă de timp nevalidă: %s"
 
 #: ping/ping.c:473
 msgid "bad timing interval"
-msgstr "mauvais intervalle de timing"
+msgstr "interval de cronometrare greșit"
 
 #: ping/ping.c:475
 #, c-format
 msgid "bad timing interval: %s"
-msgstr "mauvais intervalle de timing : %s"
+msgstr "interval de cronometrare greșit: %s"
 
 #: ping/ping.c:486
 #, c-format
 msgid "cannot copy: %s"
-msgstr "impossible de copier : %s"
+msgstr "nu se poate copia: %s"
 
 #: ping/ping.c:495
 #, c-format
 msgid "invalid source address: %s"
-msgstr "adresse source invalide : %s"
+msgstr "adresă sursă nevalidă: %s"
 
 #: ping/ping.c:509
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
-msgstr ""
-"impossible de définir une valeur de préchargement plus grande que 3 : %d"
+msgstr "nu se poate stabili preîncărcarea la o valoare mai mare de 3: %d"
 
 #: ping/ping.c:528
 #, c-format
 msgid "invalid -M argument: %s"
-msgstr "paramètre -M invalide : %s"
+msgstr "argument al opțiunii „-M” nevalid: %s"
 
 #: ping/ping.c:585
 msgid "bad linger time"
-msgstr "mauvais temps de persistance"
+msgstr "timp de persistență greșit"
 
 #: ping/ping.c:587
 #, c-format
 msgid "bad linger time: %s"
-msgstr "mauvais temps de persistance : %s"
+msgstr "timp de persistență greșit: %s"
 
 #: ping/ping.c:599
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
 msgstr ""
-"AVERTISSEMENT : Résolution DNS inverse (recherche PTR) désactivée, forcer "
-"avec -H"
+"AVERTISMENT: rezoluția DNS inversă (căutarea PTR) este dezactivată, poate fi "
+"activată forțat cu „-H”"
 
 #: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr "AVERTISSEMENT : ident 0 => raw socket forcé"
+msgstr "AVERTISMENT: ident 0 => se forțează soclul brut (neprocesat)"
 
 #: ping/ping.c:692
 #, c-format
@@ -749,33 +753,34 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
-"Avertissement : une adresse IPv6 link-local sur socket datagramme ICMP peut "
-"nécessité un ifname ou scope-id => utilisez : adresse%%<ifname|scope-id>"
+"Avertisment: adresa locală de legătură IPv6 din soclul datagramei ICMP poate "
+"necesita un nume de interfață sau un id de domeniul de aplicare => utilizați "
+"următoarele: adresa%%<nume-interfață|id-de-domeniul-de-aplicare>"
 
 #: ping/ping.c:869
 msgid "warning: QOS sockopts"
-msgstr "avertissement : QOS sockopts"
+msgstr "avertizare: sockopts QOS"
 
 #: ping/ping.c:880
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
 msgstr ""
-"Vous voulez faire un ping broadcast ? Alors utilisez -b, sinon veuillez "
-"vérifier les règles de votre pare-feu local."
+"Doriți să faceți ping la difuzare? Utilizați atunci opțiunea „-b”. Dacă nu, "
+"verificați regulile paravanului de protecție local"
 
 #: ping/ping.c:881
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
-msgstr "AVERTISSEMENT : ping de l’adresse de diffusion\n"
+msgstr "ATENȚIE: verificarea prin ping a adresei de difuzare\n"
 
 #: ping/ping.c:884 ping/ping.c:1039
 msgid "cannot set broadcasting"
-msgstr "impossible de définir la multidiffusion"
+msgstr "nu se poate configura difuzarea"
 
 #: ping/ping.c:905
 msgid "gatifaddrs failed"
-msgstr "échec de gatifaddrs"
+msgstr "gatifaddrs a eșuat"
 
 #: ping/ping.c:933
 #, c-format
@@ -783,45 +788,45 @@ msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"l'intervalle minimal de ping diffusé pour l'utilisateur doit être >=%d ms, "
-"utilisez -i %s (ou plus)"
+"intervalul minim pentru efectuarea unui ping de difuzare pentru utilizator "
+"trebuie să fie >= %d ms, utilizați „-i %s” (sau mai mare)"
 
 #: ping/ping.c:938
 msgid "broadcast ping does not fragment"
-msgstr "le ping diffusé ne fragmente pas"
+msgstr "ping-ul de difuzare nu este fragmentat"
 
 #: ping/ping.c:968
 msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr "AVERTISSEMENT : setsockopt(ICMP_FILTER)"
+msgstr "AVERTISMENT:: setsockopt(ICMP_FILTER)"
 
 #: ping/ping.c:973
 msgid "WARNING: your kernel is veeery old. No problems."
-msgstr "AVERTISSEMENT : votre noyau est trèèès vieux. Aucun problème."
+msgstr "AVERTISMENT: nucleul dvs. este foarte vechi. Nu este nicio problemă."
 
 #: ping/ping.c:977
 msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr "AVERTISSEMENT : setsockopt(IP_RECVTTL)"
+msgstr "AVERTISMENT: setsockopt(IP_RECVTTL)"
 
 #: ping/ping.c:979
 msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr "AVERTISSEMENT : setsockopt(IP_RETOPTS)"
+msgstr "AVERTISMENT: setsockopt(IP_RETOPTS)"
 
 #: ping/ping.c:1045
 msgid "cannot disable multicast loopback"
-msgstr "impossible de désactiver la boucle de retour pour la multidiffusion"
+msgstr "nu se poate dezactiva bucla de retur multi-difuzare"
 
 #: ping/ping.c:1050
 msgid "cannot set multicast time-to-live"
-msgstr "impossible de définir la durée de vie de la multidiffusion"
+msgstr "nu se poate defini durata de existență a multi-difuzării"
 
 #: ping/ping.c:1052
 msgid "cannot set unicast time-to-live"
-msgstr "impossible de définir la durée de vie de la monodiffusion"
+msgstr "nu se poate defini durata de existență a uni-difuzării (unicast)"
 
 #: ping/ping.c:1064
 #, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr "%d(%d) octets de données.\n"
+msgstr "%d(%d) octeți de date.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -839,12 +844,12 @@ msgid ""
 "%cSRR: "
 msgstr ""
 "\n"
-"%c SRR : "
+"%cSRR: "
 
 #: ping/ping.c:1145
 #, c-format
 msgid "\t(same route)"
-msgstr "\t(route identique)"
+msgstr "\t(aceeași rută)"
 
 #: ping/ping.c:1150
 #, c-format
@@ -853,7 +858,7 @@ msgid ""
 "RR: "
 msgstr ""
 "\n"
-"RR : "
+"RR: "
 
 #: ping/ping.c:1186
 #, c-format
@@ -862,27 +867,27 @@ msgid ""
 "TS: "
 msgstr ""
 "\n"
-"TS : "
+"TS: "
 
 #: ping/ping.c:1218
 #, c-format
 msgid "\t%ld absolute not-standard"
-msgstr "\t%ld absolut non standard"
+msgstr "\t%ld absolută nestandard"
 
 #: ping/ping.c:1220
 #, c-format
 msgid "\t%ld not-standard"
-msgstr "\t%ld non standard"
+msgstr "\t%ld nestandard"
 
 #: ping/ping.c:1224
 #, c-format
 msgid "\t%ld absolute"
-msgstr "\t%ld absolut"
+msgstr "\t%ld absolută"
 
 #: ping/ping.c:1235
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr "Sauts non comptabilités :%d\n"
+msgstr "Salturi neînregistrate: %d\n"
 
 #: ping/ping.c:1239
 #, c-format
@@ -891,12 +896,12 @@ msgid ""
 "unknown option %x"
 msgstr ""
 "\n"
-"option inconnue %x"
+"opțiune necunoscută %x"
 
 #: ping/ping.c:1259
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
+msgstr "Vr HL TOS  Lung  ID Fan  off TTL Pro  verif    Sursa   Dest Data\n"
 
 #: ping/ping.c:1260
 #, c-format
@@ -916,212 +921,212 @@ msgstr "  %02x  %02x %04x"
 #: ping/ping.c:1280
 #, c-format
 msgid "Echo Reply\n"
-msgstr "Réponse Echo\n"
+msgstr "Răspuns Ecou\n"
 
 #: ping/ping.c:1286
 #, c-format
 msgid "Destination Net Unreachable\n"
-msgstr "Réseau de destination injoignable\n"
+msgstr "Rețea de destinație inaccesibilă\n"
 
 #: ping/ping.c:1289
 #, c-format
 msgid "Destination Host Unreachable\n"
-msgstr "Hôte de destination injoignable\n"
+msgstr "Gazdă de destinație inaccesibilă\n"
 
 #: ping/ping.c:1292
 #, c-format
 msgid "Destination Protocol Unreachable\n"
-msgstr "Protocole de destination injoignable\n"
+msgstr "Protocol de destinație inaccesibil\n"
 
 #: ping/ping.c:1295
 #, c-format
 msgid "Destination Port Unreachable\n"
-msgstr "Port de destination injoignable\n"
+msgstr "Port de destinație inaccesibil\n"
 
 #: ping/ping.c:1298
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr "Fragmentation nécessaire et DF est défini (mtu = %u)\n"
+msgstr "Este necesară fragmentarea și definirea DF (mtu = %u)\n"
 
 #: ping/ping.c:1301
 #, c-format
 msgid "Source Route Failed\n"
-msgstr "Échec de la route source\n"
+msgstr "Ruta sursă a eșuat\n"
 
 #: ping/ping.c:1304
 #, c-format
 msgid "Destination Net Unknown\n"
-msgstr "Réseau de destination inconnu\n"
+msgstr "Rețea de destinație necunoscută\n"
 
 #: ping/ping.c:1307
 #, c-format
 msgid "Destination Host Unknown\n"
-msgstr "Hôte de destination inconnu\n"
+msgstr "Gazdă de destinație necunoscută\n"
 
 #: ping/ping.c:1310
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr "Hôte source isolé\n"
+msgstr "Gazdă sursă izolată\n"
 
 #: ping/ping.c:1313
 #, c-format
 msgid "Destination Net Prohibited\n"
-msgstr "Réseau de destination interdit\n"
+msgstr "Rețea de destinație interzisă\n"
 
 #: ping/ping.c:1316
 #, c-format
 msgid "Destination Host Prohibited\n"
-msgstr "Hôte de destination interdit\n"
+msgstr "Gazdă de destinație interzisă\n"
 
 #: ping/ping.c:1319
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr "Réseau de destination injoignable pour Type de service\n"
+msgstr "Rețea de destinație inaccesibilă pentru tipul de serviciu\n"
 
 #: ping/ping.c:1322
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
-msgstr "Hôte de destination injoignable pour Type de service\n"
+msgstr "Gazdă de destinație inaccesibilă pentru tipul de serviciu\n"
 
 #: ping/ping.c:1325
 #, c-format
 msgid "Packet filtered\n"
-msgstr "Paquet filtré\n"
+msgstr "Pachet filtrat\n"
 
 #: ping/ping.c:1328
 #, c-format
 msgid "Precedence Violation\n"
-msgstr "Violation de priorité\n"
+msgstr "Încălcarea priorității\n"
 
 #: ping/ping.c:1331
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr "Coupure de priorité\n"
+msgstr "Limită de prioritate\n"
 
 #: ping/ping.c:1334
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
-msgstr "Destination injoignable, mauvais code : %d\n"
+msgstr "Destinație inaccesibilă, cod greșit: %d\n"
 
 #: ping/ping.c:1341
 #, c-format
 msgid "Source Quench\n"
-msgstr "Terminaison de source\n"
+msgstr "Oprirea sursei\n"
 
 #: ping/ping.c:1348
 #, c-format
 msgid "Redirect Network"
-msgstr "Rediriger le réseau"
+msgstr "Redirecționarea rețelei"
 
 #: ping/ping.c:1351
 #, c-format
 msgid "Redirect Host"
-msgstr "Rediriger l'hôte"
+msgstr "Redirecționarea gazdei"
 
 #: ping/ping.c:1354
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr "Rediriger le type de service et réseau"
+msgstr "Redirecționarea tipului de serviciu și a rețelei"
 
 #: ping/ping.c:1357
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr "Rediriger le type de service et l'hôte"
+msgstr "Redirecționarea tipului de serviciu și a gazdei"
 
 #: ping/ping.c:1360
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr "Redirection, mauvais code : %d"
+msgstr "Redirecționare, cod greșit: %d"
 
 #: ping/ping.c:1371
 #, c-format
 msgid "(New nexthop: %s)\n"
-msgstr "(Nouveau sautsuivant : %s)\n"
+msgstr "(Noul salt următor: %s)\n"
 
 #: ping/ping.c:1377
 #, c-format
 msgid "Echo Request\n"
-msgstr "Requête Echo\n"
+msgstr "Cerere de Ecou\n"
 
 #: ping/ping.c:1383
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr "Durée de vie dépassée\n"
+msgstr "Durata de existență a fost depășită\n"
 
 #: ping/ping.c:1386
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr "Temps de réassemblage des fragments dépassé\n"
+msgstr "Timpul de reasamblare a fragmentelor a fost depășit\n"
 
 #: ping/ping.c:1389
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
-msgstr "Temps dépassé, mauvais code : %d\n"
+msgstr "Limita de timp a fost depășită, cod greșit: %d\n"
 
 #: ping/ping.c:1396
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr "Problème de paramètre : pointer = %u\n"
+msgstr "Problemă de parametru: indicator = %u\n"
 
 #: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
-msgstr "Horodatage\n"
+msgstr "Marca de timp\n"
 
 #: ping/ping.c:1406
 #, c-format
 msgid "Timestamp Reply\n"
-msgstr "Réponse timestamp\n"
+msgstr "Răspuns de la marca de timp\n"
 
 #: ping/ping.c:1410
 #, c-format
 msgid "Information Request\n"
-msgstr "Demande d'information\n"
+msgstr "Cerere de informații\n"
 
 #: ping/ping.c:1414
 #, c-format
 msgid "Information Reply\n"
-msgstr "Réponse d'information\n"
+msgstr "Răspuns la informații\n"
 
 #: ping/ping.c:1419
 #, c-format
 msgid "Address Mask Request\n"
-msgstr "Requête de masque d’adresse\n"
+msgstr "Cerere de mască de adresă\n"
 
 #: ping/ping.c:1424
 #, c-format
 msgid "Address Mask Reply\n"
-msgstr "Réponse de masque d’adresse\n"
+msgstr "Răspuns de mască de adresă\n"
 
 #: ping/ping.c:1428
 #, c-format
 msgid "Bad ICMP type: %d\n"
-msgstr "Mauvais type ICMP : %d\n"
+msgstr "Tip ICMP greșit: %d\n"
 
 #: ping/ping.c:1482
 #, c-format
 msgid "local error: message too long, mtu=%u"
-msgstr "erreur locale : le message est trop long : mtu=%u"
+msgstr "eroare locală: mesaj prea lung, mtu=%u"
 
 #: ping/ping.c:1655
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr "paquet trop court (%d bytes) de %s"
+msgstr "pachet prea scurt (%d octeți) de la %s"
 
 #: ping/ping.c:1734
 #, c-format
 msgid "From %s: icmp_seq=%u "
-msgstr "De %s : icmp_seq=%u "
+msgstr "De la %s: icmp_seq=%u "
 
 #: ping/ping.c:1737
 #, c-format
 msgid "(BAD CHECKSUM)"
-msgstr "(MAUVAISE SOMME DE CONTRÔLE)"
+msgstr "(SUMĂ DE CONTROL GREȘITĂ)"
 
 #: ping/ping.c:1761
 #, c-format
 msgid "(BAD CHECKSUM)\n"
-msgstr "(MAUVAISE SOMME DE CONTRÔLE)\n"
+msgstr "(SUMĂ DE CONTROL GREȘITĂ)\n"
 
 #: ping/ping_common.c:49
 #, c-format
@@ -1185,108 +1190,117 @@ msgid ""
 "For more details see ping(8).\n"
 msgstr ""
 "\n"
-"Utilisation\n"
-"  ping [options] <destination>\n"
+"Utilizare\n"
+"  ping [opțiuni] <destinație>\n"
 "\n"
-"Options :\n"
-"  <destination>      nom DNS ou adresse IP\n"
-"  -3                 précision RTT (ne pas arrondir le résultat)\n"
-"  -a                 utiliser le ping audible\n"
-"  -A                 utiliser le ping adaptatif\n"
-"  -B                 adresse source persistante\n"
-"  -c <nombre>        s'arrêter après <nombre> réponses\n"
-"  -C                 faire un appel au syscall connect() lors de la création "
-"d'un socket\n"
-"  -D                 afficher les horodatages\n"
-"  -d                 utiliser l'option de socket SO_DEBUG\n"
-"  -e <identifiant>   définir un identifiant pour la session de ping ; par "
-"défaut il est\n"
-"                     aléatoire pour SOCK_RAW et défini par le noyau pour "
-"SOCK_DGRAM\n"
-"                     L'utilisation de SOCK_RAW est implicite pour la valeur "
-"0 avec IPv4\n"
-"  -f                 inondation de pings\n"
-"  -h                 afficher l'aide et sortir\n"
-"  -H                 forcer la résolution DNS inverse (utile pour les "
-"destinations\n"
-"                     numériques ou pour -f), inverse de -n\n"
-"  -I <interface>     nom d'interface ou adresse\n"
-"  -i <intervalle>    secondes entre l'envoi de chaque paquet\n"
-"  -L                 ignorer le retour des paquets envoyés à une adresse "
-"multicast\n"
-"  -l <précharge>     envoyer <précharge> paquets en l'attente des réponses\n"
-"  -m <marque>        marquer les paquets sortants\n"
-"  -M <pmtud opt>     définir la stratégie Path MTU Discovery, options "
-"disponibles :\n"
-"                     <do|dont|want|probe>\n"
-"  -n                 désactiver la résolution DNS inverse, inverse de -H\n"
-"  -O                 rapporter les réponses en attente\n"
-"  -p <motif>         octets de remplissage\n"
-"  -q                 sortie silencieuse\n"
-"  -Q <tclass>        utiliser les bits de qualité de service <tclass>\n"
-"  -s <taille>        utiliser <taille> pour le nombre d'octets de données à "
-"envoyer\n"
-"  -S <taille>        utiliser <taille> comme valeur de l'option de socket "
-"SO_SNDBUF\n"
-"  -t <ttl>           définir le Time-to-Live\n"
-"  -U                 afficher la latence utilisateur à utilisateur\n"
-"  -v                 sortie verbeuse\n"
-"  -V                 afficher la version et sortir\n"
-"  -w <limite>        attendre des réponses pendant <limite> secondes\n"
-"  -W <expiration>    durée d'attente d'une réponse\n"
+"Opțiuni:\n"
+"  <destinație>           nume DNS sau adresă IP\n"
+"  -3                     precizie RTT (nu rotunjește timpul rezultat)\n"
+"  -a                     utilizează ping audibil\n"
+"  -A                     utilizează ping adaptiv\n"
+"  -B                     adresă sursă lipicioasă\n"
+"  -c <număr>             oprire după <număr> răspunsuri\n"
+"  -C                     apelează apelul de sistem connect() la crearea "
+"soclului\n"
+"  -D                     imprimă mărcile de timp\n"
+"  -d                     utilizează opțiunea SO_DEBUG pentru soclu\n"
+"  -e <identificator>     definește identificatorul pentru sesiunea ping, "
+"implicit\n"
+"                         este aleatoriu pentru SOCK_RAW și definit de "
+"nucleu\n"
+"                         pentru SOCK_DGRAM\n"
+"                         Implică utilizarea SOCK_RAW (pentru IPv4 numai "
+"pentru\n"
+"                         identificatorul 0)\n"
+"  -f                     ping de inundare\n"
+"  -h                     afișează ajutorul și iese\n"
+"  -H                     forțează rezoluția inversă a numelui DNS (util "
+"pentru\n"
+"                         destinații numerice sau pentru „-f”), suprascrie "
+"„-n”\n"
+"  -I <interfață>         numele sau adresa interfeței\n"
+"  -i <interval>          secunde între trimiterea fiecărui pachet\n"
+"  -L                     suprimă bucla de retur a pachetelor multi-difuzare\n"
+"  -l <preîncărcare>      trimite <preîncărcare> număr de pachete în "
+"așteptarea\n"
+"                         răspunsurilor\n"
+"  -m <marca>             etichetează pachetele care pleacă\n"
+"  -M <opțiuni-pmtud>     definește descoperirea MTU a rutei, poate fi una "
+"dintre\n"
+"                         <do|dont|want|probe>\n"
+"  -n                     fără rezoluție inversă a numelui DNS, suprascrie "
+"„-H”\n"
+"  -O                     raportează răspunsurile restante\n"
+"  -p <model>             conținutul octetului de umplere\n"
+"  -q                     ieșire silențioasă\n"
+"  -Q <tclass>            utilizează calitatea serviciului <tclass> biți\n"
+"  -s <dimensiune>        utilizează <dimensiune> ca număr de octeți de date "
+"care\n"
+"                         urmează să fie trimiși\n"
+"  -S <dimensiune>        utilizează <dimensiune> ca valoare a opțiunii de "
+"soclu\n"
+"                         SO_SNDBUF\n"
+"  -t <ttl>               definește durata de existență\n"
+"  -U                     imprimă latența de la utilizator la utilizator\n"
+"  -v                     ieșire detaliată\n"
+"  -V                     afișează versiunea și iese\n"
+"  -w <timp-limită>       <timp-limită> de așteptare a răspunsului în "
+"secunde\n"
+"  -W <timp-așteptare>    timpul de așteptare pentru răspuns\n"
 "\n"
-"Options relatives à IPv4 :\n"
-"  -4                 utiliser IPv4\n"
-"  -b                 autoriser l'envoi de pings à l'adresse de diffusion\n"
-"  -R                 enregistrer l'itinéraire\n"
-"  -T <horodatage>    définir l'horodatage, options disponibles :\n"
-"                     <tsonly|tsandaddr|tsprespec>\n"
+"Opțiuni IPv4:\n"
+"  -4 utilizează IPv4\n"
+"  -b                     permite emiterea de ping-uri de difuzare\n"
+"  -R                     înregistrează ruta\n"
+"  -T <marca-de-timp>     definește marca de timp, poate fi una dintre\n"
+"                         <tsonly|tsandaddr|tsprespec>\n"
 "\n"
-"Options relatives à IPv6 :\n"
-"  -6                 utiliser IPv6\n"
-"  -F <flowlabel>     définir le flow label ; par défaut, il est aléatoire\n"
-"  -N <nodeinfo opt>  utiliser les IPv6 Node Information Queries, essayez "
-"<help>\n"
-"                     en argument\n"
+"Opțiuni IPv6:\n"
+"  -6                     utilizează IPv6\n"
+"  -F <etichetă-flux>     definește eticheta fluxului, implicit este „random”"
 "\n"
-"Pour plus de détails, consultez ping(8).\n"
+"  -N <opțiuni-info_nod>  utilizează interogarea IPv6 cu informații despre "
+"nod,\n"
+"                         încercați <help> ca argument\n"
+"\n"
+"Pentru mai multe detalii, consultați ping(8).\n"
 
 #: ping/ping_common.c:218
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
-msgstr "les patterns doivent être définis en lettres hexadécimales : %s"
+msgstr "modelele trebuie specificate ca cifre hexazecimale: %s"
 
 #: ping/ping_common.c:233
 #, c-format
 msgid "PATTERN: 0x"
-msgstr "MOTIF : 0x"
+msgstr "MODEL: 0x"
 
 #: ping/ping_common.c:353
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
-msgstr "encore aucune réponse pour icmp_seq=%lu\n"
+msgstr "niciun răspuns încă pentru icmp_seq=%lu\n"
 
 #: ping/ping_common.c:457
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr ""
-"AVERTISSEMENT : probablement, le rcvbuf n’est pas suffisant pour maintenir "
-"le préchargement"
+"AVERTISMENT: probabil, rcvbuf nu este suficient pentru a menține "
+"preîncărcarea"
 
 #: ping/ping_common.c:476
 #, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr "AVERTISSEMENT : échec de définition du repère : %u"
+msgstr "AVERTISMENT: nu s-a reușit definirea mărcii: %u"
 
 #: ping/ping_common.c:479
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
 msgstr ""
-"=> capacité cap_net_admin+p ou cap_net_raw+p (à partir de Linux 5.17) "
-"manquante ?"
+"=> capacitatea cap_net_admin+p sau cap_net_raw+p (începând cu Linux 5.17) "
+"lipsește?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
-msgstr "AVERTISSEMENT : SO_MARK n'est pas pris en charge"
+msgstr "AVERTISMENT: SO_MARK nu este acceptat"
 
 #: ping/ping_common.c:500
 #, c-format
@@ -1294,29 +1308,28 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"impossible d'inonder, intervalle minimal pour l'utilisateur doit être >= "
-"%d ms, utilisez -i %s (ou plus)"
+"nu se poate inunda, intervalul minim pentru utilizator trebuie să fie >= %d "
+"ms, utilizați „-i %s” (sau mai mare)"
 
 #: ping/ping_common.c:504
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr "préchargement et/ou intervalle irrégulier : %d"
+msgstr "preîncărcare și/sau interval ilegal: %d"
 
 #: ping/ping_common.c:516
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr ""
-"Avertissement : pas de prise de charge de SO_TIMESTAMP, retour à SIOCGSTAMP"
+"Avertisment: nu există suport pentru SO_TIMESTAMP, se revine la SIOCGSTAMP"
 
 #: ping/ping_common.c:759
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr ""
-"Avertissement : l'heure de la journée recule (%ldus), prise de contre-mesures"
+msgstr "Avertizare: ora zilei merge înapoi (%ldus), se iau contramăsuri"
 
 #: ping/ping_common.c:809
 #, c-format
 msgid "%d bytes from %s:"
-msgstr "%d octets de %s :"
+msgstr "%d octeți din %s:"
 
 #: ping/ping_common.c:815
 #, c-format
@@ -1331,42 +1344,42 @@ msgstr " ttl=%d"
 #: ping/ping_common.c:821
 #, c-format
 msgid " (truncated)\n"
-msgstr " (tronqué)\n"
+msgstr " (trunchiat)\n"
 
 #: ping/ping_common.c:826 ping/ping_common.c:836
 #, c-format
 msgid " time=%ld.%03ld ms"
-msgstr " temps=%ld.%03ld ms"
+msgstr " timp=%ld.%03ld ms"
 
 #: ping/ping_common.c:828
 #, c-format
 msgid " time=%ld ms"
-msgstr " temps=%ld ms"
+msgstr " timp=%ld ms"
 
 #: ping/ping_common.c:830
 #, c-format
 msgid " time=%ld.%01ld ms"
-msgstr " temps=%ld.%01ld ms"
+msgstr " timp=%ld.%01ld ms"
 
 #: ping/ping_common.c:833
 #, c-format
 msgid " time=%ld.%02ld ms"
-msgstr " temps=%ld.%02ld ms"
+msgstr " timp=%ld.%02ld ms"
 
 #: ping/ping_common.c:841
 #, c-format
 msgid " (DUP!)"
-msgstr " (DUPLIQUÉ !)"
+msgstr " (DUP!)"
 
 #: ping/ping_common.c:843
 #, c-format
 msgid " (BAD CHECKSUM!)"
-msgstr " (MAUVAISE SOMME DE CONTRÔLE !)"
+msgstr " (SUMĂ DE CONTROL GREȘITĂ!)"
 
 #: ping/ping_common.c:845
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr " (ADRESSE DIFFÉRENTE !)"
+msgstr " (ADRESĂ DIFERITĂ!)"
 
 #: ping/ping_common.c:852
 #, c-format
@@ -1375,72 +1388,72 @@ msgid ""
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
 "\n"
-"octet de données incorrect #%d devrait être 0x%x mais était 0x%x"
+"octet de date greșit #%d ar trebui să fie 0x%x, dar a fost 0x%x"
 
 #: ping/ping_common.c:895
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr "--- statistiques ping %s ---\n"
+msgstr "--- statistici ping %s ---\n"
 
 #: ping/ping_common.c:896
 #, c-format
 msgid "%ld packets transmitted, "
-msgstr "%ld paquets transmis, "
+msgstr "%ld pachete transmise, "
 
 #: ping/ping_common.c:897
 #, c-format
 msgid "%ld received"
-msgstr "%ld reçus"
+msgstr "%ld primite"
 
 #: ping/ping_common.c:899
 #, c-format
 msgid ", +%ld duplicates"
-msgstr ", +%ld dupliqués"
+msgstr ", +%ld duplicate"
 
 #: ping/ping_common.c:901
 #, c-format
 msgid ", +%ld corrupted"
-msgstr ", +%ld corrompus"
+msgstr ", +%ld corupte"
 
 #: ping/ping_common.c:903
 #, c-format
 msgid ", +%ld errors"
-msgstr ", +%ld erreurs"
+msgstr ", +%ld erori"
 
 #: ping/ping_common.c:909
 #, c-format
 msgid ", %g%% packet loss"
-msgstr ", %g %% paquets perdus"
+msgstr ", %g%% pierderi de pachete"
 
 #: ping/ping_common.c:911
 #, c-format
 msgid ", time %llums"
-msgstr ", temps %llu ms"
+msgstr ", timp %llums"
 
 #: ping/ping_common.c:931
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr "rtt min/moy/max/mdev = %ld,%03ld/%lu,%03ld/%ld,%03ld/%ld,%03ld ms"
+msgstr "rtt min/med/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:939
 #, c-format
 msgid "%spipe %d"
-msgstr "%s tuyau %d"
+msgstr "%sconductă %d"
 
 #: ping/ping_common.c:946
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr "%s ipg/mmpe %d.%03d/%d.%03d ms"
+msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
 #: ping/ping_common.c:964
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
-msgstr "%ld/%ld paquets, %d %% perdus"
+msgstr "%ld/%ld pachete, %d%% pierdere"
 
 #: ping/ping_common.c:969
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ", min/moy/mmpe/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
+msgstr ", min/med/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: tracepath.c:218
 #, c-format
@@ -1448,7 +1461,7 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
-"cmsg6 :%d\n"
+"cmsg6:%d\n"
 " "
 
 #: tracepath.c:230
@@ -1457,13 +1470,13 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
-"cmsg4 :%d\n"
+"cmsg4:%d\n"
 " "
 
 #: tracepath.c:235
 #, c-format
 msgid "no info\n"
-msgstr "aucune info\n"
+msgstr "nicio informație\n"
 
 #: tracepath.c:239
 msgid "[LOCALHOST]"
@@ -1472,12 +1485,12 @@ msgstr "[LOCALHOST]"
 #: tracepath.c:287
 #, c-format
 msgid "%3lld.%03ldms "
-msgstr "%3lld.%03ld ms "
+msgstr "%3lld.%03ldms "
 
 #: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr "(Ce routeur défectueux renvoie des charges utiles corrompues) "
+msgstr "(Acest router defectuos a returnat date corupte) "
 
 #: tracepath.c:306
 #, c-format
@@ -1487,7 +1500,7 @@ msgstr "pmtu %d\n"
 #: tracepath.c:311
 #, c-format
 msgid "reached\n"
-msgstr "atteint\n"
+msgstr "atins\n"
 
 #: tracepath.c:328
 #, c-format
@@ -1496,17 +1509,17 @@ msgstr "asymm %2d "
 
 #: tracepath.c:343
 msgid "NET ERROR"
-msgstr "ERREUR RESEAU"
+msgstr "EROARE DE REȚEA"
 
 #: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
-msgstr "%2d ? : réponse reçue 8)\n"
+msgstr "%2d?: răspuns primit 8)\n"
 
 #: tracepath.c:394
 #, c-format
 msgid "%2d:  send failed\n"
-msgstr "%2d :  échec envoi\n"
+msgstr "%2d: trimiterea a eșuat\n"
 
 #: tracepath.c:401
 #, c-format
@@ -1529,138 +1542,47 @@ msgid ""
 "For more details see tracepath(8).\n"
 msgstr ""
 "\n"
-"Utilisation\n"
-"  tracepath [options] <destination>\n"
+"Utilizare\n"
+"  tracepath [opțiuni] <destinație>\n"
 "\n"
-"Options :\n"
-"  -4             utiliser IPv4\n"
-"  -6             utiliser IPv6\n"
-"  -b             afficher le nom et l’IP\n"
-"  -l <taille>    utiliser des paquets de taille <taille>\n"
-"  -m <sauts>      utiliser au maximum <sauts> sauts\n"
-"  -n             pas de résolution de nom de domaine DNS\n"
-"  -p <port>      utiliser le port de destination <port>\n"
-"  -V             afficher la version et quitter\n"
-"  <destination>  nom DNS ou adresse IP\n"
+"Opțiuni:\n"
+"  -4            utilizează IPv4\n"
+"  -6            utilizează IPv6\n"
+"  -b            afișează atât numele, cât și adresa IP\n"
+"  -l <lungime>  utilizează <lungimea> pachetului\n"
+"  -m <salturi>  utilizează maxim <salturi> salturi\n"
+"  -n            fără rezoluție DNS inversă a numelui\n"
+"  -p <port>     utilizează destinația <port>\n"
+"  -V            afișează versiunea și iese\n"
+"  <destinație>  nume DNS sau adresă IP\n"
 "\n"
-"Pour plus de détails, consultez tracepath(8).\n"
+"Pentru mai multe detalii, consultați tracepath(8).\n"
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
-msgstr "Seule l’option -4 ou -6 peut être spécifiée"
+msgstr "Poate fi specificată o singură opțiune „-4” sau „-6”"
 
 #: tracepath.c:607
 #, c-format
 msgid "%2d:  no reply\n"
-msgstr "%2d :  aucune réponse\n"
+msgstr "%2d: fără răspuns\n"
 
 #: tracepath.c:614
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr "     Reprise : pmtu %d "
+msgstr "     Rezumat: pmtu %d "
 
 #: tracepath.c:616
 #, c-format
 msgid "hops %d "
-msgstr "sauts %d "
+msgstr "salturi %d "
 
 #: tracepath.c:618
 #, c-format
 msgid "back %d "
-msgstr "retour %d "
+msgstr "returnare %d "
 
 #: tracepath.c:623
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr "pktlen doit être entre : %d < valeur <= %d"
-
-#, c-format
-#~ msgid "local error: %s"
-#~ msgstr "erreur locale : %s"
-
-#, c-format
-#~ msgid "PING %s(%s) "
-#~ msgstr "PING %s(%s) "
-
-#, c-format
-#~ msgid ""
-#~ "\n"
-#~ "Usage:\n"
-#~ "  traceroute6 [options] <destination>\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -d            use SO_DEBUG socket option\n"
-#~ "  -i <device>   bind to <device>\n"
-#~ "  -m <hops>     use maximum <hops>\n"
-#~ "  -n            no dns name resolution\n"
-#~ "  -p <port>     use destination <port>\n"
-#~ "  -q <nprobes>  number of probes\n"
-#~ "  -r            use SO_DONTROUTE socket option\n"
-#~ "  -s <address>  use source <address>\n"
-#~ "  -v            verbose output\n"
-#~ "  -w <timeout>  time to wait for response\n"
-#~ "\n"
-#~ "For more details see traceroute6(8).\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Utilisation :\n"
-#~ "  traceroute6 [options] <destination>\n"
-#~ "\n"
-#~ "Options :\n"
-#~ "  -d            utiliser l’option de socket SO_DEBUG\n"
-#~ "  -i <périphérique>   lier à <périphérique>\n"
-#~ "  -m <sauts>     utiliser au maximum <sauts>\n"
-#~ "  -n            pas de résolution de nom DNS\n"
-#~ "  -p <port>     utiliser le <port> de destionation\n"
-#~ "  -q <nessai>  nombre d’essais\n"
-#~ "  -r            utiliser l’option de socket SO_DONTROUTE\n"
-#~ "  -s <adresse>  utiliser l’<adresse> source\n"
-#~ "  -v            affichage verbeux\n"
-#~ "  -w <délai>  délai d’attente pour la réponse\n"
-#~ "\n"
-#~ "Pour plus de détails, consultez traceroute6(8).\n"
-
-#, c-format
-#~ msgid "  %.4f ms"
-#~ msgstr "  %.4f ms"
-
-#, c-format
-#~ msgid " from %s"
-#~ msgstr " de %s"
-
-#, c-format
-#~ msgid ", %d hops max, %d byte packets\n"
-#~ msgstr ", %d sauts max, %d paquets d’octets\n"
-
-#~ msgid "Destination Unreachable"
-#~ msgstr "Destination injoignable"
-
-#~ msgid "Echo Reply"
-#~ msgstr "Réponse Echo"
-
-#~ msgid "Echo Request"
-#~ msgstr "Requête Echo"
-
-#~ msgid "Error"
-#~ msgstr "Erreur"
-
-#~ msgid "Home Agent Address Discovery Reply message"
-#~ msgstr "Message de réponse de découverte de l'adresse de l'agent d'origine"
-
-#~ msgid "Home Agent Address Discovery Request Message"
-#~ msgstr "Message de demande de découverte de l'adresse de l'agent d'origine"
-
-#~ msgid "Membership Query"
-#~ msgstr "Requête d'appartenance"
-
-#~ msgid "Membership Reduction"
-#~ msgstr "Réduction d'appartenance"
-
-#~ msgid "Membership Report"
-#~ msgstr "Rapport d'appartenance"
-
-#~ msgid "OUT-OF-RANGE"
-#~ msgstr "HORS DE PORTÉE"
-
-#~ msgid "Packet Too Big"
-#~ msgstr "Paquet trop grand"
+msgstr "pktlen trebuie să fie cuprins între: %d < valoare <= %d"

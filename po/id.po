@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-02 18:28+0200\n"
-"PO-Revision-Date: 2024-09-03 17:02+0000\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"PO-Revision-Date: 2024-10-05 05:38+0000\n"
+"Last-Translator: Harry Suryapambagya <harsxv@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/id/>\n"
 "Language: id\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.7.1\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: arping.c:123
 #, c-format
@@ -238,7 +238,7 @@ msgstr ""
 "  -I            alias dari --time-format=iso\n"
 "  -h, --help    tampilkan bantuan\n"
 "  -V, --version tampilkan versi dan keluar\n"
-"  <destination> nama DNS atau alamat IP\n"
+"  <tujuan> nama DNS atau alamat IP\n"
 "\n"
 "Untuk lebih jelasnya lihat clockdiff(8).\n"
 
@@ -747,7 +747,7 @@ msgstr ""
 
 #: ping/ping.c:869
 msgid "warning: QOS sockopts"
-msgstr "warning: QOS sockopts"
+msgstr "peringatan: QOS sockopts"
 
 #: ping/ping.c:880
 msgid ""
@@ -785,7 +785,7 @@ msgstr "ping broadcast tidak terfragmentasi"
 
 #: ping/ping.c:968
 msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr "WARNING: setsockopt(ICMP_FILTER)"
+msgstr "PERINGATAN: setsockopt(ICMP_FILTER)"
 
 #: ping/ping.c:973
 msgid "WARNING: your kernel is veeery old. No problems."
@@ -793,11 +793,11 @@ msgstr "WARNING: kernel Anda terlalu tua. Tidak ada masalah."
 
 #: ping/ping.c:977
 msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr "WARNING: setsockopt(IP_RECVTTL)"
+msgstr "PERINGATAN: setsockopt(IP_RECVTTL)"
 
 #: ping/ping.c:979
 msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr "WARNING: setsockopt(IP_RETOPTS)"
+msgstr "PERINGATAN: setsockopt(IP_RETOPTS)"
 
 #: ping/ping.c:1045
 msgid "cannot disable multicast loopback"
@@ -1059,7 +1059,7 @@ msgstr "Masalah parameter: pointer = %u\n"
 #: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
-msgstr "Timestamp\n"
+msgstr "Cap waktu\n"
 
 #: ping/ping.c:1406
 #, c-format
@@ -1219,7 +1219,7 @@ msgstr ""
 "  -U                 cetak latensi pengguna ke pengguna\n"
 "  -v                 keluaran rinci\n"
 "  -V                 cetak versi dan keluar\n"
-"  -w <deadline>      <deadline> tunggu jawaban dalam detik\n"
+"  -w <tenggat>      <tenggat> tunggu jawaban dalam detik\n"
 "  -W <timeout>       waktu menunggu respon\n"
 "\n"
 "opsi IPv4:\n"
@@ -1519,11 +1519,11 @@ msgstr ""
 "  -4             gunakan IPv4\n"
 "  -6             gunakan IPv6\n"
 "  -b             tampilkan nama dan IP\n"
-"  -l <panjang>   panjang paket <panjang>\n"
-"  -m <hop>       hop maksimum <hop>\n"
+"  -l <panjang>   gunakan paket <panjang>\n"
+"  -m <hop>       gunakan maksimum <hop>\n"
 "  -n             tanpa resolusi nama DNS terbalik\n"
-"  -p <port>      port <port>\n"
-"  -V             tampilkan versi\n"
+"  -p <port>      gunakan tujuan <port>\n"
+"  -V             tampilkan versi dan keluar\n"
 "  <tujuan>       nama DNS atau alamat IP\n"
 "\n"
 "Untuk lebih jelasnya lihat tracepath(8).\n"
