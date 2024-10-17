@@ -353,6 +353,7 @@ main(int argc, char **argv)
 		.ni.subject_type = -1,
 	};
 	unsigned char buf[sizeof(struct in6_addr)];
+	struct in6_addr a6;
 
 	/* FIXME: global_rts will be removed in future */
 	global_rts = &rts;
@@ -618,6 +619,15 @@ main(int argc, char **argv)
 			error(0, 0, _("WARNING: ident 0 => forcing raw socket"));
 
 		hints.ai_socktype = SOCK_RAW;
+	}
+
+	if (inet_pton(AF_INET6, target, &a6)) {
+		if (IN6_IS_ADDR_V4MAPPED(&a6)) {
+			target = strrchr(target, ':') + 1;
+			hints.ai_family = AF_INET;
+			if (rts.opt_verbose)
+				printf("IPv4-Mapped-in-IPv6 address; using IPv4 %s\n", target);
+		}
 	}
 
 	if (hints.ai_family != AF_INET6) {
