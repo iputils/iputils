@@ -90,7 +90,9 @@ configure()
 build()
 {
 	echo "=== build ==="
-	make -j$(getconf _NPROCESSORS_ONLN)
+	# meson compile available since 0.54
+	# https://mesonbuild.com/Commands.html#compile
+	ninja -C $BUILD_DIR -v
 }
 
 check_binaries()
@@ -127,7 +129,9 @@ check_binaries()
 install()
 {
 	echo "=== install ==="
-	make install
+	# meson install -C $BUILD_DIR support since 0.57.0
+	# https://mesonbuild.com/Installing.html#destdir-support
+	ninja -C $BUILD_DIR install
 }
 
 dist()
@@ -152,13 +156,9 @@ run_tests()
 	local ret
 
 	echo "=== tests ==="
-	cd $BUILD_DIR
-
-	meson test
+	meson test  -C $BUILD_DIR
 	ret=$?
 	echo "$ret test failures"
-
-	cd - > /dev/null
 
 	exit $ret
 }
