@@ -675,7 +675,7 @@ main(int argc, char **argv)
 
 	if (rts.opt_verbose)
 		error(0, 0, "sock4.fd: %d (socktype: %s), sock6.fd: %d (socktype: %s),"
-			   " hints.ai_family: %s\n",
+			   " hints.ai_family: %s",
 			   sock4.fd, str_socktype(sock4.socktype),
 			   sock6.fd, str_socktype(sock6.socktype),
 			   str_family(hints.ai_family));
@@ -708,7 +708,7 @@ main(int argc, char **argv)
 
 	for (ai = result; ai; ai = ai->ai_next) {
 		if (rts.opt_verbose)
-			printf("ai->ai_family: %s, ai->ai_canonname: '%s'\n",
+			error(0, 0, "ai->ai_family: %s, ai->ai_canonname: '%s'",
 				   str_family(ai->ai_family),
 				   ai->ai_canonname ? ai->ai_canonname : "");
 
