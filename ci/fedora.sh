@@ -11,6 +11,7 @@ yum -y install \
 	gettext \
 	git \
 	iproute \
+	jq \
 	libcap-devel \
 	libxslt \
 	make \

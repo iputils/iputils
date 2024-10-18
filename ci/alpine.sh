@@ -13,8 +13,9 @@ apk add \
 	file \
 	gcc \
 	git \
-	iproute2 \
 	gettext-dev \
+	iproute2 \
+	jq \
 	libcap-dev \
 	libxslt \
 	make \

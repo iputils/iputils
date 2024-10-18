@@ -133,7 +133,7 @@ install()
 dist()
 {
 	local formats="xztar,gztar,zip"
-	local tag="$(date +%Y%m%d)"
+	local tag="$(meson introspect $BUILD_DIR --projectinfo | jq -r '.version')"
 	local f
 
 	echo "=== dist ($formats) ==="
