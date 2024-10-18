@@ -18,7 +18,6 @@ apk add \
 	jq \
 	libcap-dev \
 	libxslt \
-	make \
 	meson \
 	musl-dev \
 	pkgconfig

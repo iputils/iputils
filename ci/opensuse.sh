@@ -17,7 +17,6 @@ zypper --non-interactive install --no-recommends \
 	libcap-progs \
 	libidn2-devel \
 	libxslt-tools \
-	make \
 	meson \
 	ninja \
 	pkg-config

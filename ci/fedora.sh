@@ -14,7 +14,6 @@ yum -y install \
 	jq \
 	libcap-devel \
 	libxslt \
-	make \
 	pkg-config
 
 if [ "$(basename $0)" = "centos.sh" ] || [ "$(basename $0)" = "rockylinux.sh" ]; then

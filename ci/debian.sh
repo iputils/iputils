@@ -26,7 +26,6 @@ apt install -y --no-install-recommends \
 	jq \
 	libcap-dev \
 	libidn2-0-dev \
-	make \
 	meson \
 	pkg-config \
 	xsltproc
