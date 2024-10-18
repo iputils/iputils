@@ -670,7 +670,7 @@ main(int argc, char **argv)
 		max_s = ICMPV6_MAX_DATALEN;
 
 	if (rts.datalen > max_s)
-		error(EXIT_FAILURE, 0, "invalid -s value: '%d': out of range: 0 <= value <= %d",
+		error(EXIT_FAILURE, 0, _("invalid -s value: '%d': out of range: 0 <= value <= %d"),
 		      rts.datalen, max_s);
 
 	if (rts.opt_verbose)
