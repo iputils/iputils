@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-09-03 06:23+0000\n"
+"PO-Revision-Date: 2024-10-19 18:38+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.1\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: arping.c:123
 #, c-format
@@ -743,12 +743,13 @@ msgstr "გაფრთხილება: ident 0 => raw ტიპის სო
 #: ping/ping.c:629
 #, c-format
 msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
-msgstr ""
+msgstr "IPv4 ასახული IPv6 მისამართზე. გამოიყენება IPv4 %s"
 
 #: ping/ping.c:673
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
 msgstr ""
+"არასწორი მნიშვნელობა -s-სთვის: '%d': შუალედს გარეთაა: 0 <= მნიშვნელობა <= %d"
 
 #: ping/ping.c:701
 #, c-format
