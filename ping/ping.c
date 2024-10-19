@@ -354,6 +354,7 @@ main(int argc, char **argv)
 	};
 	unsigned char buf[sizeof(struct in6_addr)];
 	struct in6_addr a6;
+	char dotted_decimal[16];
 
 	/* FIXME: global_rts will be removed in future */
 	global_rts = &rts;
@@ -622,8 +623,18 @@ main(int argc, char **argv)
 	}
 
 	if (inet_pton(AF_INET6, target, &a6) && IN6_IS_ADDR_V4MAPPED(&a6)) {
-			target = strrchr(target, ':') + 1;
+			target = strchr(target + 2, 'f') + 5;
 			hints.ai_family = AF_INET;
+			if (strchr(target, '.') == NULL)  {
+				/* not a dotted decimal encoding; must be hexadecimal: anything from 0:0 to ffff:ffff */
+				unsigned int word_hi, word_lo;
+				if( sscanf(target, "%4x:%4x", &word_hi, &word_lo) == 2) {
+					sprintf(dotted_decimal, "%d.%d.%d.%d",
+						(word_hi & 0xff00) >> 8, (word_hi & 0x00ff),
+						(word_lo & 0xff00) >> 8, word_lo & 0x00ff);
+					target = dotted_decimal;
+				}
+			}
 
 			if (rts.opt_verbose)
 				error(0, 0, _("IPv4-Mapped-in-IPv6 address, using IPv4 %s"), target);
