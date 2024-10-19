@@ -722,9 +722,6 @@ main(int argc, char **argv)
 			break;
 		case AF_INET6:
 			if( SA6_IS_ADDR_V4MAPPED( ai->ai_addr ) ) { // if ipv6 is actually a masked ipv4 address
-				if (rts.opt_verbose)
-					error(0, 0, _("IPv4-Mapped-in-IPv6 address, using IPv4 %s"), target);
-
 				// compose an ipv4 addressinfo record valid *only* for a call to ping4_run:
 				struct sockaddr_in sa4;
 				memset( &sa4, 0, sizeof( struct sockaddr_in ) );   // optional: zero out this sockaddr_in
@@ -733,6 +730,13 @@ main(int argc, char **argv)
 				const int IPV4_OFFSET_IN_IPV6 = sizeof( struct in6_addr ) - sizeof( struct in_addr ); // 12
 				// copy ipv4 part of ipv6 into ipv4 record:
 				memcpy( &sa4.sin_addr, ( ( char * ) &( (struct sockaddr_in6 * ) ai->ai_addr)->sin6_addr ) + IPV4_OFFSET_IN_IPV6, sizeof( struct in_addr ) );
+
+				if (rts.opt_verbose) {
+					char strIpv4[ 16 ]; // max len of an ipv4 address in decimal representation: 16 == 4 times 3 digits + 3 dots + terminating zero-byte
+					unsigned char * ipBytes = ( unsigned char * ) &sa4.sin_addr;
+					snprintf ( strIpv4, sizeof( strIpv4 ), "%u.%u.%u.%u", ipBytes[0], ipBytes[1], ipBytes[2], ipBytes[3] );
+					error(0, 0, _("IPv4-Mapped-in-IPv6 address, using IPv4 %s (%s)"), strIpv4, target);
+				}
 
 				struct addrinfo ai4;
 				ai4.ai_flags = 0;                // TBD by someone smarter than me: does this matter for ping?
