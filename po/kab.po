@@ -7,8 +7,9 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-10-03 15:38+0000\n"
-"Last-Translator: ButterflyOfFire <butterflyoffire@protonmail.com>\n"
+"PO-Revision-Date: 2024-10-19 18:38+0000\n"
+"Last-Translator: ButterflyOfFire <butterflyoffire@users.noreply.translate."
+"fedoraproject.org>\n"
 "Language-Team: Kabyle <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/kab/>\n"
 "Language: kab\n"
@@ -1286,7 +1287,7 @@ msgstr ""
 #: ping/ping_common.c:964
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
-msgstr "%ld/%ld ikemmas, %d%% iruḥen"
+msgstr "%ld/%ld ikemmusen, %d%% iruḥen"
 
 #: ping/ping_common.c:969
 #, c-format
