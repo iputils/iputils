@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-10-03 15:38+0000\n"
+"PO-Revision-Date: 2024-10-19 18:38+0000\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ro/>\n"
@@ -750,12 +750,12 @@ msgstr "AVERTISMENT: ident 0 => se forțează soclul brut (neprocesat)"
 #: ping/ping.c:629
 #, c-format
 msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
-msgstr ""
+msgstr "adresă IPv4 transpusă în adresă IPv6, utilizând IPv4 %s"
 
 #: ping/ping.c:673
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
-msgstr ""
+msgstr "valoare „-s” nevalidă: „%d”: în afara intervalului: 0 <= valoare <= %d"
 
 #: ping/ping.c:701
 #, c-format

@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-10-05 05:38+0000\n"
-"Last-Translator: Harry Suryapambagya <harsxv@gmail.com>\n"
+"PO-Revision-Date: 2024-10-19 18:38+0000\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/id/>\n"
 "Language: id\n"
@@ -739,12 +739,12 @@ msgstr "PERINGATAN: ident 0 => memaksa soket mentah"
 #: ping/ping.c:629
 #, c-format
 msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
-msgstr ""
+msgstr "alamat IPv4-Dipetakan-dalam-IPv6, memakai IPv4 %s"
 
 #: ping/ping.c:673
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
-msgstr ""
+msgstr "nilai -s tidak valid '%d': di luar rentang: 0 <= nilai <= %d"
 
 #: ping/ping.c:701
 #, c-format

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-09-02 17:04+0000\n"
+"PO-Revision-Date: 2024-10-19 18:38+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.7.1\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: arping.c:123
 #, c-format
@@ -752,12 +752,14 @@ msgstr "УВАГА: ident 0 => примусово сокет без обробк
 #: ping/ping.c:629
 #, c-format
 msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
-msgstr ""
+msgstr "Адреса IPv4 пов'язана із IPv6, використовуємо IPv4 %s"
 
 #: ping/ping.c:673
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
 msgstr ""
+"некоректне значення -s: «%d»: поза припустимим діапазоном: 0 <= значення <= "
+"%d"
 
 #: ping/ping.c:701
 #, c-format

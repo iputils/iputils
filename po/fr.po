@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-09-21 08:38+0000\n"
+"PO-Revision-Date: 2024-10-19 18:38+0000\n"
 "Last-Translator: Léane GRASSER <leane.grasser@proton.me>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/fr/>\n"
@@ -746,12 +746,12 @@ msgstr "AVERTISSEMENT : ident 0 => raw socket forcé"
 #: ping/ping.c:629
 #, c-format
 msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
-msgstr ""
+msgstr "Adresse IPv4 au format IPv6, utilisation de l'adresse IPv4 %s"
 
 #: ping/ping.c:673
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
-msgstr ""
+msgstr "valeur -s invalide : '%d' : hors limites : 0 <= valeur <= %d"
 
 #: ping/ping.c:701
 #, c-format
