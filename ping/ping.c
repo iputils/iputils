@@ -392,14 +392,20 @@ main(int argc, char **argv)
 		force_numeric = 1;
 	}
 
+	int ipv4Unmasking = 0;
+
 	/* Parse command line options */
 	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
-			if (hints.ai_family == AF_INET6)
-				error(2, 0, _("only one -4 or -6 option may be specified"));
-			hints.ai_family = AF_INET;
+			if (hints.ai_family == AF_INET6) {
+				error(0, 0, _("enabling unmasking of IPv4-Mapped-in-IPv6 addresses. This disables -4 or -6 settings"));
+				ipv4Unmasking = 1;
+				hints.ai_family = AF_UNSPEC; // if -4 and -6 are provided: reset hints.ai_family
+			}
+			else
+				hints.ai_family = AF_INET;
 			break;
 		case '3':
 			rts.opt_rtt_precision = 1;
@@ -431,9 +437,13 @@ main(int argc, char **argv)
 			break;
 		/* IPv6 specific options */
 		case '6':
-			if (hints.ai_family == AF_INET)
-				error(2, 0, _("only one -4 or -6 option may be specified"));
-			hints.ai_family = AF_INET6;
+			if (hints.ai_family == AF_INET) {
+				error(0, 0, _("enabling unmasking of IPv4-Mapped-in-IPv6 addresses. This disables -4 or -6 settings"));
+				ipv4Unmasking = 1;
+				hints.ai_family = AF_UNSPEC; // if -4 and -6 are provided: reset hints.ai_family
+			}
+			else
+				hints.ai_family = AF_INET6;
 			break;
 		case 'F':
 			rts.flowlabel = parseflow(optarg);
@@ -721,7 +731,7 @@ main(int argc, char **argv)
 			ret_val = ping4_run(&rts, argc, argv, ai, &sock4);
 			break;
 		case AF_INET6:
-			if( SA6_IS_ADDR_V4MAPPED( ai->ai_addr ) ) { // if ipv6 is actually a masked ipv4 address
+			if( ipv4Unmasking && SA6_IS_ADDR_V4MAPPED( ai->ai_addr ) ) {   // if ipv6 is actually a masked ipv4 address
 				// compose an ipv4 addressinfo record valid *only* for a call to ping4_run:
 				struct sockaddr_in sa4;
 				memset( &sa4, 0, sizeof( struct sockaddr_in ) );   // optional: zero out this sockaddr_in
