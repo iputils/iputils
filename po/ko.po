@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-09-02 19:16+0000\n"
+"PO-Revision-Date: 2024-10-22 13:38+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.7.1\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: arping.c:123
 #, c-format
@@ -738,12 +738,12 @@ msgstr "경고: ident 0 => 원시 소켓으로 강제합니다"
 #: ping/ping.c:629
 #, c-format
 msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
-msgstr ""
+msgstr "IPv4 %s 사용하여 IPv6 주소에서-대응된-IPv4"
 
 #: ping/ping.c:673
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
-msgstr ""
+msgstr "잘못된 -s 값: '%d': 범위 초과: 0 <= 값 <= %d"
 
 #: ping/ping.c:701
 #, c-format
