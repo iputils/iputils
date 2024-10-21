@@ -6,10 +6,14 @@
 # https://github.com/actions/virtual-environments/issues/668
 ipv6_dst = []
 ipv6_switch = []
+ipv4_in_ipv6_dot_dst = []
+ipv4_in_ipv6_hex_dst = []
 ip = find_program('ip', required: false)
 if ip.found() and run_command(ip, '-6', 'a').stdout().contains('::1')
   message('IPv6 enabled')
   ipv6_dst = [ '::1' ]
+  ipv4_in_ipv6_dot_dst = [ '::ffff:127.0.0.1' ]
+  ipv4_in_ipv6_hex_dst = [ '::ffff:7f:1' ]
   ipv6_switch = [ '-6' ]
 elif not ip.found()
   message('WARNING: ip binary not found => disable IPv6 tests')
@@ -33,7 +37,7 @@ args = ['-V']
 name = 'ping ' + ' '.join(args)
 test(name, ping, args : args)
 
-foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
+foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst + ipv4_in_ipv6_dot_dst + ipv4_in_ipv6_hex_dst
   foreach switch : [ '', '-4' ] + ipv6_switch
 	args = [ '-c1', dst ]
 	should_fail = false
@@ -58,7 +62,7 @@ ping_tests_opt = [
   [ '-c1', '-W1' ],
   [ '-c1', '-W1.1' ],
 ]
-foreach dst : [ '127.0.0.1' ] + ipv6_dst
+foreach dst : [ '127.0.0.1' ] + ipv6_dst + ipv4_in_ipv6_dot_dst + ipv4_in_ipv6_hex_dst
   foreach args : ping_tests_opt
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
@@ -72,7 +76,7 @@ ping_tests_opt_fail = [
   [ '-w0.1' ],
   [ '-w0,1' ],
 ]
-foreach dst : [ '127.0.0.1' ] + ipv6_dst
+foreach dst : [ '127.0.0.1' ] + ipv6_dst + ipv4_in_ipv6_dot_dst + ipv4_in_ipv6_hex_dst
   foreach args : ping_tests_opt_fail
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
@@ -83,7 +87,7 @@ endforeach
 ping_tests_user_fail = [
   [ '-c1', '-i0.001' ], # -c1 required to quit ping when running as root
 ]
-foreach dst : [ '127.0.0.1' ] + ipv6_dst
+foreach dst : [ '127.0.0.1' ] + ipv6_dst + ipv4_in_ipv6_dot_dst + ipv4_in_ipv6_hex_dst
   foreach args : ping_tests_user_fail
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
