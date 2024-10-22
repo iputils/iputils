@@ -31,6 +31,7 @@ cmd_name = 'ping '
 args = ['-V']
 
 name = 'ping ' + ' '.join(args)
+name = name.replace(':', '_')
 test(name, ping, args : args)
 
 foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
@@ -46,6 +47,7 @@ foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
 	endif
 
 	name = cmd_name + ' '.join(args)
+  name = name.replace(':', '_')
 	test(name, cmd, args : args, should_fail : should_fail)
   endforeach
 endforeach
@@ -62,6 +64,7 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
+  name = name.replace(':', '_')
 	test(name, cmd, args : args)
   endforeach
 endforeach
@@ -76,6 +79,7 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt_fail
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
+  name = name.replace(':', '_')
 	test(name, cmd, args : args, should_fail : true)
   endforeach
 endforeach
@@ -87,6 +91,7 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_user_fail
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
+  name = name.replace(':', '_')
 	test(name, cmd, args : args, should_fail : not run_as_root)
   endforeach
 endforeach
