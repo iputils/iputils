@@ -622,6 +622,23 @@ main(int argc, char **argv)
 		hints.ai_socktype = SOCK_RAW;
 	}
 
+	struct sockaddr_in6 *sa6 = NULL;
+	if (getaddrinfo(target, NULL, &hints, &result) == 0) {
+		for (ai = result; ai; ai = ai->ai_next) {
+			if (ai->ai_family == AF_INET6) {
+				sa6 = (struct sockaddr_in6 *)ai->ai_addr;
+				if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr) ) {
+					hints.ai_family = AF_INET;
+
+					if (rts.opt_verbose)
+						error(0, 0, _("IPv4-Mapped-in-IPv6 address, using IPv4"));
+					break;
+				}
+			}
+		}
+		freeaddrinfo(result);
+		result = NULL;
+	}
 	if (inet_pton(AF_INET6, target, &a6) && IN6_IS_ADDR_V4MAPPED(&a6)) {
 			target = strchr(target + 2, 'f') + 5;
 			hints.ai_family = AF_INET;
@@ -703,7 +720,8 @@ main(int argc, char **argv)
 	 * https://github.com/iputils/iputils/issues/252
 	 */
 	int target_ai_family = hints.ai_family;
-	hints.ai_family = AF_UNSPEC;
+	if (sa6 == NULL && hints.ai_family == AF_INET6)
+		hints.ai_family = AF_UNSPEC;
 
 	if (!strchr(target, '%') && sock6.socktype == SOCK_DGRAM &&
 		inet_pton(AF_INET6, target, buf) > 0 &&
