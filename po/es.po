@@ -53,8 +53,8 @@ msgstr ""
 "  -V            imprime la versión y sale\n"
 "  -c <count>    cuántos paquetes enviar\n"
 "  -w <timeout>  cuánto esperar una respuesta\n"
-"  -i <interval> fijar el intervalo entre paquetes (predeterminado: 1 segundo)"
-"\n"
+"  -i <interval> fijar el intervalo entre paquetes (predeterminado: 1 "
+"segundo)\n"
 "  -I <device>   que dispositivo ethernet utilizar"
 
 #: arping.c:142
