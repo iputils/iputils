@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2024-11-10 02:02+0000\n"
+"Last-Translator: Emilio Herrera <ehespinosa57@gmail.com>\n"
+"Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
+"iputils/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.8.2\n"
 
 #: arping.c:123
 #, c-format
@@ -36,6 +39,23 @@ msgid ""
 "  -i <interval> set interval between packets (default: 1 second)\n"
 "  -I <device>   which ethernet device to use"
 msgstr ""
+"\n"
+"Utilización:\n"
+"  arping [options] <destination>\n"
+"\n"
+"Options:\n"
+"  -f            salir en la primera respuesta\n"
+"  -q            silencio\n"
+"  -b            mantener en radiodifusión, no en unidifusión\n"
+"  -D            duplicar el modo de detección de dirección\n"
+"  -U            modo ARP no solicitado, actualizar sus vecinos\n"
+"  -A            modo de respuesta AultifuRP, actualizar sus vecinos\n"
+"  -V            imprime la versión y sale\n"
+"  -c <count>    cuántos paquetes enviar\n"
+"  -w <timeout>  cuánto esperar una respuesta\n"
+"  -i <interval> fijar el intervalo entre paquetes (predeterminado: 1 segundo)"
+"\n"
+"  -I <device>   que dispositivo ethernet utilizar"
 
 #: arping.c:142
 #, c-format
@@ -46,26 +66,31 @@ msgid ""
 "\n"
 "For more details see arping(8).\n"
 msgstr ""
+"\n"
+"  -s <source>   dirección IP fuente\n"
+"  <destination> nonbre DNS o dirección IP\n"
+"\n"
+"Vea más detalles en arping(8).\n"
 
 #: arping.c:305
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr ""
+msgstr "Enviar %d sondas (%d radiodifusión(es))\n"
 
 #: arping.c:306
 #, c-format
 msgid "Received %d response(s)"
-msgstr ""
+msgstr "Recibida(s) %d respuesta(s)"
 
 #: arping.c:310
 #, c-format
 msgid "%d request(s)"
-msgstr ""
+msgstr "%d petición(es)"
 
 #: arping.c:312
 #, c-format
 msgid "%s%d broadcast(s)"
-msgstr ""
+msgstr "%s%d radiodifusión(es)"
 
 #: arping.c:422
 msgid "Unicast"
