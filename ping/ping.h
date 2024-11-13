@@ -237,6 +237,7 @@ struct ping_rts {
 		opt_adaptive:1,
 		opt_audible:1,
 		opt_connect_sk:1,
+		opt_deadline_ignores_errors:1,
 		opt_flood:1,
 		opt_flood_poll:1,
 		opt_flowinfo:1,

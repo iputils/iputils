@@ -391,7 +391,7 @@ main(int argc, char **argv)
 	}
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fgHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -463,6 +463,9 @@ main(int argc, char **argv)
 			break;
 		case 'D':
 			rts.opt_ptimeofday = 1;
+			break;
+		case 'g':
+			rts.opt_deadline_ignores_errors = 1;
 			break;
 		case 'H':
 			rts.opt_force_lookup = 1;

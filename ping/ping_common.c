@@ -62,6 +62,7 @@ void usage(void)
 		"                     SOCK_RAW and kernel defined for SOCK_DGRAM\n"
 		"                     Imply using SOCK_RAW (for IPv4 only for identifier 0)\n"
 		"  -f                 flood ping\n"
+		"  -g                 deadline ignores errors (only useful with -w)\n"
 		"  -h                 print help and exit\n"
 		"  -H                 force reverse DNS name resolution (useful for numeric\n"
 		"                     destinations or for -f), override -n\n"
@@ -597,9 +598,10 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 		/* Check exit conditions. */
 		if (rts->exiting)
 			break;
-		if (rts->npackets && rts->nreceived + rts->nerrors >= rts->npackets)
+		if (rts->npackets && rts->nreceived + rts->nerrors >= rts->npackets
+		    && !rts->opt_deadline_ignores_errors)
 			break;
-		if (rts->deadline && rts->nerrors)
+		if (rts->deadline && rts->nerrors && !rts->opt_deadline_ignores_errors)
 			break;
 		/* Check for and do special actions. */
 		if (rts->status_snapshot)
