@@ -790,9 +790,9 @@ xml:id="man.ping">
     <info>
       <title>ENVIRONMENT</title>
     </info>
-	<emphasis remap="I">IPUTILS_PING_PTR_LOOKUP</emphasis> environment
-	variable set to 0 disable reverse DNS resolution (PTR lookup) by default.
-	It will be overrided by <option>-H</option> or <option>-n</option> option.
+    <para><emphasis remap="I">IPUTILS_PING_PTR_LOOKUP</emphasis> environment
+    variable set to 0 disable reverse DNS resolution (PTR lookup) by default.
+    It will be overrided by <option>-H</option> or <option>-n</option> option.</para>
   </refsection>
 
   <refsection xml:id="exit_status">
