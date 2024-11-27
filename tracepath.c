@@ -370,6 +370,9 @@ static int probe_ttl(struct run_state *const ctl)
 		clock_gettime(CLOCK_MONOTONIC, &hdr->ts);
 		ctl->his[ctl->hisptr].hops = ctl->ttl;
 		ctl->his[ctl->hisptr].sendtime = hdr->ts;
+		if (ctl->mtu <= ctl->overhead) {
+			error(2, 0, "MTU <= OVERHEAD");
+		}
 		if (sendto(ctl->socket_fd, ctl->pktbuf, ctl->mtu - ctl->overhead, 0,
 			   (struct sockaddr *)&ctl->target, ctl->targetlen) > 0)
 			break;
@@ -384,6 +387,12 @@ static int probe_ttl(struct run_state *const ctl)
 
 	if (i < MAX_PROBES) {
 		data_wait(ctl);
+		const int allow_max =
+			(ctl->ai->ai_family==AF_INET6)?(DEFAULT_MTU_IPV6):(DEFAULT_MTU_IPV4);
+		if (ctl->mtu > allow_max) {
+			error(2, 0, "MTU <= MAX_MTU");
+			return 0;
+		}
 		if (recv(ctl->socket_fd, ctl->pktbuf, ctl->mtu, MSG_DONTWAIT) > 0) {
 			printf(_("%2d?: reply received 8)\n"), ctl->ttl);
 			return 0;
