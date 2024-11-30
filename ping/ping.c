@@ -390,7 +390,7 @@ main(int argc, char **argv)
 	}
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:jl:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -407,6 +407,9 @@ main(int argc, char **argv)
 		case 'e':
 			rts.ident = htons(strtoul_or_err(optarg, _("invalid argument"),
 							 0, IDENTIFIER_MAX));
+			break;
+		case 'j':
+			rts.opt_json = 1;
 			break;
 		case 'R':
 			if (rts.opt_timestamp)
@@ -572,9 +575,8 @@ main(int argc, char **argv)
 			rts.opt_verbose = 1;
 			break;
 		case 'V':
-			printf(IPUTILS_VERSION("ping"));
-			print_config();
-			exit(0);
+			rts.opt_version = 1;
+			break;
 		case 'w':
 			rts.deadline = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
@@ -593,6 +595,23 @@ main(int argc, char **argv)
 			usage();
 			break;
 		}
+	}
+
+	if (rts.opt_version) {
+		char version_info[50];
+
+		if (rts.opt_json) {
+			sprintf(version_info, IPUTILS_VERSION("ping"));
+			// TODO: cleaner JSON version output, only version number in "version" and add map with build config
+			version_info[strcspn(version_info, "\n")] = 0;
+			construct_json(&rts, PING_JSON_STR, "version", version_info);
+			print_json_packet(&rts);
+		} else {
+			printf(IPUTILS_VERSION("ping"));
+			print_config();
+		}
+
+		exit(0);
 	}
 
 	if (rts.opt_numeric && force_numeric && !rts.opt_quiet)
@@ -1058,10 +1077,12 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
-	printf(_("PING %s (%s) "), rts->hostname, inet_ntoa(rts->whereto.sin_addr));
-	if (rts->device || rts->opt_strictsource)
-		printf(_("from %s %s: "), inet_ntoa(rts->source.sin_addr), rts->device ? rts->device : "");
-	printf(_("%d(%d) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
+	if (!rts->opt_json) {
+		printf(_("PING %s (%s) "), rts->hostname, inet_ntoa(rts->whereto.sin_addr));
+		if (rts->device || rts->opt_strictsource)
+			printf(_("from %s %s: "), inet_ntoa(rts->source.sin_addr), rts->device ? rts->device : "");
+		printf(_("%d(%d) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
+	}
 
 	setup(rts, sock);
 	if (rts->opt_connect_sk &&
@@ -1478,8 +1499,12 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 			write_stdout("E", 1);
 		else if (e->ee_errno != EMSGSIZE)
 			error(0, e->ee_errno, _("local error"));
-		else
-			error(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
+		else {
+			if (!rts->opt_json)
+				error(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
+
+			error_json(rts, 0, "local", "message too long", PING_JSON_INT, "mtu", e->ee_info);
+		}
 		rts->nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
 		struct sockaddr_in *sin = (struct sockaddr_in *)(e + 1);
@@ -1623,11 +1648,13 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
  * program to be run without having intermingled output (or statistics!).
  */
 static
-void pr_echo_reply(uint8_t *_icp, int len __attribute__((__unused__)))
+void pr_echo_reply(struct ping_rts *rts, uint8_t *_icp, int len __attribute__((__unused__)))
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
 
-	printf(_(" icmp_seq=%u"), ntohs(icp->un.echo.sequence));
+	if (!rts->opt_json)
+		printf(_(" icmp_seq=%u"), ntohs(icp->un.echo.sequence));
+	construct_json(rts, PING_JSON_INT, "seq", ntohs(icp->un.echo.sequence));
 }
 
 int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
@@ -1773,9 +1800,13 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 	if (!rts->opt_flood) {
 		pr_options(rts, opts, olen + sizeof(struct iphdr));
 
-		putchar('\n');
-		fflush(stdout);
+		// handled by print_json()
+		if(!rts->opt_json) {
+			putchar('\n');
+			fflush(stdout);
+		}
 	}
+
 	return 0;
 }
 

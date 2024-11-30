@@ -394,17 +394,19 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, _("can't send flowinfo"));
 	}
 
-	printf(_("PING %s (%s) "), rts->hostname, pr_raw_addr(rts, &rts->whereto6, sizeof rts->whereto6));
-	if (rts->flowlabel)
-		printf(_(", flow 0x%05x, "), (unsigned)ntohl(rts->flowlabel));
-	if (rts->device || rts->opt_strictsource) {
-		int saved_opt_numeric = rts->opt_numeric;
+	if (!rts->opt_json) {
+		printf(_("PING %s (%s) "), rts->hostname, pr_raw_addr(rts, &rts->whereto6, sizeof rts->whereto6));
+		if (rts->flowlabel)
+			printf(_(", flow 0x%05x, "), (unsigned)ntohl(rts->flowlabel));
+		if (rts->device || rts->opt_strictsource) {
+			int saved_opt_numeric = rts->opt_numeric;
 
-		rts->opt_numeric = 1;
-		printf(_("from %s %s: "), pr_addr(rts, &rts->source6, sizeof rts->source6), rts->device ? rts->device : "");
-		rts->opt_numeric = saved_opt_numeric;
+			rts->opt_numeric = 1;
+			printf(_("from %s %s: "), pr_addr(rts, &rts->source6, sizeof rts->source6), rts->device ? rts->device : "");
+			rts->opt_numeric = saved_opt_numeric;
+		}
+		printf(_("%d data bytes\n"), rts->datalen);
 	}
-	printf(_("%d data bytes\n"), rts->datalen);
 
 	setup(rts, sock);
 
@@ -568,7 +570,8 @@ int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 			write_stdout("\bE", 2);
 		} else {
 			print_timestamp(rts);
-			printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
+			if (!rts->opt_json)
+				printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
 			print_icmp(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
 			fflush(stdout);
@@ -670,11 +673,13 @@ int ping6_send_probe(struct ping_rts *rts, socket_st *sock, void *packet, unsign
 	return (cc == len ? 0 : cc);
 }
 
-void pr_echo_reply(uint8_t *_icmph, int cc __attribute__((__unused__)))
+void pr_echo_reply(struct ping_rts *rts, uint8_t *_icmph, int cc __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *)_icmph;
 
-	printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq));
+	if (!rts->opt_json)
+		printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq));
+	construct_json(rts, PING_JSON_INT, "seq", ntohs(icmph->icmp6_seq));
 }
 
 static void putchar_safe(char c)
@@ -686,7 +691,7 @@ static void putchar_safe(char c)
 }
 
 static
-void pr_niquery_reply_name(struct ni_hdr *nih, int len)
+void pr_niquery_reply_name(struct ping_rts *rts, struct ni_hdr *nih, int len)
 {
 	uint8_t *h = (uint8_t *)(nih + 1);
 	uint8_t *p = h + 4;
@@ -698,7 +703,9 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 	len -= sizeof(struct ni_hdr) + 4;
 
 	if (len < 0) {
-		printf(_(" parse error (too short)"));
+		if (!rts->opt_json)
+			printf(_(" parse error (too short)"));
+		construct_json(rts, PING_JSON_STR, "error", "too short");
 		return;
 	}
 	while (p < end) {
@@ -712,7 +719,9 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 
 		ret = dn_expand(h, end, p, buf, sizeof(buf));
 		if (ret < 0) {
-			printf(_(" parse error (truncated)"));
+			if (!rts->opt_json)
+				printf(_(" parse error (truncated)"));
+			construct_json(rts, PING_JSON_STR, "error", "truncated");
 			break;
 		}
 		if (p + ret < end && *(p + ret) == '\0')
@@ -731,7 +740,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 }
 
 static
-void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
+void pr_niquery_reply_addr(struct ping_rts *rts, struct ni_hdr *nih, int len)
 {
 	uint8_t *h = (uint8_t *)(nih + 1);
 	uint8_t *p;
@@ -759,7 +768,9 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 	}
 	p = h;
 	if (len < 0) {
-		printf(_(" parse error (too short)"));
+		if (!rts->opt_json)
+			printf(_(" parse error (too short)"));
+		construct_json(rts, PING_JSON_STR, "error", "too short");
 		return;
 	}
 
@@ -768,24 +779,33 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 			putchar(',');
 
 		if (p + sizeof(uint32_t) + aflen > end) {
-			printf(_(" parse error (truncated)"));
+			if (!rts->opt_json)
+				printf(_(" parse error (truncated)"));
+			construct_json(rts, PING_JSON_STR, "error", "truncated");
 			break;
 		}
-		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf)))
-			printf(_(" unexpected error in inet_ntop(%s)"),
-			       strerror(errno));
-		else
+		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf))) {
+			if (!rts->opt_json)
+				printf(_(" unexpected error in inet_ntop(%s)"),
+					strerror(errno));
+			construct_json(rts, PING_JSON_STR, "error", "inet_ntop");
+
+		} else {
 			printf(" %s", buf);
+		}
 		p += sizeof(uint32_t) + aflen;
 
 		continued = 1;
 	}
-	if (truncated)
-		printf(_(" (truncated)"));
+	if (truncated) {
+		if (!rts->opt_json)
+			printf(_(" (truncated)"));
+		construct_json(rts, PING_JSON_STR, "info", "truncated");
+	}
 }
 
 static
-void pr_niquery_reply(uint8_t *_nih, int len)
+void pr_niquery_reply(struct ping_rts *rts, uint8_t *_nih, int len)
 {
 	struct ni_hdr *nih = (struct ni_hdr *)_nih;
 
@@ -793,14 +813,16 @@ void pr_niquery_reply(uint8_t *_nih, int len)
 	case IPUTILS_NI_ICMP6_SUCCESS:
 		switch (ntohs(nih->ni_qtype)) {
 		case IPUTILS_NI_QTYPE_DNSNAME:
-			pr_niquery_reply_name(nih, len);
+			pr_niquery_reply_name(rts, nih, len);
 			break;
 		case IPUTILS_NI_QTYPE_IPV4ADDR:
 		case IPUTILS_NI_QTYPE_IPV6ADDR:
-			pr_niquery_reply_addr(nih, len);
+			pr_niquery_reply_addr(rts, nih, len);
 			break;
 		default:
-			printf(_(" unknown qtype(0x%02x)"), ntohs(nih->ni_qtype));
+			if (!rts->opt_json)
+				printf(_(" unknown qtype(0x%02x)"), ntohs(nih->ni_qtype));
+			construct_json(rts, PING_JSON_STR, "error", "unknown qtype");
 		}
 		break;
 	case IPUTILS_NI_ICMP6_REFUSED:
@@ -929,7 +951,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 		if (rts->opt_flood)
 			fflush(stdout);
 	}
-	if (!rts->opt_flood) {
+	if (!rts->opt_flood && !rts->opt_json) {
 		putchar('\n');
 		fflush(stdout);
 	}

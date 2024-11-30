@@ -430,8 +430,13 @@ hard_local_error:
 	if (i == 0 && !rts->opt_quiet) {
 		if (rts->opt_flood)
 			write_stdout("E", 1);
-		else
-			error(0, errno, "sendmsg");
+		else {
+			if(!rts->opt_json)
+				error(0, errno, "sendmsg");
+
+			error_json(rts, 0, "sendmsg", strerror(errno), PING_JSON_NUL, "");
+		}
+
 	}
 	tokens = 0;
 	return SCHINT(rts->interval);
@@ -715,6 +720,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 				}
 
 				not_ours = fset->parse_reply(rts, sock, &msg, cc, addrbuf, recv_timep);
+				print_json_packet(rts);
 			}
 
 			/* See? ... someone runs another ping on this host. */
@@ -730,6 +736,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 			 * if nothing is queued, it will receive EAGAIN
 			 * and return to pinger. */
 		}
+
 	}
 	return finish(rts);
 }
@@ -737,7 +744,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 		      int cc, uint16_t seq, int hops,
 		      int csfailed, struct timeval *tv, char *from,
-		      void (*pr_reply)(uint8_t *icmph, int cc), int multicast,
+		      void (*pr_reply)(struct ping_rts *rts, uint8_t *icmph, int cc), int multicast,
 		      int wrong_source)
 {
 	int dupflag = 0;
@@ -806,35 +813,51 @@ restamp:
 		uint8_t *cp, *dp;
 
 		print_timestamp(rts);
-		printf(_("%d bytes from %s:"), cc, from);
+		if (!rts->opt_json)
+			printf(_("%d bytes from %s:"), cc, from);
+		construct_json(rts, PING_JSON_INT, "bytes", cc);
+		// TODO: split host IP address and name into separate attributes in JSON?
+		construct_json(rts, PING_JSON_STR, "host", from);
 
 		if (pr_reply)
-			pr_reply(icmph, cc);
+			pr_reply(rts, icmph, cc);
 
 		if (rts->opt_verbose && rts->ident != -1)
-			printf(_(" ident=%d"), ntohs(rts->ident));
+			if (!rts->opt_json)
+				printf(_(" ident=%d"), ntohs(rts->ident));
 
-		if (hops >= 0)
-			printf(_(" ttl=%d"), hops);
+		if (hops >= 0) {
+			if (!rts->opt_json)
+				printf(_(" ttl=%d"), hops);
+
+			construct_json(rts, PING_JSON_INT, "ttl", hops);
+		}
 
 		if (cc < rts->datalen + 8) {
 			printf(_(" (truncated)\n"));
 			return 1;
 		}
 		if (rts->timing) {
+			char outtime[30];
+
 			if (rts->opt_rtt_precision)
-				printf(_(" time=%ld.%03ld ms"), triptime / 1000, triptime % 1000);
+				sprintf(outtime, "%ld.%03ld", triptime / 1000, triptime % 1000);
 			else if (triptime >= 100000 - 50)
-				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
+				sprintf(outtime, "%ld ms", (triptime + 500) / 1000);
 			else if (triptime >= 10000 - 5)
-				printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,
+				sprintf(outtime, "%ld.%01ld", (triptime + 50) / 1000,
 				       ((triptime + 50) % 1000) / 100);
 			else if (triptime >= 1000)
-				printf(_(" time=%ld.%02ld ms"), (triptime + 5) / 1000,
+				sprintf(outtime, "%ld.%02ld", (triptime + 5) / 1000,
 				       ((triptime + 5) % 1000) / 10);
 			else
-				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
+				sprintf(outtime, "%ld.%03ld", triptime / 1000,
 				       triptime % 1000);
+
+			if (!rts->opt_json)
+				printf(_(" time=%s ms"), outtime);
+			construct_json(rts, PING_JSON_STR, "time", outtime);
+
 		}
 
 		if (dupflag && (!multicast || rts->opt_verbose))
@@ -890,28 +913,30 @@ int finish(struct ping_rts *rts)
 
 	tssub(&tv, &rts->start_time);
 
-	putchar('\n');
-	fflush(stdout);
-	printf(_("--- %s ping statistics ---\n"), rts->hostname);
-	printf(_("%ld packets transmitted, "), rts->ntransmitted);
-	printf(_("%ld received"), rts->nreceived);
-	if (rts->nrepeats)
-		printf(_(", +%ld duplicates"), rts->nrepeats);
-	if (rts->nchecksum)
-		printf(_(", +%ld corrupted"), rts->nchecksum);
-	if (rts->nerrors)
-		printf(_(", +%ld errors"), rts->nerrors);
+	if (!rts->opt_json) {
+		putchar('\n');
+		fflush(stdout);
+		printf(_("--- %s ping statistics ---\n"), rts->hostname);
+		printf(_("%ld packets transmitted, "), rts->ntransmitted);
+		printf(_("%ld received"), rts->nreceived);
+		if (rts->nrepeats)
+			printf(_(", +%ld duplicates"), rts->nrepeats);
+		if (rts->nchecksum)
+			printf(_(", +%ld corrupted"), rts->nchecksum);
+		if (rts->nerrors)
+			printf(_(", +%ld errors"), rts->nerrors);
 
-	if (rts->ntransmitted) {
+		if (rts->ntransmitted) {
 #ifdef USE_IDN
-		setlocale(LC_ALL, "C");
+	setlocale(LC_ALL, "C");
 #endif
-		printf(_(", %g%% packet loss"),
-		       (float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
-		printf(_(", time %llums"), (unsigned long long)(1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000));
-	}
+			printf(_(", %g%% packet loss"),
+			(float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
+			printf(_(", time %llums"), (unsigned long long)(1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000));
+		}
 
-	putchar('\n');
+		putchar('\n');
+	}
 
 	if (rts->nreceived && rts->timing) {
 		double tmdev;
@@ -928,14 +953,25 @@ int finish(struct ping_rts *rts)
 
 		tmdev = llsqrt(tmvar);
 
-		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
-		       (long)rts->tmin / 1000, (long)rts->tmin % 1000,
-		       (unsigned long)(tmavg / 1000), (long)(tmavg % 1000),
-		       (long)rts->tmax / 1000, (long)rts->tmax % 1000,
-		       (long)tmdev / 1000, (long)tmdev % 1000);
+		char rttmin[30];
+		char rttavg[30];
+		char rttmax[30]; 
+		char rttmdev[30];
+
+		sprintf(rttmin, "%ld.%03ld", (long)rts->tmin / 1000, (long)rts->tmin % 1000);
+		sprintf(rttavg, "%lu.%03ld", (unsigned long)(tmavg / 1000), (long)(tmavg % 1000));
+		sprintf(rttmax, "%ld.%03ld", (long)rts->tmax / 1000, (long)rts->tmax % 1000);
+		sprintf(rttmdev, "%ld.%03ld", (long)tmdev / 1000, (long)tmdev % 1000);
+
+		if (!rts->opt_json)
+			printf(_("rtt min/avg/max/mdev = %s/%s/%s/%s ms"),
+				rttmin, rttavg, rttmax, rttmdev);
+
+		construct_json_statistics(rts, tv, rttmin, rttavg, rttmax, rttmdev);
+
 		comma = ", ";
 	}
-	if (rts->pipesize > 1) {
+	if (rts->pipesize > 1 && !rts->opt_json) {
 		printf(_("%spipe %d"), comma, rts->pipesize);
 		comma = ", ";
 	}
@@ -943,10 +979,22 @@ int finish(struct ping_rts *rts)
 	if (rts->nreceived && (!rts->interval || rts->opt_flood || rts->opt_adaptive) && rts->ntransmitted > 1) {
 		int ipg = (1000000 * (long long)tv.tv_sec + tv.tv_nsec / 1000) / (rts->ntransmitted - 1);
 
-		printf(_("%sipg/ewma %d.%03d/%d.%03d ms"),
-		       comma, ipg / 1000, ipg % 1000, rts->rtt / 8000, (rts->rtt / 8) % 1000);
+		char ipgout[30];
+		char ewmaout[30];
+
+		sprintf(ipgout, "%d.%03d", ipg / 1000, ipg % 1000);
+		sprintf(ewmaout, "%d.%03d", rts->rtt / 8000, (rts->rtt / 8) % 1000);
+
+		if (!rts->opt_json)
+			printf(_("%sipg/ewma %s/%s ms"),
+			       comma, ipgout, ewmaout);
+
+		construct_json_statistics_flood(rts, ipgout, ewmaout);
 	}
-	putchar('\n');
+
+	print_json_statistics(rts);
+	if (!rts->opt_json)
+		putchar('\n');
 	return (!rts->nreceived || (rts->deadline && rts->nreceived < rts->npackets));
 }
 
