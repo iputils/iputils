@@ -1,7 +1,9 @@
 arping.c
 clockdiff.c
 ping/node_info.c
-ping/ping6_common.c
 ping/ping.c
+ping/ping6_common.c
 ping/ping_common.c
+ping/ping_json.c
+ping/ping_output.c
 tracepath.c

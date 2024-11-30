@@ -7,6 +7,8 @@ ping = executable('ping', [
 		'ping.c',
 		'ping_common.c',
 		'ping6_common.c',
+		'ping_json.c',
+		'ping_output.c',
 		'node_info.c',
 		git_version_h
 	],

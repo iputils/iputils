@@ -67,6 +67,7 @@ void usage(void)
 		"                     destinations or for -f), override -n\n"
 		"  -I <interface>     either interface name or address\n"
 		"  -i <interval>      seconds between sending each packet\n"
+		"  -j                 JSON output (experimental)\n"
 		"  -L                 suppress loopback of multicast packets\n"
 		"  -l <preload>       send <preload> number of packages while waiting replies\n"
 		"  -m <mark>          tag the packets going out\n"
@@ -107,10 +108,10 @@ void limit_capabilities(struct ping_rts *rts)
 
 	cap_cur_p = cap_get_proc();
 	if (!cap_cur_p)
-		error(-1, errno, "cap_get_proc");
+		ping_error(rts, -1, errno, "cap_get_proc");
 	cap_p = cap_init();
 	if (!cap_p)
-		error(-1, errno, "cap_init");
+		ping_error(rts, -1, errno, "cap_init");
 	cap_ok = CAP_CLEAR;
 	cap_get_flag(cap_cur_p, CAP_NET_ADMIN, CAP_PERMITTED, &cap_ok);
 	if (cap_ok != CAP_CLEAR)
@@ -120,13 +121,13 @@ void limit_capabilities(struct ping_rts *rts)
 	if (cap_ok != CAP_CLEAR)
 		cap_set_flag(cap_p, CAP_PERMITTED, 1, &rts->cap_raw, CAP_SET);
 	if (cap_set_proc(cap_p) < 0)
-		error(-1, errno, "cap_set_proc");
+		ping_error(rts, -1, errno, "cap_set_proc");
 	if (prctl(PR_SET_KEEPCAPS, 1) < 0)
-		error(-1, errno, "prctl");
+		ping_error(rts, -1, errno, "prctl");
 	if (setuid(getuid()) < 0)
-		error(-1, errno, "setuid");
+		ping_error(rts, -1, errno, "setuid");
 	if (prctl(PR_SET_KEEPCAPS, 0) < 0)
-		error(-1, errno, "prctl");
+		ping_error(rts, -1, errno, "prctl");
 	cap_free(cap_p);
 	cap_free(cap_cur_p);
 #else
@@ -135,7 +136,7 @@ void limit_capabilities(struct ping_rts *rts)
 	rts->uid = getuid();
 #ifndef HAVE_LIBCAP
 	if (seteuid(rts->uid))
-		error(-1, errno, "setuid");
+		ping_error(rts, -1, errno, "setuid");
 #endif
 }
 
@@ -215,7 +216,7 @@ void fill(struct ping_rts *rts, char *patp, unsigned char *packet, unsigned pack
 
 	for (cp = patp; *cp; cp++) {
 		if (!isxdigit(*cp))
-			error(2, 0, _("patterns must be specified as hex digits: %s"), cp);
+			ping_error(rts, 2, 0, _("patterns must be specified as hex digits: %s"), cp);
 	}
 	ii = sscanf(patp,
 		    "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
@@ -432,7 +433,7 @@ hard_local_error:
 		if (rts->opt_flood)
 			write_stdout("E", 1);
 		else
-			error(0, errno, "sendmsg");
+			ping_error(rts, 0, errno, "sendmsg");
 	}
 	tokens = 0;
 	return SCHINT(rts->interval);
@@ -464,7 +465,7 @@ void sock_setbufs(struct ping_rts *rts, socket_st *sock, int alloc)
 	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
 	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
-			error(0, 0, _("WARNING: probably, rcvbuf is not enough to hold preload"));
+			ping_error(rts, 0, 0, _("WARNING: probably, rcvbuf is not enough to hold preload"));
 	}
 }
 
@@ -483,15 +484,15 @@ void sock_setmark(struct ping_rts *rts, int fd)
 	disable_capability_admin();
 
 	if (ret == -1) {
-		error(0, errno_save, _("WARNING: failed to set mark: %u"), rts->mark);
+		ping_error(rts, 0, errno_save, _("WARNING: failed to set mark: %u"), rts->mark);
 
 		if (errno_save == EPERM)
-			error(0, 0, _("=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"));
+			ping_error(rts, 0, 0, _("=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"));
 
 		rts->opt_mark = 0;
 	}
 #else
-		error(0, errno_save, _("WARNING: SO_MARK not supported"));
+		ping_error(rts, 0, errno_save, _("WARNING: SO_MARK not supported"));
 #endif
 }
 
@@ -507,11 +508,11 @@ void setup(struct ping_rts *rts, socket_st *sock)
 		rts->interval = 0;
 
 	if (rts->uid && rts->interval < MIN_USER_INTERVAL_MS)
-		error(2, 0, _("cannot flood, minimal interval for user must be >= %d ms, use -i %s (or higher)"),
+		ping_error(rts, 2, 0, _("cannot flood, minimal interval for user must be >= %d ms, use -i %s (or higher)"),
 			  MIN_USER_INTERVAL_MS, str_interval(MIN_USER_INTERVAL_MS));
 
 	if (rts->interval >= INT_MAX / rts->preload)
-		error(2, 0, _("illegal preload and/or interval: %d"), rts->interval);
+		ping_error(rts, 2, 0, _("illegal preload and/or interval: %d"), rts->interval);
 
 	hold = 1;
 	if (rts->opt_so_debug)
@@ -523,7 +524,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	if (!rts->opt_latency) {
 		int on = 1;
 		if (setsockopt(sock->fd, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
-			error(0, 0, _("Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"));
+			ping_error(rts, 0, 0, _("Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"));
 	}
 #endif
 
@@ -697,7 +698,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 				recv_error = 0;
 				if (!fset->receive_error_msg(rts, sock)) {
 					if (errno) {
-						error(0, errno, "recvmsg");
+						ping_error(rts, 0, errno, "recvmsg");
 						break;
 					}
 					not_ours = 1;
@@ -725,6 +726,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 				}
 
 				not_ours = fset->parse_reply(rts, sock, &msg, cc, addrbuf, recv_timep);
+				print_json_packet(rts);
 			}
 
 			/* See? ... someone runs another ping on this host. */
@@ -747,7 +749,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 		      int cc, uint16_t seq, int hops,
 		      int csfailed, struct timeval *tv, char *from,
-		      void (*pr_reply)(uint8_t *icmph, int cc), int multicast,
+		      void (*pr_reply)(struct ping_rts *rts, uint8_t *icmph, int cc), int multicast,
 		      int wrong_source)
 {
 	int dupflag = 0;
@@ -779,7 +781,7 @@ restamp:
 			error(0, 0, _("Warning: invalid tv_sec %ld s"), tv->tv_sec);
 			triptime = 0;
 		} else if (tv->tv_sec < 0) {
-			error(0, 0, _("Warning: time of day goes back (%ld s), taking countermeasures"), tv->tv_sec);
+			ping_error(rts, 0, 0, _("Warning: time of day goes back (%ld s), taking countermeasures"), tv->tv_sec);
 			triptime = 0;
 			if (!rts->opt_latency) {
 				gettimeofday(tv, NULL);
@@ -832,25 +834,27 @@ restamp:
 		uint8_t *cp, *dp;
 
 		print_timestamp(rts);
-		printf(_("%d bytes from %s:"), cc, from);
+		ping_print_int(rts, _("%d bytes "), "bytes", cc);
+		// TODO: split host IP address and name into separate attributes in JSON?
+		ping_print_str(rts, _("from %s:"), "host", from);
 
 		if (pr_reply)
-			pr_reply(icmph, cc);
+			pr_reply(rts, icmph, cc);
 
 		if (rts->opt_verbose && rts->ident != -1)
-			printf(_(" ident=%d"), ntohs(rts->ident));
+			ping_print_int(rts, _(" ident=%d"), "ident", ntohs(rts->ident));
 
 		if (hops >= 0)
-			printf(_(" ttl=%d"), hops);
+			ping_print_int(rts, _(" ttl=%d"), "ttl", hops);
 
 		if (cc < rts->datalen + 8) {
-			printf(_(" (truncated)\n"));
+			ping_print_truncated(rts);
 			return 1;
 		}
 		if (rts->timing) {
 			char *fmt;
-			char fmt2[30];
 			long int num, dec = 0;
+			char outtime[30];
 
 			if (rts->opt_rtt_precision) {
 				fmt = "%ld.%03ld";
@@ -872,8 +876,8 @@ restamp:
 				num = triptime / 1000;
 				dec = triptime % 1000;
 			}
-			snprintf(fmt2, sizeof(fmt2), _(" time=%s ms"), fmt);
-			printf(fmt2, num, dec);
+			snprintf(outtime, sizeof(outtime), fmt, num, dec);
+			ping_print_str(rts, _(" time=%s ms"), "time", outtime);
 		}
 
 		if (dupflag && (!multicast || rts->opt_verbose))
@@ -903,89 +907,14 @@ restamp:
 	return 0;
 }
 
-static long llsqrt(long long a)
-{
-	long long prev = LLONG_MAX;
-	long long x = a;
-
-	if (x > 0) {
-		while (x < prev) {
-			prev = x;
-			x = (x + (a / x)) / 2;
-		}
-	}
-
-	return (long)x;
-}
-
 /*
  * finish --
  *	Print out statistics, and give up.
  */
 int finish(struct ping_rts *rts)
 {
-	struct timespec tv = rts->cur_time;
-	char *comma = "";
+	ping_print_finish(rts);
 
-	tssub(&tv, &rts->start_time);
-
-	putchar('\n');
-	fflush(stdout);
-	printf(_("--- %s ping statistics ---\n"), rts->hostname);
-	printf(_("%ld packets transmitted, "), rts->ntransmitted);
-	printf(_("%ld received"), rts->nreceived);
-	if (rts->nrepeats)
-		printf(_(", +%ld duplicates"), rts->nrepeats);
-	if (rts->nchecksum)
-		printf(_(", +%ld corrupted"), rts->nchecksum);
-	if (rts->nerrors)
-		printf(_(", +%ld errors"), rts->nerrors);
-
-	if (rts->ntransmitted) {
-#ifdef USE_IDN
-		setlocale(LC_ALL, "C");
-#endif
-		printf(_(", %g%% packet loss"),
-		       (float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
-		printf(_(", time %llums"), (unsigned long long)(1000 * tv.tv_sec + (tv.tv_nsec + 500000) / 1000000));
-	}
-
-	putchar('\n');
-
-	if (rts->nreceived && rts->timing) {
-		double tmdev;
-		long total = rts->nreceived + rts->nrepeats;
-		long tmavg = rts->tsum / total;
-		long long tmvar;
-
-		if (rts->tsum < INT_MAX)
-			/* This slightly clumsy computation order is important to avoid
-			 * integer rounding errors for small ping times. */
-			tmvar = (rts->tsum2 - ((rts->tsum * rts->tsum) / total)) / total;
-		else
-			tmvar = (rts->tsum2 / total) - (tmavg * tmavg);
-
-		tmdev = llsqrt(tmvar);
-
-		printf(_("rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"),
-		       (long)rts->tmin / 1000, (long)rts->tmin % 1000,
-		       (unsigned long)(tmavg / 1000), (long)(tmavg % 1000),
-		       (long)rts->tmax / 1000, (long)rts->tmax % 1000,
-		       (long)tmdev / 1000, (long)tmdev % 1000);
-		comma = ", ";
-	}
-	if (rts->pipesize > 1) {
-		printf(_("%spipe %d"), comma, rts->pipesize);
-		comma = ", ";
-	}
-
-	if (rts->nreceived && (!rts->interval || rts->opt_flood || rts->opt_adaptive) && rts->ntransmitted > 1) {
-		int ipg = (1000000 * (long long)tv.tv_sec + tv.tv_nsec / 1000) / (rts->ntransmitted - 1);
-
-		printf(_("%sipg/ewma %d.%03d/%d.%03d ms"),
-		       comma, ipg / 1000, ipg % 1000, (int)(rts->rtt / 8000), (int)((rts->rtt / 8) % 1000));
-	}
-	putchar('\n');
 	return (!rts->nreceived || (rts->deadline && rts->nreceived < rts->npackets));
 }
 
