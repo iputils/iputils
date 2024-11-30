@@ -60,6 +60,7 @@
 #include <math.h>
 #include <locale.h>
 #include <sys/param.h>
+#include <stdbool.h>
 
 /* FIXME: global_rts will be removed in future */
 struct ping_rts *global_rts;
@@ -354,6 +355,8 @@ main(int argc, char **argv)
 	};
 	unsigned char buf[sizeof(struct in6_addr)];
 
+	bool opt_version = 0;
+
 	/* FIXME: global_rts will be removed in future */
 	global_rts = &rts;
 
@@ -390,7 +393,7 @@ main(int argc, char **argv)
 	}
 
 	/* Parse command line options */
-	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
+	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:jl:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
@@ -407,6 +410,9 @@ main(int argc, char **argv)
 		case 'e':
 			rts.ident = htons(strtoul_or_err(optarg, _("invalid argument"),
 							 0, IDENTIFIER_MAX));
+			break;
+		case 'j':
+			rts.opt_json = 1;
 			break;
 		case 'R':
 			if (rts.opt_timestamp)
@@ -572,9 +578,8 @@ main(int argc, char **argv)
 			rts.opt_verbose = 1;
 			break;
 		case 'V':
-			printf(IPUTILS_VERSION("ping"));
-			print_config();
-			exit(0);
+			opt_version = 1;
+			break;
 		case 'w':
 			rts.deadline = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
@@ -593,6 +598,11 @@ main(int argc, char **argv)
 			usage();
 			break;
 		}
+	}
+
+	if (opt_version) {
+		ping_print_version(&rts);
+		exit(0);
 	}
 
 	if (rts.opt_numeric && force_numeric && !rts.opt_quiet)
@@ -1058,10 +1068,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
-	printf(_("PING %s (%s) "), rts->hostname, inet_ntoa(rts->whereto.sin_addr));
-	if (rts->device || rts->opt_strictsource)
-		printf(_("from %s %s: "), inet_ntoa(rts->source.sin_addr), rts->device ? rts->device : "");
-	printf(_("%d(%d) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
+	ping_print_packet(rts);
 
 	setup(rts, sock);
 	if (rts->opt_connect_sk &&
@@ -1479,7 +1486,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 		else if (e->ee_errno != EMSGSIZE)
 			error(0, e->ee_errno, _("local error"));
 		else
-			error(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
+			ping_error(rts, 0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
 		rts->nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
 		struct sockaddr_in *sin = (struct sockaddr_in *)(e + 1);
@@ -1503,7 +1510,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 				      (1 << ICMP_ECHOREPLY));
 			if (setsockopt(sock->fd, SOL_RAW, ICMP_FILTER, (const void *)&filt,
 				       sizeof(filt)) == -1)
-				error(2, errno, "setsockopt(ICMP_FILTER)");
+				ping_error(rts, 2, errno, "setsockopt(ICMP_FILTER)");
 		}
 		net_errors++;
 		rts->nerrors++;
@@ -1513,7 +1520,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 			write_stdout("\bE", 2);
 		} else {
 			print_timestamp(rts);
-			printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
+			ping_print_error_packet(rts, pr_addr(rts, sin, sizeof *sin), ntohs(icmph.un.echo.sequence));
 			pr_icmph(rts, e->ee_type, e->ee_code, e->ee_info, NULL);
 			fflush(stdout);
 		}
@@ -1623,11 +1630,11 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *sock, void *packet,
  * program to be run without having intermingled output (or statistics!).
  */
 static
-void pr_echo_reply(uint8_t *_icp, int len __attribute__((__unused__)))
+void pr_echo_reply(struct ping_rts *rts, uint8_t *_icp, int len __attribute__((__unused__)))
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
 
-	printf(_(" icmp_seq=%u"), ntohs(icp->un.echo.sequence));
+	ping_print_uint(rts, _(" icmp_seq=%u"), "seq", ntohs(icp->un.echo.sequence));
 }
 
 int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
@@ -1652,7 +1659,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 		hlen = ip->ihl * 4;
 		if (cc < hlen + 8 || ip->ihl < 5) {
 			if (rts->opt_verbose)
-				error(0, 0, _("packet too short (%d bytes) from %s"), cc,
+				ping_error(rts, 0, 0, _("packet too short (%d bytes) from %s"), cc,
 					pr_addr(rts,from, sizeof *from));
 			return 1;
 		}
@@ -1773,9 +1780,9 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 	if (!rts->opt_flood) {
 		pr_options(rts, opts, olen + sizeof(struct iphdr));
 
-		putchar('\n');
-		fflush(stdout);
+		ping_finish_line(rts);
 	}
+
 	return 0;
 }
 
@@ -1861,5 +1868,5 @@ void ping4_install_filter(struct ping_rts *rts, socket_st *sock)
 	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, htons(rts->ident), 0, 1);
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
-		error(0, errno, _("WARNING: failed to install socket filter"));
+		ping_error(rts, 0, errno, _("WARNING: failed to install socket filter"));
 }

@@ -134,6 +134,9 @@ typedef struct ping_func_set_st {
 	void (*install_filter)(struct ping_rts *rts, socket_st *);
 } ping_func_set_st;
 
+/* late include as dependent on ping_rts */
+#include "ping_json.h"
+
 /* Node Information query */
 struct ping_ni {
 	int query;
@@ -232,6 +235,10 @@ struct ping_rts {
 	size_t cmsglen;
 	struct ping_ni ni;
 
+	struct ping_json_buffer json_packet;
+	struct ping_json_buffer json_stats;
+	struct ping_json_buffer json_error;
+
 	/* boolean option bits */
 	unsigned int
 		opt_adaptive:1,
@@ -251,6 +258,7 @@ struct ping_rts {
 		opt_ptimeofday:1,
 		opt_rtt_precision:1,
 		opt_quiet:1,
+		opt_json:1,
 		opt_rroute:1,
 		opt_so_debug:1,
 		opt_so_dontroute:1,
@@ -413,7 +421,7 @@ extern void common_options(int ch);
 extern int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 			     int cc, uint16_t seq, int hops,
 			     int csfailed, struct timeval *tv, char *from,
-			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast,
+			     void (*pr_reply)(struct ping_rts *rts, uint8_t *ptr, int cc), int multicast,
 			     int wrong_source);
 extern void print_timestamp(struct ping_rts *rts);
 void fill(struct ping_rts *rts, char *patp, unsigned char *packet, unsigned packet_size);
