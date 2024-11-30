@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2021 Petr Vorel <pvorel@suse.cz>
-# TODO: ::1 generates DEPRECATION: ":" is not allowed in test name "ping -c1 ::1", it has been replaced with "_"
 
 # GitHub CI does not have working IPv6
 # https://github.com/actions/virtual-environments/issues/668
@@ -46,6 +45,7 @@ foreach dst : [ 'localhost', '127.0.0.1' ] + ipv6_dst
 	endif
 
 	name = cmd_name + ' '.join(args)
+	name = '_'.join(name.split(':'))
 	test(name, cmd, args : args, should_fail : should_fail)
   endforeach
 endforeach
@@ -62,6 +62,7 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
+	name = '_'.join(name.split(':'))
 	test(name, cmd, args : args)
   endforeach
 endforeach
@@ -76,6 +77,7 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_opt_fail
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
+	name = '_'.join(name.split(':'))
 	test(name, cmd, args : args, should_fail : true)
   endforeach
 endforeach
@@ -87,6 +89,7 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
   foreach args : ping_tests_user_fail
 	args += [ dst ]
 	name = cmd_name + ' '.join(args)
+	name = '_'.join(name.split(':'))
 	test(name, cmd, args : args, should_fail : not run_as_root)
   endforeach
 endforeach
