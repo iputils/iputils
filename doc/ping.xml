@@ -24,7 +24,7 @@ xml:id="man.ping">
     <cmdsynopsis sepchar=" ">
       <command>ping</command>
       <arg choice="opt" rep="norepeat">
-        <option>-aAbBdCDfhHLnOqrRUvV346</option>
+        <option>-aAbBdCDfhHjLnOqrRUvV346</option>
       </arg>
       <arg choice="opt" rep="norepeat">
         <option>-c
@@ -333,6 +333,14 @@ xml:id="man.ping">
           address, link specification (by the '%'-notation in
           <emphasis remap="I">destination</emphasis>, or by this
           option) can be used but it is no longer required.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-j</option>
+        </term>
+        <listitem>
+          <para>JSON output. Experimental.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
