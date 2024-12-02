@@ -93,3 +93,5 @@ foreach dst : [ '127.0.0.1' ] + ipv6_dst
 	test(name, cmd, args : args, should_fail : not run_as_root)
   endforeach
 endforeach
+
+test('json', find_program('test_json.py', required : true), args: ping)
