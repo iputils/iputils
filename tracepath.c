@@ -471,7 +471,7 @@ int main(int argc, char **argv)
 			ctl.show_both = 1;
 			break;
 		case 'l':
-			ctl.mtu = strtol_or_err(optarg, _("invalid argument"), ctl.overhead, INT_MAX);
+			ctl.mtu = strtol_or_err(optarg, _("invalid argument"), 0, INT_MAX);
 			break;
 		case 'm':
 			ctl.max_hops = strtol_or_err(optarg, _("invalid argument"), 0, MAX_HOPS_LIMIT);
