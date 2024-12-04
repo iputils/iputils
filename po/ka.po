@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-15 17:30+0100\n"
+"POT-Creation-Date: 2025-01-03 22:19+0100\n"
 "PO-Revision-Date: 2024-10-19 18:38+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
@@ -1336,42 +1336,27 @@ msgstr " ttl =%d"
 msgid " (truncated)\n"
 msgstr " (მოკვეცილია)\n"
 
-#: ping/ping_common.c:826 ping/ping_common.c:836
+#: ping/ping_common.c:849
 #, c-format
-msgid " time=%ld.%03ld ms"
-msgstr " დრო=%ld.%03ld მწმ"
+msgid " time=%s ms"
+msgstr " დრო=%s მწმ"
 
-#: ping/ping_common.c:828
-#, c-format
-msgid " time=%ld ms"
-msgstr " დრო = %ld მწმ"
-
-#: ping/ping_common.c:830
-#, c-format
-msgid " time=%ld.%01ld ms"
-msgstr " დრო=%ld.%01ld მწმ"
-
-#: ping/ping_common.c:833
-#, c-format
-msgid " time=%ld.%02ld ms"
-msgstr " დრო=%ld.%02ld მწმ"
-
-#: ping/ping_common.c:841
+#: ping/ping_common.c:854
 #, c-format
 msgid " (DUP!)"
 msgstr " (DUP!)"
 
-#: ping/ping_common.c:843
+#: ping/ping_common.c:856
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (ცუდი საკონტროლო ჯამი!)"
 
-#: ping/ping_common.c:845
+#: ping/ping_common.c:858
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " (განსხვავებული მისამართი)"
 
-#: ping/ping_common.c:852
+#: ping/ping_common.c:865
 #, c-format
 msgid ""
 "\n"
@@ -1380,67 +1365,67 @@ msgstr ""
 "\n"
 "მონაცემების არასწორი ბაიტი #%d უნდა იყოს 0ხ%x მაგრამ იყო 0x%x"
 
-#: ping/ping_common.c:895
+#: ping/ping_common.c:908
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr "--- %s-ის პინგის სტატისტიკა ----\n"
 
-#: ping/ping_common.c:896
+#: ping/ping_common.c:909
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr "გადაცემულია %ld პაკეტი, "
 
-#: ping/ping_common.c:897
+#: ping/ping_common.c:910
 #, c-format
 msgid "%ld received"
 msgstr "მიღებულია %ld"
 
-#: ping/ping_common.c:899
+#: ping/ping_common.c:912
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ", +%ld ასლი"
 
-#: ping/ping_common.c:901
+#: ping/ping_common.c:914
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ", +%ld გაფუჭებული"
 
-#: ping/ping_common.c:903
+#: ping/ping_common.c:916
 #, c-format
 msgid ", +%ld errors"
 msgstr ", +%ld შეცდომა"
 
-#: ping/ping_common.c:909
+#: ping/ping_common.c:922
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ", %g%% პაკეტი დაიკარგა"
 
-#: ping/ping_common.c:911
+#: ping/ping_common.c:924
 #, c-format
 msgid ", time %llums"
 msgstr ", დრო %lluმწმ"
 
-#: ping/ping_common.c:931
+#: ping/ping_common.c:944
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr "rtt მინ/საშ/მაქს/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld მწმ"
 
-#: ping/ping_common.c:939
+#: ping/ping_common.c:952
 #, c-format
 msgid "%spipe %d"
 msgstr "%s არხი %d"
 
-#: ping/ping_common.c:946
+#: ping/ping_common.c:959
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr "%sipg/ewma %d.%03d/%d.%03d მწმ"
 
-#: ping/ping_common.c:964
+#: ping/ping_common.c:977
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld პაკეტი, %d%% დაკარგულია"
 
-#: ping/ping_common.c:969
+#: ping/ping_common.c:982
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", მინ/საშ/ewma/მაქს = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld მწმ"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-15 17:30+0100\n"
+"POT-Creation-Date: 2025-01-03 22:19+0100\n"
 "PO-Revision-Date: 2024-09-02 17:24+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
@@ -1324,42 +1324,27 @@ msgstr " ttl=%d"
 msgid " (truncated)\n"
 msgstr " (truncado)\n"
 
-#: ping/ping_common.c:826 ping/ping_common.c:836
+#: ping/ping_common.c:849
 #, c-format
-msgid " time=%ld.%03ld ms"
-msgstr " tempo=%ld.%03ld ms"
+msgid " time=%s ms"
+msgstr " tempo=%s ms"
 
-#: ping/ping_common.c:828
-#, c-format
-msgid " time=%ld ms"
-msgstr " tempo=%ld ms"
-
-#: ping/ping_common.c:830
-#, c-format
-msgid " time=%ld.%01ld ms"
-msgstr " tempo=%ld.%01ld ms"
-
-#: ping/ping_common.c:833
-#, c-format
-msgid " time=%ld.%02ld ms"
-msgstr " tempo=%ld.%02ld ms"
-
-#: ping/ping_common.c:841
+#: ping/ping_common.c:854
 #, c-format
 msgid " (DUP!)"
 msgstr " (DUP!)"
 
-#: ping/ping_common.c:843
+#: ping/ping_common.c:856
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (SOMA DE VERIFICAÇÃO INVÁLIDA!)"
 
-#: ping/ping_common.c:845
+#: ping/ping_common.c:858
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " (ENDEREÇO DIFERENTE!)"
 
-#: ping/ping_common.c:852
+#: ping/ping_common.c:865
 #, c-format
 msgid ""
 "\n"
@@ -1368,67 +1353,67 @@ msgstr ""
 "\n"
 "dados com byte incorreto #%d deveria ser 0x%x, mas era 0x%x"
 
-#: ping/ping_common.c:895
+#: ping/ping_common.c:908
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr "--- %s estatísticas de ping ---\n"
 
-#: ping/ping_common.c:896
+#: ping/ping_common.c:909
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr "%ld pacotes transmitidos, "
 
-#: ping/ping_common.c:897
+#: ping/ping_common.c:910
 #, c-format
 msgid "%ld received"
 msgstr "%ld recebidos"
 
-#: ping/ping_common.c:899
+#: ping/ping_common.c:912
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ", +%ld duplicados"
 
-#: ping/ping_common.c:901
+#: ping/ping_common.c:914
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ", +%ld corrompidos"
 
-#: ping/ping_common.c:903
+#: ping/ping_common.c:916
 #, c-format
 msgid ", +%ld errors"
 msgstr ", +%ld erros"
 
-#: ping/ping_common.c:909
+#: ping/ping_common.c:922
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ", %g%% perda de pacote"
 
-#: ping/ping_common.c:911
+#: ping/ping_common.c:924
 #, c-format
 msgid ", time %llums"
 msgstr ", tempo %llums"
 
-#: ping/ping_common.c:931
+#: ping/ping_common.c:944
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr "rtt mín/méd/máx/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
-#: ping/ping_common.c:939
+#: ping/ping_common.c:952
 #, c-format
 msgid "%spipe %d"
 msgstr "%spipe %d"
 
-#: ping/ping_common.c:946
+#: ping/ping_common.c:959
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
-#: ping/ping_common.c:964
+#: ping/ping_common.c:977
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld pacotes, %d%% perda"
 
-#: ping/ping_common.c:969
+#: ping/ping_common.c:982
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", mín/méd/ewma/máx = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
