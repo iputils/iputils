@@ -813,24 +813,18 @@ restamp:
 		uint8_t *cp, *dp;
 
 		print_timestamp(rts);
-		if (!rts->opt_json)
-			printf(_("%d bytes from %s:"), cc, from);
-		construct_json(rts, PING_JSON_INT, "bytes", cc);
+		PRINT_INT(_("%d bytes "), "bytes", cc);
 		// TODO: split host IP address and name into separate attributes in JSON?
-		construct_json(rts, PING_JSON_STR, "host", from);
+		PRINT_STR(_("from %s:"), "host", from);
 
 		if (pr_reply)
 			pr_reply(rts, icmph, cc);
 
 		if (rts->opt_verbose && rts->ident != -1)
-			if (!rts->opt_json)
-				printf(_(" ident=%d"), ntohs(rts->ident));
+			PRINT_INT(_(" ident=%d"), "ident", ntohs(rts->ident));
 
 		if (hops >= 0) {
-			if (!rts->opt_json)
-				printf(_(" ttl=%d"), hops);
-
-			construct_json(rts, PING_JSON_INT, "ttl", hops);
+			PRINT_INT(_(" ttl=%d"), "ttl", hops);
 		}
 
 		if (cc < rts->datalen + 8) {
@@ -854,9 +848,7 @@ restamp:
 				sprintf(outtime, "%ld.%03ld", triptime / 1000,
 				       triptime % 1000);
 
-			if (!rts->opt_json)
-				printf(_(" time=%s ms"), outtime);
-			construct_json(rts, PING_JSON_STR, "time", outtime);
+			PRINT_STR(_(" time=%s ms"), "time", outtime);
 
 		}
 

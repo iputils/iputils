@@ -677,9 +677,7 @@ void pr_echo_reply(struct ping_rts *rts, uint8_t *_icmph, int cc __attribute__((
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *)_icmph;
 
-	if (!rts->opt_json)
-		printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq));
-	construct_json(rts, PING_JSON_INT, "seq", ntohs(icmph->icmp6_seq));
+	PRINT_INT(_(" icmp_seq=%u"), "seq", ntohs(icmph->icmp6_seq));
 }
 
 static void putchar_safe(char c)

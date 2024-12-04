@@ -1652,9 +1652,7 @@ void pr_echo_reply(struct ping_rts *rts, uint8_t *_icp, int len __attribute__((_
 {
 	struct icmphdr *icp = (struct icmphdr *)_icp;
 
-	if (!rts->opt_json)
-		printf(_(" icmp_seq=%u"), ntohs(icp->un.echo.sequence));
-	construct_json(rts, PING_JSON_INT, "seq", ntohs(icp->un.echo.sequence));
+	PRINT_INT(_(" icmp_seq=%u"), "seq", ntohs(icp->un.echo.sequence));
 }
 
 int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
