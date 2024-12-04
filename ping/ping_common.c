@@ -822,19 +822,32 @@ restamp:
 			return 1;
 		}
 		if (rts->timing) {
-			if (rts->opt_rtt_precision)
-				printf(_(" time=%ld.%03ld ms"), triptime / 1000, triptime % 1000);
-			else if (triptime >= 100000 - 50)
-				printf(_(" time=%ld ms"), (triptime + 500) / 1000);
-			else if (triptime >= 10000 - 5)
-				printf(_(" time=%ld.%01ld ms"), (triptime + 50) / 1000,
-				       ((triptime + 50) % 1000) / 100);
-			else if (triptime >= 1000)
-				printf(_(" time=%ld.%02ld ms"), (triptime + 5) / 1000,
-				       ((triptime + 5) % 1000) / 10);
-			else
-				printf(_(" time=%ld.%03ld ms"), triptime / 1000,
-				       triptime % 1000);
+			char *fmt;
+			char fmt2[30];
+			long int num, dec = 0;
+
+			if (rts->opt_rtt_precision) {
+				fmt = "%ld.%03ld";
+				num = triptime / 1000;
+				dec = triptime % 1000;
+			} else if (triptime >= 100000 - 50) {
+				fmt = "%ld";
+				num = (triptime + 500) / 1000;
+			} else if (triptime >= 10000 - 5) {
+				fmt = "%ld.%01ld";
+				num = (triptime + 50) / 1000;
+				dec = ((triptime + 50) % 1000) / 100;
+			} else if (triptime >= 1000) {
+				fmt = "%ld.%02ld";
+				num = (triptime + 5) / 1000;
+				dec = ((triptime + 5) % 1000) / 10;
+			} else {
+				fmt = "%ld.%03ld";
+				num = triptime / 1000;
+				dec = triptime % 1000;
+			}
+			snprintf(fmt2, sizeof(fmt2), _(" time=%s ms"), fmt);
+			printf(fmt2, num, dec);
 		}
 
 		if (dupflag && (!multicast || rts->opt_verbose))
