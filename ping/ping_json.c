@@ -29,10 +29,18 @@
 #include "ping.h"
 #include "stdarg.h"
 
+void json_emergency(char *msg) {
+	error(1, 0, "%s", msg);
+}
+
 void test_buflen(int have) {
-	if (have < 0 || have >= PING_JSON_MAX) {
-		error(1, 0, "Fatal error during JSON construction.");
-	}
+	if (have < 0 || have >= PING_JSON_MAX)
+		json_emergency("Overflow during JSON construction.");
+}
+
+void json_end_array(char *part) {
+	size_t curlen = strlen(part);
+	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "]"));
 }
 
 void json_start_object(char *part) {
@@ -69,6 +77,32 @@ void json_kv_int_continue(char *part, char *key, int value) {
 	json_continue(part);
 }
 
+/* so far only supports arrays of strings */
+void json_kv_array(char *part, char *key, va_list ap) {
+	size_t curlen = strlen(part);
+	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "\"%s\": [", key));
+
+	char * value;
+	int count = 0;
+
+	while (1) {
+		value = va_arg(ap, char *);
+
+		if (!value)
+			break;
+
+		if (count > 0)
+			json_continue(part);
+
+		curlen = strlen(part);
+		test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "\"%s\"", value));
+
+		count = count + 1;
+	}
+
+	json_end_array(part);
+}
+
 void json_kv_object(char *part, char *key, char *value) {
 	json_end_object(value);
 	size_t curlen = strlen(part);
@@ -93,6 +127,10 @@ void construct_json(struct ping_rts *rts, int ptype, char *key, ...) {
 	}
 
 	switch (ptype) {
+		case PING_JSON_ARR:
+			json_kv_array(rts->json_packet, key, ap);
+			break;
+
 		case PING_JSON_STR:
 			val_str = va_arg (ap, char *);
 			json_kv_str(rts->json_packet, key, val_str);
@@ -103,6 +141,7 @@ void construct_json(struct ping_rts *rts, int ptype, char *key, ...) {
 			json_kv_int(rts->json_packet, key, val_int);
 			break;
 	}
+
 
 	va_end (ap);
 }
@@ -168,51 +207,16 @@ void print_json_statistics(struct ping_rts *rts) {
 	}
 }
 
-void error_json(struct ping_rts *rts, int status, char *errtype, char *errmsg, int ptype, char *extrakey, ...) { 
-	if (!rts->opt_json) {
-		return;
-	}
+void construct_json_error(struct ping_rts *rts, int errnum, char *errmsg) { 
+	if (errnum < 0)
+		json_emergency("Unable to process errnum for JSON construction.");
 
-	char * extraval_str;
-	int extraval_int;
-
-	char json_error[PING_JSON_MAX];
-	json_start_object(json_error);
-
-	if (*rts->json_packet) {
-		json_continue(rts->json_packet);
-	} else {
-		json_start_object(rts->json_packet);
-	}
-
-	va_list ap;
-	va_start (ap, *extrakey);
-
-	json_kv_str_continue(json_error, "type", errtype);
-	json_kv_str_continue(json_error, "error", errmsg);
-	json_kv_int(json_error, "status", status);
-
-	switch (ptype) {
-		case PING_JSON_NUL:
-			break;
-
-		case PING_JSON_STR:
-			extraval_str = va_arg (ap, char *);
-			json_kv_str(json_error, extrakey, extraval_str);
-			break;
-
-		case PING_JSON_INT:
-			extraval_int = va_arg (ap, int);
-			json_kv_int(json_error, extrakey, extraval_int);
-			break;
-	}
-
-	va_end (ap);
-
-	json_kv_object(rts->json_packet, "error", json_error);
+	if (errmsg && errnum == 0)
+		construct_json(rts, PING_JSON_STR, "error", errmsg);
+	else if (!errmsg)
+		construct_json(rts, PING_JSON_STR, "error", strerror(errnum));
+	else
+		construct_json(rts, PING_JSON_ARR, "error", errmsg, strerror(errnum));
 
 	print_json_packet(rts);
-
-	if (status > 0)
-		exit(status);
 }

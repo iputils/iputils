@@ -26,22 +26,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IPUTILS_PING_JSON_H
-#define IPUTILS_PING_JSON_H
+/* extract first argument whilst staying C99 compliant */
+#define _JSON_VALUE(value, ...) value
+#define JSON_VALUE(...) _JSON_VALUE(__VA_ARGS__, NULL)
 
-#define PING_JSON_NUL 0
-#define PING_JSON_STR 1
-#define PING_JSON_INT 2
-#define PING_JSON_ARR 3
-#define PING_JSON_MAX 1000
+#define PRINT(msg, json_key, json_type, ...) \
+	do { \
+		if (rts->opt_json) \
+			construct_json(rts, json_type, json_key, JSON_VALUE(__VA_ARGS__)); \
+		else \
+			printf(msg, __VA_ARGS__); \
+	} while (0)
+#define PRINT_INT(msg, json_key, ...) PRINT(msg, json_key, PING_JSON_INT, __VA_ARGS__)
+#define PRINT_STR(msg, json_key, ...) PRINT(msg, json_key, PING_JSON_STR, __VA_ARGS__)
 
-#include "ping/ping_output.h"
+#define ERRORF(status, errnum, ...) \
+	do { \
+		char errmsg[50]; \
+		snprintf(errmsg, sizeof(errmsg), __VA_ARGS__); \
+		ERROR(status, errnum, errmsg); \
+	} while(0)
 
-void construct_json(struct ping_rts *rts, int ptype, char *key, ...);
-void construct_json_error(struct ping_rts *rts, int errnum, char *errmsg);
-void construct_json_statistics(struct ping_rts *rts, struct timespec tv, char *rttmin, char *rttavg, char *rttmax, char *rttmdev);
-void construct_json_statistics_flood(struct ping_rts *rts, char *ipg, char *ewma);
-void print_json_packet(struct ping_rts *rts);
-void print_json_statistics(struct ping_rts *rts);
+#define ERRORPF(...) \
+	do { \
+		char errmsg[50]; \
+		snprintf(errmsg, sizeof(errmsg), __VA_ARGS__); \
+		ERRORP(errmsg); \
+	} while(0)
 
-#endif /* IPUTILS_PING_JSON_H */
+#define ERROR(status, errnum, msg) \
+	do { \
+		if (rts->opt_json) { \
+			construct_json_error(rts, errnum, msg); \
+			if (status > 0) \
+				exit(status); \
+		} else { \
+			error(status, errnum, "%s", msg); \
+		} \
+	} while (0)
+
+#define ERRORP(...) \
+	do { \
+		if (rts->opt_json) \
+			construct_json_error(rts, 0, JSON_VALUE(__VA_ARGS__)); \
+		else \
+			printf(__VA_ARGS__); \
+	} while (0)

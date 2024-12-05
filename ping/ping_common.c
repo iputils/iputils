@@ -107,10 +107,10 @@ void limit_capabilities(struct ping_rts *rts)
 
 	cap_cur_p = cap_get_proc();
 	if (!cap_cur_p)
-		error(-1, errno, "cap_get_proc");
+		ERROR(-1, errno, "cap_get_proc");
 	cap_p = cap_init();
 	if (!cap_p)
-		error(-1, errno, "cap_init");
+		ERROR(-1, errno, "cap_init");
 	cap_ok = CAP_CLEAR;
 	cap_get_flag(cap_cur_p, CAP_NET_ADMIN, CAP_PERMITTED, &cap_ok);
 	if (cap_ok != CAP_CLEAR)
@@ -120,13 +120,13 @@ void limit_capabilities(struct ping_rts *rts)
 	if (cap_ok != CAP_CLEAR)
 		cap_set_flag(cap_p, CAP_PERMITTED, 1, &rts->cap_raw, CAP_SET);
 	if (cap_set_proc(cap_p) < 0)
-		error(-1, errno, "cap_set_proc");
+		ERROR(-1, errno, "cap_set_proc");
 	if (prctl(PR_SET_KEEPCAPS, 1) < 0)
-		error(-1, errno, "prctl");
+		ERROR(-1, errno, "prctl");
 	if (setuid(getuid()) < 0)
-		error(-1, errno, "setuid");
+		ERROR(-1, errno, "setuid");
 	if (prctl(PR_SET_KEEPCAPS, 0) < 0)
-		error(-1, errno, "prctl");
+		ERROR(-1, errno, "prctl");
 	cap_free(cap_p);
 	cap_free(cap_cur_p);
 #else
@@ -135,7 +135,7 @@ void limit_capabilities(struct ping_rts *rts)
 	rts->uid = getuid();
 #ifndef HAVE_LIBCAP
 	if (seteuid(rts->uid))
-		error(-1, errno, "setuid");
+		ERROR(-1, errno, "setuid");
 #endif
 }
 
@@ -215,7 +215,7 @@ void fill(struct ping_rts *rts, char *patp, unsigned char *packet, unsigned pack
 
 	for (cp = patp; *cp; cp++) {
 		if (!isxdigit(*cp))
-			error(2, 0, _("patterns must be specified as hex digits: %s"), cp);
+			ERRORF(2, 0, _("patterns must be specified as hex digits: %s"), cp);
 	}
 	ii = sscanf(patp,
 		    "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
@@ -431,7 +431,7 @@ hard_local_error:
 		if (rts->opt_flood)
 			write_stdout("E", 1);
 		else
-			ERROR(0, errno, "sendmsg", PING_JSON_NUL, "");
+			ERROR(0, errno, "sendmsg");
 
 	}
 	tokens = 0;
@@ -455,7 +455,7 @@ void sock_setbufs(struct ping_rts *rts, socket_st *sock, int alloc)
 	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
 	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
-			ERROR(0, 0, _("WARNING: probably, rcvbuf is not enough to hold preload"), PING_JSON_NUL, "");
+			ERROR(0, 0, _("WARNING: probably, rcvbuf is not enough to hold preload"));
 	}
 }
 
@@ -474,15 +474,15 @@ void sock_setmark(struct ping_rts *rts, int fd)
 	disable_capability_admin();
 
 	if (ret == -1) {
-		error(0, errno_save, _("WARNING: failed to set mark: %u"), rts->mark);
+		ERRORF(0, errno_save, _("WARNING: failed to set mark: %u"), rts->mark);
 
 		if (errno_save == EPERM)
-			error(0, 0, _("=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"));
+			ERROR(0, 0, _("=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"));
 
 		rts->opt_mark = 0;
 	}
 #else
-		error(0, errno_save, _("WARNING: SO_MARK not supported"));
+		ERROR(0, errno_save, _("WARNING: SO_MARK not supported"));
 #endif
 }
 
@@ -498,11 +498,11 @@ void setup(struct ping_rts *rts, socket_st *sock)
 		rts->interval = 0;
 
 	if (rts->uid && rts->interval < MIN_USER_INTERVAL_MS)
-		error(2, 0, _("cannot flood, minimal interval for user must be >= %d ms, use -i %s (or higher)"),
+		ERRORF(2, 0, _("cannot flood, minimal interval for user must be >= %d ms, use -i %s (or higher)"),
 			  MIN_USER_INTERVAL_MS, str_interval(MIN_USER_INTERVAL_MS));
 
 	if (rts->interval >= INT_MAX / rts->preload)
-		error(2, 0, _("illegal preload and/or interval: %d"), rts->interval);
+		ERRORF(2, 0, _("illegal preload and/or interval: %d"), rts->interval);
 
 	hold = 1;
 	if (rts->opt_so_debug)
@@ -514,7 +514,7 @@ void setup(struct ping_rts *rts, socket_st *sock)
 	if (!rts->opt_latency) {
 		int on = 1;
 		if (setsockopt(sock->fd, SOL_SOCKET, SO_TIMESTAMP, &on, sizeof(on)))
-			error(0, 0, _("Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"));
+			ERROR(0, 0, _("Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"));
 	}
 #endif
 
@@ -688,7 +688,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 				recv_error = 0;
 				if (!fset->receive_error_msg(rts, sock)) {
 					if (errno) {
-						error(0, errno, "recvmsg");
+						ERROR(0, errno, "recvmsg");
 						break;
 					}
 					not_ours = 1;
@@ -759,7 +759,7 @@ restamp:
 		tvsub(tv, &tmp_tv);
 		triptime = tv->tv_sec * 1000000 + tv->tv_usec;
 		if (triptime < 0) {
-			error(0, 0, _("Warning: time of day goes back (%ldus), taking countermeasures"), triptime);
+			ERRORF(0, 0, _("Warning: time of day goes back (%ldus), taking countermeasures"), triptime);
 			triptime = 0;
 			if (!rts->opt_latency) {
 				gettimeofday(tv, NULL);

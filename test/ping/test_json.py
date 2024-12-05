@@ -47,12 +47,11 @@ for arguments in [
       assert len(data['rtt'].keys()) == 4
     elif 'error' in data:
       errdata = data['error']
+      assert isinstance(errdata, list)
       if arguments[1] == '-Mdo':
-        assert errdata.get('type') == 'sendmsg'
-        assert errdata.get('status') == 0
+        assert errdata[0] == 'sendmsg'
         # in Alpine, it is "Message too large"
-        assert errdata.get('error') in ['Message too long', 'Message too large']
-        assert len(errdata.keys()) == 3
+        assert errdata[1] in ['Message too long', 'Message too large']
     else:
       print('Excess data! Missing test coverage or stray output?')
       exit(1)

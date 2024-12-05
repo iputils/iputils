@@ -1500,10 +1500,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 		else if (e->ee_errno != EMSGSIZE)
 			error(0, e->ee_errno, _("local error"));
 		else {
-			if (!rts->opt_json)
-				error(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
-
-			error_json(rts, 0, "local", "message too long", PING_JSON_INT, "mtu", e->ee_info);
+			ERRORF(0, 0, _("local error: message too long, mtu=%u"), e->ee_info);
 		}
 		rts->nerrors++;
 	} else if (e->ee_origin == SO_EE_ORIGIN_ICMP) {
@@ -1528,7 +1525,7 @@ int ping4_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 				      (1 << ICMP_ECHOREPLY));
 			if (setsockopt(sock->fd, SOL_RAW, ICMP_FILTER, (const void *)&filt,
 				       sizeof(filt)) == -1)
-				error(2, errno, "setsockopt(ICMP_FILTER)");
+				ERROR(2, errno, "setsockopt(ICMP_FILTER)");
 		}
 		net_errors++;
 		rts->nerrors++;
@@ -1677,7 +1674,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 		hlen = ip->ihl * 4;
 		if (cc < hlen + 8 || ip->ihl < 5) {
 			if (rts->opt_verbose)
-				error(0, 0, _("packet too short (%d bytes) from %s"), cc,
+				ERRORF(0, 0, _("packet too short (%d bytes) from %s"), cc,
 					pr_addr(rts,from, sizeof *from));
 			return 1;
 		}
@@ -1890,5 +1887,5 @@ void ping4_install_filter(struct ping_rts *rts, socket_st *sock)
 	insns[2] = (struct sock_filter)BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, htons(rts->ident), 0, 1);
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
-		error(0, errno, _("WARNING: failed to install socket filter"));
+		ERROR(0, errno, _("WARNING: failed to install socket filter"));
 }

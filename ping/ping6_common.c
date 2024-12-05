@@ -766,9 +766,7 @@ void pr_niquery_reply_addr(struct ping_rts *rts, struct ni_hdr *nih, int len)
 	}
 	p = h;
 	if (len < 0) {
-		if (!rts->opt_json)
-			printf(_(" parse error (too short)"));
-		construct_json(rts, PING_JSON_STR, "error", "too short");
+		printf(_(" parse error (too short)"));
 		return;
 	}
 
@@ -777,16 +775,11 @@ void pr_niquery_reply_addr(struct ping_rts *rts, struct ni_hdr *nih, int len)
 			putchar(',');
 
 		if (p + sizeof(uint32_t) + aflen > end) {
-			if (!rts->opt_json)
-				printf(_(" parse error (truncated)"));
-			construct_json(rts, PING_JSON_STR, "error", "truncated");
+			printf(_(" parse error (truncated)"));
 			break;
 		}
 		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf))) {
-			if (!rts->opt_json)
-				printf(_(" unexpected error in inet_ntop(%s)"),
-					strerror(errno));
-			construct_json(rts, PING_JSON_STR, "error", "inet_ntop");
+			printf(_(" unexpected error in inet_ntop(%s)"), strerror(errno));
 
 		} else {
 			printf(" %s", buf);
@@ -873,7 +866,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	icmph = (struct icmp6_hdr *)buf;
 	if (cc < 8) {
 		if (rts->opt_verbose)
-			error(0, 0, _("packet too short: %d bytes"), cc);
+			ERRORF(0, 0, _("packet too short: %d bytes"), cc);
 		return 1;
 	}
 
