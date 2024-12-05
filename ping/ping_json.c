@@ -29,56 +29,56 @@
 #include "ping.h"
 #include "stdarg.h"
 
-void json_emergency(char *msg) {
+static inline void json_emergency(char *msg) {
 	error(1, 0, "%s", msg);
 }
 
-void test_buflen(int have) {
+static inline void test_buflen(int have) {
 	if (have < 0 || have >= PING_JSON_MAX)
 		json_emergency("Overflow during JSON construction.");
 }
 
-void json_end_array(char *part) {
+static void json_end_array(char *part) {
 	size_t curlen = strlen(part);
 	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "]"));
 }
 
-void json_start_object(char *part) {
+static void json_start_object(char *part) {
 	test_buflen(snprintf(part, PING_JSON_MAX, "{"));
 }
 
-void json_end_object(char *part) {
+static void json_end_object(char *part) {
 	size_t curlen = strlen(part);
 	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "}"));
 }
 
-void json_continue(char *part) {
+static void json_continue(char *part) {
 	size_t curlen = strlen(part);
 	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, ", "));
 }
 
-void json_kv_str(char *part, char *key, char *value) {
+static void json_kv_str(char *part, char *key, char *value) {
 	size_t curlen = strlen(part);
 	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "\"%s\": \"%s\"", key, value));
 }
 
-void json_kv_str_continue(char *part, char *key, char *value) {
+static void json_kv_str_continue(char *part, char *key, char *value) {
 	json_kv_str(part, key, value);
 	json_continue(part);
 }
 
-void json_kv_int(char *part, char *key, int value) {
+static void json_kv_int(char *part, char *key, int value) {
 	size_t curlen = strlen(part);
 	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "\"%s\": %d", key, value));
 }
 
-void json_kv_int_continue(char *part, char *key, int value) {
+static void json_kv_int_continue(char *part, char *key, int value) {
 	json_kv_int(part, key, value);
 	json_continue(part);
 }
 
 /* so far only supports arrays of strings */
-void json_kv_array(char *part, char *key, va_list ap) {
+static void json_kv_array(char *part, char *key, va_list ap) {
 	size_t curlen = strlen(part);
 	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "\"%s\": [", key));
 
@@ -103,7 +103,7 @@ void json_kv_array(char *part, char *key, va_list ap) {
 	json_end_array(part);
 }
 
-void json_kv_object(char *part, char *key, char *value) {
+static void json_kv_object(char *part, char *key, char *value) {
 	json_end_object(value);
 	size_t curlen = strlen(part);
 	test_buflen(snprintf(part + curlen, PING_JSON_MAX - curlen, "\"%s\": %s", key, value));
