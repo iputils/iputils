@@ -430,12 +430,8 @@ hard_local_error:
 	if (i == 0 && !rts->opt_quiet) {
 		if (rts->opt_flood)
 			write_stdout("E", 1);
-		else {
-			if(!rts->opt_json)
-				error(0, errno, "sendmsg");
-
-			error_json(rts, 0, "sendmsg", strerror(errno), PING_JSON_NUL, "");
-		}
+		else
+			ERROR(0, errno, "sendmsg", PING_JSON_NUL, "");
 
 	}
 	tokens = 0;
@@ -459,7 +455,7 @@ void sock_setbufs(struct ping_rts *rts, socket_st *sock, int alloc)
 	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
 	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
-			error(0, 0, _("WARNING: probably, rcvbuf is not enough to hold preload"));
+			ERROR(0, 0, _("WARNING: probably, rcvbuf is not enough to hold preload"), PING_JSON_NUL, "");
 	}
 }
 

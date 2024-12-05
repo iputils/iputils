@@ -47,6 +47,14 @@
 #define PRINT_INT(msg, json_key, ...) PRINT(msg, json_key, PING_JSON_INT, __VA_ARGS__)
 #define PRINT_STR(msg, json_key, ...) PRINT(msg, json_key, PING_JSON_STR, __VA_ARGS__)
 
+#define ERROR(status, errnum, error_type, json_type, ...) \
+	do { \
+		if (rts->opt_json) \
+			error_json(rts, status, error_type, strerror(errnum), json_type, __VA_ARGS__); \
+		else \
+			error(status, errnum, error_type); \
+	} while (0)
+
 void construct_json(struct ping_rts *rts, int ptype, char *key, ...);
 void construct_json_statistics(struct ping_rts *rts, struct timespec tv, char *rttmin, char *rttavg, char *rttmax, char *rttmdev);
 void construct_json_statistics_flood(struct ping_rts *rts, char *ipg, char *ewma);
