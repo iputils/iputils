@@ -1,6 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) 2021 Petr Vorel <pvorel@suse.cz>
+# Copyright (c) 2021-2025 Petr Vorel <pvorel@suse.cz>
 
+message('Build directory is: ' + meson.current_build_dir())
+
+foreach t : ['ping-01-basics.t', 'ping-02-errors.t' ]
+  test(t, find_program(t), args: ping)
+endforeach
+
+# FIXME: convert to perl
 # GitHub CI does not have working IPv6
 # https://github.com/actions/virtual-environments/issues/668
 ipv6_dst = []

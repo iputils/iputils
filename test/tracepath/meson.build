@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) 2021 Petr Vorel <pvorel@suse.cz>
+# Copyright (c) 2021-2025 Petr Vorel <pvorel@suse.cz>
 
-cmd = tracepath
-cmd_name = 'tracepath '
-args = ['-V']
+message('Build directory is: ' + meson.current_build_dir())
 
-name = cmd_name + ' '.join(args)
-test(name, cmd, args : args)
+foreach t : ['tracepath-01-basic.t']
+  test(t, find_program(t), args: tracepath)
+endforeach
