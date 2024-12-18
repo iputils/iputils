@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-15 17:30+0100\n"
-"PO-Revision-Date: 2024-10-26 18:38+0000\n"
-"Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
+"PO-Revision-Date: 2024-12-19 11:38+0000\n"
+"Last-Translator: Ricky Tigg <ricky.tigg@gmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/fi/>\n"
 "Language: fi\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.9.1\n"
 
 #: arping.c:123
 #, c-format
@@ -1393,7 +1393,7 @@ msgstr ", +%ld virhettä"
 #: ping/ping_common.c:909
 #, c-format
 msgid ", %g%% packet loss"
-msgstr ", %g%% paketin menetys"
+msgstr ", %g %% pakettihäviö"
 
 #: ping/ping_common.c:911
 #, c-format
@@ -1419,7 +1419,7 @@ msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 #: ping/ping_common.c:964
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
-msgstr "%ld/%ld pakettia, %d %% menetystä"
+msgstr "%ld/%ld pakettia, %d %% häviö"
 
 #: ping/ping_common.c:969
 #, c-format
