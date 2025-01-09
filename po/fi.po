@@ -1321,22 +1321,22 @@ msgstr " (typistetty)\n"
 msgid " time=%s ms"
 msgstr " aika=%s ms"
 
-#: ping/ping_common.c:854
+#: ping/ping_common.c:854 ping/ping_common.c:841
 #, c-format
 msgid " (DUP!)"
 msgstr " (Kaksoiskappale!)"
 
-#: ping/ping_common.c:856
+#: ping/ping_common.c:856 ping/ping_common.c:843
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (Kelvoton tarkistussumma!)"
 
-#: ping/ping_common.c:858
+#: ping/ping_common.c:858 ping/ping_common.c:845
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " (Eri osoite!)"
 
-#: ping/ping_common.c:865
+#: ping/ping_common.c:865 ping/ping_common.c:852
 #, c-format
 msgid ""
 "\n"
@@ -1345,68 +1345,68 @@ msgstr ""
 "\n"
 "väärän datatavun #%d pitäisi olla 0x%x, mutta oli 0x%x"
 
-#: ping/ping_common.c:908
+#: ping/ping_common.c:908 ping/ping_common.c:895
 #, c-format
 msgid "--- %s ping statistics ---\n"
 msgstr "-- %s ping-tilastot --\n"
 
-#: ping/ping_common.c:909
+#: ping/ping_common.c:909 ping/ping_common.c:896
 #, c-format
 msgid "%ld packets transmitted, "
 msgstr "%ld paketteja lähetetty, "
 
-#: ping/ping_common.c:910
+#: ping/ping_common.c:910 ping/ping_common.c:897
 #, c-format
 msgid "%ld received"
 msgstr "%ld otettu vastaan"
 
-#: ping/ping_common.c:912
+#: ping/ping_common.c:912 ping/ping_common.c:899
 #, c-format
 msgid ", +%ld duplicates"
 msgstr ", +%ld kaksoiskappaletta"
 
-#: ping/ping_common.c:914
+#: ping/ping_common.c:914 ping/ping_common.c:901
 #, c-format
 msgid ", +%ld corrupted"
 msgstr ", +%ld vioittuneet"
 
-#: ping/ping_common.c:916
+#: ping/ping_common.c:916 ping/ping_common.c:903
 #, c-format
 msgid ", +%ld errors"
 msgstr ", +%ld virhettä"
 
-#: ping/ping_common.c:922
+#: ping/ping_common.c:922 ping/ping_common.c:909
 #, c-format
 msgid ", %g%% packet loss"
 msgstr ", %g %% pakettihäviö"
 
-#: ping/ping_common.c:924
+#: ping/ping_common.c:924 ping/ping_common.c:911
 #, c-format
 msgid ", time %llums"
 msgstr ", aika %llu ms"
 
-#: ping/ping_common.c:944
+#: ping/ping_common.c:944 ping/ping_common.c:931
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 msgstr ""
 "rtt min/keskiarvo/maks/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
-#: ping/ping_common.c:952
+#: ping/ping_common.c:952 ping/ping_common.c:939
 #, c-format
 msgid "%spipe %d"
 msgstr "%spipe %d"
 
-#: ping/ping_common.c:959
+#: ping/ping_common.c:959 ping/ping_common.c:946
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
 msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
-#: ping/ping_common.c:977
+#: ping/ping_common.c:977 ping/ping_common.c:964
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld pakettia, %d %% häviö"
 
-#: ping/ping_common.c:982
+#: ping/ping_common.c:982 ping/ping_common.c:969
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", min/keskiarvo/ewma/maks = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
@@ -1542,6 +1542,26 @@ msgstr "takaisin %d "
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
 msgstr "pktlenin on oltava sisällä: %d < arvo <= %d"
+
+#: ping/ping_common.c:826 ping/ping_common.c:836
+#, c-format
+msgid " time=%ld.%03ld ms"
+msgstr " aika=%ld.%03ld ms"
+
+#: ping/ping_common.c:828
+#, c-format
+msgid " time=%ld ms"
+msgstr " aika=%ld ms"
+
+#: ping/ping_common.c:830
+#, c-format
+msgid " time=%ld.%01ld ms"
+msgstr " aika=%ld.%01ld ms"
+
+#: ping/ping_common.c:833
+#, c-format
+msgid " time=%ld.%02ld ms"
+msgstr " aika=%ld.%02ld ms"
 
 #, c-format
 #~ msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
