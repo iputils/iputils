@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2025-04-09 22:53+0000\n"
+"Last-Translator: hsu zangmen <chzang55@gmail.com>\n"
+"Language-Team: Chinese (Traditional Han script) <https://"
+"translate.fedoraproject.org/projects/iputils/iputils/zh_Hant/>\n"
 "Language: zh_Hant\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.10.4\n"
 
 #: arping.c:123
 #, c-format
@@ -46,140 +49,145 @@ msgid ""
 "\n"
 "For more details see arping(8).\n"
 msgstr ""
+"\n"
+"  -s <source>    來源 IP 位址\n"
+"   <destination> DNS 名稱或 IP 位址 \n"
+"\n"
+"如需詳細資訊，請參閱 arping(8)。\n"
 
 #: arping.c:305
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr ""
+msgstr "已傳送 %d 探測 (%d 廣播)\n"
 
 #: arping.c:306
 #, c-format
 msgid "Received %d response(s)"
-msgstr ""
+msgstr "收到 %d 回覆"
 
 #: arping.c:310
 #, c-format
 msgid "%d request(s)"
-msgstr ""
+msgstr "%d 請求"
 
 #: arping.c:312
 #, c-format
 msgid "%s%d broadcast(s)"
-msgstr ""
+msgstr "%s%d 廣播"
 
 #: arping.c:422
 msgid "Unicast"
-msgstr ""
+msgstr "單點傳播"
 
 #: arping.c:422
 msgid "Broadcast"
-msgstr ""
+msgstr "廣播"
 
 #: arping.c:423
 #, c-format
 msgid "%s from "
-msgstr ""
+msgstr "%s 來自 "
 
 #: arping.c:423
 msgid "reply"
-msgstr ""
+msgstr "回覆"
 
 #: arping.c:423
 msgid "request"
-msgstr ""
+msgstr "請求"
 
 #: arping.c:428
 #, c-format
 msgid "for %s "
-msgstr ""
+msgstr "於 %s "
 
 #: arping.c:433
 #, c-format
 msgid "for "
-msgstr ""
+msgstr "於 "
 
 #: arping.c:443
 #, c-format
 msgid " %ld.%03ldms\n"
-msgstr ""
+msgstr " %ld.%03ldms\n"
 
 #: arping.c:445
 #, c-format
 msgid " UNSOLICITED?\n"
-msgstr ""
+msgstr " 不受歡迎？\n"
 
 #: arping.c:596
 #, c-format
 msgid "Interface \"%s\" is down\n"
-msgstr ""
+msgstr "介面 \"%s\" 已關閉\n"
 
 #: arping.c:604
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
-msgstr ""
+msgstr "介面 \"%s\" 不是 ARPable\n"
 
 #: arping.c:697
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
-msgstr ""
+msgstr "警告：使用預設廣播位址。\n"
 
 #: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:408 ping/ping.c:455
 #: ping/ping.c:507 ping/ping.c:515 ping/ping.c:559 ping/ping.c:562
 #: ping/ping.c:565 ping/ping.c:579 tracepath.c:474 tracepath.c:477
 #: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
-msgstr ""
+msgstr "無效論點"
 
 #: arping.c:978
 #, c-format
 msgid "Device %s not available."
-msgstr ""
+msgstr "裝置 %s 不可用。"
 
 #: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
-msgstr ""
+msgstr "無法確定適合的裝置。 請使用選項 -I。"
 
 #: arping.c:999
 msgid "WARNING: interface is ignored"
-msgstr ""
+msgstr "警告：介面被忽略"
 
 #: arping.c:1018
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr ""
+msgstr "警告：setsockopt(SO_DONTROUTE)"
 
 #: arping.c:1042
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
+msgstr "介面 \"%s\" 不可 ARPable (沒有 ll 位址)\n"
 
 #: arping.c:1051
 #, c-format
 msgid "ARPING %s "
-msgstr ""
+msgstr "ARPING %s "
 
 #: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
-msgstr ""
+msgstr "來自 %s %s\n"
 
 #: arping.c:1056
 msgid "no source address in not-DAD mode"
-msgstr ""
+msgstr "在非 DAD 模式下無來源位址"
 
 #: clockdiff.c:242
 #, c-format
 msgid "Wrong timestamp %d\n"
-msgstr ""
+msgstr "錯誤的時間戳記 %d\n"
 
 #: clockdiff.c:247
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr ""
+msgstr "溢出 %d 跳躍\n"
 
 #: clockdiff.c:272
 #, c-format
 msgid "wrong timestamps\n"
-msgstr ""
+msgstr "錯誤的時間戳\n"
 
 #: clockdiff.c:453
 #, c-format
@@ -209,17 +217,17 @@ msgstr ""
 #: clockdiff.c:603
 #, c-format
 msgid "%s is down"
-msgstr ""
+msgstr "%s 已停機"
 
 #: clockdiff.c:606
 #, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr ""
+msgstr "以非標準格式傳送的 %s 時間"
 
 #: clockdiff.c:609
 #, c-format
 msgid "%s is unreachable"
-msgstr ""
+msgstr "%s 無法連線"
 
 #: clockdiff.c:628
 #, c-format
@@ -227,39 +235,41 @@ msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
+"\n"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 
 #: ping/node_info.c:169
 #, c-format
 msgid "Qtype conflict\n"
-msgstr ""
+msgstr "Qtype 衝突\n"
 
 #: ping/node_info.c:221
 #, c-format
 msgid "Subject type conflict\n"
-msgstr ""
+msgstr "主題類型衝突\n"
 
 #: ping/node_info.c:312
 #, c-format
 msgid "IDN encoding error: %s"
-msgstr ""
+msgstr "IDN 編碼錯誤：%s"
 
 #: ping/node_info.c:323
 msgid "too long scope name"
-msgstr ""
+msgstr "範圍名稱太長"
 
 #: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:308
 #: ping/ping.c:1059
 msgid "memory allocation failed"
-msgstr ""
+msgstr "分配記憶體失敗"
 
 #: ping/node_info.c:359
 #, c-format
 msgid "inappropriate subject name: %s"
-msgstr ""
+msgstr "不適當的主題名稱：%s"
 
 #: ping/node_info.c:362
 msgid "dn_comp() returned too long result"
-msgstr ""
+msgstr "dn_comp() 回傳太長的結果"
 
 #: ping/node_info.c:402
 #, c-format
@@ -287,390 +297,390 @@ msgstr ""
 #: ping/ping6_common.c:99 ping/ping.c:747
 #, c-format
 msgid "unknown iface: %s"
-msgstr ""
+msgstr "未知 iface：%s"
 
 #: ping/ping6_common.c:146
 msgid "scope discrepancy among the nodes"
-msgstr ""
+msgstr "節點間的範圍差異"
 
 #: ping/ping6_common.c:225 ping/ping.c:917
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
-msgstr ""
+msgstr "警告：來源位址可能在裝置上被選取，而不是：%s"
 
 #: ping/ping6_common.c:266
 #, c-format
 msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr ""
+msgstr "使用者群播傳送 ping 的最小間隔必須 >= %d ms，使用 -i %s (或更高)"
 
 #: ping/ping6_common.c:271
 msgid "multicast ping does not fragment"
-msgstr ""
+msgstr "群播傳送 ping 不會分片"
 
 #: ping/ping6_common.c:330
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr ""
+msgstr "setsockopt(RAW_CHECKSUM) 己失敗 - 嘗試繼續"
 
 #: ping/ping6_common.c:356
 msgid "can't disable multicast loopback"
-msgstr ""
+msgstr "無法停用群播回送"
 
 #: ping/ping6_common.c:361
 msgid "can't set multicast hop limit"
-msgstr ""
+msgstr "無法設定群播傳送跳數限制"
 
 #: ping/ping6_common.c:364
 msgid "can't set unicast hop limit"
-msgstr ""
+msgstr "無法設定單播跳數限制"
 
 #: ping/ping6_common.c:376
 msgid "can't receive hop limit"
-msgstr ""
+msgstr "無法接收跳數限制"
 
 #: ping/ping6_common.c:390
 msgid "can't set flowlabel"
-msgstr ""
+msgstr "無法設定 flowlabel"
 
 #: ping/ping6_common.c:394
 msgid "can't send flowinfo"
-msgstr ""
+msgstr "無法傳送 flowinfo"
 
 #: ping/ping6_common.c:397 ping/ping.c:1061
 #, c-format
 msgid "PING %s (%s) "
-msgstr ""
+msgstr "PING %s (%s) "
 
 #: ping/ping6_common.c:399
 #, c-format
 msgid ", flow 0x%05x, "
-msgstr ""
+msgstr ", flow 0x%05x, "
 
 #: ping/ping6_common.c:404 ping/ping.c:1063
 #, c-format
 msgid "from %s %s: "
-msgstr ""
+msgstr "來自 %s %s： "
 
 #: ping/ping6_common.c:407
 #, c-format
 msgid "%d data bytes\n"
-msgstr ""
+msgstr "%d 資料位元組\n"
 
 #: ping/ping6_common.c:423
 #, c-format
 msgid "Destination unreachable: "
-msgstr ""
+msgstr "目的地無法連線： "
 
 #: ping/ping6_common.c:426
 #, c-format
 msgid "No route"
-msgstr ""
+msgstr "無路徑"
 
 #: ping/ping6_common.c:429
-#, c-format
+#, c-format, fuzzy
 msgid "Administratively prohibited"
-msgstr ""
+msgstr "行政禁止"
 
 #: ping/ping6_common.c:432
 #, c-format
 msgid "Beyond scope of source address"
-msgstr ""
+msgstr "超出來源位址範圍"
 
 #: ping/ping6_common.c:435
 #, c-format
 msgid "Address unreachable"
-msgstr ""
+msgstr "位址無法連線"
 
 #: ping/ping6_common.c:438
 #, c-format
 msgid "Port unreachable"
-msgstr ""
+msgstr "通訊埠無法連線"
 
 #: ping/ping6_common.c:441
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "來源位址未通過入口/出口政策"
 
 #: ping/ping6_common.c:444
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "拒絕前往目的地的路徑"
 
 #: ping/ping6_common.c:447
 #, c-format
 msgid "Unknown code %d"
-msgstr ""
+msgstr "未知代碼 %d"
 
 #: ping/ping6_common.c:452
 #, c-format
 msgid "Packet too big: mtu=%u"
-msgstr ""
+msgstr "封包太大：mtu=%u"
 
 #: ping/ping6_common.c:454
 #, c-format
 msgid ", code=%d"
-msgstr ""
+msgstr ", 代碼=%d"
 
 #: ping/ping6_common.c:457
 #, c-format
 msgid "Time exceeded: "
-msgstr ""
+msgstr "超過時間： "
 
 #: ping/ping6_common.c:459
 #, c-format
 msgid "Hop limit"
-msgstr ""
+msgstr "跳數限制"
 
 #: ping/ping6_common.c:461
 #, c-format
 msgid "Defragmentation failure"
-msgstr ""
+msgstr "碎片整理失敗"
 
 #: ping/ping6_common.c:463
 #, c-format
 msgid "code %d"
-msgstr ""
+msgstr "代碼 %d"
 
 #: ping/ping6_common.c:466
 #, c-format
 msgid "Parameter problem: "
-msgstr ""
+msgstr "參數問題： "
 
 #: ping/ping6_common.c:468
 #, c-format
 msgid "Wrong header field "
-msgstr ""
+msgstr "錯誤的標頭欄位 "
 
 #: ping/ping6_common.c:470
 #, c-format
 msgid "Unknown header "
-msgstr ""
+msgstr "未知標頭 "
 
 #: ping/ping6_common.c:472
 #, c-format
 msgid "Unknown option "
-msgstr ""
+msgstr "未知選項 "
 
 #: ping/ping6_common.c:474
 #, c-format
 msgid "code %d "
-msgstr ""
+msgstr "代碼 %d "
 
 #: ping/ping6_common.c:475
 #, c-format
 msgid "at %u"
-msgstr ""
+msgstr "在 %u"
 
 #: ping/ping6_common.c:478
 #, c-format
 msgid "Echo request"
-msgstr ""
+msgstr "回應請求"
 
 #: ping/ping6_common.c:481
 #, c-format
 msgid "Echo reply"
-msgstr ""
+msgstr "回應回覆"
 
 #: ping/ping6_common.c:484
 #, c-format
 msgid "MLD Query"
-msgstr ""
+msgstr "MLD 查詢"
 
 #: ping/ping6_common.c:487
 #, c-format
 msgid "MLD Report"
-msgstr ""
+msgstr "MLD 報告"
 
 #: ping/ping6_common.c:490
 #, c-format
 msgid "MLD Reduction"
-msgstr ""
+msgstr "MLD 減少"
 
 #: ping/ping6_common.c:493
 #, c-format
 msgid "unknown icmp type: %u"
-msgstr ""
+msgstr "未知的 icmp 類型：%u"
 
 #: ping/ping6_common.c:547 ping/ping.c:1480
 msgid "local error"
-msgstr ""
+msgstr "本地錯誤"
 
 #: ping/ping6_common.c:549
 #, c-format
 msgid "local error: message too long, mtu: %u"
-msgstr ""
+msgstr "本地錯誤：訊息太長，mtu：%u"
 
 #: ping/ping6_common.c:571 ping/ping.c:1516
 #, c-format
 msgid "From %s icmp_seq=%u "
-msgstr ""
+msgstr "來自 %s icmp_seq=%u "
 
 #: ping/ping6_common.c:677 ping/ping.c:1630
 #, c-format
 msgid " icmp_seq=%u"
-msgstr ""
+msgstr " icmp_seq=%u"
 
 #: ping/ping6_common.c:701 ping/ping6_common.c:762
 #, c-format
 msgid " parse error (too short)"
-msgstr ""
+msgstr " 解析錯誤 (太短)"
 
 #: ping/ping6_common.c:715 ping/ping6_common.c:771
 #, c-format
 msgid " parse error (truncated)"
-msgstr ""
+msgstr " 解析錯誤 (己截斷)"
 
 #: ping/ping6_common.c:775
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
-msgstr ""
+msgstr " inet_ntop(%s) 中的意外錯誤"
 
 #: ping/ping6_common.c:784
 #, c-format
 msgid " (truncated)"
-msgstr ""
+msgstr " (己截斷)"
 
 #: ping/ping6_common.c:803
 #, c-format
 msgid " unknown qtype(0x%02x)"
-msgstr ""
+msgstr " 未知 qtype(0x%02x)"
 
 #: ping/ping6_common.c:807
 #, c-format
 msgid " refused"
-msgstr ""
+msgstr " 被拒絕"
 
 #: ping/ping6_common.c:810
 #, c-format
 msgid " unknown"
-msgstr ""
+msgstr " 未知"
 
 #: ping/ping6_common.c:813
 #, c-format
 msgid " unknown code(%02x)"
-msgstr ""
+msgstr " 未知代碼(%02x)"
 
 #: ping/ping6_common.c:815
 #, c-format
 msgid "; seq=%u;"
-msgstr ""
+msgstr "; seq=%u;"
 
 #: ping/ping6_common.c:856
 #, c-format
 msgid "packet too short: %d bytes"
-msgstr ""
+msgstr "封包太短：%d 位元組"
 
 #: ping/ping6_common.c:923 ping/ping.c:1759
 #, c-format
 msgid "From %s: "
-msgstr ""
+msgstr "來自 %s "
 
 #: ping/ping6_common.c:964 ping/ping.c:1864
 msgid "WARNING: failed to install socket filter"
-msgstr ""
+msgstr "警告：未安裝socket過濾器"
 
 #: ping/ping.c:103 ping/ping.c:724
 #, c-format
 msgid "unknown protocol family: %d"
-msgstr ""
+msgstr "未知通訊協定家族：%d"
 
 #: ping/ping.c:118
 #, c-format
 msgid "unknown sock type: %d"
-msgstr ""
+msgstr "未知sock類型：%d"
 
 #: ping/ping.c:213
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "=> 缺少 cap_net_raw+p 功能或 setuid？"
 
 #: ping/ping.c:252
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr ""
+msgstr "選項參數包含垃圾：%s"
 
 #: ping/ping.c:253
 msgid "this will become fatal error in the future"
-msgstr ""
+msgstr "這將會成為日後的致命錯誤"
 
 #: ping/ping.c:287
 #, c-format
 msgid "bad value for flowinfo: %s"
-msgstr ""
+msgstr "flowinfo 的不良值： %s"
 
 #: ping/ping.c:290
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
-msgstr ""
+msgstr "流量值大於 20 位元：%s"
 
 #: ping/ping.c:312
 #, c-format
 msgid "bad TOS value: %s"
-msgstr ""
+msgstr "錯誤的 TOS 值：%s"
 
 #: ping/ping.c:315
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr ""
+msgstr "TOS 位元的十進位值範圍必須是 0-255: %d"
 
 #: ping/ping.c:398 ping/ping.c:432
 msgid "only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "只能指定一個 -4 或 -6 選項"
 
 #: ping/ping.c:413 ping/ping.c:418
 msgid "only one of -T or -R may be used"
-msgstr ""
+msgstr "只能使用 -T 或 -R 其中之一"
 
 #: ping/ping.c:427
 #, c-format
 msgid "invalid timestamp type: %s"
-msgstr ""
+msgstr "時間戳類型無效：%s"
 
 #: ping/ping.c:473
 msgid "bad timing interval"
-msgstr ""
+msgstr "不良的時間間隔"
 
 #: ping/ping.c:475
 #, c-format
 msgid "bad timing interval: %s"
-msgstr ""
+msgstr "不良的定時間隔：%s"
 
 #: ping/ping.c:486
 #, c-format
 msgid "cannot copy: %s"
-msgstr ""
+msgstr "無法複製：%s"
 
 #: ping/ping.c:495
 #, c-format
 msgid "invalid source address: %s"
-msgstr ""
+msgstr "無效來源位址： %s"
 
 #: ping/ping.c:509
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
-msgstr ""
+msgstr "無法設定預載值大於 3: %d"
 
 #: ping/ping.c:528
 #, c-format
 msgid "invalid -M argument: %s"
-msgstr ""
+msgstr "無效 -M 參數：%s"
 
 #: ping/ping.c:585
 msgid "bad linger time"
-msgstr ""
+msgstr "不良徘徊時間"
 
 #: ping/ping.c:587
 #, c-format
 msgid "bad linger time: %s"
-msgstr ""
+msgstr "不良徘徊時間：%s"
 
 #: ping/ping.c:599
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
-msgstr ""
+msgstr "警告：已停用 DNS 反向解析 (PTR 查詢)，請使用 -H 強制執行"
 
 #: ping/ping.c:618
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "警告：識別碼 0 => 強制原始套接字"
 
 #: ping/ping.c:664
 #, c-format
@@ -720,36 +730,36 @@ msgstr ""
 
 #: ping/ping.c:968
 msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr ""
+msgstr "警告：setsockopt(ICMP_FILTER)"
 
 #: ping/ping.c:973
 msgid "WARNING: your kernel is veeery old. No problems."
-msgstr ""
+msgstr "警告：您的核心已經很舊了。 沒有問題。"
 
 #: ping/ping.c:977
 msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr ""
+msgstr "警告：setsockopt(IP_RECVTTL)"
 
 #: ping/ping.c:979
 msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr ""
+msgstr "警告：setsockopt(IP_RETOPTS)"
 
 #: ping/ping.c:1045
 msgid "cannot disable multicast loopback"
-msgstr ""
+msgstr "無法停用群播回送"
 
 #: ping/ping.c:1050
 msgid "cannot set multicast time-to-live"
-msgstr ""
+msgstr "無法設定群播生存時間"
 
 #: ping/ping.c:1052
 msgid "cannot set unicast time-to-live"
-msgstr ""
+msgstr "無法設定單點傳送的生存時間"
 
 #: ping/ping.c:1064
 #, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr ""
+msgstr "%d(%d) 位元組的資料。\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -757,6 +767,8 @@ msgid ""
 "\n"
 "NOP"
 msgstr ""
+"\n"
+"NOP"
 
 #: ping/ping.c:1107
 #, c-format
@@ -764,11 +776,13 @@ msgid ""
 "\n"
 "%cSRR: "
 msgstr ""
+"\n"
+"%cSRR: "
 
 #: ping/ping.c:1145
 #, c-format
 msgid "\t(same route)"
-msgstr ""
+msgstr "\t(相同路線)"
 
 #: ping/ping.c:1150
 #, c-format
@@ -776,6 +790,8 @@ msgid ""
 "\n"
 "RR: "
 msgstr ""
+"\n"
+"RR: "
 
 #: ping/ping.c:1186
 #, c-format
@@ -783,21 +799,23 @@ msgid ""
 "\n"
 "TS: "
 msgstr ""
+"\n"
+"TS: "
 
 #: ping/ping.c:1218
 #, c-format
 msgid "\t%ld absolute not-standard"
-msgstr ""
+msgstr "\t%ld 絕對不標準"
 
 #: ping/ping.c:1220
 #, c-format
 msgid "\t%ld not-standard"
-msgstr ""
+msgstr "\t%ld 非標準"
 
 #: ping/ping.c:1224
 #, c-format
 msgid "\t%ld absolute"
-msgstr ""
+msgstr "\t%ld 絕對值"
 
 #: ping/ping.c:1235
 #, c-format
@@ -929,117 +947,117 @@ msgstr ""
 #: ping/ping.c:1348
 #, c-format
 msgid "Redirect Network"
-msgstr ""
+msgstr "網路重新導向"
 
 #: ping/ping.c:1351
 #, c-format
 msgid "Redirect Host"
-msgstr ""
+msgstr "主機重新導向"
 
 #: ping/ping.c:1354
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "重新導向服務類型與網路"
 
 #: ping/ping.c:1357
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "重新導向服務類型與主機"
 
 #: ping/ping.c:1360
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "重新導向，不良代碼： %d"
 
 #: ping/ping.c:1371
 #, c-format
 msgid "(New nexthop: %s)\n"
-msgstr ""
+msgstr "(新的 nexthop: %s)\n"
 
 #: ping/ping.c:1377
 #, c-format
 msgid "Echo Request\n"
-msgstr ""
+msgstr "要求回應\n"
 
 #: ping/ping.c:1383
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr ""
+msgstr "超過生存時間\n"
 
 #: ping/ping.c:1386
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr ""
+msgstr "超過 Frag 重組時間\n"
 
 #: ping/ping.c:1389
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
-msgstr ""
+msgstr "超過時間，不良代碼： %d\n"
 
 #: ping/ping.c:1396
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr ""
+msgstr "參數問題：指針 = %u\n"
 
 #: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
-msgstr ""
+msgstr "時間戳\n"
 
 #: ping/ping.c:1406
 #, c-format
 msgid "Timestamp Reply\n"
-msgstr ""
+msgstr "時間戳回覆\n"
 
 #: ping/ping.c:1410
 #, c-format
 msgid "Information Request\n"
-msgstr ""
+msgstr "資訊請求\n"
 
 #: ping/ping.c:1414
 #, c-format
 msgid "Information Reply\n"
-msgstr ""
+msgstr "資訊回覆\n"
 
 #: ping/ping.c:1419
 #, c-format
 msgid "Address Mask Request\n"
-msgstr ""
+msgstr "位址遮罩請求\n"
 
 #: ping/ping.c:1424
 #, c-format
 msgid "Address Mask Reply\n"
-msgstr ""
+msgstr "位址遮罩回覆\n"
 
 #: ping/ping.c:1428
 #, c-format
 msgid "Bad ICMP type: %d\n"
-msgstr ""
+msgstr "錯誤的 ICMP 類型：%d\n"
 
 #: ping/ping.c:1482
 #, c-format
 msgid "local error: message too long, mtu=%u"
-msgstr ""
+msgstr "本地錯誤：訊息太長，mtu=%u"
 
 #: ping/ping.c:1655
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr ""
+msgstr "來自 %s 的封包太短 ( %d 位元組)"
 
 #: ping/ping.c:1734
 #, c-format
 msgid "From %s: icmp_seq=%u "
-msgstr ""
+msgstr "來自 %s: icmp_seq=%u "
 
 #: ping/ping.c:1737
 #, c-format
 msgid "(BAD CHECKSUM)"
-msgstr ""
+msgstr "（錯誤校驗和）"
 
 #: ping/ping.c:1761
 #, c-format
 msgid "(BAD CHECKSUM)\n"
-msgstr ""
+msgstr "（錯誤校驗和）\n"
 
 #: ping/ping_common.c:49
 #, c-format
@@ -1111,30 +1129,30 @@ msgstr ""
 #: ping/ping_common.c:233
 #, c-format
 msgid "PATTERN: 0x"
-msgstr ""
+msgstr "模式：0x"
 
 #: ping/ping_common.c:353
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
-msgstr ""
+msgstr "icmp_seq=%lu 尚未有答案\n"
 
 #: ping/ping_common.c:457
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr ""
+msgstr "警告：可能 rcvbuf 不足以容納預先載入的內容"
 
 #: ping/ping_common.c:476
 #, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr ""
+msgstr "警告：設定標記失敗：%u"
 
 #: ping/ping_common.c:479
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr ""
+msgstr "=> 缺少 cap_net_admin+p 或 cap_net_raw+p（自 Linux 5.17 起）功能？"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "警告：己不支援 SO_MARK"
 
 #: ping/ping_common.c:500
 #, c-format
@@ -1150,12 +1168,12 @@ msgstr ""
 
 #: ping/ping_common.c:516
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr ""
+msgstr "警告： 己不支援 SO_TIMESTAMP，回退到 SIOCGSTAMP"
 
 #: ping/ping_common.c:759
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr ""
+msgstr "警告： 時間回溯 (%ldus), 採取對策"
 
 #: ping/ping_common.c:809
 #, c-format
