@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 20:33+0000\n"
+"PO-Revision-Date: 2025-04-24 20:36+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
@@ -1067,7 +1067,7 @@ msgstr ""
 #: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
-msgstr ""
+msgstr "Cronomarcador:\n"
 
 #: ping/ping.c:1406
 #, c-format
