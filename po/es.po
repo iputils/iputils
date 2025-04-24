@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 20:05+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-04-24 20:12+0000\n"
+"Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
 "Language: es\n"
@@ -922,87 +921,87 @@ msgstr "Responder eco\n"
 #: ping/ping.c:1286
 #, c-format
 msgid "Destination Net Unreachable\n"
-msgstr ""
+msgstr "Red Destino No Alcanzable\n"
 
 #: ping/ping.c:1289
 #, c-format
 msgid "Destination Host Unreachable\n"
-msgstr ""
+msgstr "Huésped Destino No Alcanzable\n"
 
 #: ping/ping.c:1292
 #, c-format
 msgid "Destination Protocol Unreachable\n"
-msgstr ""
+msgstr "Protocolo Destino No Alcanzable\n"
 
 #: ping/ping.c:1295
 #, c-format
 msgid "Destination Port Unreachable\n"
-msgstr ""
+msgstr "Puerto Destino No Alcanzable\n"
 
 #: ping/ping.c:1298
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr ""
+msgstr "Frag necesario y DF fijado (mtu = %u)\n"
 
 #: ping/ping.c:1301
 #, c-format
 msgid "Source Route Failed\n"
-msgstr ""
+msgstr "Ruta Origen Incorrecta\n"
 
 #: ping/ping.c:1304
 #, c-format
 msgid "Destination Net Unknown\n"
-msgstr ""
+msgstr "Red Destino Desconocida\n"
 
 #: ping/ping.c:1307
 #, c-format
 msgid "Destination Host Unknown\n"
-msgstr ""
+msgstr "Anfitrión Destino Desconocido\n"
 
 #: ping/ping.c:1310
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr ""
+msgstr "Anfitrión Origen Aislado\n"
 
 #: ping/ping.c:1313
 #, c-format
 msgid "Destination Net Prohibited\n"
-msgstr ""
+msgstr "Red Destino Prohibida\n"
 
 #: ping/ping.c:1316
 #, c-format
 msgid "Destination Host Prohibited\n"
-msgstr ""
+msgstr "Anfitrión Destino Prohibido\n"
 
 #: ping/ping.c:1319
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr ""
+msgstr "Red Destino Inalcanzable para Tipo de Servicio\n"
 
 #: ping/ping.c:1322
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
-msgstr ""
+msgstr "Hospedaje Destino Inalcanzable para Tipo de Servicio\n"
 
 #: ping/ping.c:1325
 #, c-format
 msgid "Packet filtered\n"
-msgstr ""
+msgstr "Paquete filtrado\n"
 
 #: ping/ping.c:1328
 #, c-format
 msgid "Precedence Violation\n"
-msgstr ""
+msgstr "Violación Precedente\n"
 
 #: ping/ping.c:1331
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "Recorte Precedente\n"
 
 #: ping/ping.c:1334
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
-msgstr ""
+msgstr "Dest Inalcanzable, Código Incorrecto: %d\n"
 
 #: ping/ping.c:1341
 #, c-format
