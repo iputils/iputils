@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-21 17:53+0000\n"
+"PO-Revision-Date: 2025-04-25 01:04+0000\n"
 "Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
@@ -40,8 +40,8 @@ msgid ""
 "  -I <device>   which ethernet device to use"
 msgstr ""
 "\n"
-"Utilización:\n"
-"  arping [opcones] <destino>\n"
+"Modo de empleo:\n"
+"  arping [opciones] <destino>\n"
 "\n"
 "Opciones:\n"
 "  -f            salir en la primera respuesta\n"
@@ -49,13 +49,12 @@ msgstr ""
 "  -b            mantener en radiodifusión, no en unidifusión\n"
 "  -D            duplicar el modo de detección de dirección\n"
 "  -U            modo ARP no solicitado, actualizar sus vecinos\n"
-"  -A            modo de respuesta AultifuRP, actualizar sus vecinos\n"
+"  -A            modo de respuesta ARP, actualizar sus vecinos\n"
 "  -V            imprime la versión y sale\n"
 "  -c <conteo>    cuántos paquetes enviar\n"
 "  -w <espera>  cuánto esperar una respuesta\n"
-"  -i <intervalo> fijar el intervalo entre paquetes (predeterminado: 1 "
-"segundo)\n"
-"  -I <dispositivo>   que dispositivo ethernet utilizar"
+"  -i <intervalo> fijar el intervalo entre paquetes (predet.: 1 segundo)\n"
+"  -I <dispositivo>   que dispositivo Ethernet utilizar"
 
 #: arping.c:142
 #, c-format
@@ -67,8 +66,8 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <source>   dirección IP fuente\n"
-"  <destination> nonbre DNS o dirección IP\n"
+"  -s <origen>   dirección IP origen\n"
+"  <destino> nombre DNS o dirección IP\n"
 "\n"
 "Para más detalles consulte arping(8).\n"
 
@@ -94,11 +93,11 @@ msgstr "%s%d radiodifusión(es)"
 
 #: arping.c:422
 msgid "Unicast"
-msgstr ""
+msgstr "Unidifusión"
 
 #: arping.c:422
 msgid "Broadcast"
-msgstr ""
+msgstr "Multidifusión"
 
 #: arping.c:423
 #, c-format
@@ -146,14 +145,14 @@ msgstr "Interfaz «%s» no es ARPable\n"
 #: arping.c:697
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
-msgstr ""
+msgstr "AVISO: utilizando dirección de multidifusión por defecto.\n"
 
 #: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:408 ping/ping.c:455
 #: ping/ping.c:507 ping/ping.c:515 ping/ping.c:559 ping/ping.c:562
 #: ping/ping.c:565 ping/ping.c:579 tracepath.c:474 tracepath.c:477
 #: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
-msgstr ""
+msgstr "argumento inválido"
 
 #: arping.c:978
 #, c-format
@@ -170,41 +169,41 @@ msgstr "AVISO: interfaz omitido"
 
 #: arping.c:1018
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr ""
+msgstr "AVISO: setsockopt(SO_DONTROUTE)"
 
 #: arping.c:1042
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
+msgstr "Interfaz «%s» no es ARPable (ninguna dirección ll)\n"
 
 #: arping.c:1051
 #, c-format
 msgid "ARPING %s "
-msgstr ""
+msgstr "ARPING %s "
 
 #: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
-msgstr ""
+msgstr "desde %s %s\n"
 
 #: arping.c:1056
 msgid "no source address in not-DAD mode"
-msgstr ""
+msgstr "ninguna dirección origen en modo no-DAD"
 
 #: clockdiff.c:242
 #, c-format
 msgid "Wrong timestamp %d\n"
-msgstr ""
+msgstr "Temporización %d incorrecta\n"
 
 #: clockdiff.c:247
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr ""
+msgstr "Desbordamiento %d hops\n"
 
 #: clockdiff.c:272
 #, c-format
 msgid "wrong timestamps\n"
-msgstr ""
+msgstr "sello temporal incorrecto\n"
 
 #: clockdiff.c:453
 #, c-format
@@ -226,15 +225,33 @@ msgid ""
 "\n"
 "For more details see clockdiff(8).\n"
 msgstr ""
+"\n"
+"Modo de empleo:\n"
+"  clockdiff [opciones] <destino>\n"
+"\n"
+"Opciones::\n"
+"                sin -o, utilice solo sello horario icmp (consulte RFC0792, "
+"pág. 16)\n"
+"  -o            utilice sello horario IP y eco icmp\n"
+"  -o1           utilice tercer-término IP sello horario y eco icmp\n"
+"  -T, --time-format <ctime|iso>\n"
+"                  especifique formato del tiempo de pantalla, ctime es lo "
+"predet.\n"
+"  -I            alias de --time-format=iso\n"
+"  -h, --help    exhibe esta ayuda\n"
+"  -V, --version declara versión y sale\n"
+"  <destino> nombre DNS o dirección IP\n"
+"\n"
+"Para más detalles consulte clockdiff(8).\n"
 
 #: clockdiff.c:598
 msgid "measure: unknown failure"
-msgstr ""
+msgstr "medida: fallo desconocido"
 
 #: clockdiff.c:603
 #, c-format
 msgid "%s is down"
-msgstr "%s está desconectado"
+msgstr "%s está caído"
 
 #: clockdiff.c:606
 #, c-format
@@ -247,13 +264,13 @@ msgid "%s is unreachable"
 msgstr "%s es inalcanzable"
 
 #: clockdiff.c:628
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 "\n"
-"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
+"hospedaje=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 
 #: ping/node_info.c:169
 #, c-format
@@ -706,7 +723,7 @@ msgstr "argumento -M no válido: %s"
 
 #: ping/ping.c:585
 msgid "bad linger time"
-msgstr "tiempo pers. inco."
+msgstr "tmp espera incorrecto"
 
 #: ping/ping.c:587
 #, c-format
@@ -771,40 +788,40 @@ msgstr ""
 
 #: ping/ping.c:938
 msgid "broadcast ping does not fragment"
-msgstr ""
+msgstr "difusión de ping no fragmentado"
 
 #: ping/ping.c:968
 msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr ""
+msgstr "AVISO: setsockopt(_FILTRO ICMP)"
 
 #: ping/ping.c:973
 msgid "WARNING: your kernel is veeery old. No problems."
-msgstr ""
+msgstr "AVISO: su kernel es muuuy antiguo. Sin problemas."
 
 #: ping/ping.c:977
 msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr ""
+msgstr "AVISO: setsockopt(IP _RECVTTL)"
 
 #: ping/ping.c:979
 msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr ""
+msgstr "AVISO: setsockopt(IP_RETOPTS)"
 
 #: ping/ping.c:1045
 msgid "cannot disable multicast loopback"
-msgstr ""
+msgstr "no puede desactivar bucle mulicast"
 
 #: ping/ping.c:1050
 msgid "cannot set multicast time-to-live"
-msgstr ""
+msgstr "no se puede establecer tiempo-de-vida multicast"
 
 #: ping/ping.c:1052
 msgid "cannot set unicast time-to-live"
-msgstr ""
+msgstr "no se puede establecer tiempo de vida unicast"
 
 #: ping/ping.c:1064
 #, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr ""
+msgstr "%d(%d) bytes de datos.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -812,6 +829,8 @@ msgid ""
 "\n"
 "NOP"
 msgstr ""
+"\n"
+"NOP"
 
 #: ping/ping.c:1107
 #, c-format
@@ -819,11 +838,13 @@ msgid ""
 "\n"
 "%cSRR: "
 msgstr ""
+"\n"
+"%cSRR: "
 
 #: ping/ping.c:1145
 #, c-format
 msgid "\t(same route)"
-msgstr ""
+msgstr "\t(lo mismo que ruta)"
 
 #: ping/ping.c:1150
 #, c-format
@@ -831,6 +852,8 @@ msgid ""
 "\n"
 "RR: "
 msgstr ""
+"\n"
+"RR: "
 
 #: ping/ping.c:1186
 #, c-format
@@ -838,11 +861,13 @@ msgid ""
 "\n"
 "TS: "
 msgstr ""
+"\n"
+"TS: "
 
 #: ping/ping.c:1218
 #, c-format
 msgid "\t%ld absolute not-standard"
-msgstr ""
+msgstr "\t%ld absoluto no-estándar"
 
 #: ping/ping.c:1220
 #, c-format
@@ -857,7 +882,7 @@ msgstr "\t%ld absoluto"
 #: ping/ping.c:1235
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr ""
+msgstr "Saltos no reconocidos: %d\n"
 
 #: ping/ping.c:1239
 #, c-format
@@ -865,121 +890,123 @@ msgid ""
 "\n"
 "unknown option %x"
 msgstr ""
+"\n"
+"opción %x desconocida"
 
 #: ping/ping.c:1259
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr ""
+msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Datos\n"
 
 #: ping/ping.c:1260
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
-msgstr ""
+msgstr " %1x  %1x  %02x %04x %04x"
 
 #: ping/ping.c:1262
 #, c-format
 msgid "   %1x %04x"
-msgstr ""
+msgstr "   %1x %04x"
 
 #: ping/ping.c:1264
 #, c-format
 msgid "  %02x  %02x %04x"
-msgstr ""
+msgstr "  %02x  %02x %04x"
 
 #: ping/ping.c:1280
 #, c-format
 msgid "Echo Reply\n"
-msgstr ""
+msgstr "Responder eco\n"
 
 #: ping/ping.c:1286
 #, c-format
 msgid "Destination Net Unreachable\n"
-msgstr ""
+msgstr "Red Destino No Alcanzable\n"
 
 #: ping/ping.c:1289
 #, c-format
 msgid "Destination Host Unreachable\n"
-msgstr ""
+msgstr "Huésped Destino No Alcanzable\n"
 
 #: ping/ping.c:1292
 #, c-format
 msgid "Destination Protocol Unreachable\n"
-msgstr ""
+msgstr "Protocolo Destino No Alcanzable\n"
 
 #: ping/ping.c:1295
 #, c-format
 msgid "Destination Port Unreachable\n"
-msgstr ""
+msgstr "Puerto Destino No Alcanzable\n"
 
 #: ping/ping.c:1298
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr ""
+msgstr "Frag necesario y DF fijado (mtu = %u)\n"
 
 #: ping/ping.c:1301
 #, c-format
 msgid "Source Route Failed\n"
-msgstr ""
+msgstr "Ruta Origen Incorrecta\n"
 
 #: ping/ping.c:1304
 #, c-format
 msgid "Destination Net Unknown\n"
-msgstr ""
+msgstr "Red Destino Desconocida\n"
 
 #: ping/ping.c:1307
 #, c-format
 msgid "Destination Host Unknown\n"
-msgstr ""
+msgstr "Anfitrión Destino Desconocido\n"
 
 #: ping/ping.c:1310
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr ""
+msgstr "Anfitrión Origen Aislado\n"
 
 #: ping/ping.c:1313
 #, c-format
 msgid "Destination Net Prohibited\n"
-msgstr ""
+msgstr "Red Destino Prohibida\n"
 
 #: ping/ping.c:1316
 #, c-format
 msgid "Destination Host Prohibited\n"
-msgstr ""
+msgstr "Anfitrión Destino Prohibido\n"
 
 #: ping/ping.c:1319
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr ""
+msgstr "Red Destino Inalcanzable para Tipo de Servicio\n"
 
 #: ping/ping.c:1322
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
-msgstr ""
+msgstr "Hospedaje Destino Inalcanzable para Tipo de Servicio\n"
 
 #: ping/ping.c:1325
 #, c-format
 msgid "Packet filtered\n"
-msgstr ""
+msgstr "Paquete filtrado\n"
 
 #: ping/ping.c:1328
 #, c-format
 msgid "Precedence Violation\n"
-msgstr ""
+msgstr "Violación Precedente\n"
 
 #: ping/ping.c:1331
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "Recorte Precedente\n"
 
 #: ping/ping.c:1334
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
-msgstr ""
+msgstr "Dest Inalcanzable, Código Incorrecto: %d\n"
 
 #: ping/ping.c:1341
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "Aplacar Origen\n"
 
 #: ping/ping.c:1348
 #, c-format
@@ -989,62 +1016,62 @@ msgstr "Redirigir Red"
 #: ping/ping.c:1351
 #, c-format
 msgid "Redirect Host"
-msgstr ""
+msgstr "Redireccionar Hospedaje"
 
 #: ping/ping.c:1354
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "Redireccionar Tipo de Servicio y Red"
 
 #: ping/ping.c:1357
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "Redireccionar Tipo de Servicio y Hospedaje"
 
 #: ping/ping.c:1360
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "Redireccionar, Código Incorrecto: %d"
 
 #: ping/ping.c:1371
 #, c-format
 msgid "(New nexthop: %s)\n"
-msgstr ""
+msgstr "(Nuevo hueco sig: %s)\n"
 
 #: ping/ping.c:1377
 #, c-format
 msgid "Echo Request\n"
-msgstr ""
+msgstr "Solicitar Eco\n"
 
 #: ping/ping.c:1383
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr ""
+msgstr "Tiempo de vida superado\n"
 
 #: ping/ping.c:1386
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr ""
+msgstr "Se excedió el tiempo de re-ensamblaje de fragmentos\n"
 
 #: ping/ping.c:1389
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
-msgstr ""
+msgstr "Tiempo superado, Código Incorrecto: %d\n"
 
 #: ping/ping.c:1396
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr ""
+msgstr "Problema de parámetro: puntero = %u\n"
 
 #: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
-msgstr ""
+msgstr "Cronomarcador\n"
 
 #: ping/ping.c:1406
 #, c-format
 msgid "Timestamp Reply\n"
-msgstr ""
+msgstr "Réplica Sello Horario\n"
 
 #: ping/ping.c:1410
 #, c-format
@@ -1054,47 +1081,47 @@ msgstr "Solicitar Información\n"
 #: ping/ping.c:1414
 #, c-format
 msgid "Information Reply\n"
-msgstr ""
+msgstr "Réplica Información\n"
 
 #: ping/ping.c:1419
 #, c-format
 msgid "Address Mask Request\n"
-msgstr ""
+msgstr "Máscara de Dirección Solicita\n"
 
 #: ping/ping.c:1424
 #, c-format
 msgid "Address Mask Reply\n"
-msgstr ""
+msgstr "Réplica Máscara Dirección\n"
 
 #: ping/ping.c:1428
 #, c-format
 msgid "Bad ICMP type: %d\n"
-msgstr ""
+msgstr "Tipo ICMP incorrecto: %d\n"
 
 #: ping/ping.c:1482
 #, c-format
 msgid "local error: message too long, mtu=%u"
-msgstr ""
+msgstr "error local: mensaje muy largo, mtu=%u"
 
 #: ping/ping.c:1655
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr ""
+msgstr "paquete muy breve (%d bytes) desde %s"
 
 #: ping/ping.c:1734
 #, c-format
 msgid "From %s: icmp_seq=%u "
-msgstr ""
+msgstr "Origen %s: icmp_seq=%u "
 
 #: ping/ping.c:1737
 #, c-format
 msgid "(BAD CHECKSUM)"
-msgstr ""
+msgstr "(COMP. SUMA. INCORRECTO)"
 
 #: ping/ping.c:1761
 #, c-format
 msgid "(BAD CHECKSUM)\n"
-msgstr ""
+msgstr "(COMP. SUMA. INCORRECTO)\n"
 
 #: ping/ping_common.c:49
 #, c-format
@@ -1157,25 +1184,86 @@ msgid ""
 "\n"
 "For more details see ping(8).\n"
 msgstr ""
+"\n"
+"Modo de empleo\n"
+"  ping [opciones] <destino>\n"
+"\n"
+"Opciones:\n"
+"  <destino> Nombre DNS o dirección IP\n"
+"  -3                 precisión RTT (no redondea el tiempo resultado)\n"
+"  -a                 utiliza ping audible\n"
+"  -A                 utiliza ping adaptativo\n"
+"  -B                 pincha dirección origen\n"
+"  -c <contador>         detiene tras <contador> réplicas\n"
+"  -C                 invoca connect() syscall en creación de zócalo\n"
+"  -D                 declara sello horario\n"
+"  -d                 utiliza opción de zócalo SO_DEBUG\n"
+"  -e <identificador>    define identificador para sesión ping, predet. es "
+"aleatorio para\n"
+"                     SOCK_RAW y kernel definido para SOCK_DGRAM\n"
+"                     Implica utilizando SOCK_RAW (para IPv4 solo para "
+"identificador 0)\n"
+"  -f                 azotar ping\n"
+"  -h                 declara ayuda y sale\n"
+"  -H                 fuerza resolución de nombre DNS revertido (útil para "
+"destino\n"
+"                        numérico o para -f), sobrecarga -n\n"
+"  -I <interfaz>     o bien nombre de interfaz o dirección\n"
+"  -i <intervalo>      segundos entre enviar cada paquete\n"
+"  -L                 suprime loopback de paquetes multicast\n"
+"  -l <precarga>       envía número de <precarga> de paquetes mientras "
+"esperan réplicas\n"
+"  -m <marcador>          etiqueta los paquetes salientes\n"
+"  -M <pmtud opc>     define descubrir ruta MTU puede ser una de "
+"<do|dont|want|probe>\n"
+"  -n                 no revertir resolución de nombre DNS sobrecarga -H\n"
+"  -O                 informa réplicas de salida\n"
+"  -p <patrón>       contenido de relleno byte\n"
+"  -q                 salida silenciosa\n"
+"  -Q <tclase>        utiliza calidad de servicio <tclass> bits\n"
+"  -s <tam>          utiliza <tam> como número de bytes de datos para ser "
+"enviados\n"
+"  -S <tam>         utiliza <tam> como valor de opción zócalo SO_SNDBUF\n"
+"  -t <ttl>           define tiempo de vida\n"
+"  -U                 declara latencia usuario-a-usuario\n"
+"  -v                 salida verborrea\n"
+"  -V                 declara versión y sale\n"
+"  -w <muerte>      responde espera <línea-muerte> en segundos\n"
+"  -W <espera>       tiempo de espera para responder\n"
+"\n"
+"Opciones IPv4:\n"
+"  -4                 utiliza IPv4\n"
+"  -b                 permite multitud de ping\n"
+"  -R                 registra ruta\n"
+"  -T <sello horario>     define sello horario, puede ser uno de "
+"<tsonly|tsandaddr|tsprespec>\n"
+"\n"
+"Opciones IPv6:\n"
+"  -6                 utilice IPv6\n"
+"  -F <etiqueta flujo>     define etiqueta de flujo, p.d. es aleatorio\n"
+"  -N <opc nodoinfo>  utilice nodo IPv6 info query, intente <ayuda> como "
+"argumento\n"
+"\n"
+"Para más detalles consulte ping(8).\n"
 
 #: ping/ping_common.c:218
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
-msgstr ""
+msgstr "patrones deben ser especificados como dígito hex: %s"
 
 #: ping/ping_common.c:233
 #, c-format
 msgid "PATTERN: 0x"
-msgstr ""
+msgstr "PATRÓN: 0x"
 
 #: ping/ping_common.c:353
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
-msgstr ""
+msgstr "aún sin respuesta para icmp_seq=%lu\n"
 
 #: ping/ping_common.c:457
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr ""
+msgstr "AVISO: probablemente, rcvbuf no es suficiente para mantener precarga"
 
 #: ping/ping_common.c:476
 #, c-format
@@ -1186,10 +1274,11 @@ msgstr "AVISO: ha fallado al fijar marca: %u"
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
 msgstr ""
+"=> ¿ausencia de cap_net_admin+p o cap_net_raw+p (desde Linux 5.17) capacidad?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "AVISO: SO_MARK no admitido"
 
 #: ping/ping_common.c:500
 #, c-format
@@ -1197,60 +1286,64 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"no se puede inundar, intervalo mínimo para usuario debe ser >= %d ms, "
+"utilice -i %s (o más alto)"
 
 #: ping/ping_common.c:504
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr ""
+msgstr "precarga ilegal y/o intervalo: %d"
 
 #: ping/ping_common.c:516
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr ""
+msgstr "Aviso: no admite SO_TIMESTAMP, retrocede a SIOCGSTAMP"
 
 #: ping/ping_common.c:759
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
 msgstr ""
+"Advertencia: la hora del día retrocede (%ldus), se están tomando "
+"contramedidas"
 
 #: ping/ping_common.c:809
 #, c-format
 msgid "%d bytes from %s:"
-msgstr ""
+msgstr "%d bytes desde %s:"
 
 #: ping/ping_common.c:815
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:818
 #, c-format
 msgid " ttl=%d"
-msgstr ""
+msgstr " ttl=%d"
 
 #: ping/ping_common.c:821
 #, c-format
 msgid " (truncated)\n"
-msgstr ""
+msgstr " (truncado)\n"
 
 #: ping/ping_common.c:849
 #, c-format
 msgid " time=%s ms"
-msgstr ""
+msgstr " tiempo=%s ms"
 
 #: ping/ping_common.c:854
 #, c-format
 msgid " (DUP!)"
-msgstr ""
+msgstr " (DUP!)"
 
 #: ping/ping_common.c:856
 #, c-format
 msgid " (BAD CHECKSUM!)"
-msgstr ""
+msgstr " (COMP. SUMA INCORRECTO)"
 
 #: ping/ping_common.c:858
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (DIRECC DIFERENTE)"
 
 #: ping/ping_common.c:865
 #, c-format
@@ -1258,71 +1351,73 @@ msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
+"\n"
+"byte de datos #%d incorrecto sería 0x%x pero fue 0x%x"
 
 #: ping/ping_common.c:908
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr ""
+msgstr "--- %s estadísticas ping ---\n"
 
 #: ping/ping_common.c:909
 #, c-format
 msgid "%ld packets transmitted, "
-msgstr ""
+msgstr "%ld paquetes transmitidos, "
 
 #: ping/ping_common.c:910
 #, c-format
 msgid "%ld received"
-msgstr ""
+msgstr "%ld recibidos"
 
 #: ping/ping_common.c:912
 #, c-format
 msgid ", +%ld duplicates"
-msgstr ""
+msgstr ", +%ld duplicados"
 
 #: ping/ping_common.c:914
 #, c-format
 msgid ", +%ld corrupted"
-msgstr ""
+msgstr ", +%ld corruptos"
 
 #: ping/ping_common.c:916
 #, c-format
 msgid ", +%ld errors"
-msgstr ""
+msgstr ", +%ld errores"
 
 #: ping/ping_common.c:922
 #, c-format
 msgid ", %g%% packet loss"
-msgstr ""
+msgstr ", %g%% paquetes perdidos"
 
 #: ping/ping_common.c:924
 #, c-format
 msgid ", time %llums"
-msgstr ""
+msgstr ", tiempo %llums"
 
 #: ping/ping_common.c:944
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
+msgstr "rtt min/med/máx/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:952
 #, c-format
 msgid "%spipe %d"
-msgstr ""
+msgstr "%sconducto %d"
 
 #: ping/ping_common.c:959
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr ""
+msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
 #: ping/ping_common.c:977
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
-msgstr ""
+msgstr "%ld/%ld paquetes, %d%% perdidos"
 
 #: ping/ping_common.c:982
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
+msgstr ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: tracepath.c:218
 #, c-format
@@ -1330,6 +1425,8 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
+"cmsg6:%d\n"
+" "
 
 #: tracepath.c:230
 #, c-format
@@ -1337,54 +1434,56 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
+"cmsg4:%d\n"
+" "
 
 #: tracepath.c:235
 #, c-format
 msgid "no info\n"
-msgstr ""
+msgstr "sin info\n"
 
 #: tracepath.c:239
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[HOSPEDAJE LOCAL]"
 
 #: tracepath.c:287
 #, c-format
 msgid "%3lld.%03ldms "
-msgstr ""
+msgstr "%3lld.%03ldms "
 
 #: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr ""
+msgstr "(Este enrutador estropeado devuelve carga corrupta) "
 
 #: tracepath.c:306
 #, c-format
 msgid "pmtu %d\n"
-msgstr ""
+msgstr "pmtu %d\n"
 
 #: tracepath.c:311
 #, c-format
 msgid "reached\n"
-msgstr ""
+msgstr "alcanzado\n"
 
 #: tracepath.c:328
 #, c-format
 msgid "asymm %2d "
-msgstr ""
+msgstr "asimétrico %2d "
 
 #: tracepath.c:343
 msgid "NET ERROR"
-msgstr ""
+msgstr "ERROR DE RED"
 
 #: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
-msgstr ""
+msgstr "%2d?: respuesta recibida 8)\n"
 
 #: tracepath.c:394
 #, c-format
 msgid "%2d:  send failed\n"
-msgstr ""
+msgstr "%2d:  envío incorrecto\n"
 
 #: tracepath.c:401
 #, c-format
@@ -1406,32 +1505,48 @@ msgid ""
 "\n"
 "For more details see tracepath(8).\n"
 msgstr ""
+"\n"
+"Modo de empleo\n"
+"  tracepath [opciones] <destino>\n"
+"\n"
+"Opciones:\n"
+"  -4             utiliza IPv4\n"
+"  -6             utiliza IPv6\n"
+"  -b             declara ambos nombre e IP\n"
+"  -l <longitud>    utiliza paquete <longitud>\n"
+"  -m <hops>      utiliza máximo <hops>\n"
+"  -n             no revierte resolución de nombre DNS\n"
+"  -p <puerto>      utiliza destino <puerto>\n"
+"  -V             declara versión y sale\n"
+"  <destino>  nombre de DNS o dirección IP\n"
+"\n"
+"Para más detalles consulte tracepath(8).\n"
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "Solo una opción -4 o -6 puede especificarse"
 
 #: tracepath.c:607
 #, c-format
 msgid "%2d:  no reply\n"
-msgstr ""
+msgstr "%2d:  sin réplica\n"
 
 #: tracepath.c:614
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr ""
+msgstr "     Resumen: pmtu %d "
 
 #: tracepath.c:616
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "%d huecos "
 
 #: tracepath.c:618
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "retorna %d "
 
 #: tracepath.c:623
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr ""
+msgstr "pktlen debe estar dentro de: %d < valor ≤ %d"
