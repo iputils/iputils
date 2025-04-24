@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 20:27+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-04-24 20:32+0000\n"
+"Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
 "Language: es\n"
@@ -1007,7 +1006,7 @@ msgstr "Dest Inalcanzable, Código Incorrecto: %d\n"
 #: ping/ping.c:1341
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "Aplacar Origen\n"
 
 #: ping/ping.c:1348
 #, c-format
@@ -1017,27 +1016,27 @@ msgstr "Redirigir Red"
 #: ping/ping.c:1351
 #, c-format
 msgid "Redirect Host"
-msgstr ""
+msgstr "Redireccionar Hospedaje"
 
 #: ping/ping.c:1354
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "Redireccionar Tipo de Servicio y Red"
 
 #: ping/ping.c:1357
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "Redireccionar Tipo de Servicio y Hospedaje"
 
 #: ping/ping.c:1360
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "Redireccionar, Código Incorrecto: %d"
 
 #: ping/ping.c:1371
 #, c-format
 msgid "(New nexthop: %s)\n"
-msgstr ""
+msgstr "(Nuevo hueco sig: %s)\n"
 
 #: ping/ping.c:1377
 #, c-format
@@ -1459,29 +1458,29 @@ msgstr ""
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
-msgstr "solo una opción -4 o -6 puede especificarse"
+msgstr "Solo una opción -4 o -6 puede especificarse"
 
 #: tracepath.c:607
 #, c-format
 msgid "%2d:  no reply\n"
-msgstr ""
+msgstr "%2d:  sin réplica\n"
 
 #: tracepath.c:614
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr ""
+msgstr "     Resumen: pmtu %d "
 
 #: tracepath.c:616
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "%d huecos "
 
 #: tracepath.c:618
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "retorna %d "
 
 #: tracepath.c:623
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr ""
+msgstr "pktlen debe estar dentro de: %d < valor <= %d"
