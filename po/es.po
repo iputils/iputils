@@ -9,8 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
 "PO-Revision-Date: 2025-04-24 20:36+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
 "Language: es\n"
@@ -1072,7 +1071,7 @@ msgstr "Cronomarcador:\n"
 #: ping/ping.c:1406
 #, c-format
 msgid "Timestamp Reply\n"
-msgstr ""
+msgstr "Réplica Sello Horario\n"
 
 #: ping/ping.c:1410
 #, c-format
@@ -1082,27 +1081,27 @@ msgstr "Solicitar Información\n"
 #: ping/ping.c:1414
 #, c-format
 msgid "Information Reply\n"
-msgstr ""
+msgstr "Réplica Información\n"
 
 #: ping/ping.c:1419
 #, c-format
 msgid "Address Mask Request\n"
-msgstr ""
+msgstr "Máscara de Dirección Solicita\n"
 
 #: ping/ping.c:1424
 #, c-format
 msgid "Address Mask Reply\n"
-msgstr ""
+msgstr "Réplica Máscara Dirección\n"
 
 #: ping/ping.c:1428
 #, c-format
 msgid "Bad ICMP type: %d\n"
-msgstr ""
+msgstr "Tipo ICMP incorrecto: %d\n"
 
 #: ping/ping.c:1482
 #, c-format
 msgid "local error: message too long, mtu=%u"
-msgstr "error local: mensaje muy largo, mtu: %u"
+msgstr "error local: mensaje muy largo, mtu=%u"
 
 #: ping/ping.c:1655
 #, c-format
