@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 20:12+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-04-24 20:14+0000\n"
+"Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
 "Language: es\n"
@@ -1042,12 +1041,12 @@ msgstr ""
 #: ping/ping.c:1377
 #, c-format
 msgid "Echo Request\n"
-msgstr "Solicitar eco\n"
+msgstr "Solicitar Eco\n"
 
 #: ping/ping.c:1383
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr ""
+msgstr "Tiempo de vida superado\n"
 
 #: ping/ping.c:1386
 #, c-format
@@ -1117,12 +1116,12 @@ msgstr ""
 #: ping/ping.c:1737
 #, c-format
 msgid "(BAD CHECKSUM)"
-msgstr ""
+msgstr "(COMP. SUMA. INCORRECTO)"
 
 #: ping/ping.c:1761
 #, c-format
 msgid "(BAD CHECKSUM)\n"
-msgstr ""
+msgstr "(COMP. SUMA. INCORRECTO)\n"
 
 #: ping/ping_common.c:49
 #, c-format
@@ -1243,17 +1242,17 @@ msgstr ""
 #: ping/ping_common.c:809
 #, c-format
 msgid "%d bytes from %s:"
-msgstr ""
+msgstr "%d bytes desde %s:"
 
 #: ping/ping_common.c:815
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:818
 #, c-format
 msgid " ttl=%d"
-msgstr ""
+msgstr " ttl=%d"
 
 #: ping/ping_common.c:821
 #, c-format
