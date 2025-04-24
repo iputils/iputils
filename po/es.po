@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 20:36+0000\n"
+"PO-Revision-Date: 2025-04-25 01:04+0000\n"
 "Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
@@ -1051,22 +1051,22 @@ msgstr "Tiempo de vida superado\n"
 #: ping/ping.c:1386
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr ""
+msgstr "Se excedió el tiempo de re-ensamblaje de fragmentos\n"
 
 #: ping/ping.c:1389
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
-msgstr ""
+msgstr "Tiempo superado, Código Incorrecto: %d\n"
 
 #: ping/ping.c:1396
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr ""
+msgstr "Problema de parámetro: puntero = %u\n"
 
 #: ping/ping.c:1402
 #, c-format
 msgid "Timestamp\n"
-msgstr "Cronomarcador:\n"
+msgstr "Cronomarcador\n"
 
 #: ping/ping.c:1406
 #, c-format
@@ -1111,7 +1111,7 @@ msgstr "paquete muy breve (%d bytes) desde %s"
 #: ping/ping.c:1734
 #, c-format
 msgid "From %s: icmp_seq=%u "
-msgstr "Origen %s icmp_seq=%u "
+msgstr "Origen %s: icmp_seq=%u "
 
 #: ping/ping.c:1737
 #, c-format
@@ -1184,25 +1184,86 @@ msgid ""
 "\n"
 "For more details see ping(8).\n"
 msgstr ""
+"\n"
+"Modo de empleo\n"
+"  ping [opciones] <destino>\n"
+"\n"
+"Opciones:\n"
+"  <destino> Nombre DNS o dirección IP\n"
+"  -3                 precisión RTT (no redondea el tiempo resultado)\n"
+"  -a                 utiliza ping audible\n"
+"  -A                 utiliza ping adaptativo\n"
+"  -B                 pincha dirección origen\n"
+"  -c <contador>         detiene tras <contador> réplicas\n"
+"  -C                 invoca connect() syscall en creación de zócalo\n"
+"  -D                 declara sello horario\n"
+"  -d                 utiliza opción de zócalo SO_DEBUG\n"
+"  -e <identificador>    define identificador para sesión ping, predet. es "
+"aleatorio para\n"
+"                     SOCK_RAW y kernel definido para SOCK_DGRAM\n"
+"                     Implica utilizando SOCK_RAW (para IPv4 solo para "
+"identificador 0)\n"
+"  -f                 azotar ping\n"
+"  -h                 declara ayuda y sale\n"
+"  -H                 fuerza resolución de nombre DNS revertido (útil para "
+"destino\n"
+"                        numérico o para -f), sobrecarga -n\n"
+"  -I <interfaz>     o bien nombre de interfaz o dirección\n"
+"  -i <intervalo>      segundos entre enviar cada paquete\n"
+"  -L                 suprime loopback de paquetes multicast\n"
+"  -l <precarga>       envía número de <precarga> de paquetes mientras "
+"esperan réplicas\n"
+"  -m <marcador>          etiqueta los paquetes salientes\n"
+"  -M <pmtud opc>     define descubrir ruta MTU puede ser una de "
+"<do|dont|want|probe>\n"
+"  -n                 no revertir resolución de nombre DNS sobrecarga -H\n"
+"  -O                 informa réplicas de salida\n"
+"  -p <patrón>       contenido de relleno byte\n"
+"  -q                 salida silenciosa\n"
+"  -Q <tclase>        utiliza calidad de servicio <tclass> bits\n"
+"  -s <tam>          utiliza <tam> como número de bytes de datos para ser "
+"enviados\n"
+"  -S <tam>         utiliza <tam> como valor de opción zócalo SO_SNDBUF\n"
+"  -t <ttl>           define tiempo de vida\n"
+"  -U                 declara latencia usuario-a-usuario\n"
+"  -v                 salida verborrea\n"
+"  -V                 declara versión y sale\n"
+"  -w <muerte>      responde espera <línea-muerte> en segundos\n"
+"  -W <espera>       tiempo de espera para responder\n"
+"\n"
+"Opciones IPv4:\n"
+"  -4                 utiliza IPv4\n"
+"  -b                 permite multitud de ping\n"
+"  -R                 registra ruta\n"
+"  -T <sello horario>     define sello horario, puede ser uno de "
+"<tsonly|tsandaddr|tsprespec>\n"
+"\n"
+"Opciones IPv6:\n"
+"  -6                 utilice IPv6\n"
+"  -F <etiqueta flujo>     define etiqueta de flujo, p.d. es aleatorio\n"
+"  -N <opc nodoinfo>  utilice nodo IPv6 info query, intente <ayuda> como "
+"argumento\n"
+"\n"
+"Para más detalles consulte ping(8).\n"
 
 #: ping/ping_common.c:218
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
-msgstr ""
+msgstr "patrones deben ser especificados como dígito hex: %s"
 
 #: ping/ping_common.c:233
 #, c-format
 msgid "PATTERN: 0x"
-msgstr ""
+msgstr "PATRÓN: 0x"
 
 #: ping/ping_common.c:353
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
-msgstr ""
+msgstr "aún sin respuesta para icmp_seq=%lu\n"
 
 #: ping/ping_common.c:457
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr ""
+msgstr "AVISO: probablemente, rcvbuf no es suficiente para mantener precarga"
 
 #: ping/ping_common.c:476
 #, c-format
@@ -1213,10 +1274,11 @@ msgstr "AVISO: ha fallado al fijar marca: %u"
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
 msgstr ""
+"=> ¿ausencia de cap_net_admin+p o cap_net_raw+p (desde Linux 5.17) capacidad?"
 
 #: ping/ping_common.c:484
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "AVISO: SO_MARK no admitido"
 
 #: ping/ping_common.c:500
 #, c-format
@@ -1224,20 +1286,24 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"no se puede inundar, intervalo mínimo para usuario debe ser >= %d ms, "
+"utilice -i %s (o más alto)"
 
 #: ping/ping_common.c:504
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr ""
+msgstr "precarga ilegal y/o intervalo: %d"
 
 #: ping/ping_common.c:516
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr ""
+msgstr "Aviso: no admite SO_TIMESTAMP, retrocede a SIOCGSTAMP"
 
 #: ping/ping_common.c:759
 #, c-format
 msgid "Warning: time of day goes back (%ldus), taking countermeasures"
 msgstr ""
+"Advertencia: la hora del día retrocede (%ldus), se están tomando "
+"contramedidas"
 
 #: ping/ping_common.c:809
 #, c-format
@@ -1388,7 +1454,7 @@ msgstr "%3lld.%03ldms "
 #: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr "(Este router estropeado devuelve carga corrupta) "
+msgstr "(Este enrutador estropeado devuelve carga corrupta) "
 
 #: tracepath.c:306
 #, c-format
@@ -1412,7 +1478,7 @@ msgstr "ERROR DE RED"
 #: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
-msgstr "%2d?: respuesta recivida 8)\n"
+msgstr "%2d?: respuesta recibida 8)\n"
 
 #: tracepath.c:394
 #, c-format
@@ -1450,9 +1516,9 @@ msgstr ""
 "  -l <longitud>    utiliza paquete <longitud>\n"
 "  -m <hops>      utiliza máximo <hops>\n"
 "  -n             no revierte resolución de nombre DNS\n"
-"  -p <port>      utiliza destino <puerto>\n"
+"  -p <puerto>      utiliza destino <puerto>\n"
 "  -V             declara versión y sale\n"
-"  <destination>  nombre de DNS o dirección IP\n"
+"  <destino>  nombre de DNS o dirección IP\n"
 "\n"
 "Para más detalles consulte tracepath(8).\n"
 
@@ -1483,4 +1549,4 @@ msgstr "retorna %d "
 #: tracepath.c:623
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr "pktlen debe estar dentro de: %d < valor <= %d"
+msgstr "pktlen debe estar dentro de: %d < valor ≤ %d"
