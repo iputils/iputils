@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 19:40+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-04-24 20:05+0000\n"
+"Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
 "Language: es\n"
@@ -185,26 +184,26 @@ msgstr "ARPING %s "
 #: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
-msgstr "desde %s %s:\n"
+msgstr "desde %s %s\n"
 
 #: arping.c:1056
 msgid "no source address in not-DAD mode"
-msgstr ""
+msgstr "ninguna dirección origen en modo no-DAD"
 
 #: clockdiff.c:242
 #, c-format
 msgid "Wrong timestamp %d\n"
-msgstr ""
+msgstr "Temporización %d incorrecta\n"
 
 #: clockdiff.c:247
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr ""
+msgstr "Desbordamiento %d hops\n"
 
 #: clockdiff.c:272
 #, c-format
 msgid "wrong timestamps\n"
-msgstr ""
+msgstr "sello temporal incorrecto\n"
 
 #: clockdiff.c:453
 #, c-format
@@ -226,15 +225,33 @@ msgid ""
 "\n"
 "For more details see clockdiff(8).\n"
 msgstr ""
+"\n"
+"Modo de empleo:\n"
+"  clockdiff [opciones] <destino>\n"
+"\n"
+"Opciones::\n"
+"                sin -o, utilice solo sello horario icmp (consulte RFC0792, "
+"pág. 16)\n"
+"  -o            utilice sello horario IP y eco icmp\n"
+"  -o1           utilice tercer-término IP sello horario y eco icmp\n"
+"  -T, --time-format <ctime|iso>\n"
+"                  especifique formato del tiempo de pantalla, ctime es lo "
+"predet.\n"
+"  -I            alias de --time-format=iso\n"
+"  -h, --help    exhibe esta ayuda\n"
+"  -V, --version declara versión y sale\n"
+"  <destino> nombre DNS o dirección IP\n"
+"\n"
+"Para más detalles consulte clockdiff(8).\n"
 
 #: clockdiff.c:598
 msgid "measure: unknown failure"
-msgstr ""
+msgstr "medida: fallo desconocido"
 
 #: clockdiff.c:603
 #, c-format
 msgid "%s is down"
-msgstr "%s está desconectado"
+msgstr "%s está caído"
 
 #: clockdiff.c:606
 #, c-format
@@ -247,13 +264,13 @@ msgid "%s is unreachable"
 msgstr "%s es inalcanzable"
 
 #: clockdiff.c:628
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
 "\n"
-"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
+"hospedaje=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 
 #: ping/node_info.c:169
 #, c-format
@@ -706,7 +723,7 @@ msgstr "argumento -M no válido: %s"
 
 #: ping/ping.c:585
 msgid "bad linger time"
-msgstr "tiempo pers. inco."
+msgstr "tmp espera incorrecto"
 
 #: ping/ping.c:587
 #, c-format
@@ -771,40 +788,40 @@ msgstr ""
 
 #: ping/ping.c:938
 msgid "broadcast ping does not fragment"
-msgstr ""
+msgstr "difusión de ping no fragmentado"
 
 #: ping/ping.c:968
 msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr ""
+msgstr "AVISO: setsockopt(_FILTRO ICMP)"
 
 #: ping/ping.c:973
 msgid "WARNING: your kernel is veeery old. No problems."
-msgstr ""
+msgstr "AVISO: su kernel es muuuy antiguo. Sin problemas."
 
 #: ping/ping.c:977
 msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr ""
+msgstr "AVISO: setsockopt(IP _RECVTTL)"
 
 #: ping/ping.c:979
 msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr ""
+msgstr "AVISO: setsockopt(IP_RETOPTS)"
 
 #: ping/ping.c:1045
 msgid "cannot disable multicast loopback"
-msgstr ""
+msgstr "no puede desactivar bucle mulicast"
 
 #: ping/ping.c:1050
 msgid "cannot set multicast time-to-live"
-msgstr ""
+msgstr "no se puede establecer tiempo-de-vida multicast"
 
 #: ping/ping.c:1052
 msgid "cannot set unicast time-to-live"
-msgstr ""
+msgstr "no se puede establecer tiempo de vida unicast"
 
 #: ping/ping.c:1064
 #, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr ""
+msgstr "%d(%d) bytes de datos.\n"
 
 #: ping/ping.c:1096
 #, c-format
@@ -812,6 +829,8 @@ msgid ""
 "\n"
 "NOP"
 msgstr ""
+"\n"
+"NOP"
 
 #: ping/ping.c:1107
 #, c-format
@@ -819,11 +838,13 @@ msgid ""
 "\n"
 "%cSRR: "
 msgstr ""
+"\n"
+"%cSRR: "
 
 #: ping/ping.c:1145
 #, c-format
 msgid "\t(same route)"
-msgstr ""
+msgstr "\t(lo mismo que ruta)"
 
 #: ping/ping.c:1150
 #, c-format
@@ -831,6 +852,8 @@ msgid ""
 "\n"
 "RR: "
 msgstr ""
+"\n"
+"RR: "
 
 #: ping/ping.c:1186
 #, c-format
@@ -838,11 +861,13 @@ msgid ""
 "\n"
 "TS: "
 msgstr ""
+"\n"
+"TS: "
 
 #: ping/ping.c:1218
 #, c-format
 msgid "\t%ld absolute not-standard"
-msgstr ""
+msgstr "\t%ld absoluto no-estándar"
 
 #: ping/ping.c:1220
 #, c-format
@@ -857,7 +882,7 @@ msgstr "\t%ld absoluto"
 #: ping/ping.c:1235
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr ""
+msgstr "Saltos no reconocidos: %d\n"
 
 #: ping/ping.c:1239
 #, c-format
@@ -865,26 +890,28 @@ msgid ""
 "\n"
 "unknown option %x"
 msgstr ""
+"\n"
+"opción %x desconocida"
 
 #: ping/ping.c:1259
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr ""
+msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Datos\n"
 
 #: ping/ping.c:1260
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
-msgstr ""
+msgstr " %1x  %1x  %02x %04x %04x"
 
 #: ping/ping.c:1262
 #, c-format
 msgid "   %1x %04x"
-msgstr ""
+msgstr "   %1x %04x"
 
 #: ping/ping.c:1264
 #, c-format
 msgid "  %02x  %02x %04x"
-msgstr ""
+msgstr "  %02x  %02x %04x"
 
 #: ping/ping.c:1280
 #, c-format
