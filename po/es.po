@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 20:14+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-04-24 20:27+0000\n"
+"Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
 "Language: es\n"
@@ -1263,22 +1262,22 @@ msgstr " (truncado)\n"
 #: ping/ping_common.c:849
 #, c-format
 msgid " time=%s ms"
-msgstr ""
+msgstr " tiempo=%s ms"
 
 #: ping/ping_common.c:854
 #, c-format
 msgid " (DUP!)"
-msgstr ""
+msgstr " (DUP!)"
 
 #: ping/ping_common.c:856
 #, c-format
 msgid " (BAD CHECKSUM!)"
-msgstr ""
+msgstr " (COMP. SUMA INCORRECTO)"
 
 #: ping/ping_common.c:858
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (DIRECC DIFERENTE)"
 
 #: ping/ping_common.c:865
 #, c-format
@@ -1286,71 +1285,73 @@ msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
+"\n"
+"byte de datos #%d incorrecto sería 0x%x pero fue 0x%x"
 
 #: ping/ping_common.c:908
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr ""
+msgstr "--- %s estadísticas ping ---\n"
 
 #: ping/ping_common.c:909
 #, c-format
 msgid "%ld packets transmitted, "
-msgstr ""
+msgstr "%ld paquetes transmitidos, "
 
 #: ping/ping_common.c:910
 #, c-format
 msgid "%ld received"
-msgstr ""
+msgstr "%ld recibidos"
 
 #: ping/ping_common.c:912
 #, c-format
 msgid ", +%ld duplicates"
-msgstr ""
+msgstr ", +%ld duplicados"
 
 #: ping/ping_common.c:914
 #, c-format
 msgid ", +%ld corrupted"
-msgstr ""
+msgstr ", +%ld corruptos"
 
 #: ping/ping_common.c:916
 #, c-format
 msgid ", +%ld errors"
-msgstr ""
+msgstr ", +%ld errores"
 
 #: ping/ping_common.c:922
 #, c-format
 msgid ", %g%% packet loss"
-msgstr ""
+msgstr ", %g%% paquetes perdidos"
 
 #: ping/ping_common.c:924
 #, c-format
 msgid ", time %llums"
-msgstr ""
+msgstr ", tiempo %llums"
 
 #: ping/ping_common.c:944
 #, c-format
 msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
+msgstr "rtt min/med/máx/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_common.c:952
 #, c-format
 msgid "%spipe %d"
-msgstr ""
+msgstr "%sconducto %d"
 
 #: ping/ping_common.c:959
 #, c-format
 msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr ""
+msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
 
 #: ping/ping_common.c:977
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
-msgstr ""
+msgstr "%ld/%ld paquetes, %d%% perdidos"
 
 #: ping/ping_common.c:982
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
+msgstr ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: tracepath.c:218
 #, c-format
@@ -1358,6 +1359,8 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
+"cmsg6:%d\n"
+" "
 
 #: tracepath.c:230
 #, c-format
@@ -1365,54 +1368,56 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
+"cmsg4:%d\n"
+" "
 
 #: tracepath.c:235
 #, c-format
 msgid "no info\n"
-msgstr ""
+msgstr "sin info\n"
 
 #: tracepath.c:239
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[HOSPEDAJE LOCAL]"
 
 #: tracepath.c:287
 #, c-format
 msgid "%3lld.%03ldms "
-msgstr ""
+msgstr "%3lld.%03ldms "
 
 #: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr ""
+msgstr "(Este router estropeado devuelve carga corrupta) "
 
 #: tracepath.c:306
 #, c-format
 msgid "pmtu %d\n"
-msgstr ""
+msgstr "pmtu %d\n"
 
 #: tracepath.c:311
 #, c-format
 msgid "reached\n"
-msgstr ""
+msgstr "alcanzado\n"
 
 #: tracepath.c:328
 #, c-format
 msgid "asymm %2d "
-msgstr ""
+msgstr "asimétrico %2d "
 
 #: tracepath.c:343
 msgid "NET ERROR"
-msgstr ""
+msgstr "ERROR DE RED"
 
 #: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
-msgstr ""
+msgstr "%2d?: respuesta recivida 8)\n"
 
 #: tracepath.c:394
 #, c-format
 msgid "%2d:  send failed\n"
-msgstr ""
+msgstr "%2d:  envío incorrecto\n"
 
 #: tracepath.c:401
 #, c-format
@@ -1434,6 +1439,22 @@ msgid ""
 "\n"
 "For more details see tracepath(8).\n"
 msgstr ""
+"\n"
+"Modo de empleo\n"
+"  tracepath [opciones] <destino>\n"
+"\n"
+"Opciones:\n"
+"  -4             utiliza IPv4\n"
+"  -6             utiliza IPv6\n"
+"  -b             declara ambos nombre e IP\n"
+"  -l <longitud>    utiliza paquete <longitud>\n"
+"  -m <hops>      utiliza máximo <hops>\n"
+"  -n             no revierte resolución de nombre DNS\n"
+"  -p <port>      utiliza destino <puerto>\n"
+"  -V             declara versión y sale\n"
+"  <destination>  nombre de DNS o dirección IP\n"
+"\n"
+"Para más detalles consulte tracepath(8).\n"
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
