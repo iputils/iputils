@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 19:29+0000\n"
+"PO-Revision-Date: 2025-04-24 19:35+0000\n"
 "Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
@@ -41,7 +41,7 @@ msgid ""
 msgstr ""
 "\n"
 "Modo de empleo:\n"
-"  arping [opcones] <destino>\n"
+"  arping [opciones] <destino>\n"
 "\n"
 "Opciones:\n"
 "  -f            salir en la primera respuesta\n"
@@ -66,8 +66,8 @@ msgid ""
 "For more details see arping(8).\n"
 msgstr ""
 "\n"
-"  -s <source>   dirección IP fuente\n"
-"  <destination> nonbre DNS o dirección IP\n"
+"  -s <origen>   dirección IP origen\n"
+"  <destino> nombre DNS o dirección IP\n"
 "\n"
 "Para más detalles consulte arping(8).\n"
 
@@ -93,11 +93,11 @@ msgstr "%s%d radiodifusión(es)"
 
 #: arping.c:422
 msgid "Unicast"
-msgstr ""
+msgstr "Unidifusión"
 
 #: arping.c:422
 msgid "Broadcast"
-msgstr "Difusión"
+msgstr "Multidifusión"
 
 #: arping.c:423
 #, c-format
@@ -145,7 +145,7 @@ msgstr "Interfaz «%s» no es ARPable\n"
 #: arping.c:697
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
-msgstr ""
+msgstr "AVISO: utilizando dirección de multidifusión por defecto.\n"
 
 #: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:408 ping/ping.c:455
 #: ping/ping.c:507 ping/ping.c:515 ping/ping.c:559 ping/ping.c:562
