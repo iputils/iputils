@@ -8,9 +8,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-24 20:32+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2025-04-24 20:33+0000\n"
+"Last-Translator: \"Fco. Javier F. Serrador\" <fserrador@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/es/>\n"
 "Language: es\n"
@@ -1107,7 +1106,7 @@ msgstr ""
 #: ping/ping.c:1655
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr ""
+msgstr "paquete muy breve (%d bytes) desde %s"
 
 #: ping/ping.c:1734
 #, c-format
