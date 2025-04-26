@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-09 22:53+0000\n"
+"PO-Revision-Date: 2025-04-26 03:25+0000\n"
 "Last-Translator: hsu zangmen <chzang55@gmail.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://"
 "translate.fedoraproject.org/projects/iputils/iputils/zh_Hant/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.10.4\n"
+"X-Generator: Weblate 5.11\n"
 
 #: arping.c:123
 #, c-format
@@ -1042,7 +1042,7 @@ msgstr "本地錯誤：訊息太長，mtu=%u"
 #: ping/ping.c:1655
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr "來自 %s 的封包太短 ( %d 位元組)"
+msgstr "封包太短 ( %d 位元組) 來自 %s"
 
 #: ping/ping.c:1734
 #, c-format
