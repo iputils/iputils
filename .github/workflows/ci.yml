@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) 2021-2024 Petr Vorel <pvorel@suse.cz>
+# Copyright (c) 2021-2025 Petr Vorel <pvorel@suse.cz>
 
 name: "CI: docker based builds"
 on: [push, pull_request]
@@ -127,7 +127,7 @@ jobs:
         INSTALL="${INSTALL#quay.io/centos/}"
         INSTALL="${INSTALL%%:*}"
         INSTALL="${INSTALL%%/*}"
-        ./ci/$INSTALL.sh
+        WITH_TEST_DEPS=1 ./ci/$INSTALL.sh
         if [ "$VARIANT" ]; then ./ci/$INSTALL.$VARIANT.sh; fi
 
     - name: Check dependencies
