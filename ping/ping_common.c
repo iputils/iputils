@@ -754,16 +754,32 @@ int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 
 restamp:
 		tvsub(tv, &tmp_tv);
-		triptime = tv->tv_sec * 1000000 + tv->tv_usec;
-		if (triptime < 0) {
-			error(0, 0, _("Warning: time of day goes back (%ldus), taking countermeasures"), triptime);
+
+		if (tv->tv_usec >= 1000000) {
+			error(0, 0, _("Warning: invalid tv_usec %ld us"), tv->tv_usec);
+			tv->tv_usec = 999999;
+		}
+
+		if (tv->tv_usec < 0) {
+			error(0, 0, _("Warning: invalid tv_usec %ld us"), tv->tv_usec);
+			tv->tv_usec = 0;
+		}
+
+		if (tv->tv_sec > TV_SEC_MAX_VAL) {
+			error(0, 0, _("Warning: invalid tv_sec %ld s"), tv->tv_sec);
+			triptime = 0;
+		} else if (tv->tv_sec < 0) {
+			error(0, 0, _("Warning: time of day goes back (%ld s), taking countermeasures"), tv->tv_sec);
 			triptime = 0;
 			if (!rts->opt_latency) {
 				gettimeofday(tv, NULL);
 				rts->opt_latency = 1;
 				goto restamp;
 			}
+		} else {
+			triptime = tv->tv_sec * 1000000 + tv->tv_usec;
 		}
+
 		if (!csfailed) {
 			rts->tsum += triptime;
 			rts->tsum2 += (double)((long long)triptime * (long long)triptime);
