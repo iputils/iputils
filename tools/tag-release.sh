@@ -51,22 +51,31 @@ cat > "$credit" <<EOF
 TODO: Add changelog
 
 ## credit
-Many thanks to the people contributing to this release:
+Many thanks to the developers contributing to this release:
 \`\`\`
-    $ git shortlog -sen $old_tag..
+    $ git shortlog -sen $old_tag.. -- \$(git ls-files | grep -v ^po/)
 EOF
-git shortlog -sen "$old_tag".. >> "$credit"
+git shortlog -sen "$old_tag".. -- $(git ls-files | grep -v ^po/) .github/ >> "$credit"
 
 cat >> "$credit" <<EOF
 \`\`\`
 
-Also thanks to patch reviewers:
+and translators:
+\`\`\`
+    $ git shortlog -sen $old_tag.. -- po/
+EOF
+git shortlog -sen "$old_tag".. -- po/ >> "$credit"
+
+cat >> "$credit" <<EOF
+\`\`\`
+
+Also thanks to patch reviewers and co-developers:
 
 \`\`\`
-$ git log $old_tag.. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
+$ git log $old_tag.. | grep -Ei '(reviewed|acked|co-developed)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
 EOF
 
-git log "$old_tag".. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r >> "$credit"
+git log "$old_tag".. | grep -Ei '(reviewed|acked|co-developed)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r >> "$credit"
 
 cat >> "$credit" <<EOF
 \`\`\`
