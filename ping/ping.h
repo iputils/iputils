@@ -176,7 +176,7 @@ struct ping_rts {
 	int interval;			/* interval between packets (msec) */
 	int preload;
 	int deadline;			/* time to die */
-	int lingertime;
+	uint32_t lingertime;
 	struct timespec start_time, cur_time;
 	volatile int exiting;
 	volatile int status_snapshot;

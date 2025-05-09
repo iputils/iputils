@@ -265,8 +265,9 @@ int __schedule_exit(int next)
 		waittime = 2 * global_rts->tmax;
 		if (waittime < 1000 * (unsigned long)global_rts->interval)
 			waittime = 1000 * global_rts->interval;
-	} else
-		waittime = global_rts->lingertime * 1000;
+	} else {
+		waittime = global_rts->lingertime;
+	}
 
 	if (next < 0 || (unsigned long)next < waittime / 1000)
 		next = waittime / 1000;
@@ -388,7 +389,7 @@ resend:
 		if (nores_interval > 500)
 			nores_interval = 500;
 		oom_count++;
-		if (oom_count * nores_interval < rts->lingertime)
+		if ((uint32_t)(oom_count * nores_interval) < rts->lingertime)
 			return nores_interval;
 		i = 0;
 		/* Fall to hard error. It is to avoid complete deadlock

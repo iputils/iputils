@@ -583,10 +583,10 @@ main(int argc, char **argv)
 			double optval;
 
 			optval = ping_strtod(optarg, _("bad linger time"));
-			if (isless(optval, 0) || isgreater(optval, (double)INT_MAX / 1000))
+			if (isless(optval, 0) || isgreater(optval, (double)UINT_MAX / 1000000))
 				error(2, 0, _("bad linger time: %s"), optarg);
-			/* lingertime will be converted to usec later */
-			rts.lingertime = (int)(optval * 1000);
+
+			rts.lingertime = (uint32_t)(optval * 1000000);
 		}
 			break;
 		default:
