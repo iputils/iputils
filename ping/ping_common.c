@@ -448,9 +448,18 @@ void sock_setbufs(struct ping_rts *rts, socket_st *sock, int alloc)
 		rts->sndbuf = alloc;
 	setsockopt(sock->fd, SOL_SOCKET, SO_SNDBUF, (char *)&rts->sndbuf, sizeof(rts->sndbuf));
 
-	rcvbuf = hold = alloc * rts->preload;
+	if (alloc > INT_MAX / rts->preload) {
+		error(0, 0, _("WARNING: buffer size overflow, reduce packet size or preload"));
+		hold = INT_MAX;
+	} else {
+		hold = alloc * rts->preload;
+	}
+
+	rcvbuf = hold;
+
 	if (hold < 65536)
 		hold = 65536;
+
 	setsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, sizeof(hold));
 	if (getsockopt(sock->fd, SOL_SOCKET, SO_RCVBUF, (char *)&hold, &tmplen) == 0) {
 		if (hold < rcvbuf)
