@@ -265,8 +265,9 @@ int __schedule_exit(int next)
 		waittime = 2 * global_rts->tmax;
 		if (waittime < 1000 * (unsigned long)global_rts->interval)
 			waittime = 1000 * global_rts->interval;
-	} else
-		waittime = global_rts->lingertime * 1000;
+	} else {
+		waittime = (unsigned long)global_rts->lingertime * 1000;
+	}
 
 	if (next < 0 || (unsigned long)next < waittime / 1000)
 		next = waittime / 1000;
