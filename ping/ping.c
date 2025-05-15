@@ -1642,7 +1642,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 	int csfailed;
 	struct cmsghdr *cmsgh;
 	int reply_ttl;
-	uint8_t *opts, *tmp_ttl;
+	uint8_t *opts;
 	int olen;
 	int wrong_source = 0;
 
@@ -1670,8 +1670,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 			if (cmsgh->cmsg_type == IP_TTL) {
 				if (cmsgh->cmsg_len < sizeof(int))
 					continue;
-				tmp_ttl = (uint8_t *)CMSG_DATA(cmsgh);
-				reply_ttl = (int)*tmp_ttl;
+				memcpy(&reply_ttl, CMSG_DATA(cmsgh), sizeof(reply_ttl));
 			} else if (cmsgh->cmsg_type == IP_RETOPTS) {
 				opts = (uint8_t *)CMSG_DATA(cmsgh);
 				olen = cmsgh->cmsg_len;
