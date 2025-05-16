@@ -1,5 +1,9 @@
 [ type description here; PLEASE REMOVE THIS LINE AND THE LINES BELOW BEFORE SUBMITTING THIS ISSUE ]
 <!--
+NOTE: Potential security issue / exploitable vulnerability please report privately via
+https://github.com/iputils/iputils/security/advisories
+See https://github.com/iputils/iputils/blob/master/SECURITY.md
+
 * If reporting a bug, please document how to reproduce it.
 * If posting ping output, run it with -v to get more debug info.
 * Report the tool version (use -V). Sometimes it might be Linux distribution related (cat /etc/os-release).
