@@ -11,7 +11,7 @@
 					 __typeof__(&arr[0]))])) * 0)
 
 /* 1000001 = 1000000 tv_sec + 1 tv_usec */
-#define TV_SEC_MAX_VAL (LONG_MAX/1000001)
+#define TV_SEC_MAX_VAL (INT32_MAX/1000001)
 
 #ifdef __GNUC__
 # define iputils_attribute_format(t, n, m) __attribute__((__format__ (t, n, m)))

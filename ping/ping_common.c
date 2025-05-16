@@ -282,7 +282,7 @@ int __schedule_exit(int next)
 
 static inline void update_interval(struct ping_rts *rts)
 {
-	int est = rts->rtt ? rts->rtt / 8 : rts->interval * 1000;
+	int est = rts->rtt ? (int)(rts->rtt / 8) : rts->interval * 1000;
 
 	rts->interval = (est + rts->rtt_addend + 500) / 1000;
 	if (rts->uid && rts->interval < MIN_USER_INTERVAL_MS)
@@ -798,7 +798,7 @@ restamp:
 			if (triptime > rts->tmax)
 				rts->tmax = triptime;
 			if (!rts->rtt)
-				rts->rtt = triptime * 8;
+				rts->rtt = ((uint64_t)triptime) * 8;
 			else
 				rts->rtt += triptime - rts->rtt / 8;
 			if (rts->opt_adaptive)
@@ -983,7 +983,7 @@ int finish(struct ping_rts *rts)
 		int ipg = (1000000 * (long long)tv.tv_sec + tv.tv_nsec / 1000) / (rts->ntransmitted - 1);
 
 		printf(_("%sipg/ewma %d.%03d/%d.%03d ms"),
-		       comma, ipg / 1000, ipg % 1000, rts->rtt / 8000, (rts->rtt / 8) % 1000);
+		       comma, ipg / 1000, ipg % 1000, (int)(rts->rtt / 8000), (int)((rts->rtt / 8) % 1000));
 	}
 	putchar('\n');
 	return (!rts->nreceived || (rts->deadline && rts->nreceived < rts->npackets));
@@ -1008,7 +1008,7 @@ void status(struct ping_rts *rts)
 		fprintf(stderr, _(", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"),
 			(long)rts->tmin / 1000, (long)rts->tmin % 1000,
 			tavg / 1000, tavg % 1000,
-			rts->rtt / 8000, (rts->rtt / 8) % 1000, (long)rts->tmax / 1000, (long)rts->tmax % 1000);
+			(int)(rts->rtt / 8000), (int)((rts->rtt / 8) % 1000), (long)rts->tmax / 1000, (long)rts->tmax % 1000);
 	}
 	fprintf(stderr, "\n");
 }

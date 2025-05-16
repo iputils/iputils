@@ -194,7 +194,7 @@ struct ping_rts {
 	long tmax;			/* maximum round trip time */
 	double tsum;			/* sum of all times, for doing average */
 	double tsum2;
-	int rtt;
+	uint64_t rtt;                   /* Exponential weight moving average calculated in fixed point */
 	int rtt_addend;
 	uint16_t acked;
 	int pipesize;
