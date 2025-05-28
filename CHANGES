@@ -1,3 +1,31 @@
+===== 20250602 =====
+Released June 02, 2025
+
+Security release, fixes CVE-2025-47268 and CVE-2025-48964.
+
+* ping
+- fix CVE-2025-48964: Fix moving average rtt calculation (commit: afa3639)
+  https://github.com/iputils/iputils/security/advisories/GHSA-25fr-jw29-74f9
+- fix CVE-2025-47268: Fix signed 64-bit integer overflow in RTT calculation
+  (issue: #584, PR: #585, commit: 070cfac)
+- fix: Fix integer overflow in large -s and -l values (PR: #586, commit: f30f0e5)
+- fix: Fix integer overflow in large -W value (PR: #588, commit: f7d1989)
+- fix sS90x: Fix ipv4 ttl value when using SOCK_DGRAM on big endian systems
+  (PR: #591, commit: c9c82b4, regression from 7e7ffff)
+- fix man: Fix ping man page syntax error (commit: e8c9d6d)
+- fix: Translate error message (commit: 9651db5)
+
+* tracepath
+- fix: Cleanup min value of -l (PR: #572, commit: 65e3837)
+
+* Meson build system
+- fix: Fix installation of prebuilt manpages in dist tarball (commit: dca2358)
+- fix: build.sh: Fix tarball name (commit: b912d64)
+
+* Localization
+- New languages: Kabyle, Romanian
+- Updated most of the languages
+
 ===== 20240905 =====
 Released September 05, 2024
 
