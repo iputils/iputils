@@ -8,8 +8,9 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2025-04-26 03:25+0000\n"
-"Last-Translator: hsu zangmen <chzang55@gmail.com>\n"
+"PO-Revision-Date: 2025-06-01 07:20+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Chinese (Traditional Han script) <https://"
 "translate.fedoraproject.org/projects/iputils/iputils/zh_Hant/>\n"
 "Language: zh_Hant\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.11\n"
+"X-Generator: Weblate 5.11.4\n"
 
 #: arping.c:123
 #, c-format
@@ -820,7 +821,7 @@ msgstr "\t%ld 絕對值"
 #: ping/ping.c:1235
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr ""
+msgstr "未記錄的跳數：%d\n"
 
 #: ping/ping.c:1239
 #, c-format
@@ -828,6 +829,8 @@ msgid ""
 "\n"
 "unknown option %x"
 msgstr ""
+"\n"
+"未知選項 %x"
 
 #: ping/ping.c:1259
 #, c-format
@@ -852,87 +855,87 @@ msgstr ""
 #: ping/ping.c:1280
 #, c-format
 msgid "Echo Reply\n"
-msgstr ""
+msgstr "回應回覆\n"
 
 #: ping/ping.c:1286
 #, c-format
 msgid "Destination Net Unreachable\n"
-msgstr ""
+msgstr "無法連線的目的地網路\n"
 
 #: ping/ping.c:1289
 #, c-format
 msgid "Destination Host Unreachable\n"
-msgstr ""
+msgstr "無法連線的目的地網路\n"
 
 #: ping/ping.c:1292
 #, c-format
 msgid "Destination Protocol Unreachable\n"
-msgstr ""
+msgstr "無法連線的目的地通訊協定\n"
 
 #: ping/ping.c:1295
 #, c-format
 msgid "Destination Port Unreachable\n"
-msgstr ""
+msgstr "無法連線的目的地連接埠\n"
 
 #: ping/ping.c:1298
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr ""
+msgstr "需要 Frag 並已設定 DF (mtu = %u)\n"
 
 #: ping/ping.c:1301
 #, c-format
 msgid "Source Route Failed\n"
-msgstr ""
+msgstr "來源路由己失敗\n"
 
 #: ping/ping.c:1304
 #, c-format
 msgid "Destination Net Unknown\n"
-msgstr ""
+msgstr "目的地網路未知\n"
 
 #: ping/ping.c:1307
 #, c-format
 msgid "Destination Host Unknown\n"
-msgstr ""
+msgstr "目的地主機未知\n"
 
 #: ping/ping.c:1310
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr ""
+msgstr "來源主機己隔離\n"
 
 #: ping/ping.c:1313
 #, c-format
 msgid "Destination Net Prohibited\n"
-msgstr ""
+msgstr "己禁止目的地網路\n"
 
 #: ping/ping.c:1316
 #, c-format
 msgid "Destination Host Prohibited\n"
-msgstr ""
+msgstr "己禁止目的地主機\n"
 
 #: ping/ping.c:1319
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr ""
+msgstr "服務類型無法連線的目的地網路\n"
 
 #: ping/ping.c:1322
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
-msgstr ""
+msgstr "服務類型無法連線的目的地主機\n"
 
 #: ping/ping.c:1325
 #, c-format
 msgid "Packet filtered\n"
-msgstr ""
+msgstr "封包己過濾\n"
 
 #: ping/ping.c:1328
 #, c-format
 msgid "Precedence Violation\n"
-msgstr ""
+msgstr "違反優先順序\n"
 
 #: ping/ping.c:1331
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "優先切換\n"
 
 #: ping/ping.c:1334
 #, c-format
@@ -942,7 +945,7 @@ msgstr ""
 #: ping/ping.c:1341
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "來源抑制\n"
 
 #: ping/ping.c:1348
 #, c-format
@@ -1124,7 +1127,7 @@ msgstr ""
 #: ping/ping_common.c:218
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
-msgstr ""
+msgstr "模式必須指定為十六進位數字： %s"
 
 #: ping/ping_common.c:233
 #, c-format
@@ -1159,12 +1162,12 @@ msgstr "警告：己不支援 SO_MARK"
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
-msgstr ""
+msgstr "無法使用泛洪法，使用者的最小間隔必須 >= %d ms，使用 -i %s (或更高)"
 
 #: ping/ping_common.c:504
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr ""
+msgstr "非法預載和/或間隔：%d"
 
 #: ping/ping_common.c:516
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
@@ -1178,7 +1181,7 @@ msgstr "警告： 時間回溯 (%ldus), 採取對策"
 #: ping/ping_common.c:809
 #, c-format
 msgid "%d bytes from %s:"
-msgstr ""
+msgstr "%d 位元組來自 %s :"
 
 #: ping/ping_common.c:815
 #, c-format
@@ -1193,12 +1196,12 @@ msgstr ""
 #: ping/ping_common.c:821
 #, c-format
 msgid " (truncated)\n"
-msgstr ""
+msgstr " (己截斷)\n"
 
 #: ping/ping_common.c:849
 #, c-format
 msgid " time=%s ms"
-msgstr ""
+msgstr " 時間=%s 毫秒"
 
 #: ping/ping_common.c:854
 #, c-format
@@ -1208,12 +1211,12 @@ msgstr ""
 #: ping/ping_common.c:856
 #, c-format
 msgid " (BAD CHECKSUM!)"
-msgstr ""
+msgstr " （錯誤校驗和）"
 
 #: ping/ping_common.c:858
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (地址不同!)"
 
 #: ping/ping_common.c:865
 #, c-format
@@ -1250,17 +1253,17 @@ msgstr ""
 #: ping/ping_common.c:916
 #, c-format
 msgid ", +%ld errors"
-msgstr ""
+msgstr ", +%ld 錯誤"
 
 #: ping/ping_common.c:922
 #, c-format
 msgid ", %g%% packet loss"
-msgstr ""
+msgstr ", %g%% 封包遺失"
 
 #: ping/ping_common.c:924
 #, c-format
 msgid ", time %llums"
-msgstr ""
+msgstr ", 時間 %llums"
 
 #: ping/ping_common.c:944
 #, c-format
@@ -1304,11 +1307,11 @@ msgstr ""
 #: tracepath.c:235
 #, c-format
 msgid "no info\n"
-msgstr ""
+msgstr "無資訊\n"
 
 #: tracepath.c:239
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[本地]"
 
 #: tracepath.c:287
 #, c-format
@@ -1318,7 +1321,7 @@ msgstr ""
 #: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr ""
+msgstr "(此故障路由器傳回損毀的有效負載) "
 
 #: tracepath.c:306
 #, c-format
@@ -1337,7 +1340,7 @@ msgstr ""
 
 #: tracepath.c:343
 msgid "NET ERROR"
-msgstr ""
+msgstr "網路錯誤"
 
 #: tracepath.c:388
 #, c-format
@@ -1372,7 +1375,7 @@ msgstr ""
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "只能指定一個 -4 或 -6 選項"
 
 #: tracepath.c:607
 #, c-format
@@ -1387,7 +1390,7 @@ msgstr ""
 #: tracepath.c:616
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "跳數 %d "
 
 #: tracepath.c:618
 #, c-format
