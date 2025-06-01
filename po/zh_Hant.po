@@ -9,7 +9,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
 "PO-Revision-Date: 2025-06-01 07:20+0000\n"
-"Last-Translator: hsu zangmen <chzang55@gmail.com>\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Chinese (Traditional Han script) <https://"
 "translate.fedoraproject.org/projects/iputils/iputils/zh_Hant/>\n"
 "Language: zh_Hant\n"
@@ -854,7 +855,7 @@ msgstr ""
 #: ping/ping.c:1280
 #, c-format
 msgid "Echo Reply\n"
-msgstr ""
+msgstr "回應回覆\n"
 
 #: ping/ping.c:1286
 #, c-format
@@ -1195,7 +1196,7 @@ msgstr ""
 #: ping/ping_common.c:821
 #, c-format
 msgid " (truncated)\n"
-msgstr ""
+msgstr " (己截斷)\n"
 
 #: ping/ping_common.c:849
 #, c-format
@@ -1210,7 +1211,7 @@ msgstr ""
 #: ping/ping_common.c:856
 #, c-format
 msgid " (BAD CHECKSUM!)"
-msgstr ""
+msgstr " （錯誤校驗和）"
 
 #: ping/ping_common.c:858
 #, c-format
@@ -1374,7 +1375,7 @@ msgstr ""
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "只能指定一個 -4 或 -6 選項"
 
 #: tracepath.c:607
 #, c-format
