@@ -1,3 +1,11 @@
+===== 20250605 =====
+Released June 05, 2025
+
+Fixing regression in ping.
+
+* ping
+- fix: ping: Fix regression in -c1 (issue: #596, PR: #597, commit: a41fbf3)
+
 ===== 20250602 =====
 Released June 02, 2025
 
