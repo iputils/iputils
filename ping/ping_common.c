@@ -389,7 +389,7 @@ resend:
 		if (nores_interval > 500)
 			nores_interval = 500;
 		oom_count++;
-		if ((uint32_t)(oom_count * nores_interval) < rts->lingertime)
+		if ((uint32_t)(oom_count * nores_interval) < rts->lingertime/1000)
 			return nores_interval;
 		i = 0;
 		/* Fall to hard error. It is to avoid complete deadlock

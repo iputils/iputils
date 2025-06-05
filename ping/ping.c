@@ -335,7 +335,7 @@ main(int argc, char **argv)
 	static struct ping_rts rts = {
 		.interval = 1000,
 		.preload = 1,
-		.lingertime = MAXWAIT * 1000,
+		.lingertime = MAXWAIT * 1000000,
 		.confirm_flag = MSG_CONFIRM,
 		.tmin = LONG_MAX,
 		.pipesize = -1,
