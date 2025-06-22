@@ -143,7 +143,7 @@ endif
 foreach h : [
 	'error.h',
 ]
-	if cc.has_header(h)
+	if cc.has_header(h) and cc.has_function('error')
 		conf.set('HAVE_' + h.to_upper().underscorify(), 1,
 			description : 'Define if ' + h + ' can be included.')
 	endif
