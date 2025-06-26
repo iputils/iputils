@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-03 22:19+0100\n"
-"PO-Revision-Date: 2024-09-02 17:24+0000\n"
+"PO-Revision-Date: 2025-06-26 03:03+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.7.1\n"
+"X-Generator: Weblate 5.12.2\n"
 
 #: arping.c:123
 #, c-format
@@ -739,7 +739,7 @@ msgstr "AVISO: ident 0 => forçando socket não tratado"
 #: ping/ping.c:664
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
-msgstr ""
+msgstr "valor -s inválido: '%d': fora do intervalo: 0 <= valor <= %d"
 
 #: ping/ping.c:692
 #, c-format
