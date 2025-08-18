@@ -1,5 +1,5 @@
 #!/bin/sh -eux
-# Copyright (c) 2019-2024 Petr Vorel <pvorel@suse.cz>
+# Copyright (c) 2019-2025 Petr Vorel <pvorel@suse.cz>
 
 CFLAGS="${CFLAGS:--Wformat -Werror=format-security -Werror=implicit-function-declaration -Werror=return-type -fno-common}"
 CC="${CC:-gcc}"
@@ -112,7 +112,7 @@ check_binaries()
 
 	if [ "${BUILD_32:-}" ]; then
 		bits=32
-		arch='80386'
+		arch='(80386|i386)'
 	fi
 
 	for i in $BINARIES; do
@@ -122,6 +122,7 @@ check_binaries()
 			continue
 		fi
 		[ -x "$BUILD_DIR/$i" ]
+		file "$BUILD_DIR/$i" # debug
 		file "$BUILD_DIR/$i" | grep -E "$i.*${bits}-bit .*(executable|shared object).*$arch.*dynamically linked"
 	done
 }
