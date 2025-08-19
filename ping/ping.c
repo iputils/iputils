@@ -93,6 +93,9 @@ ping_func_set_st ping4_func_set = {
 
 #define CASE_TYPE(x) case x: return #x;
 
+const unsigned char IPV4_MASK_IN_IPV6[ 12 ] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff };
+#define SA6_IS_ADDR_V4MAPPED( addr ) ( memcmp( &( (struct sockaddr_in6 * ) addr)->sin6_addr, IPV4_MASK_IN_IPV6, 12 ) == 0 )
+
 static char *str_family(int family)
 {
 	switch (family) {
@@ -389,14 +392,20 @@ main(int argc, char **argv)
 		force_numeric = 1;
 	}
 
+	int ipv4Unmasking = 0;
+
 	/* Parse command line options */
 	while ((ch = getopt(argc, argv, "h?" "4bRT:" "6F:N:" "3aABc:CdDe:fHi:I:l:Lm:M:nOp:qQ:rs:S:t:UvVw:W:")) != EOF) {
 		switch(ch) {
 		/* IPv4 specific options */
 		case '4':
-			if (hints.ai_family == AF_INET6)
-				error(2, 0, _("only one -4 or -6 option may be specified"));
-			hints.ai_family = AF_INET;
+			if (hints.ai_family == AF_INET6) {
+				error(0, 0, _("enabling unmasking of IPv4-Mapped-in-IPv6 addresses. This disables -4 or -6 settings"));
+				ipv4Unmasking = 1;
+				hints.ai_family = AF_UNSPEC; // if -4 and -6 are provided: reset hints.ai_family
+			}
+			else
+				hints.ai_family = AF_INET;
 			break;
 		case '3':
 			rts.opt_rtt_precision = 1;
@@ -428,9 +437,13 @@ main(int argc, char **argv)
 			break;
 		/* IPv6 specific options */
 		case '6':
-			if (hints.ai_family == AF_INET)
-				error(2, 0, _("only one -4 or -6 option may be specified"));
-			hints.ai_family = AF_INET6;
+			if (hints.ai_family == AF_INET) {
+				error(0, 0, _("enabling unmasking of IPv4-Mapped-in-IPv6 addresses. This disables -4 or -6 settings"));
+				ipv4Unmasking = 1;
+				hints.ai_family = AF_UNSPEC; // if -4 and -6 are provided: reset hints.ai_family
+			}
+			else
+				hints.ai_family = AF_INET6;
 			break;
 		case 'F':
 			rts.flowlabel = parseflow(optarg);
@@ -718,7 +731,37 @@ main(int argc, char **argv)
 			ret_val = ping4_run(&rts, argc, argv, ai, &sock4);
 			break;
 		case AF_INET6:
-			ret_val = ping6_run(&rts, argc, argv, ai, &sock6);
+			if( ipv4Unmasking && SA6_IS_ADDR_V4MAPPED( ai->ai_addr ) ) {   // if ipv6 is actually a masked ipv4 address
+				// compose an ipv4 addressinfo record valid *only* for a call to ping4_run:
+				struct sockaddr_in sa4;
+				memset( &sa4, 0, sizeof( struct sockaddr_in ) );   // optional: zero out this sockaddr_in
+				sa4.sin_family = AF_INET;                          // ipv4 family
+				sa4.sin_port = 0;                                  // port doesn't matter in context
+				const int IPV4_OFFSET_IN_IPV6 = sizeof( struct in6_addr ) - sizeof( struct in_addr ); // 12
+				// copy ipv4 part of ipv6 into ipv4 record:
+				memcpy( &sa4.sin_addr, ( ( char * ) &( (struct sockaddr_in6 * ) ai->ai_addr)->sin6_addr ) + IPV4_OFFSET_IN_IPV6, sizeof( struct in_addr ) );
+
+				if (rts.opt_verbose) {
+					char strIpv4[ 16 ]; // max len of an ipv4 address in decimal representation: 16 == 4 times 3 digits + 3 dots + terminating zero-byte
+					unsigned char * ipBytes = ( unsigned char * ) &sa4.sin_addr;
+					snprintf ( strIpv4, sizeof( strIpv4 ), "%u.%u.%u.%u", ipBytes[0], ipBytes[1], ipBytes[2], ipBytes[3] );
+					error(0, 0, _("IPv4-Mapped-in-IPv6 address, using IPv4 %s (%s)"), strIpv4, target);
+				}
+
+				struct addrinfo ai4;
+				ai4.ai_flags = 0;                // TBD by someone smarter than me: does this matter for ping?
+				ai4.ai_family = AF_INET;         // ipv4
+				ai4.ai_socktype = 0;             // SOCK_UNSPEC: TBD by someone smarter than me: does this matter for ping?
+				ai4.ai_protocol = IPPROTO_ICMP;  // TBD by someone smarter than me: is IPPROTO_ICMP == 1 okay? seems to default to IPPROTO_TCP == 6
+				ai4.ai_addrlen = sizeof( struct sockaddr_in );   // ipv4 socket address
+				ai4.ai_addr = ( struct sockaddr * ) &sa4;        // as initialized above
+				ai4.ai_canonname = NULL;         // unused
+				ai4.ai_next = NULL;              // unused (should not matter for ping4_run, otherwise could be set to result->ai_next
+
+				ret_val = ping4_run(&rts, argc, argv, &ai4, &sock4);
+			}
+			else // actual ipv6
+				ret_val = ping6_run(&rts, argc, argv, ai, &sock6);
 			break;
 		default:
 			error(2, 0, _("unknown protocol family: %d"), ai->ai_family);
