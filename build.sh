@@ -122,7 +122,6 @@ check_binaries()
 			continue
 		fi
 		[ -x "$BUILD_DIR/$i" ]
-		file "$BUILD_DIR/$i" # debug
 		file "$BUILD_DIR/$i" | grep -E "$i.*${bits}-bit .*(executable|shared object).*$arch.*dynamically linked"
 	done
 }
