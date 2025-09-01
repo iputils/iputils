@@ -146,7 +146,7 @@ jobs:
       run: ./build.sh check-binaries
 
     - name: Dist
-      run: if [ ! "$SKIP_DISC" ]; then ./build.sh dist; else echo "meson dist skipped"; fi
+      run: if [ ! "$SKIP_DISC" ]; then ./build.sh dist; else echo '::notice ::meson dist skipped'; fi
 
     - name: Install
       run: ./build.sh install
@@ -156,8 +156,8 @@ jobs:
       run: ./build.sh install-log
 
     - name: Tests
-      run: if [ ! "$SKIP_TESTS" ]; then ./build.sh test; else echo "tests skipped"; fi
+      run: if [ ! "$SKIP_TESTS" ]; then ./build.sh test; else echo '::notice ::Tests skipped'; fi
 
     - name: Show test log
       if: always()
-      run: ./build.sh test-log
+      run: if [ ! "$SKIP_TESTS" ]; then ./build.sh test-log; else echo '::notice ::Tests skipped'; fi
