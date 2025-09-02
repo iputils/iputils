@@ -51,6 +51,10 @@ jobs:
               EXTRA_BUILD_OPTS: "-DUSE_CAP=false -DUSE_IDN=false -DBUILD_ARPING=false -DBUILD_CLOCKDIFF=false -DUSE_GETTEXT=false"
 
           # other builds
+          - container: "opensuse/tumbleweed"
+            env:
+              CC: gcc
+
           - container: "opensuse/leap"
             env:
               CC: clang
