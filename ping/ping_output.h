@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * Copyright (c) 2024-2025 Georg Pfuetzenreuter <mail+ip@georg-pfuetzenreuter.net>
+ * Copyright (c) Iputils Project, 2025
  */
 
 #define PING_ERROR_MAX 300
@@ -13,7 +14,7 @@ void ping_print_error_packet(struct ping_rts *rts, char *address, uint8_t sequen
 void ping_print_error_parse(struct ping_rts *rts, char *reason);
 void ping_print_error_qtype(struct ping_rts *rts, uint32_t val);
 void ping_print_truncated(struct ping_rts *rts);
-void ping_print_packet(struct ping_rts *rts);
+void ping_print_packet(struct ping_rts *rts, ping_func_set_st *fset);
 void ping_print_error_parse(struct ping_rts *rts, char *reason);
 void ping_print_finish(struct ping_rts *rts);
 void ping_print_statistics(struct ping_rts *rts, struct timespec tv);

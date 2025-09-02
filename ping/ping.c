@@ -78,7 +78,11 @@ ping_func_set_st ping4_func_set = {
 	.send_probe = ping4_send_probe,
 	.receive_error_msg = ping4_receive_error_msg,
 	.parse_reply = ping4_parse_reply,
-	.install_filter = ping4_install_filter
+	.install_filter = ping4_install_filter,
+	.ping_data_bytes = ping4_data_bytes,
+	.ping_print_data_bytes = ping4_print_data_bytes,
+	.ping_source = ping4_source,
+	.ping_target = ping4_target,
 };
 
 #define	MAXIPLEN	60
@@ -1068,7 +1072,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 	if (!(packet = (unsigned char *)malloc((unsigned int)packlen)))
 		error(2, errno, _("memory allocation failed"));
 
-	ping_print_packet(rts);
+	ping_print_packet(rts, &ping4_func_set);
 
 	setup(rts, sock);
 	if (rts->opt_connect_sk &&
@@ -1840,7 +1844,6 @@ char *_pr_addr(struct ping_rts *rts, void *sa, socklen_t salen, int resolve_name
 	return (buffer);
 }
 
-
 void ping4_install_filter(struct ping_rts *rts, socket_st *sock)
 {
 	static int once;
@@ -1868,4 +1871,24 @@ void ping4_install_filter(struct ping_rts *rts, socket_st *sock)
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		ping_error(rts, 0, errno, _("WARNING: failed to install socket filter"));
+}
+
+int ping4_data_bytes(struct ping_rts *rts)
+{
+	return rts->datalen + 8 + rts->optlen + 20;
+}
+
+void ping4_print_data_bytes(struct ping_rts *rts, int bytes)
+{
+	printf(_("%d(%d) bytes of data.\n"), rts->datalen, bytes);
+}
+
+char *ping4_source(struct ping_rts *rts)
+{
+	return inet_ntoa(rts->source.sin_addr);
+}
+
+char *ping4_target(struct ping_rts *rts)
+{
+	return inet_ntoa(rts->whereto.sin_addr);
 }

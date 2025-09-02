@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /*
  * Copyright (c) 2024-2025 Georg Pfuetzenreuter <mail+ip@georg-pfuetzenreuter.net>
- * Copyright (c) 2014-2024 Iputils project
+ * Copyright (c) 2014-2025 Iputils project
  * Copyright (c) 1989-2006 The Regents of the University of California
  */
 
@@ -79,23 +79,12 @@ inline void ping_print_truncated(struct ping_rts *rts)
 		putchar('\n');
 }
 
-inline void ping_print_packet(struct ping_rts *rts)
+inline void ping_print_packet(struct ping_rts *rts, ping_func_set_st *fset)
 {
 	if (!rts->opt_json) {
-		char *source;
-		char *target;
+		printf(_("PING %s (%s) "), rts->hostname, fset->ping_target(rts));
 
-		if (rts->ni.subject_type == IPUTILS_NI_ICMP6_SUBJ_IPV6) {
-			source = pr_addr(rts, &rts->source6, sizeof(rts->source6));
-			target = pr_raw_addr(rts, &rts->whereto6, sizeof(rts->whereto6));
-		} else {
-			source = inet_ntoa(rts->source.sin_addr);
-			target = inet_ntoa(rts->whereto.sin_addr);
-		}
-
-		printf(_("PING %s (%s) "), rts->hostname, target);
-
-		if (rts->ni.subject_type == IPUTILS_NI_ICMP6_SUBJ_IPV6 && rts->flowlabel)
+		if (rts->flowlabel)
 			printf(_(", flow 0x%05x, "), (unsigned int)ntohl(rts->flowlabel));
 
 		if (rts->device || rts->opt_strictsource) {
@@ -104,13 +93,10 @@ inline void ping_print_packet(struct ping_rts *rts)
 			rts->opt_numeric = 1;
 			rts->opt_numeric = saved_opt_numeric;
 
-			printf(_("from %s %s: "), source, rts->device ? rts->device : "");
+			printf(_("from %s %s: "), fset->ping_source(rts), rts->device ? rts->device : "");
 		}
 
-		if (rts->ni.subject_type == IPUTILS_NI_ICMP6_SUBJ_IPV6)
-			printf(_("%d data bytes\n"), rts->datalen);
-		else
-			printf(_("%d(%d) bytes of data.\n"), rts->datalen, rts->datalen + 8 + rts->optlen + 20);
+		fset->ping_print_data_bytes(rts, fset->ping_data_bytes ? fset->ping_data_bytes(rts) : 0);
 	}
 }
 

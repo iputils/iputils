@@ -126,12 +126,20 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *, void *packet, unsigned p
 int ping4_receive_error_msg(struct ping_rts *, socket_st *);
 int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
 void ping4_install_filter(struct ping_rts *rts, socket_st *);
+int ping4_data_bytes(struct ping_rts *rts);
+void ping4_print_data_bytes(struct ping_rts *rts, int bytes);
+char *ping4_source(struct ping_rts *rts);
+char *ping4_target(struct ping_rts *rts);
 
 typedef struct ping_func_set_st {
 	int (*send_probe)(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
 	int (*receive_error_msg)(struct ping_rts *rts, socket_st *sock);
 	int (*parse_reply)(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
 	void (*install_filter)(struct ping_rts *rts, socket_st *);
+	int (*ping_data_bytes)(struct ping_rts *rts);
+	void (*ping_print_data_bytes)(struct ping_rts *rts, int bytes);
+	char *(*ping_source)(struct ping_rts *rts);
+	char *(*ping_target)(struct ping_rts *rts);
 } ping_func_set_st;
 
 /* late include as dependent on ping_rts */
@@ -437,6 +445,9 @@ int ping6_send_probe(struct ping_rts *rts, socket_st *sockets, void *packet, uns
 int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sockets);
 int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
 void ping6_install_filter(struct ping_rts *rts, socket_st *sockets);
+void ping6_print_data_bytes(struct ping_rts *rts, int bytes __attribute__((__unused__)));
+char *ping6_source(struct ping_rts *rts);
+char *ping6_target(struct ping_rts *rts);
 int ntohsp(uint16_t *p);
 
 /* IPv6 node information query */

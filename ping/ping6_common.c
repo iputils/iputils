@@ -78,7 +78,10 @@ ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,
 	.receive_error_msg = ping6_receive_error_msg,
 	.parse_reply = ping6_parse_reply,
-	.install_filter = ping6_install_filter
+	.install_filter = ping6_install_filter,
+	.ping_print_data_bytes = ping6_print_data_bytes,
+	.ping_source = ping6_source,
+	.ping_target = ping6_target,
 };
 
 #ifndef SCOPE_DELIMITER
@@ -394,7 +397,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, _("can't send flowinfo"));
 	}
 
-	ping_print_packet(rts);
+	ping_print_packet(rts, &ping6_func_set);
 
 	setup(rts, sock);
 
@@ -949,4 +952,19 @@ void ping6_install_filter(struct ping_rts *rts, socket_st *sock)
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		error(0, errno, _("WARNING: failed to install socket filter"));
+}
+
+void ping6_print_data_bytes(struct ping_rts *rts, int bytes __attribute__((__unused__)))
+{
+	printf(_("%d data bytes\n"), rts->datalen);
+}
+
+char *ping6_source(struct ping_rts *rts)
+{
+	return pr_addr(rts, &rts->source6, sizeof(rts->source6));
+}
+
+char *ping6_target(struct ping_rts *rts)
+{
+	return pr_raw_addr(rts, &rts->whereto6, sizeof(rts->whereto6));
 }
