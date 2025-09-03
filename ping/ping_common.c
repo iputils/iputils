@@ -834,6 +834,17 @@ restamp:
 		uint8_t *cp, *dp;
 
 		print_timestamp(rts);
+
+		if (rts->opt_json) {
+			// TODO: improve key name
+			construct_json(rts, PING_JSON_INT, "data_bytes", rts->datalen);
+			/*
+			 * FIXME: Add this require either add ping_func_set_st *fset or move into ping_print_packet().
+			if (fset->ping_data_bytes)
+				construct_json(rts, PING_JSON_INT, "data_bytes_full", fset->ping_data_bytes(rts));
+			*/
+		}
+
 		ping_print_int(rts, _("%d bytes "), "bytes", cc);
 		// TODO: split host IP address and name into separate attributes in JSON?
 		ping_print_str(rts, _("from %s:"), "host", from);
