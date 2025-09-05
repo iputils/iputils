@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-03 22:19+0100\n"
+"POT-Creation-Date: 2025-09-05 14:28+0200\n"
 "PO-Revision-Date: 2025-04-02 15:59+0000\n"
 "Last-Translator: z z <3397542367@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
@@ -146,9 +146,9 @@ msgstr "网络接口 “%s” 不适用 ARP\n"
 msgid "WARNING: using default broadcast address.\n"
 msgstr "警告：使用默认广播地址。\n"
 
-#: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:408 ping/ping.c:455
-#: ping/ping.c:507 ping/ping.c:515 ping/ping.c:559 ping/ping.c:562
-#: ping/ping.c:565 ping/ping.c:579 tracepath.c:474 tracepath.c:477
+#: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:415 ping/ping.c:465
+#: ping/ping.c:517 ping/ping.c:525 ping/ping.c:569 ping/ping.c:572
+#: ping/ping.c:575 ping/ping.c:588 tracepath.c:474 tracepath.c:477
 #: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
 msgstr "无效参数"
@@ -288,8 +288,8 @@ msgstr "IDN 编码错误：%s"
 msgid "too long scope name"
 msgstr "作用域名称太长"
 
-#: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:308
-#: ping/ping.c:1059
+#: ping/node_info.c:347 ping/node_info.c:389 ping/ping.c:1073
+#: ping/ping6_common.c:311
 msgid "memory allocation failed"
 msgstr "内存分配错误"
 
@@ -343,400 +343,114 @@ msgstr ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 
-#: ping/ping6_common.c:99 ping/ping.c:747
-#, c-format
-msgid "unknown iface: %s"
-msgstr "未知界面：%s"
-
-#: ping/ping6_common.c:146
-msgid "scope discrepancy among the nodes"
-msgstr "节点之间的范围差异"
-
-#: ping/ping6_common.c:225 ping/ping.c:917
-#, c-format
-msgid "Warning: source address might be selected on device other than: %s"
-msgstr "警告：可能在除以下设备之外的设备上选择了源地址：%s"
-
-#: ping/ping6_common.c:266
-#, c-format
-msgid ""
-"minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
-"higher)"
-msgstr "用户多播 ping 的最小间隔必须 >= %d ms，使用 -i %s （或更高）"
-
-#: ping/ping6_common.c:271
-msgid "multicast ping does not fragment"
-msgstr "多播 ping 不分片"
-
-#: ping/ping6_common.c:330
-msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr "setsockopt(RAW_CHECKSUM) 失败 - 尝试继续"
-
-#: ping/ping6_common.c:356
-msgid "can't disable multicast loopback"
-msgstr "无法禁用多播环回"
-
-#: ping/ping6_common.c:361
-msgid "can't set multicast hop limit"
-msgstr "无法设置组播跃点限制"
-
-#: ping/ping6_common.c:364
-msgid "can't set unicast hop limit"
-msgstr "无法设置单播跃点限制"
-
-#: ping/ping6_common.c:376
-msgid "can't receive hop limit"
-msgstr "无法接收跃点限制"
-
-#: ping/ping6_common.c:390
-msgid "can't set flowlabel"
-msgstr "无法设置流标签"
-
-#: ping/ping6_common.c:394
-msgid "can't send flowinfo"
-msgstr "无法发送流信息"
-
-#: ping/ping6_common.c:397 ping/ping.c:1061
-#, c-format
-msgid "PING %s (%s) "
-msgstr "PING %s (%s) "
-
-#: ping/ping6_common.c:399
-#, c-format
-msgid ", flow 0x%05x, "
-msgstr "，流量 0x%05x， "
-
-#: ping/ping6_common.c:404 ping/ping.c:1063
-#, c-format
-msgid "from %s %s: "
-msgstr "来自 %s %s "
-
-#: ping/ping6_common.c:407
-#, c-format
-msgid "%d data bytes\n"
-msgstr "%d 字节的数据\n"
-
-#: ping/ping6_common.c:423
-#, c-format
-msgid "Destination unreachable: "
-msgstr "目标不可达： "
-
-#: ping/ping6_common.c:426
-#, c-format
-msgid "No route"
-msgstr "没有路由（可达）"
-
-#: ping/ping6_common.c:429
-#, c-format
-msgid "Administratively prohibited"
-msgstr "已被管理员禁止"
-
-#: ping/ping6_common.c:432
-#, c-format
-msgid "Beyond scope of source address"
-msgstr "超出源的地址范围外"
-
-#: ping/ping6_common.c:435
-#, c-format
-msgid "Address unreachable"
-msgstr "地址不可达"
-
-#: ping/ping6_common.c:438
-#, c-format
-msgid "Port unreachable"
-msgstr "端口不可达"
-
-#: ping/ping6_common.c:441
-#, c-format
-msgid "Source address failed ingress/egress policy"
-msgstr "源地址入口/出口策略失败"
-
-#: ping/ping6_common.c:444
-#, c-format
-msgid "Reject route to destination"
-msgstr "拒绝前往目的地的路线"
-
-#: ping/ping6_common.c:447
-#, c-format
-msgid "Unknown code %d"
-msgstr "未知代码 %d"
-
-#: ping/ping6_common.c:452
-#, c-format
-msgid "Packet too big: mtu=%u"
-msgstr "数据包太大：MTU=%u"
-
-#: ping/ping6_common.c:454
-#, c-format
-msgid ", code=%d"
-msgstr ", 代码=%d"
-
-#: ping/ping6_common.c:457
-#, c-format
-msgid "Time exceeded: "
-msgstr "超时： "
-
-#: ping/ping6_common.c:459
-#, c-format
-msgid "Hop limit"
-msgstr "跃点数上限"
-
-#: ping/ping6_common.c:461
-#, c-format
-msgid "Defragmentation failure"
-msgstr "分段失败"
-
-#: ping/ping6_common.c:463
-#, c-format
-msgid "code %d"
-msgstr "代码 %d"
-
-#: ping/ping6_common.c:466
-#, c-format
-msgid "Parameter problem: "
-msgstr "参数问题： "
-
-#: ping/ping6_common.c:468
-#, c-format
-msgid "Wrong header field "
-msgstr "错误的标头字段 "
-
-#: ping/ping6_common.c:470
-#, c-format
-msgid "Unknown header "
-msgstr "未知头部 "
-
-#: ping/ping6_common.c:472
-#, c-format
-msgid "Unknown option "
-msgstr "未知选项 "
-
-#: ping/ping6_common.c:474
-#, c-format
-msgid "code %d "
-msgstr "代码 %d "
-
-#: ping/ping6_common.c:475
-#, c-format
-msgid "at %u"
-msgstr "在 %u"
-
-#: ping/ping6_common.c:478
-#, c-format
-msgid "Echo request"
-msgstr "Echo 请求"
-
-#: ping/ping6_common.c:481
-#, c-format
-msgid "Echo reply"
-msgstr "Echo 应答"
-
-#: ping/ping6_common.c:484
-#, c-format
-msgid "MLD Query"
-msgstr "组播组查询"
-
-#: ping/ping6_common.c:487
-#, c-format
-msgid "MLD Report"
-msgstr "组播组报告"
-
-#: ping/ping6_common.c:490
-#, c-format
-msgid "MLD Reduction"
-msgstr "组播组退出"
-
-#: ping/ping6_common.c:493
-#, c-format
-msgid "unknown icmp type: %u"
-msgstr "未知的 ICMP 类型： %u"
-
-#: ping/ping6_common.c:547 ping/ping.c:1480
-msgid "local error"
-msgstr "本地错误"
-
-#: ping/ping6_common.c:549
-#, c-format
-msgid "local error: message too long, mtu: %u"
-msgstr "本地错误：消息太长，MTU：%u"
-
-#: ping/ping6_common.c:571 ping/ping.c:1516
-#, c-format
-msgid "From %s icmp_seq=%u "
-msgstr "来自 %s icmp_seq=%u "
-
-#: ping/ping6_common.c:677 ping/ping.c:1630
-#, c-format
-msgid " icmp_seq=%u"
-msgstr " icmp_seq=%u"
-
-#: ping/ping6_common.c:701 ping/ping6_common.c:762
-#, c-format
-msgid " parse error (too short)"
-msgstr " 解析错误 (太短)"
-
-#: ping/ping6_common.c:715 ping/ping6_common.c:771
-#, c-format
-msgid " parse error (truncated)"
-msgstr " 解析错误 (被截断)"
-
-#: ping/ping6_common.c:775
-#, c-format
-msgid " unexpected error in inet_ntop(%s)"
-msgstr " 在 inet_ntop(%s) 发生未预期的错误"
-
-#: ping/ping6_common.c:784
-#, c-format
-msgid " (truncated)"
-msgstr " (已截断)"
-
-#: ping/ping6_common.c:803
-#, c-format
-msgid " unknown qtype(0x%02x)"
-msgstr " 未知的 qtype(0x%02x)"
-
-#: ping/ping6_common.c:807
-#, c-format
-msgid " refused"
-msgstr " 被拒绝"
-
-#: ping/ping6_common.c:810
-#, c-format
-msgid " unknown"
-msgstr " 未知"
-
-#: ping/ping6_common.c:813
-#, c-format
-msgid " unknown code(%02x)"
-msgstr " 未知代码(%02x)"
-
-#: ping/ping6_common.c:815
-#, c-format
-msgid "; seq=%u;"
-msgstr "; seq=%u;"
-
-#: ping/ping6_common.c:856
-#, c-format
-msgid "packet too short: %d bytes"
-msgstr "过短的包: %d 字节"
-
-#: ping/ping6_common.c:923 ping/ping.c:1759
-#, c-format
-msgid "From %s: "
-msgstr "来自%s ： "
-
-#: ping/ping6_common.c:964 ping/ping.c:1864
-msgid "WARNING: failed to install socket filter"
-msgstr "警告：无法安装套接字过滤器"
-
-#: ping/ping.c:103 ping/ping.c:724
+#: ping/ping.c:108 ping/ping.c:738
 #, c-format
 msgid "unknown protocol family: %d"
 msgstr "未知协议系列： %d"
 
-#: ping/ping.c:118
+#: ping/ping.c:123
 #, c-format
 msgid "unknown sock type: %d"
 msgstr "未知套接字类型： %d"
 
-#: ping/ping.c:213
+#: ping/ping.c:218
 msgid "=> missing cap_net_raw+p capability or setuid?"
 msgstr "=> 缺少 cap_net_raw+p 功能或 setuid？"
 
-#: ping/ping.c:252
+#: ping/ping.c:257
 #, c-format
 msgid "option argument contains garbage: %s"
 msgstr "选项参数包含垃圾： %s"
 
-#: ping/ping.c:253
+#: ping/ping.c:258
 msgid "this will become fatal error in the future"
 msgstr "这将在未来成为致命错误"
 
-#: ping/ping.c:287
+#: ping/ping.c:292
 #, c-format
 msgid "bad value for flowinfo: %s"
 msgstr "流信息的错误值： %s"
 
-#: ping/ping.c:290
+#: ping/ping.c:295
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
 msgstr "流值大于 20 位： %s"
 
-#: ping/ping.c:312
+#: ping/ping.c:317
 #, c-format
 msgid "bad TOS value: %s"
 msgstr "错误的 TOS 值： %s"
 
-#: ping/ping.c:315
+#: ping/ping.c:320
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
 msgstr "TOS 位的十进制值必须在 0-255 范围内：%d"
 
-#: ping/ping.c:398 ping/ping.c:432
+#: ping/ping.c:405 ping/ping.c:442
 msgid "only one -4 or -6 option may be specified"
 msgstr "只接受参数 -4 或 -6 中的一个"
 
-#: ping/ping.c:413 ping/ping.c:418
+#: ping/ping.c:423 ping/ping.c:428
 msgid "only one of -T or -R may be used"
 msgstr "只能使用 -T 或 -R 中的一个"
 
-#: ping/ping.c:427
+#: ping/ping.c:437
 #, c-format
 msgid "invalid timestamp type: %s"
 msgstr "时间戳类型无效： %s"
 
-#: ping/ping.c:473
+#: ping/ping.c:483
 msgid "bad timing interval"
 msgstr "时序间隔错误"
 
-#: ping/ping.c:475
+#: ping/ping.c:485
 #, c-format
 msgid "bad timing interval: %s"
 msgstr "时序间隔错误：%s"
 
-#: ping/ping.c:486
+#: ping/ping.c:496
 #, c-format
 msgid "cannot copy: %s"
 msgstr "无法打开：%s"
 
-#: ping/ping.c:495
+#: ping/ping.c:505
 #, c-format
 msgid "invalid source address: %s"
 msgstr "源地址无效：%s"
 
-#: ping/ping.c:509
+#: ping/ping.c:519
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
 msgstr "不能将 preload 设置到 3 以上的 %d"
 
-#: ping/ping.c:528
+#: ping/ping.c:538
 #, c-format
 msgid "invalid -M argument: %s"
 msgstr "无效参数：%s"
 
-#: ping/ping.c:585
+#: ping/ping.c:594
 msgid "bad linger time"
 msgstr "徘徊时间无效"
 
-#: ping/ping.c:587
+#: ping/ping.c:596
 #, c-format
 msgid "bad linger time: %s"
 msgstr "徘徊时间无效：%s"
 
-#: ping/ping.c:599
+#: ping/ping.c:613
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
 msgstr "警告：反向 DNS 解析（PTR 查找）已禁用，请使用 -H 强制执行"
 
-#: ping/ping.c:618
+#: ping/ping.c:632
 msgid "WARNING: ident 0 => forcing raw socket"
 msgstr "警告：标识 0 => 强制使用原始套接字"
 
-#: ping/ping.c:664
+#: ping/ping.c:678
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
 msgstr "无效的 -s 值：％d：超出范围：0 <= 值 <= ％d"
 
-#: ping/ping.c:692
+#: ping/ping.c:706
 #, c-format
 msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
@@ -745,97 +459,102 @@ msgstr ""
 "警告：ICMP 数据报套接字上的 IPv6 链路本地地址可能需要 ifname 或作用域 ID => "
 "使用：地址%%<ifname|scope-id>"
 
-#: ping/ping.c:869
+#: ping/ping.c:761 ping/ping6_common.c:102
+#, c-format
+msgid "unknown iface: %s"
+msgstr "未知界面：%s"
+
+#: ping/ping.c:883
 msgid "warning: QOS sockopts"
 msgstr "警告：QOS 套接字选项"
 
-#: ping/ping.c:880
+#: ping/ping.c:894
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
 msgstr "您想要 ping 广播地址吗？若是则加上参数 -b，否则检查你的本地防火墙规则"
 
-#: ping/ping.c:881
+#: ping/ping.c:895
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
 msgstr "警告：正在 ping 广播地址\n"
 
-#: ping/ping.c:884 ping/ping.c:1039
+#: ping/ping.c:898 ping/ping.c:1053
 msgid "cannot set broadcasting"
 msgstr "不能设置广播"
 
-#: ping/ping.c:905
+#: ping/ping.c:919
 msgid "gatifaddrs failed"
 msgstr "gatifaddrs 失败"
 
-#: ping/ping.c:933
+#: ping/ping.c:931 ping/ping6_common.c:228
+#, c-format
+msgid "Warning: source address might be selected on device other than: %s"
+msgstr "警告：可能在除以下设备之外的设备上选择了源地址：%s"
+
+#: ping/ping.c:947
 #, c-format
 msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr "用户广播 ping 的最小间隔必须 >= %d ms，使用 -i %s （或更高）"
 
-#: ping/ping.c:938
+#: ping/ping.c:952
 msgid "broadcast ping does not fragment"
 msgstr "广播 ping 不分段"
 
-#: ping/ping.c:968
+#: ping/ping.c:982
 msgid "WARNING: setsockopt(ICMP_FILTER)"
 msgstr "警告：setsockopt(ICMP_FILTER)"
 
-#: ping/ping.c:973
+#: ping/ping.c:987
 msgid "WARNING: your kernel is veeery old. No problems."
 msgstr "警告：您的内核非常旧。没有其他问题。"
 
-#: ping/ping.c:977
+#: ping/ping.c:991
 msgid "WARNING: setsockopt(IP_RECVTTL)"
 msgstr "警告：setsockopt(IP_RECVTTL)"
 
-#: ping/ping.c:979
+#: ping/ping.c:993
 msgid "WARNING: setsockopt(IP_RETOPTS)"
 msgstr "警告：setsockopt(IP_RETOPTS)"
 
-#: ping/ping.c:1045
+#: ping/ping.c:1059
 msgid "cannot disable multicast loopback"
 msgstr "无法禁用组播环回"
 
-#: ping/ping.c:1050
+#: ping/ping.c:1064
 msgid "cannot set multicast time-to-live"
 msgstr "不能设置多播 TTL"
 
-#: ping/ping.c:1052
+#: ping/ping.c:1066
 msgid "cannot set unicast time-to-live"
 msgstr "不能设置单拨的 TTL"
-
-#: ping/ping.c:1064
-#, c-format
-msgid "%d(%d) bytes of data.\n"
-msgstr "%d(%d) 字节的数据。\n"
-
-#: ping/ping.c:1096
-#, c-format
-msgid ""
-"\n"
-"NOP"
-msgstr ""
-"\n"
-"NOP"
 
 #: ping/ping.c:1107
 #, c-format
 msgid ""
 "\n"
+"NOP"
+msgstr ""
+"\n"
+"NOP"
+
+#: ping/ping.c:1118
+#, c-format
+msgid ""
+"\n"
 "%cSRR: "
 msgstr ""
 "\n"
 "%cSRR: "
 
-#: ping/ping.c:1145
+#: ping/ping.c:1156
 #, c-format
 msgid "\t(same route)"
 msgstr "\t(同一路由)"
 
-#: ping/ping.c:1150
+#: ping/ping.c:1161
 #, c-format
 msgid ""
 "\n"
@@ -844,7 +563,7 @@ msgstr ""
 "\n"
 "RR: "
 
-#: ping/ping.c:1186
+#: ping/ping.c:1197
 #, c-format
 msgid ""
 "\n"
@@ -853,27 +572,27 @@ msgstr ""
 "\n"
 "TS: "
 
-#: ping/ping.c:1218
+#: ping/ping.c:1229
 #, c-format
 msgid "\t%ld absolute not-standard"
 msgstr "\t%ld 绝对非标准"
 
-#: ping/ping.c:1220
+#: ping/ping.c:1231
 #, c-format
 msgid "\t%ld not-standard"
 msgstr "\t%ld 非标准"
 
-#: ping/ping.c:1224
+#: ping/ping.c:1235
 #, c-format
 msgid "\t%ld absolute"
 msgstr "\t%ld 绝对"
 
-#: ping/ping.c:1235
+#: ping/ping.c:1246
 #, c-format
 msgid "Unrecorded hops: %d\n"
 msgstr "未记录的跃点数: %d\n"
 
-#: ping/ping.c:1239
+#: ping/ping.c:1250
 #, c-format
 msgid ""
 "\n"
@@ -882,236 +601,477 @@ msgstr ""
 "\n"
 "未知选项： %x"
 
-#: ping/ping.c:1259
+#: ping/ping.c:1270
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 msgstr ""
 "Vr HL TOS  Len   ID 标记  关闭 TTL Pro  cks      源位置      目标数据\n"
 
-#: ping/ping.c:1260
+#: ping/ping.c:1271
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
 msgstr " %1x  %1x  %02x %04x %04x"
 
-#: ping/ping.c:1262
+#: ping/ping.c:1273
 #, c-format
 msgid "   %1x %04x"
 msgstr "   %1x %04x"
 
-#: ping/ping.c:1264
+#: ping/ping.c:1275
 #, c-format
 msgid "  %02x  %02x %04x"
 msgstr "  %02x  %02x %04x"
 
-#: ping/ping.c:1280
+#: ping/ping.c:1291
 #, c-format
 msgid "Echo Reply\n"
 msgstr "回声应答\n"
 
-#: ping/ping.c:1286
+#: ping/ping.c:1297
 #, c-format
 msgid "Destination Net Unreachable\n"
 msgstr "目标网络不可达\n"
 
-#: ping/ping.c:1289
+#: ping/ping.c:1300
 #, c-format
 msgid "Destination Host Unreachable\n"
 msgstr "目标主机不可达\n"
 
-#: ping/ping.c:1292
+#: ping/ping.c:1303
 #, c-format
 msgid "Destination Protocol Unreachable\n"
 msgstr "目标协议不可达\n"
 
-#: ping/ping.c:1295
+#: ping/ping.c:1306
 #, c-format
 msgid "Destination Port Unreachable\n"
 msgstr "目标端口不可达\n"
 
-#: ping/ping.c:1298
+#: ping/ping.c:1309
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
 msgstr "需要分段但是设置了 DF （mtu = %u）\n"
 
-#: ping/ping.c:1301
+#: ping/ping.c:1312
 #, c-format
 msgid "Source Route Failed\n"
 msgstr "源路由失败\n"
 
-#: ping/ping.c:1304
+#: ping/ping.c:1315
 #, c-format
 msgid "Destination Net Unknown\n"
 msgstr "目标网络未知\n"
 
-#: ping/ping.c:1307
+#: ping/ping.c:1318
 #, c-format
 msgid "Destination Host Unknown\n"
 msgstr "目标主机未知\n"
 
-#: ping/ping.c:1310
+#: ping/ping.c:1321
 #, c-format
 msgid "Source Host Isolated\n"
 msgstr "源主机隔离\n"
 
-#: ping/ping.c:1313
+#: ping/ping.c:1324
 #, c-format
 msgid "Destination Net Prohibited\n"
 msgstr "目标网络被禁止。\n"
 
-#: ping/ping.c:1316
+#: ping/ping.c:1327
 #, c-format
 msgid "Destination Host Prohibited\n"
 msgstr "目标主机被禁止\n"
 
-#: ping/ping.c:1319
+#: ping/ping.c:1330
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
 msgstr "对于此 ToS 而言目标网络不可达\n"
 
-#: ping/ping.c:1322
+#: ping/ping.c:1333
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
 msgstr "对于此 ToS 而言目标主机不可达\n"
 
-#: ping/ping.c:1325
+#: ping/ping.c:1336
 #, c-format
 msgid "Packet filtered\n"
 msgstr "数据包被过滤\n"
 
-#: ping/ping.c:1328
+#: ping/ping.c:1339
 #, c-format
 msgid "Precedence Violation\n"
 msgstr "优先级冲突\n"
 
-#: ping/ping.c:1331
+#: ping/ping.c:1342
 #, c-format
 msgid "Precedence Cutoff\n"
 msgstr "优先级冲突\n"
 
-#: ping/ping.c:1334
+#: ping/ping.c:1345
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
 msgstr "目标不可达，错误代码：%d\n"
 
-#: ping/ping.c:1341
+#: ping/ping.c:1352
 #, c-format
 msgid "Source Quench\n"
 msgstr "源淬火\n"
 
-#: ping/ping.c:1348
+#: ping/ping.c:1359
 #, c-format
 msgid "Redirect Network"
 msgstr "重定向网络"
 
-#: ping/ping.c:1351
+#: ping/ping.c:1362
 #, c-format
 msgid "Redirect Host"
 msgstr "重定向主机"
 
-#: ping/ping.c:1354
+#: ping/ping.c:1365
 #, c-format
 msgid "Redirect Type of Service and Network"
 msgstr "重定向服务和网络类型"
 
-#: ping/ping.c:1357
+#: ping/ping.c:1368
 #, c-format
 msgid "Redirect Type of Service and Host"
 msgstr "重定向服务和主机类型"
 
-#: ping/ping.c:1360
+#: ping/ping.c:1371
 #, c-format
 msgid "Redirect, Bad Code: %d"
 msgstr "重定向，错误代码：%d"
 
-#: ping/ping.c:1371
+#: ping/ping.c:1382
 #, c-format
 msgid "(New nexthop: %s)\n"
 msgstr "(新的下一跳: %s)\n"
 
-#: ping/ping.c:1377
+#: ping/ping.c:1388
 #, c-format
 msgid "Echo Request\n"
 msgstr "Echo 请求\n"
 
-#: ping/ping.c:1383
+#: ping/ping.c:1394
 #, c-format
 msgid "Time to live exceeded\n"
 msgstr "超过生存时间\n"
 
-#: ping/ping.c:1386
+#: ping/ping.c:1397
 #, c-format
 msgid "Frag reassembly time exceeded\n"
 msgstr "分段重建时间超时\n"
 
-#: ping/ping.c:1389
+#: ping/ping.c:1400
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
 msgstr "超时，错误代码： %d\n"
 
-#: ping/ping.c:1396
+#: ping/ping.c:1407
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
 msgstr "参数问题：指针=%u\n"
 
-#: ping/ping.c:1402
+#: ping/ping.c:1413
 #, c-format
 msgid "Timestamp\n"
 msgstr "时间戳\n"
 
-#: ping/ping.c:1406
+#: ping/ping.c:1417
 #, c-format
 msgid "Timestamp Reply\n"
 msgstr "时间戳回复\n"
 
-#: ping/ping.c:1410
+#: ping/ping.c:1421
 #, c-format
 msgid "Information Request\n"
 msgstr "信息请求\n"
 
-#: ping/ping.c:1414
+#: ping/ping.c:1425
 #, c-format
 msgid "Information Reply\n"
 msgstr "应答信息\n"
 
-#: ping/ping.c:1419
+#: ping/ping.c:1430
 #, c-format
 msgid "Address Mask Request\n"
 msgstr "地址掩码请求\n"
 
-#: ping/ping.c:1424
+#: ping/ping.c:1435
 #, c-format
 msgid "Address Mask Reply\n"
 msgstr "地址掩码应答\n"
 
-#: ping/ping.c:1428
+#: ping/ping.c:1439
 #, c-format
 msgid "Bad ICMP type: %d\n"
 msgstr "错误的 ICMP 类型：%d\n"
 
-#: ping/ping.c:1482
+#: ping/ping.c:1491 ping/ping6_common.c:540
+msgid "local error"
+msgstr "本地错误"
+
+#: ping/ping.c:1493
 #, c-format
 msgid "local error: message too long, mtu=%u"
 msgstr "本地错误：消息太长，mtu=%u"
 
-#: ping/ping.c:1655
+#: ping/ping.c:1641 ping/ping6_common.c:670
+#, c-format
+msgid " icmp_seq=%u"
+msgstr " icmp_seq=%u"
+
+#: ping/ping.c:1666
 #, c-format
 msgid "packet too short (%d bytes) from %s"
 msgstr "过短的包 (%d 字节) 来自 %s"
 
-#: ping/ping.c:1734
+#: ping/ping.c:1744
 #, c-format
 msgid "From %s: icmp_seq=%u "
 msgstr "来自 %s: icmp_seq=%u "
 
-#: ping/ping.c:1737
+#: ping/ping.c:1747
 #, c-format
 msgid "(BAD CHECKSUM)"
 msgstr "(CHECKSUM 错误)"
 
-#: ping/ping.c:1761
+#: ping/ping.c:1769 ping/ping6_common.c:915
+#, c-format
+msgid "From %s: "
+msgstr "来自%s ： "
+
+#: ping/ping.c:1771
 #, c-format
 msgid "(BAD CHECKSUM)\n"
 msgstr "(CHECKSUM 错误)\n"
+
+#: ping/ping.c:1873 ping/ping6_common.c:954
+msgid "WARNING: failed to install socket filter"
+msgstr "警告：无法安装套接字过滤器"
+
+#: ping/ping.c:1883
+#, c-format
+msgid "%d(%d) bytes of data.\n"
+msgstr "%d(%d) 字节的数据。\n"
+
+#: ping/ping6_common.c:149
+msgid "scope discrepancy among the nodes"
+msgstr "节点之间的范围差异"
+
+#: ping/ping6_common.c:269
+#, c-format
+msgid ""
+"minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
+"higher)"
+msgstr "用户多播 ping 的最小间隔必须 >= %d ms，使用 -i %s （或更高）"
+
+#: ping/ping6_common.c:274
+msgid "multicast ping does not fragment"
+msgstr "多播 ping 不分片"
+
+#: ping/ping6_common.c:333
+msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
+msgstr "setsockopt(RAW_CHECKSUM) 失败 - 尝试继续"
+
+#: ping/ping6_common.c:359
+msgid "can't disable multicast loopback"
+msgstr "无法禁用多播环回"
+
+#: ping/ping6_common.c:364
+msgid "can't set multicast hop limit"
+msgstr "无法设置组播跃点限制"
+
+#: ping/ping6_common.c:367
+msgid "can't set unicast hop limit"
+msgstr "无法设置单播跃点限制"
+
+#: ping/ping6_common.c:379
+msgid "can't receive hop limit"
+msgstr "无法接收跃点限制"
+
+#: ping/ping6_common.c:393
+msgid "can't set flowlabel"
+msgstr "无法设置流标签"
+
+#: ping/ping6_common.c:397
+msgid "can't send flowinfo"
+msgstr "无法发送流信息"
+
+#: ping/ping6_common.c:416
+#, c-format
+msgid "Destination unreachable: "
+msgstr "目标不可达： "
+
+#: ping/ping6_common.c:419
+#, c-format
+msgid "No route"
+msgstr "没有路由（可达）"
+
+#: ping/ping6_common.c:422
+#, c-format
+msgid "Administratively prohibited"
+msgstr "已被管理员禁止"
+
+#: ping/ping6_common.c:425
+#, c-format
+msgid "Beyond scope of source address"
+msgstr "超出源的地址范围外"
+
+#: ping/ping6_common.c:428
+#, c-format
+msgid "Address unreachable"
+msgstr "地址不可达"
+
+#: ping/ping6_common.c:431
+#, c-format
+msgid "Port unreachable"
+msgstr "端口不可达"
+
+#: ping/ping6_common.c:434
+#, c-format
+msgid "Source address failed ingress/egress policy"
+msgstr "源地址入口/出口策略失败"
+
+#: ping/ping6_common.c:437
+#, c-format
+msgid "Reject route to destination"
+msgstr "拒绝前往目的地的路线"
+
+#: ping/ping6_common.c:440
+#, c-format
+msgid "Unknown code %d"
+msgstr "未知代码 %d"
+
+#: ping/ping6_common.c:445
+#, c-format
+msgid "Packet too big: mtu=%u"
+msgstr "数据包太大：MTU=%u"
+
+#: ping/ping6_common.c:447
+#, c-format
+msgid ", code=%d"
+msgstr ", 代码=%d"
+
+#: ping/ping6_common.c:450
+#, c-format
+msgid "Time exceeded: "
+msgstr "超时： "
+
+#: ping/ping6_common.c:452
+#, c-format
+msgid "Hop limit"
+msgstr "跃点数上限"
+
+#: ping/ping6_common.c:454
+#, c-format
+msgid "Defragmentation failure"
+msgstr "分段失败"
+
+#: ping/ping6_common.c:456
+#, c-format
+msgid "code %d"
+msgstr "代码 %d"
+
+#: ping/ping6_common.c:459
+#, c-format
+msgid "Parameter problem: "
+msgstr "参数问题： "
+
+#: ping/ping6_common.c:461
+#, c-format
+msgid "Wrong header field "
+msgstr "错误的标头字段 "
+
+#: ping/ping6_common.c:463
+#, c-format
+msgid "Unknown header "
+msgstr "未知头部 "
+
+#: ping/ping6_common.c:465
+#, c-format
+msgid "Unknown option "
+msgstr "未知选项 "
+
+#: ping/ping6_common.c:467
+#, c-format
+msgid "code %d "
+msgstr "代码 %d "
+
+#: ping/ping6_common.c:468
+#, c-format
+msgid "at %u"
+msgstr "在 %u"
+
+#: ping/ping6_common.c:471
+#, c-format
+msgid "Echo request"
+msgstr "Echo 请求"
+
+#: ping/ping6_common.c:474
+#, c-format
+msgid "Echo reply"
+msgstr "Echo 应答"
+
+#: ping/ping6_common.c:477
+#, c-format
+msgid "MLD Query"
+msgstr "组播组查询"
+
+#: ping/ping6_common.c:480
+#, c-format
+msgid "MLD Report"
+msgstr "组播组报告"
+
+#: ping/ping6_common.c:483
+#, c-format
+msgid "MLD Reduction"
+msgstr "组播组退出"
+
+#: ping/ping6_common.c:486
+#, c-format
+msgid "unknown icmp type: %u"
+msgstr "未知的 ICMP 类型： %u"
+
+#: ping/ping6_common.c:542
+#, c-format
+msgid "local error: message too long, mtu: %u"
+msgstr "本地错误：消息太长，MTU：%u"
+
+#: ping/ping6_common.c:768
+#, c-format
+msgid " unexpected error in inet_ntop(%s)"
+msgstr " 在 inet_ntop(%s) 发生未预期的错误"
+
+#: ping/ping6_common.c:799
+#, c-format
+msgid " refused"
+msgstr " 被拒绝"
+
+#: ping/ping6_common.c:802
+#, c-format
+msgid " unknown"
+msgstr " 未知"
+
+#: ping/ping6_common.c:805
+#, c-format
+msgid " unknown code(%02x)"
+msgstr " 未知代码(%02x)"
+
+#: ping/ping6_common.c:807
+#, c-format
+msgid "; seq=%u;"
+msgstr "; seq=%u;"
+
+#: ping/ping6_common.c:848
+#, c-format
+msgid "packet too short: %d bytes"
+msgstr "过短的包: %d 字节"
+
+#: ping/ping6_common.c:959
+#, c-format
+msgid "%d data bytes\n"
+msgstr "%d 字节的数据\n"
 
 #: ping/ping_common.c:49
 #, fuzzy, c-format
@@ -1140,6 +1100,7 @@ msgid ""
 "                     destinations or for -f), override -n\n"
 "  -I <interface>     either interface name or address\n"
 "  -i <interval>      seconds between sending each packet\n"
+"  -j                 JSON output (experimental)\n"
 "  -L                 suppress loopback of multicast packets\n"
 "  -l <preload>       send <preload> number of packages while waiting "
 "replies\n"
@@ -1226,101 +1187,115 @@ msgstr ""
 "\n"
 "有关详细信息，请参阅 ping(8)。\n"
 
-#: ping/ping_common.c:218
+#: ping/ping_common.c:219
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
 msgstr "模式必须指定为十六进制数字：%s"
 
-#: ping/ping_common.c:233
+#: ping/ping_common.c:234
 #, c-format
 msgid "PATTERN: 0x"
 msgstr "模式：0x"
 
-#: ping/ping_common.c:353
+#: ping/ping_common.c:355
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
 msgstr "icmp_seq=%lu 未响应\n"
 
-#: ping/ping_common.c:457
+#: ping/ping_common.c:454
+msgid "WARNING: buffer size overflow, reduce packet size or preload"
+msgstr ""
+
+#: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr "警告：RCVBUF 可能不足以保持预载"
 
-#: ping/ping_common.c:476
+#: ping/ping_common.c:487
 #, c-format
 msgid "WARNING: failed to set mark: %u"
 msgstr "警告：无法安装套接字过滤器：%u"
 
-#: ping/ping_common.c:479
+#: ping/ping_common.c:490
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
 msgstr "=> 缺少 cap_net_admin+p 或 cap_net_raw+p（自 Linux 5.17 起）功能？"
 
-#: ping/ping_common.c:484
+#: ping/ping_common.c:495
 msgid "WARNING: SO_MARK not supported"
 msgstr "警告：不支持 SO_MARK"
 
-#: ping/ping_common.c:500
+#: ping/ping_common.c:511
 #, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr "不能泛洪，用户的最小间隔必须 >= %d ms，使用 -i %s （或更高）"
 
-#: ping/ping_common.c:504
+#: ping/ping_common.c:515
 #, c-format
 msgid "illegal preload and/or interval: %d"
 msgstr "非法预紧和/或间隔：%d"
 
-#: ping/ping_common.c:516
+#: ping/ping_common.c:527
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr "警告：不支持 SO_TIMESTAMP，回退到 SIOCGSTAMP"
 
-#: ping/ping_common.c:759
+#: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
-msgid "Warning: time of day goes back (%ldus), taking countermeasures"
+msgid "Warning: invalid tv_usec %ld us"
+msgstr ""
+
+#: ping/ping_common.c:781
+#, c-format
+msgid "Warning: invalid tv_sec %ld s"
+msgstr ""
+
+#: ping/ping_common.c:784
+#, fuzzy, c-format
+msgid "Warning: time of day goes back (%ld s), taking countermeasures"
 msgstr "警告：一天中的时间返回 （%ldus），采取对策"
 
-#: ping/ping_common.c:809
-#, c-format
-msgid "%d bytes from %s:"
-msgstr "%d 字节，来自 %s:"
+#: ping/ping_common.c:837
+#, fuzzy, c-format
+msgid "%d bytes "
+msgstr "%d 字节的数据\n"
 
-#: ping/ping_common.c:815
+#: ping/ping_common.c:839
+#, fuzzy, c-format
+msgid "from %s:"
+msgstr " 来自 %s"
+
+#: ping/ping_common.c:845
 #, c-format
 msgid " ident=%d"
 msgstr " 标识=%d"
 
-#: ping/ping_common.c:818
+#: ping/ping_common.c:848
 #, c-format
 msgid " ttl=%d"
 msgstr " ttl=%d"
 
-#: ping/ping_common.c:821
-#, c-format
-msgid " (truncated)\n"
-msgstr " (已截断)\n"
-
-#: ping/ping_common.c:849
+#: ping/ping_common.c:880
 #, c-format
 msgid " time=%s ms"
 msgstr " 时间=%s 毫秒"
 
-#: ping/ping_common.c:854
+#: ping/ping_common.c:884
 #, c-format
 msgid " (DUP!)"
 msgstr " (重复!)"
 
-#: ping/ping_common.c:856
+#: ping/ping_common.c:886
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (CHECKSUM 错误)"
 
-#: ping/ping_common.c:858
+#: ping/ping_common.c:888
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " （地址不同！）"
 
-#: ping/ping_common.c:865
+#: ping/ping_common.c:895
 #, c-format
 msgid ""
 "\n"
@@ -1329,71 +1304,110 @@ msgstr ""
 "\n"
 "错误的数据字节 #%d 预期为 0x%x 但实际接收到 0x%x"
 
-#: ping/ping_common.c:908
-#, c-format
-msgid "--- %s ping statistics ---\n"
-msgstr "--- %s ping 统计 ---\n"
-
-#: ping/ping_common.c:909
-#, c-format
-msgid "%ld packets transmitted, "
-msgstr "已发送 %ld 个包， "
-
-#: ping/ping_common.c:910
-#, c-format
-msgid "%ld received"
-msgstr "已接收 %ld 个包"
-
-#: ping/ping_common.c:912
-#, c-format
-msgid ", +%ld duplicates"
-msgstr ", +%ld 重复"
-
-#: ping/ping_common.c:914
-#, c-format
-msgid ", +%ld corrupted"
-msgstr ", +%ld 损坏"
-
-#: ping/ping_common.c:916
-#, c-format
-msgid ", +%ld errors"
-msgstr ", +%ld 错误"
-
-#: ping/ping_common.c:922
-#, c-format
-msgid ", %g%% packet loss"
-msgstr ", %g%% 包丢失"
-
-#: ping/ping_common.c:924
-#, c-format
-msgid ", time %llums"
-msgstr ", 耗时 %llu 毫秒"
-
-#: ping/ping_common.c:944
-#, c-format
-msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr ""
-"rtt 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-
-#: ping/ping_common.c:952
-#, c-format
-msgid "%spipe %d"
-msgstr "%s 管道 %d"
-
-#: ping/ping_common.c:959
-#, c-format
-msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d 毫秒"
-
-#: ping/ping_common.c:977
+#: ping/ping_common.c:932
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld/%ld 个包，%d%% 丢失"
 
-#: ping/ping_common.c:982
+#: ping/ping_common.c:937
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld 毫秒"
+
+#: ping/ping_json.c:17
+msgid "Overflow during JSON construction"
+msgstr ""
+
+#: ping/ping_output.c:50
+#, c-format
+msgid "From %s icmp_seq=%u "
+msgstr "来自 %s icmp_seq=%u "
+
+#: ping/ping_output.c:56
+#, fuzzy, c-format
+msgid " parse error (%s)"
+msgstr " 解析错误 (太短)"
+
+#: ping/ping_output.c:64
+#, c-format
+msgid " unknown qtype(0x%02x)"
+msgstr " 未知的 qtype(0x%02x)"
+
+#: ping/ping_output.c:76
+#, c-format
+msgid " (truncated)"
+msgstr " (已截断)"
+
+#: ping/ping_output.c:85
+#, c-format
+msgid "PING %s (%s) "
+msgstr "PING %s (%s) "
+
+#: ping/ping_output.c:88
+#, c-format
+msgid ", flow 0x%05x, "
+msgstr "，流量 0x%05x， "
+
+#: ping/ping_output.c:96
+#, c-format
+msgid "from %s %s: "
+msgstr "来自 %s %s "
+
+#: ping/ping_output.c:149
+#, fuzzy, c-format
+msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
+msgstr ""
+"rtt 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+
+#: ping/ping_output.c:165
+#, c-format
+msgid "--- %s ping statistics ---\n"
+msgstr "--- %s ping 统计 ---\n"
+
+#: ping/ping_output.c:166
+#, c-format
+msgid "%ld packets transmitted, "
+msgstr "已发送 %ld 个包， "
+
+#: ping/ping_output.c:167
+#, c-format
+msgid "%ld received"
+msgstr "已接收 %ld 个包"
+
+#: ping/ping_output.c:169
+#, c-format
+msgid ", +%ld duplicates"
+msgstr ", +%ld 重复"
+
+#: ping/ping_output.c:171
+#, c-format
+msgid ", +%ld corrupted"
+msgstr ", +%ld 损坏"
+
+#: ping/ping_output.c:173
+#, c-format
+msgid ", +%ld errors"
+msgstr ", +%ld 错误"
+
+#: ping/ping_output.c:179
+#, c-format
+msgid ", %g%% packet loss"
+msgstr ", %g%% 包丢失"
+
+#: ping/ping_output.c:181
+#, c-format
+msgid ", time %llums"
+msgstr ", 耗时 %llu 毫秒"
+
+#: ping/ping_output.c:194
+#, fuzzy, c-format
+msgid "pipe %d"
+msgstr "%s 管道 %d"
+
+#: ping/ping_output.c:210
+#, fuzzy, c-format
+msgid "ipg/ewma %s/%s ms"
+msgstr "%sipg/ewma %d.%03d/%d.%03d 毫秒"
 
 #: tracepath.c:218
 #, c-format
@@ -1528,6 +1542,18 @@ msgid "pktlen must be within: %d < value <= %d"
 msgstr "PKTLEN 必须在以下范围内： %d < 值 <= %d"
 
 #, c-format
+#~ msgid " parse error (truncated)"
+#~ msgstr " 解析错误 (被截断)"
+
+#, c-format
+#~ msgid "%d bytes from %s:"
+#~ msgstr "%d 字节，来自 %s:"
+
+#, c-format
+#~ msgid " (truncated)\n"
+#~ msgstr " (已截断)\n"
+
+#, c-format
 #~ msgid "local error: %s"
 #~ msgstr "本地错误：%s"
 
@@ -1590,10 +1616,6 @@ msgstr "PKTLEN 必须在以下范围内： %d < 值 <= %d"
 #, c-format
 #~ msgid "  %.4f ms"
 #~ msgstr "  %.4f 毫秒"
-
-#, c-format
-#~ msgid " from %s"
-#~ msgstr " 来自 %s"
 
 #, c-format
 #~ msgid ", %d hops max, %d byte packets\n"
