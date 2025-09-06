@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2025-06-26 03:03+0000\n"
+"PO-Revision-Date: 2025-09-06 10:28+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.13.2\n"
 
 #: arping.c:123
 #, c-format
@@ -1285,9 +1285,9 @@ msgid "%d bytes "
 msgstr "%d bytes de dados\n"
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr " de %s"
+msgstr "de %s"
 
 #: ping/ping_common.c:845
 #, c-format

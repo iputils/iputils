@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2025-01-12 07:38+0000\n"
+"PO-Revision-Date: 2025-09-06 10:28+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.13.2\n"
 
 #: arping.c:123
 #, c-format
@@ -1099,7 +1099,7 @@ msgid "%d data bytes\n"
 msgstr "%d байтів даних\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1187,12 +1187,13 @@ msgstr ""
 "                       призначень або для -f), має вищий пріоритет за -n\n"
 "  -I <інтерфейс>       назва або адреса інтерфейсу\n"
 "  -i <інтервал>        інтервал між надсиланням послідовних пакетів\n"
+"  -j                 вивести у форматі JSON (експеримент)\n"
 "  -L                   придушити петльовий інтерфейс трансляційних пакетів\n"
 "  -l <кількість>       надіслати <кількість> пакетів під час очікування "
 "відповідей\n"
 "  -m <позначка>        позначати вихідні пакети\n"
-"  -M <пар pmtud>       визначити режим mtu, одне зі значень <do|dont|want|"
-"probe>\n"
+"  -M <пар pmtud>       визначити режим mtu, одне зі значень "
+"<do|dont|want|probe>\n"
 "  -n                   без визначення назви DNS\n"
 "  -O                   звітувати про нестандартні відповіді\n"
 "  -p <взірець>         вміст байта-доповнення\n"
@@ -1213,8 +1214,8 @@ msgstr ""
 "  -4                   скористатися IPv4\n"
 "  -b                   дозволити трансляцію зондування\n"
 "  -R                   записати маршрут\n"
-"  -T <часова позначка> визначити часову позначку, одне зі значень <tsonly|"
-"tsandaddr|tsprespec>\n"
+"  -T <часова позначка> визначити часову позначку, одне зі значень "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "Параметри IPv6:\n"
 "  -6                   скористатися IPv6\n"
@@ -1242,6 +1243,8 @@ msgstr "відповідь для icmp_seq=%lu ще не отримано\n"
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
 msgstr ""
+"УВАГА: перевищення розміру буфера, зменште розмір пакета або завантажуйте "
+"попередньо"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1286,29 +1289,29 @@ msgstr ""
 "SIOCGSTAMP"
 
 #: ping/ping_common.c:771 ping/ping_common.c:776
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr "arping: некоректне джерело %s\n"
+msgstr "Увага! Некоректне значення tv_usec %ld мкс"
 
 #: ping/ping_common.c:781
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr "arping: некоректне джерело %s\n"
+msgstr "Увага! Некоректне значення tv_sec %ld с"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "Попередження: відставання часу дня (%ldмкс), вживаємо контрзаходів"
+msgstr "Попередження: відставання часу дня (%ld с), вживаємо контрзаходів"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d байтів даних\n"
+msgstr "%d байтів "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr " від %s"
+msgstr "від %s:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1361,7 +1364,7 @@ msgstr ", мін/сер/ewma/макс = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld м
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "Переповнення під час побудови JSON"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1369,9 +1372,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "З %s icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " помилка обробки (надто короткі дані)"
+msgstr " помилка обробки (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1399,9 +1402,9 @@ msgid "from %s %s: "
 msgstr "з %s %s: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "rtt мін/сер/макс/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld мс"
+msgstr "rtt мін/сер/макс/mdev = %s/%s/%s/%s мс"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1444,14 +1447,14 @@ msgid ", time %llums"
 msgstr ", час %llu мс"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%sканал %d"
+msgstr "канал %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d мс"
+msgstr "ipg/ewma %s/%s мс"
 
 #: tracepath.c:218
 #, c-format
