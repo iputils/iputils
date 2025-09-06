@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2024-10-19 18:38+0000\n"
+"PO-Revision-Date: 2025-09-06 10:28+0000\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ro/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.13.2\n"
 
 #: arping.c:123
 #, c-format
@@ -1094,7 +1094,7 @@ msgid "%d data bytes\n"
 msgstr "%d octeți de date\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1182,10 +1182,11 @@ msgstr ""
 "  -h                     afișează ajutorul și iese\n"
 "  -H                     forțează rezoluția inversă a numelui DNS (util "
 "pentru\n"
-"                         destinații numerice sau pentru „-f”), suprascrie „-"
-"n”\n"
+"                         destinații numerice sau pentru „-f”), suprascrie "
+"„-n”\n"
 "  -I <interfață>         numele sau adresa interfeței\n"
 "  -i <interval>          secunde între trimiterea fiecărui pachet\n"
+"  -j                     ieșire în format JSON (experimental)\n"
 "  -L                     suprimă bucla de retur a pachetelor multi-difuzare\n"
 "  -l <preîncărcare>      trimite <preîncărcare> număr de pachete în "
 "așteptarea\n"
@@ -1194,8 +1195,8 @@ msgstr ""
 "  -M <opțiuni-pmtud>     definește descoperirea MTU a rutei, poate fi una "
 "dintre\n"
 "                         <do|dont|want|probe>\n"
-"  -n                     fără rezoluție inversă a numelui DNS, suprascrie „-"
-"H”\n"
+"  -n                     fără rezoluție inversă a numelui DNS, suprascrie "
+"„-H”\n"
 "  -O                     raportează răspunsurile restante\n"
 "  -p <model>             conținutul octetului de umplere\n"
 "  -q                     ieșire silențioasă\n"
@@ -1212,10 +1213,11 @@ msgstr ""
 "  -V                     afișează versiunea și iese\n"
 "  -w <timp-limită>       <timp-limită> de așteptare a răspunsului în "
 "secunde\n"
+"                         pentru „linie moartă”\n"
 "  -W <timp-așteptare>    timpul de așteptare pentru răspuns\n"
 "\n"
 "Opțiuni IPv4:\n"
-"  -4 utilizează IPv4\n"
+"  -4                     utilizează IPv4\n"
 "  -b                     permite emiterea de ping-uri de difuzare\n"
 "  -R                     înregistrează ruta\n"
 "  -T <marca-de-timp>     definește marca de timp, poate fi una dintre\n"
@@ -1223,8 +1225,8 @@ msgstr ""
 "\n"
 "Opțiuni IPv6:\n"
 "  -6                     utilizează IPv6\n"
-"  -F <etichetă-flux>     definește eticheta fluxului, implicit este "
-"„random”\n"
+"  -F <etichetă-flux>     definește eticheta fluxului, implicit este „random”"
+"\n"
 "  -N <opțiuni-info_nod>  utilizează interogarea IPv6 cu informații despre "
 "nod,\n"
 "                         încercați <help> ca argument\n"
@@ -1249,6 +1251,8 @@ msgstr "niciun răspuns încă pentru icmp_seq=%lu\n"
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
 msgstr ""
+"AVERTISMENT: depășirea dimensiunii memoriei tampon, reduceți dimensiunea "
+"pachetului sau preîncărcați"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1294,27 +1298,27 @@ msgstr ""
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "Avertizare: tv_usec %ld us nevalid"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "Avertizare: tv_sec %ld s nevalid"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "Avertizare: ora zilei merge înapoi (%ldus), se iau contramăsuri"
+msgstr "Avertizare: ora zilei merge înapoi (%ld s), se iau contra-măsuri"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d octeți de date\n"
+msgstr "%d octeți "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr "De la %s: "
+msgstr "de la %s:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1367,7 +1371,7 @@ msgstr ", min/med/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "Depășire în timpul construirii JSON"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1375,9 +1379,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "De la %s icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " eroare de analizare (date prea scurte)"
+msgstr " eroare de analizare (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1405,9 +1409,9 @@ msgid "from %s %s: "
 msgstr "de la %s %s: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "rtt min/med/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt min/med/max/mdev = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1450,14 +1454,14 @@ msgid ", time %llums"
 msgstr ", timp %llums"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%sconductă %d"
+msgstr "conductă %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
+msgstr "ipg/ewma %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
