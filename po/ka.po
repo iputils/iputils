@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2024-10-19 18:38+0000\n"
+"PO-Revision-Date: 2025-09-08 03:54+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.13.2\n"
 
 #: arping.c:123
 #, c-format
@@ -1090,7 +1090,7 @@ msgid "%d data bytes\n"
 msgstr "%d ბაიტი მონაცემი\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1180,6 +1180,7 @@ msgstr ""
 "                      და პარამეტრისთვის -f). გადაფარავს პარამეტრს -n\n"
 "  -I <ინტერფეისი>     ინტერფეისის სახელი ან მისამართი\n"
 "  -i <ინტერვალი>      წამები პაკეტების გაგზანის შორის\n"
+"  -j                    გამოტანა JSON ფორმატში (ექსპერიმენტული)\n"
 "  -L                  მულტიკასტის პაკეტებისთვის loopback ინტერფეისის "
 "გამოტოვება\n"
 "  -l <წინჩატვ>        პასუხის მოლოდინისას <წინჩატვ> რაოდენობის პაკეტების "
@@ -1236,6 +1237,8 @@ msgstr "პასუხის გარეშე. icmp_sql=%lu\n"
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
 msgstr ""
+"გაფრთხილება: ბუფერის ზომა გადაივსო. შეამცირეთ ან წინასაწარ ჩატვირთვის, ან "
+"პაკეტის ზომა"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1279,27 +1282,27 @@ msgstr ""
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "გაფრთხილება: არასწორი tv_usec %ld us"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "გაფრთხილება: არასწორი tv_sec %ld s"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "გაფრთხილება: დრო უკან დაბრუნდა (%ldus), მიიღება საწინააღმდეგო ზომები"
+msgstr "გაფრთხილება: დრო უკან დაბრუნდა (%ld us), მიიღება საწინააღმდეგო ზომები"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d ბაიტი მონაცემი\n"
+msgstr "%d ბაიტი "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr "%s-დან: "
+msgstr "%s-დან:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1352,7 +1355,7 @@ msgstr ", მინ/საშ/ewma/მაქს = %ld.%03ld/%lu.%03ld/%d.%03d/%l
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "გადავსება JSON-ის აწყობისას"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1360,9 +1363,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "%s -დან icm_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " დამუშავების შეცდომა (ძალიან მოკლეა)"
+msgstr " დამუშავების შეცდომა (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1390,9 +1393,9 @@ msgid "from %s %s: "
 msgstr "%s%s-დან: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "rtt მინ/საშ/მაქს/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld მწმ"
+msgstr "rtt მინ/საშ/მაქს/mdev = %s/%s/%s/%s მწმ"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1435,14 +1438,14 @@ msgid ", time %llums"
 msgstr ", დრო %lluმწმ"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%s არხი %d"
+msgstr "არხი %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d მწმ"
+msgstr "ipg/ewma %s/%s მწმ"
 
 #: tracepath.c:218
 #, c-format
