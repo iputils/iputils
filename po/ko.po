@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2024-10-22 13:38+0000\n"
+"PO-Revision-Date: 2025-09-09 06:55+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.13.2\n"
 
 #: arping.c:123
 #, c-format
@@ -1081,7 +1081,7 @@ msgid "%d data bytes\n"
 msgstr "%d 자료 바이트\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1144,10 +1144,10 @@ msgid ""
 msgstr ""
 "\n"
 "사용법\n"
-"  ping [options] <destination>\n"
+"  ping [옵션] <대상>\n"
 "\n"
 "옵션:\n"
-"  <destination>      DNS 이름 또는 IP 주소\n"
+"  <destination>      DNS name or IP address\n"
 "  -3                 RTT precision (do not round up the result time)\n"
 "  -a                 use audible ping\n"
 "  -A                 use adaptive ping\n"
@@ -1166,12 +1166,13 @@ msgstr ""
 "                     destinations or for -f), override -n\n"
 "  -I <interface>     either interface name or address\n"
 "  -i <interval>      seconds between sending each packet\n"
+"  -j                 JSON output (experimental)\n"
 "  -L                 suppress loopback of multicast packets\n"
 "  -l <preload>       send <preload> number of packages while waiting "
 "replies\n"
 "  -m <mark>          tag the packets going out\n"
-"  -M <pmtud opt>     define path MTU discovery, can be one of <do|dont|want|"
-"probe>\n"
+"  -M <pmtud opt>     define path MTU discovery, can be one of "
+"<do|dont|want|probe>\n"
 "  -n                 no reverse DNS name resolution, override -H\n"
 "  -O                 report outstanding replies\n"
 "  -p <pattern>       contents of padding byte\n"
@@ -1190,15 +1191,15 @@ msgstr ""
 "  -4                 use IPv4\n"
 "  -b                 allow pinging broadcast\n"
 "  -R                 record route\n"
-"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|"
-"tsprespec>\n"
+"  -T <timestamp>     define timestamp, can be one of "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "IPv6 옵션:\n"
 "  -6                 use IPv6\n"
 "  -F <flowlabel>     define flow label, default is random\n"
 "  -N <nodeinfo opt>  use IPv6 node info query, try <help> as argument\n"
 "\n"
-"더 자세한 사항은 ping(8)을 참조하세요.\n"
+"더 자세한 정보를 위해 ping(8)을 참조하세요.\n"
 
 #: ping/ping_common.c:219
 #, c-format
@@ -1217,7 +1218,7 @@ msgstr "아직 응답이 없습니다(icmp_seq=%lu)\n"
 
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
-msgstr ""
+msgstr "경고: 버퍼가 넘쳤으며, 패킷 크기나 사전적재를 줄이세요"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1259,27 +1260,27 @@ msgstr "경고: SO_TIMESTAMP를 지원하지 않아서, SIOCGSTAMP로 되바꿉�
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "경고: 잘못된 tv_usec %ld us"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "경고: 잘못된 tv_sec %ld s"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "경고: 시간을 (%ldus)로 되돌리고, 대책을 강구합니다"
+msgstr "경고: 시간을 (%ld s)로 되돌리고, 대책을 강구합니다"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d 자료 바이트\n"
+msgstr "%d 바이트 "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr " %s에서"
+msgstr "%s 에서:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1333,7 +1334,7 @@ msgstr ""
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "JSON 생성 중에 넘침"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1341,9 +1342,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "%s에서 icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " 구문 분석 오류 (너무 짧음)"
+msgstr " 구문 분석 오류 (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1371,10 +1372,9 @@ msgid "from %s %s: "
 msgstr "%s %s에서: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr ""
-"rtt 최소/평균/최대/표준편차 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt 최소/평균/최대/표준편차 = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1417,14 +1417,14 @@ msgid ", time %llums"
 msgstr ", 시간 %llums"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%s파이프 %d"
+msgstr "파이프 %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/지수가중평균 %d.%03d/%d.%03d ms"
+msgstr "ipg/지수가중평균 %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
