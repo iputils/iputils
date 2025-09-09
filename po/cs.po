@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2025-09-06 10:28+0000\n"
+"PO-Revision-Date: 2025-09-09 06:55+0000\n"
 "Last-Translator: Petr Vorel <petr.vorel@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
@@ -1170,7 +1170,7 @@ msgstr ""
 "  -I <rozhraní>        rozhraní nebo adresa\n"
 "  -i <interval>        interval v sekundách mezi posíláním jednotlivých "
 "packetů\n"
-"  -j                 JSON výstup (experimental)\n"
+"  -j                   JSON výstup (experimentální)\n"
 "  -L                   potlačí příjem vlastních multicastových dotazů\n"
 "  -l <přednačítání>    pošle <přednačítání> paketů během čekání na odpovědi\n"
 "  -m <značka>          označí odchozí pakety\n"
@@ -1188,7 +1188,7 @@ msgstr ""
 "  -U                   vypíše uživatel-uživatel latenci\n"
 "  -v                   podrobný výstup\n"
 "  -V                   vypíše údaje o verzi a skončí\n"
-"  -w <doba>            <doba> čekání na odpověď v sekundách\n"
+"  -w <doba>            doba čekání na odpověď v sekundách\n"
 "  -W <časový limit>    časový limit pro odpovědi\n"
 "\n"
 "IPv4 volby:\n"
@@ -1224,6 +1224,8 @@ msgstr "žádná odpověď pro pořadí=%lu\n"
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
 msgstr ""
+"POZOR: přetečení velikosti vyrovnávací paměti, zmenšete velikost paketu nebo "
+"proveďte předběžné načtení"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1268,27 +1270,27 @@ msgstr "Pozor: SO_TIMESTAMP není podporováno, přechází se na SIOCGSTAMP"
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "Pozor: neplatný tv_usec %ld us"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "Pozor: neplatný tv_sec %ld s"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
 msgstr "Pozor: čas se vrátil zpět (%ld µs), přijímají se protiopatření"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d datových bajtů\n"
+msgstr "%d bajtů "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr " z %s"
+msgstr "z %s:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1341,7 +1343,7 @@ msgstr ", min/prům/klouz.prům/max = %ld,%03ld/%lu,%03ld/%d,%03d/%ld,%03ld ms"
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "Přetečení během vytváření JSON"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1349,9 +1351,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "Od %s pořadí=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " chyba rozboru (příliš krátké)"
+msgstr " chyba rozboru (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1379,9 +1381,9 @@ msgid "from %s %s: "
 msgstr "od %s %s: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "RTT min/prům/max/std.odch = %ld,%03ld/%lu,%03ld/%ld,%03ld/%ld,%03ld ms"
+msgstr "rtt min/prům/max/std.odch = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1424,14 +1426,14 @@ msgid ", time %llums"
 msgstr ", čas %llu ms"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%sroura %d"
+msgstr "roura %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sIPG/klouz.prům %d,%03d/%d,%03d ms"
+msgstr "ipg/ klouz.prům. %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
