@@ -53,18 +53,18 @@ TODO: Add changelog
 ## credit
 Many thanks to the developers contributing to this release:
 \`\`\`
-    $ git shortlog -sen $old_tag.. -- \$(git ls-files | grep -v ^po/)
+    $ git shortlog -sen $old_tag.. -- \$(git ls-files | grep -v '^po/.*\.po')
 EOF
-git shortlog -sen "$old_tag".. -- $(git ls-files | grep -v ^po/) .github/ >> "$credit"
+git shortlog -sen "$old_tag".. -- $(git ls-files | grep -v '^po/.*\.po') >> "$credit"
 
 cat >> "$credit" <<EOF
 \`\`\`
 
 and translators:
 \`\`\`
-    $ git shortlog -sen $old_tag.. -- po/
+    $ git shortlog -sen $old_tag.. -- po/*.po
 EOF
-git shortlog -sen "$old_tag".. -- po/ >> "$credit"
+git shortlog -sen "$old_tag".. -- po/*.po >> "$credit"
 
 cat >> "$credit" <<EOF
 \`\`\`
