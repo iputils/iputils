@@ -594,8 +594,11 @@ int build_echo(struct ping_rts *rts, uint8_t *_icmph,
 	icmph->icmp6_seq = htons(rts->ntransmitted + 1);
 	icmph->icmp6_id = rts->ident;
 
-	if (rts->timing)
-		gettimeofday((struct timeval *)&_icmph[8], NULL);
+	if (rts->timing) {
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		memcpy(&_icmph[8], &tv, sizeof(tv));
+	}
 
 	cc = rts->datalen + 8;			/* skips ICMP portion */
 
