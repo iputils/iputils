@@ -1,6 +1,6 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) 2019-2024 Petr Vorel <petr.vorel@gmail.com>
+# Copyright (c) 2019-2025 Petr Vorel <petr.vorel@gmail.com>
 set -ex
 
 if [ "$DISTRO_VERSION" = "xenial" ]; then
@@ -15,6 +15,13 @@ export DEBIAN_FRONTEND="noninteractive"
 
 apt update
 
+if [ "$WITH_TEST_DEPS" ]; then
+	TEST_DEPS="
+	libsocket-getaddrinfo-perl
+	libtest-command-perl
+"
+fi
+
 apt install -y --no-install-recommends \
 	clang \
 	docbook-xsl-ns \
@@ -28,4 +35,5 @@ apt install -y --no-install-recommends \
 	libidn2-0-dev \
 	meson \
 	pkg-config \
-	xsltproc
+	xsltproc \
+	$TEST_DEPS

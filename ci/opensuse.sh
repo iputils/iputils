@@ -1,9 +1,21 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) 2018-2024 Petr Vorel <pvorel@suse.cz>
+# Copyright (c) 2018-2025 Petr Vorel <pvorel@suse.cz>
 set -ex
 
-zypper --non-interactive install --no-recommends \
+zypper='zypper --non-interactive install --no-recommends'
+
+if [ "$WITH_TEST_DEPS" ]; then
+	TEST_DEPS="
+	perl-Test-Command
+"
+	if ! $zypper perl-Socket-GetAddrInfo; then
+		$zypper make perl
+		PERL_MM_USE_DEFAULT=1 cpan -T Socket::GetAddrInfo
+	fi
+fi
+
+$zypper \
 	clang \
 	docbook_5 \
 	docbook5-xsl-stylesheets \
@@ -19,4 +31,5 @@ zypper --non-interactive install --no-recommends \
 	libxslt-tools \
 	meson \
 	ninja \
-	pkg-config
+	pkg-config \
+	$TEST_DEPS
