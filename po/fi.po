@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2024-10-26 18:38+0000\n"
+"PO-Revision-Date: 2025-09-25 07:53+0000\n"
 "Last-Translator: Ricky Tigg <ricky.tigg@gmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/fi/>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.9.1\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: arping.c:123
 #, c-format
@@ -1080,7 +1080,7 @@ msgid "%d data bytes\n"
 msgstr "%d data-tavut\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1168,8 +1168,8 @@ msgstr ""
 "  -l <esilataus>  lähetä <esilataus> pakettien määrä odottaessaan "
 "vastauksia\n"
 "  -m <merkki>  merkitse lähtevät paketit\n"
-"  -M <pmtud opt>  määrittää mtu-etsinnän, voi olla yksi seuraavista: <do|"
-"dont|want|probe>\n"
+"  -M <pmtud opt>  määrittää mtu-etsinnän, voi olla yksi seuraavista: "
+"<do|dont|want|probe>\n"
 "  -n  ei DNS-nimen selvittämistä; ohittaa '-H'\n"
 "  -O  ilmoita odottamattomista vastauksista\n"
 "  -p <lauseke>  täytetavun sisältö\n"
@@ -1188,8 +1188,8 @@ msgstr ""
 "  -4  käytä IPv4:ää\n"
 "  -b  salli ping-yleislähetyksen\n"
 "  -R  tallenna reitti\n"
-"  -T <timestamp>  määritä aikaleima, voi olla jokin seuraavista: <tsonly|"
-"tsandaddr|tsprespec>\n"
+"  -T <timestamp>  määritä aikaleima, voi olla jokin seuraavista: "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "IPv6-vaihtoehdot:\n"
 "  -6  käytä IPv6:ta\n"
@@ -1216,7 +1216,7 @@ msgstr "ei vielä vastausta icmp_seq=%lu:lle\n"
 
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
-msgstr ""
+msgstr "Varoitus: puskurin ylivuoto; pienennä paketin kokoa tai esilataa"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1259,27 +1259,28 @@ msgstr "Varoitus: ei SO_TIMESTAMP-tukea, palataan SIOCGSTAMP:een"
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "Varoitus: virheellinen tv_usec %ld us"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "Varoitus: virheellinen tv_sec %ld s"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "Varoitus: vuorokaudenaika palautuu (%ldus); ryhdytään vastatoimiin"
+msgstr ""
+"Varoitus: päiväm kellonaika palaa taaksepäin (%ld s); ryhdytään vastatoimiin"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d data-tavut\n"
+msgstr "%d tavua "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr "%s:lta: "
+msgstr "%s:lta:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1332,7 +1333,7 @@ msgstr ", min/keskiarvo/ewma/maks = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "Ylivuoto JSON-rakentamisen aikana"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1340,9 +1341,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "%s:lta icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " jäsennysvirhe (liian lyhyt)"
+msgstr " jäsennysvirhe (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1370,10 +1371,9 @@ msgid "from %s %s: "
 msgstr "%s %s:lta : "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr ""
-"rtt min/keskiarvo/maks/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt min/keskiarvo/maks/keskiarvopoikkeama = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1416,14 +1416,14 @@ msgid ", time %llums"
 msgstr ", aika %llu ms"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%spipe %d"
+msgstr "putki %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
+msgstr "ipg/ewma %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
