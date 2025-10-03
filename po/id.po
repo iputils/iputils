@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2024-10-19 18:38+0000\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"PO-Revision-Date: 2025-10-04 05:19+0000\n"
+"Last-Translator: Arif Budiman <arifpedia@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/id/>\n"
 "Language: id\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: arping.c:123
 #, c-format
@@ -1082,7 +1082,7 @@ msgid "%d data bytes\n"
 msgstr "%d byte data\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1144,64 +1144,70 @@ msgid ""
 "For more details see ping(8).\n"
 msgstr ""
 "\n"
-"Cara pakai\n"
-"  ping [opsi] <tujuan>\n"
+"Penggunaan\n"
+"ping [opsi] <tujuan>\n"
 "\n"
 "Opsi:\n"
-"  <tujuan>           nama DNS atau alamat IP\n"
-"  -3                 presisi RTT (jangan bulatkan waktu hasil)\n"
-"  -a                 pakai ping berbunyi\n"
-"  -A                 pakai ping adaptif\n"
-"  -B                 alamat sumber lengket\n"
-"  -c <cacah>         berhenti setelah <cacah> jawaban\n"
-"  -C                 panggil syscall connect() saat pembuatan soket\n"
-"  -D                 cetak stempel waktu\n"
-"  -d                 pakai opsi soket SO_DEBUG\n"
-"  -e <identifier>    menentukan identifier untuk sesi ping, bakunya acak\n"
-"                     untuk SOCK_RAW dan ditentukan oleh kernel bagi "
-"SOCK_DGRAM\n"
-"                     Mengimplikasi memakai SOCK_RAW (hanya bagi IPv4 untuk "
-"identifier 0)\n"
-"  -f                 flood ping\n"
-"  -h                 cetak bantuan dan keluar\n"
-"  -H                 paksakan resolusi nama reverse DNS (berguna untuk "
-"tujuan\n"
-"                     numerik atau untuk -f), menimpa -n\n"
-"  -I <interface>     bisa nama interface atau alamatnya\n"
-"  -i <interval>      detik antara setiap pengiriman paket\n"
-"  -L                 redam loopback dari paket multicast\n"
-"  -l <preload>       kirim sejumlah <preload> paket ketika menunggu jawaban\n"
-"  -m <mark>          tag paket yang menuju ke luar\n"
-"  -M <pmtud opt>     menentukan path MTU discovery, bisa berupa satu dari "
-"<do|dont|want|probe>\n"
-"  -n                 tidak ada resolusi nama reverse DNS, menimpa -H\n"
-"  -O                 laporkan jawaban tertunda\n"
-"  -p <pattern>       konten dari byte pengganjal\n"
-"  -q                 keluaran senyap\n"
-"  -Q <tclass>        pakai bit quality of service <tclass>\n"
-"  -s <size>          pakai <size> sebagai banyaknya byte data yang dikirim\n"
-"  -S <size>          pakai <size> sebagai SO_SNDBUF nilai opsi soket\n"
-"  -t <ttl>           menentukan time to live\n"
-"  -U                 cetak latensi pengguna ke pengguna\n"
-"  -v                 keluaran rinci\n"
-"  -V                 cetak versi dan keluar\n"
-"  -w <tenggat>      <tenggat> tunggu jawaban dalam detik\n"
-"  -W <timeout>       waktu menunggu respon\n"
+"<tujuan>      Nama DNS atau alamat IP\n"
+"-3                 Presisi RTT (tidak membulatkan waktu hasil)\n"
+"-a                 Gunakan ping dengan suara\n"
+"-A                 Gunakan ping adaptif\n"
+"-B                 Alamat sumber tetap\n"
+"-c <jumlah>         Berhenti setelah <jumlah> respons\n"
+"  -C                 panggil panggilan sistem connect() saat pembuatan "
+"soket\n"
+"  -D                 tampilkan cap waktu\n"
+"  -d                 gunakan opsi soket SO_DEBUG\n"
+"  -e <pengidentifikasi>    tentukan pengidentifikasi untuk sesi ping, "
+"default adalah acak untuk\n"
+"                     SOCK_RAW dan ditentukan oleh kernel untuk SOCK_DGRAM\n"
+"                     Implikasikan penggunaan SOCK_RAW (hanya untuk IPv4 "
+"dengan pengidentifikasi 0)\n"
+"  -f                 banjir ping\n"
+"  -h                 tampilkan bantuan dan keluar\n"
+"  -H                 paksa resolusi nama DNS terbalik (berguna untuk tujuan "
+"numerik\n"
+"                     atau untuk -f), menggantikan -n\n"
+"  -I <antarmuka>     nama antarmuka atau alamat\n"
+"  -i <interval>      detik antara pengiriman setiap paket\n"
+"  -j                 keluaran JSON (eksperimental)\n"
+"  -L                 menonaktifkan loopback paket multicast\n"
+"  -l <preload>       mengirim <preload> jumlah paket sambil menunggu "
+"respons\n"
+"-m <mark>          menandai paket yang keluar\n"
+"-M <pmtud opt>     mendefinisikan penemuan MTU jalur, dapat berupa salah "
+"satu dari <do|dont|want|probe>\n"
+"  -n                 tidak melakukan resolusi nama DNS terbalik, "
+"menggantikan -H\n"
+"  -O                 melaporkan respons yang belum diterima\n"
+"-p <pattern>       isi byte padding\n"
+"-q                 keluaran senyap\n"
+"-Q <tclass>        menggunakan bit kualitas layanan <tclass>\n"
+"-s <size>          menggunakan <size> sebagai jumlah byte data yang akan "
+"dikirim\n"
+"  -S <size>          gunakan <size> sebagai nilai opsi soket SO_SNDBUF\n"
+"  -t <ttl>           tentukan waktu hidup (TTL)\n"
+"-U                 tampilkan latensi antar pengguna\n"
+"-v                 keluaran terperinci\n"
+"-V                 tampilkan versi dan keluar\n"
+"-w <deadline>      tunggu balasan selama <deadline> detik\n"
+"  -W <timeout>       waktu tunggu untuk respons\n"
 "\n"
-"opsi IPv4:\n"
-"  -4                 pakai IPv4\n"
-"  -b                 izinkan ping ke broadcast\n"
-"  -R                 rekam rute\n"
-"  -T <timestamp>     menentukan stempel waktu, bisa satu dari <tsonly|"
-"tsandaddr|tsprespec>\n"
 "\n"
-"opsi IPv6:\n"
-"  -6                 pakai IPv6\n"
-"  -F <flowlabel>     menentukan label flow, bakunya acak\n"
-"  -N <nodeinfo opt>  pakai query info simpul IPv6, coba <help> sebagai "
+"Opsi IPv4:\n"
+"-4                 gunakan IPv4\n"
+"-b                 izinkan ping ke broadcast\n"
+"-R                 rekam rute\n"
+"-T <timestamp>     tentukan cap waktu, dapat berupa salah satu dari "
+"<tsonly|tsandaddr|tsprespec>\n"
+"\n"
+"Opsi IPv6:\n"
+"-6                 gunakan IPv6\n"
+"-F <label aliran>     tentukan label aliran, default adalah acak\n"
+"-N <opsi info node>  gunakan kueri info node IPv6, coba <help> sebagai "
 "argumen\n"
 "\n"
-"Untuk lebih banyak rincian lihat ping(8).\n"
+"Untuk detail lebih lanjut, lihat ping(8).\n"
 
 #: ping/ping_common.c:219
 #, c-format
@@ -1221,6 +1227,8 @@ msgstr "belum ada jawaban untuk icmp_seq=%lu\n"
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
 msgstr ""
+"PERINGATAN: Kelebihan ukuran buffer, kurangi ukuran paket atau lakukan pra-"
+"muat"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1264,27 +1272,27 @@ msgstr ""
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "Peringatan: nilai tv_usec %ld tidak valid"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "Peringatan: tv_sec %ld tidak valid"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "Peringatan: time of day mundur (%ldus), melakukan upaya perlawanan"
+msgstr "Peringatan: Waktu kembali (%ld detik), ambil tindakan pencegahan"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d byte data\n"
+msgstr "%d byte "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr " dari %s"
+msgstr "dari %s:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1337,7 +1345,7 @@ msgstr ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "Kelebihan kapasitas selama proses konstruksi JSON"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1345,9 +1353,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "Dari %s icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " kesalahan parse (terlalu pendek)"
+msgstr " kesalahan parsing (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1375,9 +1383,9 @@ msgid "from %s %s: "
 msgstr "dari %s %s: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1420,14 +1428,14 @@ msgid ", time %llums"
 msgstr ", waktu %llums"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%spipe %d"
+msgstr "pipe %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
+msgstr "ipg/ewma %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
