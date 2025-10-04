@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2024-10-19 18:38+0000\n"
+"PO-Revision-Date: 2025-10-05 15:53+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/tr/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.13.3\n"
 
 #: arping.c:123
 #, c-format
@@ -1082,7 +1082,7 @@ msgid "%d data bytes\n"
 msgstr "%d bayt veri\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1169,6 +1169,7 @@ msgstr ""
 "                     -f için kullanışlıdır), -n seçeneğini geçersiz kılar\n"
 "  -I <arayüz>        arayüz adı veya adresi\n"
 "  -i <aralık>        her paketin gönderilmesi arasında geçen saniye\n"
+"  -f                 JSON çıktısı (deneysel)\n"
 "  -L                 çok noktaya yayın paketlerinin geri döngüsünü engelle\n"
 "  -l <ön yükleme>    yanıt beklerken <ön yükleme> tane paket gönder\n"
 "  -m <işaret>        giden paketleri etiketle\n"
@@ -1221,7 +1222,7 @@ msgstr "icmp_seq=%lu için henüz cevap yok\n"
 
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
-msgstr ""
+msgstr "UYARI: tampon boyutu taşması, paket boyutunu veya ön yüklemeyi azaltın"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1264,27 +1265,27 @@ msgstr "Uyarı: SO_TIMESTAMP desteği yok, SIOCGSTAMP'a geri dönülüyor"
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "Uyarı: geçersiz tv_usec %ld us"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "Uyarı: geçersiz tv_sec %ld s"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "Uyarı: günün zamanı geriye gidiyor (%ldus), karşı önlemler alınıyor"
+msgstr "Uyarı: günün zamanı geriye gidiyor (%ld s), karşı önlemler alınıyor"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d bayt veri\n"
+msgstr "%d bayt veri "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr " %s'den"
+msgstr "%s'den:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1338,7 +1339,7 @@ msgstr ""
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "JSON oluşturma sırasında taşma"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1346,9 +1347,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "%s'den icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " ayrıştırma hatası (çok kısa)"
+msgstr " ayrıştırma hatası (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1376,11 +1377,9 @@ msgid "from %s %s: "
 msgstr "%s %s'den: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr ""
-"rtt en düşük/ortalama/en yüksek/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld."
-"%03ld ms"
+msgstr "rtt en düşük/ortalama/en yüksek/mdev = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1423,14 +1422,14 @@ msgid ", time %llums"
 msgstr ", zaman %llums"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%sboru %d"
+msgstr "boru %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
+msgstr "ipg/ewma %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
