@@ -167,7 +167,7 @@ struct ping_ni {
 /*ping runtime state */
 struct ping_rts {
 	unsigned int mark;
-	unsigned char outpack[MAXPACKET];
+	unsigned char outpack[MAXPACKET] __attribute__ ((aligned));
 
 	struct rcvd_table rcvd_tbl;
 
