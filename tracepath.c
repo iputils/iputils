@@ -18,6 +18,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <resolv.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -157,6 +158,7 @@ static int recverr(struct run_state *const ctl)
 		.msg_controllen = sizeof(cbuf),
 		0
 	};
+	bool restart;
 
  restart:
 	memset(&rcvbuf, -1, sizeof(rcvbuf));
@@ -298,23 +300,27 @@ static int recverr(struct run_state *const ctl)
 	else
 		rethops = 256 - rethops;
 
+	restart = false;
+
 	switch (e->ee_errno) {
 	case ETIMEDOUT:
 		printf("\n");
+		restart = true;
 		break;
 	case EMSGSIZE:
 		printf(_("pmtu %d\n"), e->ee_info);
 		ctl->mtu = e->ee_info;
 		progress = ctl->mtu;
+		restart = true;
 		break;
 	case ECONNREFUSED:
 		printf(_("reached\n"));
 		ctl->hops_to = sndhops < 0 ? ctl->ttl : sndhops;
 		ctl->hops_from = rethops;
-		return 0;
+		break;
 	case EPROTO:
 		printf("!P\n");
-		return 0;
+		break;
 	case EHOSTUNREACH:
 		if ((e->ee_origin == SO_EE_ORIGIN_ICMP &&
 		     e->ee_type == ICMP_TIME_EXCEEDED &&
@@ -328,22 +334,26 @@ static int recverr(struct run_state *const ctl)
 					printf(_("asymm %2d "), rethops);
 			}
 			printf("\n");
+			restart = true;
 			break;
 		}
 		printf("!H\n");
-		return 0;
+		break;
 	case ENETUNREACH:
 		printf("!N\n");
-		return 0;
+		break;
 	case EACCES:
 		printf("!A\n");
-		return 0;
+		break;
 	default:
 		printf("\n");
 		error(0, e->ee_errno, _("NET ERROR"));
-		return 0;
+		break;
 	}
-	goto restart;
+
+	if (restart)
+		goto restart;
+	return 0;
 }
 
 static int probe_ttl(struct run_state *const ctl)
