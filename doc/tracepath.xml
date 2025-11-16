@@ -46,6 +46,9 @@ xml:id="man.tracepath">
         <replaceable>port</replaceable></option>
       </arg>
       <arg choice="opt" rep="norepeat">
+        <option>-e</option>
+      </arg>
+      <arg choice="opt" rep="norepeat">
         <option>-V</option>
       </arg>
       <arg choice="req" rep="norepeat">destination</arg>
@@ -139,6 +142,14 @@ xml:id="man.tracepath">
         </term>
         <listitem>
           <para>Sets the initial destination port to use.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <option>-e</option>
+        </term>
+        <listitem>
+          <para>Show ICMP extensions (if present).</para>
         </listitem>
       </varlistentry>
       <varlistentry>
