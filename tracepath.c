@@ -58,6 +58,8 @@ enum {
 	DEFAULT_OVERHEAD_IPV4 = 28,
 	DEFAULT_OVERHEAD_IPV6 = 48,
 
+	MAX_ICMP_MSG_SIZE = 1280,
+
 	DEFAULT_MTU_IPV4 = 65535,
 	DEFAULT_MTU_IPV6 = 128000,
 
@@ -72,8 +74,13 @@ struct hhistory {
 };
 
 struct probehdr {
-	uint32_t ttl;
-	struct timespec ts;
+	union {
+		struct {
+			uint32_t ttl;
+			struct timespec ts;
+		} probe_data;
+		char buf[MAX_ICMP_MSG_SIZE];
+	} un;
 };
 
 struct run_state {
@@ -194,12 +201,14 @@ static int recverr(struct run_state *const ctl)
 		retts = &ctl->his[slot].sendtime;
 		ctl->his[slot].hops = 0;
 	}
-	if (recv_size == sizeof(rcvbuf)) {
-		if (rcvbuf.ttl == 0 || (rcvbuf.ts.tv_sec == 0 && rcvbuf.ts.tv_nsec == 0))
+	if (recv_size >= (ssize_t)sizeof(rcvbuf.un.probe_data)) {
+		if (rcvbuf.un.probe_data.ttl == 0 ||
+		    (rcvbuf.un.probe_data.ts.tv_sec == 0 &&
+		     rcvbuf.un.probe_data.ts.tv_nsec == 0))
 			broken_router = 1;
 		else {
-			sndhops = rcvbuf.ttl;
-			retts = &rcvbuf.ts;
+			sndhops = rcvbuf.un.probe_data.ttl;
+			retts = &rcvbuf.un.probe_data.ts;
 		}
 	}
 
@@ -366,7 +375,7 @@ static int probe_ttl(struct run_state *const ctl)
 	for (i = 0; i < MAX_PROBES; i++) {
 		int res;
 
-		hdr->ttl = ctl->ttl;
+		hdr->un.probe_data.ttl = ctl->ttl;
 		switch (ctl->ai->ai_family) {
 		case AF_INET6:
 			((struct sockaddr_in6 *)&ctl->target)->sin6_port =
@@ -377,9 +386,9 @@ static int probe_ttl(struct run_state *const ctl)
 			    htons(ctl->base_port + ctl->hisptr);
 			break;
 		}
-		clock_gettime(CLOCK_MONOTONIC, &hdr->ts);
+		clock_gettime(CLOCK_MONOTONIC, &hdr->un.probe_data.ts);
 		ctl->his[ctl->hisptr].hops = ctl->ttl;
-		ctl->his[ctl->hisptr].sendtime = hdr->ts;
+		ctl->his[ctl->hisptr].sendtime = hdr->un.probe_data.ts;
 		if (sendto(ctl->socket_fd, ctl->pktbuf, ctl->mtu - ctl->overhead, 0,
 			   (struct sockaddr *)&ctl->target, ctl->targetlen) > 0)
 			break;
