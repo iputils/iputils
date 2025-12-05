@@ -10,8 +10,8 @@ $ ./configure && meson build
 ```
 
 Configuration can be adjusted (prefix, what is being build, etc.), see
-[`meson_options.txt`](https://github.com/iputils/iputils/blob/master/meson.build),
-[`meson.build`](https://github.com/iputils/iputils/blob/master/meson.build).
+[`meson_options.txt`](meson_options.txt),
+[`meson.build`](meson.build).
 
 Build dependencies are listed in scripts in
 [ci directory](https://github.com/iputils/iputils/tree/master/ci).
