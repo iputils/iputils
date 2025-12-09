@@ -691,13 +691,15 @@ main(int argc, char **argv)
 	if (rts.tclass)
 		set_socket_option(&sock6, IPPROTO_IPV6, IPV6_TCLASS, &rts.tclass, sizeof(rts.tclass));
 
-	/* getaddrinfo fails to indicate a scopeid when not used in dual-stack mode.
-	 * Work around by always using dual-stack name resolution.
-	 *
-	 * https://github.com/iputils/iputils/issues/252
-	 */
 	int target_ai_family = hints.ai_family;
-	hints.ai_family = AF_UNSPEC;
+	if (hints.ai_family == AF_INET6) {
+		/* getaddrinfo fails to indicate a scopeid when not used in dual-stack mode.
+		 * Work around by always using dual-stack name resolution.
+		 *
+		 * https://github.com/iputils/iputils/issues/252
+		*/
+		hints.ai_family = AF_UNSPEC;
+	}
 
 	if (!strchr(target, '%') && sock6.socktype == SOCK_DGRAM &&
 		inet_pton(AF_INET6, target, buf) > 0 &&
