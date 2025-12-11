@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2025-09-08 03:54+0000\n"
+"PO-Revision-Date: 2025-12-11 06:58+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.13.2\n"
+"X-Generator: Weblate 5.14.3\n"
 
 #: arping.c:123
 #, c-format
@@ -1307,7 +1307,7 @@ msgstr "%s-დან:"
 #: ping/ping_common.c:845
 #, c-format
 msgid " ident=%d"
-msgstr " ident=%d"
+msgstr " იდენტ=%d"
 
 #: ping/ping_common.c:848
 #, c-format
