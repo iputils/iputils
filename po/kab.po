@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2024-10-19 18:38+0000\n"
+"PO-Revision-Date: 2026-02-09 00:21+0000\n"
 "Last-Translator: ButterflyOfFire "
 "<butterflyoffire@users.noreply.translate.fedoraproject.org>\n"
 "Language-Team: Kabyle <https://translate.fedoraproject.org/projects/iputils/"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.15.2\n"
 
 #: arping.c:123
 #, c-format
@@ -163,7 +163,7 @@ msgstr "ARPING %s "
 #: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
-msgstr ""
+msgstr "seg %s %s\n"
 
 #: arping.c:1056
 msgid "no source address in not-DAD mode"
@@ -212,7 +212,7 @@ msgstr ""
 #: clockdiff.c:603
 #, c-format
 msgid "%s is down"
-msgstr ""
+msgstr "%s d arurmid"
 
 #: clockdiff.c:606
 #, c-format
@@ -543,7 +543,7 @@ msgstr ""
 #: ping/ping.c:1271
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
-msgstr ""
+msgstr " %1x  %1x  %02x %04x %04x"
 
 #: ping/ping.c:1273
 #, c-format
@@ -553,7 +553,7 @@ msgstr "   %1x %04x"
 #: ping/ping.c:1275
 #, c-format
 msgid "  %02x  %02x %04x"
-msgstr ""
+msgstr "  %02x  %02x %04x"
 
 #: ping/ping.c:1291
 #, c-format
@@ -884,7 +884,7 @@ msgstr ""
 #: ping/ping6_common.c:447
 #, c-format
 msgid ", code=%d"
-msgstr ""
+msgstr ", angal=%d"
 
 #: ping/ping6_common.c:450
 #, c-format
@@ -904,12 +904,12 @@ msgstr ""
 #: ping/ping6_common.c:456
 #, c-format
 msgid "code %d"
-msgstr ""
+msgstr "angal %d"
 
 #: ping/ping6_common.c:459
 #, c-format
 msgid "Parameter problem: "
-msgstr ""
+msgstr "Ugur deg uɣewwar: "
 
 #: ping/ping6_common.c:461
 #, c-format
@@ -1138,14 +1138,14 @@ msgid "Warning: time of day goes back (%ld s), taking countermeasures"
 msgstr ""
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d itamḍanen seg %s:"
+msgstr "%d ibiten "
 
 #: ping/ping_common.c:839
-#, fuzzy, c-format
+#, c-format
 msgid "from %s:"
-msgstr "Seg %s: "
+msgstr "seg %s:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1231,12 +1231,12 @@ msgstr ""
 #: ping/ping_output.c:96
 #, c-format
 msgid "from %s %s: "
-msgstr ""
+msgstr "seg %s %s: "
 
 #: ping/ping_output.c:149
 #, fuzzy, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld mts"
+msgstr "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1266,7 +1266,7 @@ msgstr ""
 #: ping/ping_output.c:173
 #, c-format
 msgid ", +%ld errors"
-msgstr ""
+msgstr ", +%ld n tuccḍiwin"
 
 #: ping/ping_output.c:179
 #, c-format
@@ -1382,7 +1382,7 @@ msgstr ""
 #: tracepath.c:607
 #, c-format
 msgid "%2d:  no reply\n"
-msgstr ""
+msgstr "%2d:  war tiririt\n"
 
 #: tracepath.c:614
 #, c-format
