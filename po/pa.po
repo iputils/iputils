@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2026-02-19 14:58+0000\n"
+"Last-Translator: A S Alam <aalam@users.noreply.translate.fedoraproject.org>\n"
+"Language-Team: Punjabi <https://translate.fedoraproject.org/projects/iputils/"
+"iputils/pa/>\n"
 "Language: pa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.16\n"
 
 #: arping.c:123
 #, c-format
@@ -56,48 +58,48 @@ msgstr ""
 #: arping.c:306
 #, c-format
 msgid "Received %d response(s)"
-msgstr ""
+msgstr "%d ਜਵਾਬ ਮਿਲੇ"
 
 #: arping.c:310
 #, c-format
 msgid "%d request(s)"
-msgstr ""
+msgstr "%d ਬੇਨਤੀਆਂ"
 
 #: arping.c:312
 #, c-format
 msgid "%s%d broadcast(s)"
-msgstr ""
+msgstr "%s%d ਬਰਾਂਡਕਾਸਟ"
 
 #: arping.c:422
 msgid "Unicast"
-msgstr ""
+msgstr "ਯੂਨੀਕਾਸਟ"
 
 #: arping.c:422
 msgid "Broadcast"
-msgstr ""
+msgstr "ਬਰਾਡਕਾਸਟ"
 
 #: arping.c:423
 #, c-format
 msgid "%s from "
-msgstr ""
+msgstr "%s ਇਸ ਤੋਂ "
 
 #: arping.c:423
 msgid "reply"
-msgstr ""
+msgstr "ਜਵਾਬ"
 
 #: arping.c:423
 msgid "request"
-msgstr ""
+msgstr "ਬੇਨਤੀ"
 
 #: arping.c:428
 #, c-format
 msgid "for %s "
-msgstr ""
+msgstr "%s ਲਈ "
 
 #: arping.c:433
 #, c-format
 msgid "for "
-msgstr ""
+msgstr "ਇਸ ਲਈ "
 
 #: arping.c:443
 #, c-format
@@ -112,7 +114,7 @@ msgstr ""
 #: arping.c:596
 #, c-format
 msgid "Interface \"%s\" is down\n"
-msgstr ""
+msgstr "ਇੰਟਰਫੇਸ \"%s\" ਬੰਦ ਹੈ\n"
 
 #: arping.c:604
 #, c-format
@@ -134,7 +136,7 @@ msgstr ""
 #: arping.c:978
 #, c-format
 msgid "Device %s not available."
-msgstr ""
+msgstr "ਡਿਵਾਈਸ %s ਉਪਲੱਬਧ ਨਹੀ ਹੈ।"
 
 #: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
@@ -142,7 +144,7 @@ msgstr ""
 
 #: arping.c:999
 msgid "WARNING: interface is ignored"
-msgstr ""
+msgstr "ਸਾਵਧਾਨ: ਇੰਟਰਫੇਸ ਨੂੰ ਅਣਡਿੱਠਾ ਕੀਤਾ ਗਿਆ ਹੈ"
 
 #: arping.c:1018
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
@@ -210,7 +212,7 @@ msgstr ""
 #: clockdiff.c:603
 #, c-format
 msgid "%s is down"
-msgstr ""
+msgstr "%s ਬੰਦ ਹੈ"
 
 #: clockdiff.c:606
 #, c-format
