@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2025-12-11 06:58+0000\n"
+"PO-Revision-Date: 2026-03-04 08:58+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14.3\n"
+"X-Generator: Weblate 5.16.1\n"
 
 #: arping.c:123
 #, c-format
@@ -539,11 +539,11 @@ msgstr "გადაცემის მარყუჟის გათიშვ�
 
 #: ping/ping.c:1064
 msgid "cannot set multicast time-to-live"
-msgstr "გადაცემის TTL-ის დაყენების შეცდომა"
+msgstr "ტრანსლაციის სიცოცხლის დროის დაყენება შეუძლებელია"
 
 #: ping/ping.c:1066
 msgid "cannot set unicast time-to-live"
-msgstr "უნიკასტის TTL-ის დაყენების შეცდომა"
+msgstr "უნიკასტის სიცოცხლის დროის დაყენება შეუძლებელია"
 
 #: ping/ping.c:1107
 #, c-format
@@ -699,7 +699,7 @@ msgstr "სამიზნე ჰოსტი აკრძალულია\n"
 #: ping/ping.c:1330
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr "TOS-ის სამიზნე ქსელი მიუწვდომელია\n"
+msgstr "სერვისის ტიპისთვის სამიზნე ქსელი ხელმისაწვდომი არა\n"
 
 #: ping/ping.c:1333
 #, c-format
@@ -769,7 +769,7 @@ msgstr "ექოს მოთხოვნა\n"
 #: ping/ping.c:1394
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr "TTL გადაჭარბებულია\n"
+msgstr "სიცოცხლის დრო გადაჭარბებულია\n"
 
 #: ping/ping.c:1397
 #, c-format
@@ -1487,7 +1487,7 @@ msgstr "(გაფუჭებულმა რაუტერმა არას
 #: tracepath.c:306
 #, c-format
 msgid "pmtu %d\n"
-msgstr "PMTU %d\n"
+msgstr "pmtu %d\n"
 
 #: tracepath.c:311
 #, c-format
