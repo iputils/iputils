@@ -855,6 +855,7 @@ static int event_loop(struct run_state *ctl)
 
 	close(sfd);
 	close(tfd);
+	close(timeoutfd);
 	freeifaddrs(ctl->ifa0);
 
 	return finish(ctl);
