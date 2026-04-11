@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2026-02-09 00:21+0000\n"
+"PO-Revision-Date: 2026-04-12 11:21+0000\n"
 "Last-Translator: ButterflyOfFire "
 "<butterflyoffire@users.noreply.translate.fedoraproject.org>\n"
 "Language-Team: Kabyle <https://translate.fedoraproject.org/projects/iputils/"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.15.2\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #: arping.c:123
 #, c-format
@@ -924,12 +924,12 @@ msgstr ""
 #: ping/ping6_common.c:465
 #, c-format
 msgid "Unknown option "
-msgstr ""
+msgstr "Taxtiṛt tarussint "
 
 #: ping/ping6_common.c:467
 #, c-format
 msgid "code %d "
-msgstr ""
+msgstr "angal %d "
 
 #: ping/ping6_common.c:468
 #, c-format
@@ -949,7 +949,7 @@ msgstr ""
 #: ping/ping6_common.c:477
 #, c-format
 msgid "MLD Query"
-msgstr ""
+msgstr "Tuttra MLD"
 
 #: ping/ping6_common.c:480
 #, c-format
