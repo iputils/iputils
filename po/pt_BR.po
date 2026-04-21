@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2025-09-06 10:28+0000\n"
+"PO-Revision-Date: 2026-04-22 00:58+0000\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/pt_BR/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.13.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #: arping.c:123
 #, c-format
@@ -1082,7 +1082,7 @@ msgid "%d data bytes\n"
 msgstr "%d bytes de dados\n"
 
 #: ping/ping_common.c:49
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1158,11 +1158,11 @@ msgstr ""
 "soquete\n"
 "  -D                 imprime marcas de tempo\n"
 "  -d                 usa opção de soquete SO_DEBUG\n"
-"  -e <identificador> define identificador para sessão de ping, padrão é\n"
-"                     aleatório para SOCK_RAW e definido pelo kernel para\n"
-"                     SOCK_DGRAM Implica uso de SOCK_RAW (apenas para IPv4 "
-"para\n"
-"                     identificador 0)\n"
+"  -e <identificador> define identificador para sessão de ping, padrão é "
+"aleatório\n"
+"                     para SOCK_RAW e definido pelo kernel para SOCK_DGRAM\n"
+"                     Implica usar SOCK_RAW (apenas para IPv4 para "
+"identificador 0)\n"
 "  -f                 ping em sequência rápida (flood)\n"
 "  -h                 imprime ajuda e sai\n"
 "  -H                 força resolução de nome DNS reverso (útil para "
@@ -1170,18 +1170,18 @@ msgstr ""
 "                     numéricos ou para -f), substitui -n\n"
 "  -I <interface>     nome da interface ou endereço\n"
 "  -i <intervalo>     segundos entre o envio de cada pacote\n"
+"  -j                 saída JSON (experimental)\n"
 "  -L                 suprime loopback de pacotes multicast\n"
 "  -l <preload>       envia <preload> número de pacotes enquanto aguarda "
 "respostas\n"
 "  -m <marca>         etiqueta os pacotes que saem\n"
-"  -M <opção_pmtud>   define descoberta do MTU do caminho, pode ser <do|dont|"
-"want|probe>\n"
+"  -M <opção_pmtud>   define descoberta do MTU do caminho, pode ser "
+"<do|dont|want|probe>\n"
 "  -n                 sem resolução de nome DNS reverso, substitui -H\n"
 "  -O                 relata respostas pendentes\n"
 "  -p <padrão>        conteúdo do byte de preenchimento\n"
 "  -q                 saída silenciosa\n"
-"  -Q <classe_de_qualidade> usa bits de qualidade de serviço "
-"<classe_de_qualidade>\n"
+"  -Q <tclasse>       usa bits de qualidade de serviço <tclasse>\n"
 "  -s <tamanho>       usa <tamanho> como número de bytes de dados a serem "
 "enviados\n"
 "  -S <tamanho>       usa <tamanho> como valor da opção de soquete SO_SNDBUF\n"
@@ -1196,12 +1196,12 @@ msgstr ""
 "  -4                 usa IPv4\n"
 "  -b                 permite ping de broadcast\n"
 "  -R                 grava rota\n"
-"  -T <timestamp>     define a marca de tempo, pode ser um dos <tsonly|"
-"tsandaddr|tsprespec>\n"
+"  -T <timestamp>     define a marca de tempo, pode ser um dos "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "Opções de IPv6:\n"
 "  -6                 usa IPv6\n"
-"  -F <rótulo_flux>   define rótulo de fluxo, padrão é aleatório\n"
+"  -F <rótulo_fluxo>  define rótulo de fluxo, padrão é aleatório\n"
 "  -N <opç_nodeinfo>  usa consulta de informações de nó IPv6, tente <help> "
 "como argumento\n"
 "\n"
@@ -1225,6 +1225,7 @@ msgstr "nenhuma resposta ainda para icmp_seq=%lu\n"
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
 msgstr ""
+"AVISO: estouro de tamanho de bufferm reduza o tamanho ou preload do pacote"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1267,27 +1268,27 @@ msgstr "Aviso: sem suporte a SO_TIMESTAMP, recorrendo a SIOCGSTAMP"
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "Aviso: tv_usec inválido %ld us"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "Aviso: tv_sec inválido %ld s"
 
 #: ping/ping_common.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "Aviso: a hora do dia está voltando (%ldus), tomando contramedidas"
+msgstr "Aviso: a hora do dia está voltando (%ld s), tomando contramedidas"
 
 #: ping/ping_common.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "%d bytes "
-msgstr "%d bytes de dados\n"
+msgstr "%d bytes "
 
 #: ping/ping_common.c:839
 #, c-format
 msgid "from %s:"
-msgstr "de %s"
+msgstr "de %s:"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1340,7 +1341,7 @@ msgstr ", mín/méd/ewma/máx = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "Estouro durante construção JSON"
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1348,9 +1349,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "De %s icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, fuzzy, c-format
+#, c-format
 msgid " parse error (%s)"
-msgstr " erro de análise (curta demais)"
+msgstr " erro de análise (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1378,9 +1379,9 @@ msgid "from %s %s: "
 msgstr "de %s %s: "
 
 #: ping/ping_output.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "rtt mín/méd/máx/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
+msgstr "rtt mín/méd/máx/mdev = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1423,14 +1424,14 @@ msgid ", time %llums"
 msgstr ", tempo %llums"
 
 #: ping/ping_output.c:194
-#, fuzzy, c-format
+#, c-format
 msgid "pipe %d"
-msgstr "%spipe %d"
+msgstr "pipe %d"
 
 #: ping/ping_output.c:210
-#, fuzzy, c-format
+#, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d ms"
+msgstr "ipg/ewma %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
