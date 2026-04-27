@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2026-04-12 11:21+0000\n"
+"PO-Revision-Date: 2026-04-28 12:59+0000\n"
 "Last-Translator: ButterflyOfFire "
 "<butterflyoffire@users.noreply.translate.fedoraproject.org>\n"
 "Language-Team: Kabyle <https://translate.fedoraproject.org/projects/iputils/"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #: arping.c:123
 #, c-format
@@ -49,6 +49,11 @@ msgid ""
 "\n"
 "For more details see arping(8).\n"
 msgstr ""
+"\n"
+"  -s <aɣbalu>   tansa IP taɣbalut\n"
+"  <taɣerwaḍt> isem DNS neɣ tansa IP\n"
+"\n"
+"I ugar n telqayt, wali arping(8).\n"
 
 #: arping.c:305
 #, c-format
@@ -89,7 +94,7 @@ msgstr "tiririt"
 
 #: arping.c:423
 msgid "request"
-msgstr ""
+msgstr "tuttra"
 
 #: arping.c:428
 #, c-format
@@ -136,7 +141,7 @@ msgstr ""
 #: arping.c:978
 #, c-format
 msgid "Device %s not available."
-msgstr ""
+msgstr "Ibenk %s ur yestufi ara."
 
 #: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
@@ -558,7 +563,7 @@ msgstr "  %02x  %02x %04x"
 #: ping/ping.c:1291
 #, c-format
 msgid "Echo Reply\n"
-msgstr ""
+msgstr "Tiririt Echo\n"
 
 #: ping/ping.c:1297
 #, c-format
@@ -874,7 +879,7 @@ msgstr ""
 #: ping/ping6_common.c:440
 #, c-format
 msgid "Unknown code %d"
-msgstr ""
+msgstr "Angal %d d arussin"
 
 #: ping/ping6_common.c:445
 #, c-format
@@ -939,12 +944,12 @@ msgstr "ɣef %u"
 #: ping/ping6_common.c:471
 #, c-format
 msgid "Echo request"
-msgstr ""
+msgstr "Tuttra Echo"
 
 #: ping/ping6_common.c:474
 #, c-format
 msgid "Echo reply"
-msgstr ""
+msgstr "Tiririt Echo"
 
 #: ping/ping6_common.c:477
 #, c-format
@@ -954,7 +959,7 @@ msgstr "Tuttra MLD"
 #: ping/ping6_common.c:480
 #, c-format
 msgid "MLD Report"
-msgstr ""
+msgstr "Aneqqis MLD"
 
 #: ping/ping6_common.c:483
 #, c-format
@@ -1201,7 +1206,7 @@ msgstr ""
 #: ping/ping_output.c:50
 #, c-format
 msgid "From %s icmp_seq=%u "
-msgstr ""
+msgstr "Seg %s icmp_seq=%u "
 
 #: ping/ping_output.c:56
 #, c-format
@@ -1221,7 +1226,7 @@ msgstr ""
 #: ping/ping_output.c:85
 #, c-format
 msgid "PING %s (%s) "
-msgstr ""
+msgstr "PING %s (%s) "
 
 #: ping/ping_output.c:88
 #, c-format
@@ -1241,12 +1246,12 @@ msgstr "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
 #: ping/ping_output.c:165
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr "--- %s tidaddanin n ping ---\n"
+msgstr "--- tidaddanin ping n %s ---\n"
 
 #: ping/ping_output.c:166
 #, c-format
 msgid "%ld packets transmitted, "
-msgstr "%ld ikemmas yettwaṭfen, "
+msgstr "%ld n yikemmusen i yettwaznen, "
 
 #: ping/ping_output.c:167
 #, c-format
@@ -1397,7 +1402,7 @@ msgstr ""
 #: tracepath.c:618
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "tuɣalin %d "
 
 #: tracepath.c:623
 #, c-format
