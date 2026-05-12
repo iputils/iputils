@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2026-05-13 11:59+0000\n"
+"Last-Translator: Bone NI <bounkirdni@gmail.com>\n"
+"Language-Team: Lao <https://translate.fedoraproject.org/projects/iputils/"
+"iputils/lo/>\n"
 "Language: lo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.17.1\n"
 
 #: arping.c:123
 #, c-format
@@ -37,6 +39,22 @@ msgid ""
 "  -i <interval> set interval between packets (default: 1 second)\n"
 "  -I <device>   which ethernet device to use"
 msgstr ""
+"\n"
+"ວິທີໃຊ້:\n"
+"  arping [ຕົວເລືອກ] <ປາຍທາງ>\n"
+"\n"
+"ຕົວເລືອກ:\n"
+"  -f            ອອກເມື່ອໄດ້ຮັບການຕອບກັບທຳອິດ\n"
+"  -q            ໂໝດງຽບ\n"
+"  -b            ສົ່ງແບບກະຈາຍ (broadcast) ຕໍ່ໄປ, ບໍ່ສົ່ງແບບເຈາະຈົງ (unicast)\n"
+"  -D            ໂໝດກວດສອບການຊ້ຳກັນຂອງທີ່ຢູ່ (duplicate address detection)\n"
+"  -U            ໂໝດ ARP ແບບບໍ່ໄດ້ຮ້ອງຂໍ (unsolicited), ອັບເດດ neighbours ຂອງທ່ານ\n"
+"  -A            ໂໝດຕອບກັບ ARP, ອັບເດດ neighbours ຂອງທ່ານ\n"
+"  -V            ສະແດງເວີຊັນແລ້ວອອກ\n"
+"  -c <ຈຳນວນ>     ຈຳນວນແພັກເກັດທີ່ຈະສົ່ງ\n"
+"  -w <ເວລາລໍຖ້າ>   ໄລຍະເວລາລໍຖ້າການຕອບກັບ\n"
+"  -i <ຊ່ວງເວລາ>   ກຳນົດຊ່ວງເວລາລະຫວ່າງແພັກເກັດ (ຄ່າເລີ່ມຕົ້ນ: 1 ວິນາທີ)\n"
+"  -I <ອຸປະກອນ>    ອຸປະກອນ Ethernet ທີ່ຈະໃຊ້"
 
 #: arping.c:142
 #, c-format
@@ -47,140 +65,145 @@ msgid ""
 "\n"
 "For more details see arping(8).\n"
 msgstr ""
+"\n"
+"  -s <ຕົ້ນທາງ>   ທີ່ຢູ່ IP ຕົ້ນທາງ\n"
+"  <ປາຍທາງ>      ຊື່ DNS ຫຼື ທີ່ຢູ່ IP\n"
+"\n"
+"ສຳລັບລາຍລະອຽດເພີ່ມເຕີມ ເບິ່ງໄດ້ທີ່ arping(8).\n"
 
 #: arping.c:305
 #, c-format
 msgid "Sent %d probes (%d broadcast(s))\n"
-msgstr ""
+msgstr "ສົ່ງການກວດສອບ %d ຄັ້ງ (ແບບກະຈາຍ %d ຄັ້ງ)\n"
 
 #: arping.c:306
 #, c-format
 msgid "Received %d response(s)"
-msgstr ""
+msgstr "ໄດ້ຮັບການຕອບສະໜອງ %d ຄັ້ງ"
 
 #: arping.c:310
 #, c-format
 msgid "%d request(s)"
-msgstr ""
+msgstr "%d ຄຳຮ້ອງຂໍ"
 
 #: arping.c:312
 #, c-format
 msgid "%s%d broadcast(s)"
-msgstr ""
+msgstr "%s%d ແບບກະຈາຍ"
 
 #: arping.c:422
 msgid "Unicast"
-msgstr ""
+msgstr "ຢູນີແຄສ (Unicast)"
 
 #: arping.c:422
 msgid "Broadcast"
-msgstr ""
+msgstr "ບຣອດແຄສ (Broadcast)"
 
 #: arping.c:423
 #, c-format
 msgid "%s from "
-msgstr ""
+msgstr "%s ຈາກ "
 
 #: arping.c:423
 msgid "reply"
-msgstr ""
+msgstr "ຕອບກັບ"
 
 #: arping.c:423
 msgid "request"
-msgstr ""
+msgstr "ຄຳຮ້ອງຂໍ"
 
 #: arping.c:428
 #, c-format
 msgid "for %s "
-msgstr ""
+msgstr "ສຳລັບ %s "
 
 #: arping.c:433
 #, c-format
 msgid "for "
-msgstr ""
+msgstr "ສຳລັບ "
 
 #: arping.c:443
 #, c-format
 msgid " %ld.%03ldms\n"
-msgstr ""
+msgstr " %ld.%03ldms\n"
 
 #: arping.c:445
 #, c-format
 msgid " UNSOLICITED?\n"
-msgstr ""
+msgstr " ບໍ່ໄດ້ຮ້ອງຂໍ (UNSOLICITED)?\n"
 
 #: arping.c:596
 #, c-format
 msgid "Interface \"%s\" is down\n"
-msgstr ""
+msgstr "ອິນເຕີເຟສ \"%s\" ປິດການໃຊ້ງານຢູ່\n"
 
 #: arping.c:604
 #, c-format
 msgid "Interface \"%s\" is not ARPable\n"
-msgstr ""
+msgstr "ອິນເຕີເຟສ \"%s\" ບໍ່ສາມາດໃຊ້ ARP ໄດ້\n"
 
 #: arping.c:697
 #, c-format
 msgid "WARNING: using default broadcast address.\n"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ກຳລັງໃຊ້ທີ່ຢູ່ແບບກະຈາຍ (broadcast) ມາດຕະຖານ.\n"
 
 #: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:415 ping/ping.c:465
 #: ping/ping.c:517 ping/ping.c:525 ping/ping.c:569 ping/ping.c:572
 #: ping/ping.c:575 ping/ping.c:588 tracepath.c:474 tracepath.c:477
 #: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
-msgstr ""
+msgstr "ອາກິວເມັນບໍ່ຖືກຕ້ອງ"
 
 #: arping.c:978
 #, c-format
 msgid "Device %s not available."
-msgstr ""
+msgstr "ອຸປະກອນ %s ບໍ່ພ້ອມໃຊ້ງານ."
 
 #: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດອຸປະກອນທີ່ເໝາະສົມໄດ້. ກະລຸນາໃຊ້ຕົວເລືອກ -I."
 
 #: arping.c:999
 msgid "WARNING: interface is ignored"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ອິນເຕີເຟສຖືກລະເລີຍ"
 
 #: arping.c:1018
 msgid "WARNING: setsockopt(SO_DONTROUTE)"
-msgstr ""
+msgstr "ຄຳເຕືອນ: setsockopt(SO_DONTROUTE)"
 
 #: arping.c:1042
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
+msgstr "ອິນເຕີເຟສ \"%s\" ບໍ່ສາມາດໃຊ້ ARP ໄດ້ (ບໍ່ມີທີ່ຢູ່ ll)\n"
 
 #: arping.c:1051
 #, c-format
 msgid "ARPING %s "
-msgstr ""
+msgstr "ກຳລັງ ARPING %s "
 
 #: arping.c:1052
 #, c-format
 msgid "from %s %s\n"
-msgstr ""
+msgstr "ຈາກ %s %s\n"
 
 #: arping.c:1056
 msgid "no source address in not-DAD mode"
-msgstr ""
+msgstr "ບໍ່ມີທີ່ຢູ່ຕົ້ນທາງໃນໂໝດທີ່ບໍ່ແມ່ນ DAD"
 
 #: clockdiff.c:242
 #, c-format
 msgid "Wrong timestamp %d\n"
-msgstr ""
+msgstr "ເວລາ (timestamp) ບໍ່ຖືກຕ້ອງ %d\n"
 
 #: clockdiff.c:247
 #, c-format
 msgid "Overflow %d hops\n"
-msgstr ""
+msgstr "ເກີນກຳນົດ %d hops\n"
 
 #: clockdiff.c:272
 #, c-format
 msgid "wrong timestamps\n"
-msgstr ""
+msgstr "ເວລາ (timestamps) ບໍ່ຖືກຕ້ອງ\n"
 
 #: clockdiff.c:453
 #, c-format
@@ -202,25 +225,41 @@ msgid ""
 "\n"
 "For more details see clockdiff(8).\n"
 msgstr ""
+"\n"
+"ວິທີໃຊ້:\n"
+"  clockdiff [ຕົວເລືອກ] <ປາຍທາງ>\n"
+"\n"
+"ຕົວເລືອກ:\n"
+"                ຫາກບໍ່ມີ -o, ຈະໃຊ້ພຽງແຕ່ icmp timestamp (ເບິ່ງ RFC0792, ໜ້າ 16)\n"
+"  -o            ໃຊ້ IP timestamp ແລະ icmp echo\n"
+"  -o1           ໃຊ້ three-term IP timestamp ແລະ icmp echo\n"
+"  -T, --time-format <ctime|iso>\n"
+"                  ກຳນົດຮູບແບບການສະແດງເວລາ, ຄ່າເລີ່ມຕົ້ນແມ່ນ ctime\n"
+"  -I            ໃຊ້ແທນ --time-format=iso\n"
+"  -h, --help    ສະແດງການຊ່ວຍເຫຼືອນີ້\n"
+"  -V, --version ສະແດງເວີຊັນແລ້ວອອກ\n"
+"  <ປາຍທາງ>      ຊື່ DNS ຫຼື ທີ່ຢູ່ IP\n"
+"\n"
+"ສຳລັບລາຍລະອຽດເພີ່ມເຕີມ ເບິ່ງໄດ້ທີ່ clockdiff(8).\n"
 
 #: clockdiff.c:598
 msgid "measure: unknown failure"
-msgstr ""
+msgstr "ການວັດແທກ: ຂໍ້ຜິດພາດທີ່ບໍ່ຮູ້ຈັກ"
 
 #: clockdiff.c:603
 #, c-format
 msgid "%s is down"
-msgstr ""
+msgstr "%s ປິດຢູ່"
 
 #: clockdiff.c:606
 #, c-format
 msgid "%s time transmitted in a non-standard format"
-msgstr ""
+msgstr "%s ສົ່ງເວລາໃນຮູບແບບທີ່ບໍ່ເປັນມາດຕະຖານ"
 
 #: clockdiff.c:609
 #, c-format
 msgid "%s is unreachable"
-msgstr ""
+msgstr "%s ຕິດຕໍ່ບໍ່ໄດ້"
 
 #: clockdiff.c:628
 #, c-format
@@ -228,39 +267,41 @@ msgid ""
 "\n"
 "host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 msgstr ""
+"\n"
+"host=%s rtt=%ld(%ld)ms/%ldms delta=%dms/%dms %s\n"
 
 #: ping/node_info.c:169
 #, c-format
 msgid "Qtype conflict\n"
-msgstr ""
+msgstr "Qtype ຂັດແຍ້ງກັນ\n"
 
 #: ping/node_info.c:221
 #, c-format
 msgid "Subject type conflict\n"
-msgstr ""
+msgstr "Subject type ຂັດແຍ້ງກັນ\n"
 
 #: ping/node_info.c:312
 #, c-format
 msgid "IDN encoding error: %s"
-msgstr ""
+msgstr "ຂໍ້ຜິດພາດການເຂົ້າລະຫັດ IDN: %s"
 
 #: ping/node_info.c:323
 msgid "too long scope name"
-msgstr ""
+msgstr "ຊື່ scope ຍາວເກີນໄປ"
 
 #: ping/node_info.c:347 ping/node_info.c:389 ping/ping.c:1073
 #: ping/ping6_common.c:311
 msgid "memory allocation failed"
-msgstr ""
+msgstr "ການຈອງໜ່ວຍຄວາມຈຳລົ້ມເຫຼວ"
 
 #: ping/node_info.c:359
 #, c-format
 msgid "inappropriate subject name: %s"
-msgstr ""
+msgstr "ຊື່ subject ບໍ່ເໝາະສົມ: %s"
 
 #: ping/node_info.c:362
 msgid "dn_comp() returned too long result"
-msgstr ""
+msgstr "dn_comp() ສົ່ງຄືນຜົນລັດທີ່ຍາວເກີນໄປ"
 
 #: ping/node_info.c:402
 #, c-format
@@ -284,113 +325,132 @@ msgid ""
 "  subject-name=name\n"
 "  subject-fqdn=name\n"
 msgstr ""
+"ping -6 -N <nodeinfo opt>\n"
+"ຊ່ວຍເຫຼືອ:\n"
+"  help\n"
+"ສອບຖາມ:\n"
+"  name\n"
+"  ipv6\n"
+"  ipv6-all\n"
+"  ipv6-compatible\n"
+"  ipv6-global\n"
+"  ipv6-linklocal\n"
+"  ipv6-sitelocal\n"
+"  ipv4\n"
+"  ipv4-all\n"
+"ຫົວຂໍ້:\n"
+"  subject-ipv6=addr\n"
+"  subject-ipv4=addr\n"
+"  subject-name=name\n"
+"  subject-fqdn=name\n"
 
 #: ping/ping.c:108 ping/ping.c:738
 #, c-format
 msgid "unknown protocol family: %d"
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກ protocol family: %d"
 
 #: ping/ping.c:123
 #, c-format
 msgid "unknown sock type: %d"
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກ sock type: %d"
 
 #: ping/ping.c:218
 msgid "=> missing cap_net_raw+p capability or setuid?"
-msgstr ""
+msgstr "=> ຂາດຄວາມສາມາດ cap_net_raw+p ຫຼື setuid?"
 
 #: ping/ping.c:257
 #, c-format
 msgid "option argument contains garbage: %s"
-msgstr ""
+msgstr "ອາກິວເມັນຂອງຕົວເລືອກມີຂໍ້ມູນທີ່ໃຊ້ບໍ່ໄດ້: %s"
 
 #: ping/ping.c:258
 msgid "this will become fatal error in the future"
-msgstr ""
+msgstr "ນີ້ຈະກາຍເປັນຂໍ້ຜິດພາດທີ່ຮ້າຍແຮງໃນອະນາຄົດ"
 
 #: ping/ping.c:292
 #, c-format
 msgid "bad value for flowinfo: %s"
-msgstr ""
+msgstr "ຄ່າ flowinfo ບໍ່ຖືກຕ້ອງ: %s"
 
 #: ping/ping.c:295
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
-msgstr ""
+msgstr "ຄ່າ flow ໃຫຍ່ກວ່າ 20 bits: %s"
 
 #: ping/ping.c:317
 #, c-format
 msgid "bad TOS value: %s"
-msgstr ""
+msgstr "ຄ່າ TOS ບໍ່ຖືກຕ້ອງ: %s"
 
 #: ping/ping.c:320
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr ""
+msgstr "ຄ່າເລກຖານສິບຂອງ TOS bits ຕ້ອງຢູ່ໃນຊ່ວງ 0-255: %d"
 
 #: ping/ping.c:405 ping/ping.c:442
 msgid "only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "ສາມາດກຳນົດໄດ້ພຽງແຕ່ຕົວເລືອກ -4 ຫຼື -6 ຢ່າງໃດຢ່າງໜຶ່ງເທົ່ານັ້ນ"
 
 #: ping/ping.c:423 ping/ping.c:428
 msgid "only one of -T or -R may be used"
-msgstr ""
+msgstr "ສາມາດໃຊ້ໄດ້ພຽງແຕ່ -T ຫຼື -R ຢ່າງໃດຢ່າງໜຶ່ງເທົ່ານັ້ນ"
 
 #: ping/ping.c:437
 #, c-format
 msgid "invalid timestamp type: %s"
-msgstr ""
+msgstr "ປະເພດ timestamp ບໍ່ຖືກຕ້ອງ: %s"
 
 #: ping/ping.c:483
 msgid "bad timing interval"
-msgstr ""
+msgstr "ຊ່ວງເວລາ (interval) ບໍ່ຖືກຕ້ອງ"
 
 #: ping/ping.c:485
 #, c-format
 msgid "bad timing interval: %s"
-msgstr ""
+msgstr "ຊ່ວງເວລາ (interval) ບໍ່ຖືກຕ້ອງ: %s"
 
 #: ping/ping.c:496
 #, c-format
 msgid "cannot copy: %s"
-msgstr ""
+msgstr "ບໍ່ສາມາດສຳເນົາ: %s"
 
 #: ping/ping.c:505
 #, c-format
 msgid "invalid source address: %s"
-msgstr ""
+msgstr "ທີ່ຢູ່ຕົ້ນທາງບໍ່ຖືກຕ້ອງ: %s"
 
 #: ping/ping.c:519
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດ preload ໃຫ້ໃຫຍ່ກວ່າ 3: %d"
 
 #: ping/ping.c:538
 #, c-format
 msgid "invalid -M argument: %s"
-msgstr ""
+msgstr "ອາກິວເມັນ -M ບໍ່ຖືກຕ້ອງ: %s"
 
 #: ping/ping.c:594
 msgid "bad linger time"
-msgstr ""
+msgstr "ເວລາ linger ບໍ່ຖືກຕ້ອງ"
 
 #: ping/ping.c:596
 #, c-format
 msgid "bad linger time: %s"
-msgstr ""
+msgstr "ເວລາ linger ບໍ່ຖືກຕ້ອງ: %s"
 
 #: ping/ping.c:613
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
 msgstr ""
+"ຄຳເຕືອນ: ການແກ້ໄຂຊື່ reverse DNS (PTR lookup) ຖືກປິດຢູ່, ບັງຄັບໃຊ້ດ້ວຍ -H"
 
 #: ping/ping.c:632
 msgid "WARNING: ident 0 => forcing raw socket"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ident 0 => ບັງຄັບໃຊ້ raw socket"
 
 #: ping/ping.c:678
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
-msgstr ""
+msgstr "ຄ່າ -s ບໍ່ຖືກຕ້ອງ: '%d': ຢູ່ນອກຊ່ວງ: 0 <= ຄ່າ <= %d"
 
 #: ping/ping.c:706
 #, c-format
@@ -398,39 +458,43 @@ msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
 "or scope-id => use: address%%<ifname|scope-id>"
 msgstr ""
+"ຄຳເຕືອນ: ທີ່ຢູ່ IPv6 link-local ໃນ ICMP datagram socket ອາດຈະຕ້ອງໃຊ້ ifname ຫຼື scope-"
+"id => ໃຊ້: address%%<ifname|scope-id>"
 
 #: ping/ping.c:761 ping/ping6_common.c:102
 #, c-format
 msgid "unknown iface: %s"
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກ iface: %s"
 
 #: ping/ping.c:883
 msgid "warning: QOS sockopts"
-msgstr ""
+msgstr "ຄຳເຕືອນ: QOS sockopts"
 
 #: ping/ping.c:894
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
 msgstr ""
+"ທ່ານຕ້ອງການ ping ແບບກະຈາຍ (broadcast) ບໍ່? ຖ້າແມ່ນ ໃຫ້ໃຊ້ -b. ຖ້າບໍ່ແມ່ນ, ໃຫ້ກວດສອບກົດລະບຽບ"
+"ໄຟວໍຂອງທ່ານ"
 
 #: ping/ping.c:895
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ກຳລັງ ping ທີ່ຢູ່ແບບກະຈາຍ (broadcast)\n"
 
 #: ping/ping.c:898 ping/ping.c:1053
 msgid "cannot set broadcasting"
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດການສົ່ງແບບກະຈາຍ (broadcasting)"
 
 #: ping/ping.c:919
 msgid "gatifaddrs failed"
-msgstr ""
+msgstr "gatifaddrs ລົ້ມເຫຼວ"
 
 #: ping/ping.c:931 ping/ping6_common.c:228
 #, c-format
 msgid "Warning: source address might be selected on device other than: %s"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ທີ່ຢູ່ຕົ້ນທາງອາດຈະຖືກເລືອກໃນອຸປະກອນອື່ນທີ່ບໍ່ແມ່ນ: %s"
 
 #: ping/ping.c:947
 #, c-format
@@ -438,38 +502,39 @@ msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"ຊ່ວງເວລາຕ່ຳສຸດສຳລັບການ broadcast ping ຂອງຜູ້ໃຊ້ຕ້ອງ >= %d ms, ໃຫ້ໃຊ້ -i %s (ຫຼື ສູງກວ່າ)"
 
 #: ping/ping.c:952
 msgid "broadcast ping does not fragment"
-msgstr ""
+msgstr "broadcast ping ຈະບໍ່ມີການແຍກສ່ວນ (fragment)"
 
 #: ping/ping.c:982
 msgid "WARNING: setsockopt(ICMP_FILTER)"
-msgstr ""
+msgstr "ຄຳເຕືອນ: setsockopt(ICMP_FILTER)"
 
 #: ping/ping.c:987
 msgid "WARNING: your kernel is veeery old. No problems."
-msgstr ""
+msgstr "ຄຳເຕືອນ: ເຄີເນລຂອງທ່ານເກົ່າຫຼາຍ, ແຕ່ບໍ່ມີບັນຫາ."
 
 #: ping/ping.c:991
 msgid "WARNING: setsockopt(IP_RECVTTL)"
-msgstr ""
+msgstr "ຄຳເຕືອນ: setsockopt(IP_RECVTTL)"
 
 #: ping/ping.c:993
 msgid "WARNING: setsockopt(IP_RETOPTS)"
-msgstr ""
+msgstr "ຄຳເຕືອນ: setsockopt(IP_RETOPTS)"
 
 #: ping/ping.c:1059
 msgid "cannot disable multicast loopback"
-msgstr ""
+msgstr "ບໍ່ສາມາດປິດການໃຊ້ງານ multicast loopback"
 
 #: ping/ping.c:1064
 msgid "cannot set multicast time-to-live"
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດ multicast time-to-live"
 
 #: ping/ping.c:1066
 msgid "cannot set unicast time-to-live"
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດ unicast time-to-live"
 
 #: ping/ping.c:1107
 #, c-format
@@ -477,6 +542,8 @@ msgid ""
 "\n"
 "NOP"
 msgstr ""
+"\n"
+"NOP"
 
 #: ping/ping.c:1118
 #, c-format
@@ -484,11 +551,13 @@ msgid ""
 "\n"
 "%cSRR: "
 msgstr ""
+"\n"
+"%cSRR: "
 
 #: ping/ping.c:1156
 #, c-format
 msgid "\t(same route)"
-msgstr ""
+msgstr "\t(ເສັ້ນທາງດຽວກັນ)"
 
 #: ping/ping.c:1161
 #, c-format
@@ -496,6 +565,8 @@ msgid ""
 "\n"
 "RR: "
 msgstr ""
+"\n"
+"RR: "
 
 #: ping/ping.c:1197
 #, c-format
@@ -503,26 +574,28 @@ msgid ""
 "\n"
 "TS: "
 msgstr ""
+"\n"
+"TS: "
 
 #: ping/ping.c:1229
 #, c-format
 msgid "\t%ld absolute not-standard"
-msgstr ""
+msgstr "\t%ld absolute ບໍ່ເປັນມາດຕະຖານ"
 
 #: ping/ping.c:1231
 #, c-format
 msgid "\t%ld not-standard"
-msgstr ""
+msgstr "\t%ld ບໍ່ເປັນມາດຕະຖານ"
 
 #: ping/ping.c:1235
 #, c-format
 msgid "\t%ld absolute"
-msgstr ""
+msgstr "\t%ld absolute"
 
 #: ping/ping.c:1246
 #, c-format
 msgid "Unrecorded hops: %d\n"
-msgstr ""
+msgstr "Hops ທີ່ບໍ່ໄດ້ບັນທຶກ: %d\n"
 
 #: ping/ping.c:1250
 #, c-format
@@ -530,263 +603,265 @@ msgid ""
 "\n"
 "unknown option %x"
 msgstr ""
+"\n"
+"ບໍ່ຮູ້ຈັກຕົວເລືອກ %x"
 
 #: ping/ping.c:1270
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
-msgstr ""
+msgstr "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 
 #: ping/ping.c:1271
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
-msgstr ""
+msgstr " %1x  %1x  %02x %04x %04x"
 
 #: ping/ping.c:1273
 #, c-format
 msgid "   %1x %04x"
-msgstr ""
+msgstr "   %1x %04x"
 
 #: ping/ping.c:1275
 #, c-format
 msgid "  %02x  %02x %04x"
-msgstr ""
+msgstr "  %02x  %02x %04x"
 
 #: ping/ping.c:1291
 #, c-format
 msgid "Echo Reply\n"
-msgstr ""
+msgstr "ການຕອບກັບ Echo (Echo Reply)\n"
 
 #: ping/ping.c:1297
 #, c-format
 msgid "Destination Net Unreachable\n"
-msgstr ""
+msgstr "ເຄືອຂ່າຍປາຍທາງຕິດຕໍ່ບໍ່ໄດ້\n"
 
 #: ping/ping.c:1300
 #, c-format
 msgid "Destination Host Unreachable\n"
-msgstr ""
+msgstr "ໂຮສປາຍທາງຕິດຕໍ່ບໍ່ໄດ້\n"
 
 #: ping/ping.c:1303
 #, c-format
 msgid "Destination Protocol Unreachable\n"
-msgstr ""
+msgstr "ໂປຣໂຕຄໍປາຍທາງຕິດຕໍ່ບໍ່ໄດ້\n"
 
 #: ping/ping.c:1306
 #, c-format
 msgid "Destination Port Unreachable\n"
-msgstr ""
+msgstr "ພອດປາຍທາງຕິດຕໍ່ບໍ່ໄດ້\n"
 
 #: ping/ping.c:1309
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
-msgstr ""
+msgstr "ຕ້ອງມີການແຍກສ່ວນ (Frag) ແລະ ມີການຕັ້ງຄ່າ DF (mtu = %u)\n"
 
 #: ping/ping.c:1312
 #, c-format
 msgid "Source Route Failed\n"
-msgstr ""
+msgstr "ເສັ້ນທາງຕົ້ນທາງລົ້ມເຫຼວ\n"
 
 #: ping/ping.c:1315
 #, c-format
 msgid "Destination Net Unknown\n"
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກເຄືອຂ່າຍປາຍທາງ\n"
 
 #: ping/ping.c:1318
 #, c-format
 msgid "Destination Host Unknown\n"
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກໂຮສປາຍທາງ\n"
 
 #: ping/ping.c:1321
 #, c-format
 msgid "Source Host Isolated\n"
-msgstr ""
+msgstr "ໂຮສຕົ້ນທາງຖືກແຍກອອກ\n"
 
 #: ping/ping.c:1324
 #, c-format
 msgid "Destination Net Prohibited\n"
-msgstr ""
+msgstr "ເຄືອຂ່າຍປາຍທາງຖືກຫ້າມ\n"
 
 #: ping/ping.c:1327
 #, c-format
 msgid "Destination Host Prohibited\n"
-msgstr ""
+msgstr "ໂຮສປາຍທາງຖືກຫ້າມ\n"
 
 #: ping/ping.c:1330
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
-msgstr ""
+msgstr "ເຄືອຂ່າຍປາຍທາງຕິດຕໍ່ບໍ່ໄດ້ສຳລັບ Type of Service\n"
 
 #: ping/ping.c:1333
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
-msgstr ""
+msgstr "ໂຮສປາຍທາງຕິດຕໍ່ບໍ່ໄດ້ສຳລັບ Type of Service\n"
 
 #: ping/ping.c:1336
 #, c-format
 msgid "Packet filtered\n"
-msgstr ""
+msgstr "ແພັກເກັດຖືກກອງໄວ້\n"
 
 #: ping/ping.c:1339
 #, c-format
 msgid "Precedence Violation\n"
-msgstr ""
+msgstr "ການລະເມີດລຳດັບຄວາມສຳຄັນ (Precedence Violation)\n"
 
 #: ping/ping.c:1342
 #, c-format
 msgid "Precedence Cutoff\n"
-msgstr ""
+msgstr "ການຕັດລຳດັບຄວາມສຳຄັນ (Precedence Cutoff)\n"
 
 #: ping/ping.c:1345
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
-msgstr ""
+msgstr "ປາຍທາງຕິດຕໍ່ບໍ່ໄດ້, ລະຫັດຜິດພາດ: %d\n"
 
 #: ping/ping.c:1352
 #, c-format
 msgid "Source Quench\n"
-msgstr ""
+msgstr "Source Quench\n"
 
 #: ping/ping.c:1359
 #, c-format
 msgid "Redirect Network"
-msgstr ""
+msgstr "ປ່ຽນເສັ້ນທາງເຄືອຂ່າຍ (Redirect Network)"
 
 #: ping/ping.c:1362
 #, c-format
 msgid "Redirect Host"
-msgstr ""
+msgstr "ປ່ຽນເສັ້ນທາງໂຮສ (Redirect Host)"
 
 #: ping/ping.c:1365
 #, c-format
 msgid "Redirect Type of Service and Network"
-msgstr ""
+msgstr "ປ່ຽນເສັ້ນທາງ Type of Service ແລະ ເຄືອຂ່າຍ"
 
 #: ping/ping.c:1368
 #, c-format
 msgid "Redirect Type of Service and Host"
-msgstr ""
+msgstr "ປ່ຽນເສັ້ນທາງ Type of Service ແລະ ໂຮສ"
 
 #: ping/ping.c:1371
 #, c-format
 msgid "Redirect, Bad Code: %d"
-msgstr ""
+msgstr "ປ່ຽນເສັ້ນທາງ, ລະຫັດຜິດພາດ: %d"
 
 #: ping/ping.c:1382
 #, c-format
 msgid "(New nexthop: %s)\n"
-msgstr ""
+msgstr "(Nexthop ໃໝ່: %s)\n"
 
 #: ping/ping.c:1388
 #, c-format
 msgid "Echo Request\n"
-msgstr ""
+msgstr "ການຮ້ອງຂໍ Echo (Echo Request)\n"
 
 #: ping/ping.c:1394
 #, c-format
 msgid "Time to live exceeded\n"
-msgstr ""
+msgstr "ໝົດອາຍຸເວລາໃນການສົ່ງ (TTL exceeded)\n"
 
 #: ping/ping.c:1397
 #, c-format
 msgid "Frag reassembly time exceeded\n"
-msgstr ""
+msgstr "ເກີນກຳນົດເວລາໃນການປະກອບສ່ວນແຍກ (Frag reassembly)\n"
 
 #: ping/ping.c:1400
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
-msgstr ""
+msgstr "ເກີນກຳນົດເວລາ, ລະຫັດຜິດພາດ: %d\n"
 
 #: ping/ping.c:1407
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
-msgstr ""
+msgstr "ບັນຫາພາຣາມິເຕີ: pointer = %u\n"
 
 #: ping/ping.c:1413
 #, c-format
 msgid "Timestamp\n"
-msgstr ""
+msgstr "Timestamp\n"
 
 #: ping/ping.c:1417
 #, c-format
 msgid "Timestamp Reply\n"
-msgstr ""
+msgstr "ການຕອບກັບ Timestamp\n"
 
 #: ping/ping.c:1421
 #, c-format
 msgid "Information Request\n"
-msgstr ""
+msgstr "ການຮ້ອງຂໍຂໍ້ມູນ\n"
 
 #: ping/ping.c:1425
 #, c-format
 msgid "Information Reply\n"
-msgstr ""
+msgstr "ການຕອບກັບຂໍ້ມູນ\n"
 
 #: ping/ping.c:1430
 #, c-format
 msgid "Address Mask Request\n"
-msgstr ""
+msgstr "ການຮ້ອງຂໍ Address Mask\n"
 
 #: ping/ping.c:1435
 #, c-format
 msgid "Address Mask Reply\n"
-msgstr ""
+msgstr "ການຕອບກັບ Address Mask\n"
 
 #: ping/ping.c:1439
 #, c-format
 msgid "Bad ICMP type: %d\n"
-msgstr ""
+msgstr "ປະເພດ ICMP ບໍ່ຖືກຕ້ອງ: %d\n"
 
 #: ping/ping.c:1491 ping/ping6_common.c:540
 msgid "local error"
-msgstr ""
+msgstr "ຂໍ້ຜິດພາດພາຍໃນ (local error)"
 
 #: ping/ping.c:1493
 #, c-format
 msgid "local error: message too long, mtu=%u"
-msgstr ""
+msgstr "ຂໍ້ຜິດພາດພາຍໃນ: ຂໍ້ຄວາມຍາວເກີນໄປ, mtu=%u"
 
 #: ping/ping.c:1641 ping/ping6_common.c:670
 #, c-format
 msgid " icmp_seq=%u"
-msgstr ""
+msgstr " icmp_seq=%u"
 
 #: ping/ping.c:1666
 #, c-format
 msgid "packet too short (%d bytes) from %s"
-msgstr ""
+msgstr "ແພັກເກັດສັ້ນເກີນໄປ (%d ໄບທ໌) ຈາກ %s"
 
 #: ping/ping.c:1744
 #, c-format
 msgid "From %s: icmp_seq=%u "
-msgstr ""
+msgstr "ຈາກ %s: icmp_seq=%u "
 
 #: ping/ping.c:1747
 #, c-format
 msgid "(BAD CHECKSUM)"
-msgstr ""
+msgstr "(CHECKSUM ບໍ່ຖືກຕ້ອງ)"
 
 #: ping/ping.c:1769 ping/ping6_common.c:915
 #, c-format
 msgid "From %s: "
-msgstr ""
+msgstr "ຈາກ %s: "
 
 #: ping/ping.c:1771
 #, c-format
 msgid "(BAD CHECKSUM)\n"
-msgstr ""
+msgstr "(CHECKSUM ບໍ່ຖືກຕ້ອງ)\n"
 
 #: ping/ping.c:1873 ping/ping6_common.c:954
 msgid "WARNING: failed to install socket filter"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ຕິດຕັ້ງ socket filter ບໍ່ສຳເລັດ"
 
 #: ping/ping.c:1883
 #, c-format
 msgid "%d(%d) bytes of data.\n"
-msgstr ""
+msgstr "ຂໍ້ມູນ %d(%d) ໄບທ໌.\n"
 
 #: ping/ping6_common.c:149
 msgid "scope discrepancy among the nodes"
-msgstr ""
+msgstr "ຄວາມແຕກຕ່າງຂອງ scope ລະຫວ່າງໂນດ"
 
 #: ping/ping6_common.c:269
 #, c-format
@@ -794,213 +869,214 @@ msgid ""
 "minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"ຊ່ວງເວລາຕ່ຳສຸດສຳລັບ multicast ping ຂອງຜູ້ໃຊ້ຕ້ອງ >= %d ms, ໃຫ້ໃຊ້ -i %s (ຫຼື ສູງກວ່າ)"
 
 #: ping/ping6_common.c:274
 msgid "multicast ping does not fragment"
-msgstr ""
+msgstr "multicast ping ຈະບໍ່ມີການແຍກສ່ວນ"
 
 #: ping/ping6_common.c:333
 msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr ""
+msgstr "setsockopt(RAW_CHECKSUM) ລົ້ມເຫຼວ - ຈະພະຍາຍາມດຳເນີນການຕໍ່"
 
 #: ping/ping6_common.c:359
 msgid "can't disable multicast loopback"
-msgstr ""
+msgstr "ບໍ່ສາມາດປິດການໃຊ້ງານ multicast loopback"
 
 #: ping/ping6_common.c:364
 msgid "can't set multicast hop limit"
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດ multicast hop limit"
 
 #: ping/ping6_common.c:367
 msgid "can't set unicast hop limit"
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດ unicast hop limit"
 
 #: ping/ping6_common.c:379
 msgid "can't receive hop limit"
-msgstr ""
+msgstr "ບໍ່ສາມາດຮັບ hop limit"
 
 #: ping/ping6_common.c:393
 msgid "can't set flowlabel"
-msgstr ""
+msgstr "ບໍ່ສາມາດກຳນົດ flowlabel"
 
 #: ping/ping6_common.c:397
 msgid "can't send flowinfo"
-msgstr ""
+msgstr "ບໍ່ສາມາດສົ່ງ flowinfo"
 
 #: ping/ping6_common.c:416
 #, c-format
 msgid "Destination unreachable: "
-msgstr ""
+msgstr "ປາຍທາງຕິດຕໍ່ບໍ່ໄດ້: "
 
 #: ping/ping6_common.c:419
 #, c-format
 msgid "No route"
-msgstr ""
+msgstr "ບໍ່ມີເສັ້ນທາງ"
 
 #: ping/ping6_common.c:422
 #, c-format
 msgid "Administratively prohibited"
-msgstr ""
+msgstr "ຖືກຫ້າມໂດຍຜູ້ດູແລລະບົບ"
 
 #: ping/ping6_common.c:425
 #, c-format
 msgid "Beyond scope of source address"
-msgstr ""
+msgstr "ຢູ່ນອກຂອບເຂດ (scope) ຂອງທີ່ຢູ່ຕົ້ນທາງ"
 
 #: ping/ping6_common.c:428
 #, c-format
 msgid "Address unreachable"
-msgstr ""
+msgstr "ທີ່ຢູ່ຕິດຕໍ່ບໍ່ໄດ້"
 
 #: ping/ping6_common.c:431
 #, c-format
 msgid "Port unreachable"
-msgstr ""
+msgstr "ພອດຕິດຕໍ່ບໍ່ໄດ້"
 
 #: ping/ping6_common.c:434
 #, c-format
 msgid "Source address failed ingress/egress policy"
-msgstr ""
+msgstr "ທີ່ຢູ່ຕົ້ນທາງບໍ່ຜ່ານນະໂຍບາຍ ingress/egress"
 
 #: ping/ping6_common.c:437
 #, c-format
 msgid "Reject route to destination"
-msgstr ""
+msgstr "ປະຕິເສດເສັ້ນທາງໄປຫາປາຍທາງ"
 
 #: ping/ping6_common.c:440
 #, c-format
 msgid "Unknown code %d"
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກລະຫັດ %d"
 
 #: ping/ping6_common.c:445
 #, c-format
 msgid "Packet too big: mtu=%u"
-msgstr ""
+msgstr "ແພັກເກັດໃຫຍ່ເກີນໄປ: mtu=%u"
 
 #: ping/ping6_common.c:447
 #, c-format
 msgid ", code=%d"
-msgstr ""
+msgstr ", ລະຫັດ=%d"
 
 #: ping/ping6_common.c:450
 #, c-format
 msgid "Time exceeded: "
-msgstr ""
+msgstr "ເກີນກຳນົດເວລາ: "
 
 #: ping/ping6_common.c:452
 #, c-format
 msgid "Hop limit"
-msgstr ""
+msgstr "Hop limit"
 
 #: ping/ping6_common.c:454
 #, c-format
 msgid "Defragmentation failure"
-msgstr ""
+msgstr "ການປະກອບສ່ວນແຍກ (Defragmentation) ລົ້ມເຫຼວ"
 
 #: ping/ping6_common.c:456
 #, c-format
 msgid "code %d"
-msgstr ""
+msgstr "ລະຫັດ %d"
 
 #: ping/ping6_common.c:459
 #, c-format
 msgid "Parameter problem: "
-msgstr ""
+msgstr "ບັນຫາພາຣາມິເຕີ: "
 
 #: ping/ping6_common.c:461
 #, c-format
 msgid "Wrong header field "
-msgstr ""
+msgstr "ຟິວສ່ວນຫົວ (header field) ບໍ່ຖືກຕ້ອງ "
 
 #: ping/ping6_common.c:463
 #, c-format
 msgid "Unknown header "
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກສ່ວນຫົວ (header) "
 
 #: ping/ping6_common.c:465
 #, c-format
 msgid "Unknown option "
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກຕົວເລືອກ "
 
 #: ping/ping6_common.c:467
 #, c-format
 msgid "code %d "
-msgstr ""
+msgstr "ລະຫັດ %d "
 
 #: ping/ping6_common.c:468
 #, c-format
 msgid "at %u"
-msgstr ""
+msgstr "ທີ່ %u"
 
 #: ping/ping6_common.c:471
 #, c-format
 msgid "Echo request"
-msgstr ""
+msgstr "ການຮ້ອງຂໍ Echo"
 
 #: ping/ping6_common.c:474
 #, c-format
 msgid "Echo reply"
-msgstr ""
+msgstr "ການຕອບກັບ Echo"
 
 #: ping/ping6_common.c:477
 #, c-format
 msgid "MLD Query"
-msgstr ""
+msgstr "ການສອບຖາມ MLD"
 
 #: ping/ping6_common.c:480
 #, c-format
 msgid "MLD Report"
-msgstr ""
+msgstr "ລາຍງານ MLD"
 
 #: ping/ping6_common.c:483
 #, c-format
 msgid "MLD Reduction"
-msgstr ""
+msgstr "ການຫຼຸດຜ່ອນ MLD"
 
 #: ping/ping6_common.c:486
 #, c-format
 msgid "unknown icmp type: %u"
-msgstr ""
+msgstr "ບໍ່ຮູ້ຈັກປະເພດ icmp: %u"
 
 #: ping/ping6_common.c:542
 #, c-format
 msgid "local error: message too long, mtu: %u"
-msgstr ""
+msgstr "ຂໍ້ຜິດພາດພາຍໃນ: ຂໍ້ຄວາມຍາວເກີນໄປ, mtu: %u"
 
 #: ping/ping6_common.c:768
 #, c-format
 msgid " unexpected error in inet_ntop(%s)"
-msgstr ""
+msgstr " ຂໍ້ຜິດພາດທີ່ບໍ່ຄາດຄິດໃນ inet_ntop(%s)"
 
 #: ping/ping6_common.c:799
 #, c-format
 msgid " refused"
-msgstr ""
+msgstr " ຖືກປະຕິເສດ"
 
 #: ping/ping6_common.c:802
 #, c-format
 msgid " unknown"
-msgstr ""
+msgstr " ບໍ່ຮູ້ຈັກ"
 
 #: ping/ping6_common.c:805
 #, c-format
 msgid " unknown code(%02x)"
-msgstr ""
+msgstr " ບໍ່ຮູ້ຈັກລະຫັດ(%02x)"
 
 #: ping/ping6_common.c:807
 #, c-format
 msgid "; seq=%u;"
-msgstr ""
+msgstr "; seq=%u;"
 
 #: ping/ping6_common.c:848
 #, c-format
 msgid "packet too short: %d bytes"
-msgstr ""
+msgstr "ແພັກເກັດສັ້ນເກີນໄປ: %d ໄບທ໌"
 
 #: ping/ping6_common.c:959
 #, c-format
 msgid "%d data bytes\n"
-msgstr ""
+msgstr "ຂໍ້ມູນ %d ໄບທ໌\n"
 
 #: ping/ping_common.c:49
 #, c-format
@@ -1064,43 +1140,97 @@ msgid ""
 "\n"
 "For more details see ping(8).\n"
 msgstr ""
+"\n"
+"ວິທີໃຊ້\n"
+"  ping [ຕົວເລືອກ] <ປາຍທາງ>\n"
+"\n"
+"ຕົວເລືອກ:\n"
+"  <ປາຍທາງ>           ຊື່ DNS ຫຼື ທີ່ຢູ່ IP\n"
+"  -3                 ຄວາມລະອຽດ RTT (ບໍ່ປັດເສດເວລາຜົນລັດ)\n"
+"  -a                 ໃຊ້ສຽງເຕືອນ ping\n"
+"  -A                 ໃຊ້ adaptive ping\n"
+"  -B                 ບັງຄັບໃຊ້ທີ່ຢູ່ຕົ້ນທາງເດີມ\n"
+"  -c <ຈຳນວນ>         ຢຸດຫຼັງຈາກໄດ້ຮັບການຕອບກັບຄົບ <ຈຳນວນ> ຄັ້ງ\n"
+"  -C                 ເອີ້ນໃຊ້ connect() syscall ເມື່ອສ້າງ socket\n"
+"  -D                 ສະແດງ timestamps\n"
+"  -d                 ໃຊ້ຕົວເລືອກ socket SO_DEBUG\n"
+"  -e <ຕົວລະບຸ>        ກຳນົດຕົວລະບຸສຳລັບ ping session, ຄ່າເລີ່ມຕົ້ນແມ່ນແບບສຸ່ມສຳລັບ\n"
+"                     SOCK_RAW ແລະ ກຳນົດໂດຍເຄີເນລສຳລັບ SOCK_DGRAM\n"
+"                     ໝາຍເຖິງການໃຊ້ SOCK_RAW (ສຳລັບ IPv4 ທີ່ມີຕົວລະບຸ 0 ເທົ່ານັ້ນ)\n"
+"  -f                 flood ping\n"
+"  -h                 ສະແດງການຊ່ວຍເຫຼືອແລ້ວອອກ\n"
+"  -H                 ບັງຄັບການແກ້ໄຂຊື່ reverse DNS (ມີປະໂຫຍດສຳລັບປາຍທາງທີ່ເປັນ\n"
+"                     ຕົວເລກ ຫຼື ສຳລັບ -f), ແທນທີ່ -n\n"
+"  -I <ອິນເຕີເຟສ>     ຊື່ອິນເຕີເຟສ ຫຼື ທີ່ຢູ່\n"
+"  -i <ຊ່ວງເວລາ>      ວິນາທີລະຫວ່າງການສົ່ງແຕ່ລະແພັກເກັດ\n"
+"  -j                 JSON output (ທົດລອງ)\n"
+"  -L                 ລະງັບ loopback ຂອງແພັກເກັດ multicast\n"
+"  -l <preload>       ສົ່ງແພັກເກັດຈຳນວນ <preload> ໃນຂະນະທີ່ລໍຖ້າການຕອບກັບ\n"
+"  -m <mark>          ຕິດແທັກແພັກເກັດຂາອອກ\n"
+"  -M <pmtud opt>     ກຳນົດ path MTU discovery, ສາມາດເປັນ <do|dont|want|probe>\n"
+"  -n                 ບໍ່ມີການແກ້ໄຂຊື່ reverse DNS, ແທນທີ່ -H\n"
+"  -O                 ລາຍງານການຕອບກັບທີ່ຍັງຄ້າງຢູ່\n"
+"  -p <pattern>       ເນື້ອໃນຂອງ padding byte\n"
+"  -q                 ໂໝດງຽບ\n"
+"  -Q <tclass>        ໃຊ້ quality of service <tclass> bits\n"
+"  -s <ຂະໜາດ>         ໃຊ້ <ຂະໜາດ> ເປັນຈຳນວນໄບທ໌ຂໍ້ມູນທີ່ຈະສົ່ງ\n"
+"  -S <ຂະໜາດ>         ໃຊ້ <ຂະໜາດ> ເປັນຄ່າຕົວເລືອກ socket SO_SNDBUF\n"
+"  -t <ttl>           ກຳນົດ time to live\n"
+"  -U                 ສະແດງ latency ລະຫວ່າງຜູ້ໃຊ້ (user-to-user)\n"
+"  -v                 ສະແດງລາຍລະອຽດການເຮັດວຽກ\n"
+"  -V                 ສະແດງເວີຊັນແລ້ວອອກ\n"
+"  -w <ກຳນົດເວລາ>      ເວລາລໍຖ້າການຕອບກັບ <ກຳນົດເວລາ> ເປັນວິນາທີ\n"
+"  -W <ເວລາລໍຖ້າ>      ເວລາທີ່ຈະລໍຖ້າການຕອບສະໜອງ\n"
+"\n"
+"ຕົວເລືອກ IPv4:\n"
+"  -4                 ໃຊ້ IPv4\n"
+"  -b                 ອະນຸຍາດໃຫ້ ping ແບບ broadcast\n"
+"  -R                 ບັນທຶກເສັ້ນທາງ (record route)\n"
+"  -T <timestamp>     ກຳນົດ timestamp, ສາມາດເປັນ <tsonly|tsandaddr|tsprespec>\n"
+"\n"
+"ຕົວເລືອກ IPv6:\n"
+"  -6                 ໃຊ້ IPv6\n"
+"  -F <flowlabel>     ກຳນົດ flow label, ຄ່າເລີ່ມຕົ້ນແມ່ນແບບສຸ່ມ\n"
+"  -N <nodeinfo opt>  ໃຊ້ IPv6 node info query, ລອງໃຊ້ <help> ເປັນອາກິວເມັນ\n"
+"\n"
+"ສຳລັບລາຍລະອຽດເພີ່ມເຕີມ ເບິ່ງໄດ້ທີ່ ping(8).\n"
 
 #: ping/ping_common.c:219
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
-msgstr ""
+msgstr "pattern ຕ້ອງຖືກກຳນົດເປັນເລກຖານສິບຫົກ: %s"
 
 #: ping/ping_common.c:234
 #, c-format
 msgid "PATTERN: 0x"
-msgstr ""
+msgstr "PATTERN: 0x"
 
 #: ping/ping_common.c:355
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
-msgstr ""
+msgstr "ຍັງບໍ່ມີການຕອບກັບສຳລັບ icmp_seq=%lu\n"
 
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ບັບເຟີມີຂະໜາດເກີນ, ໃຫ້ຫຼຸດຂະໜາດແພັກເກັດ ຫຼື preload"
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr ""
+msgstr "ຄຳເຕືອນ: rcvbuf ອາດຈະບໍ່ພໍທີ່ຈະຮອງຮັບ preload"
 
 #: ping/ping_common.c:487
 #, c-format
 msgid "WARNING: failed to set mark: %u"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ຕັ້ງຄ່າ mark ບໍ່ສຳເລັດ: %u"
 
 #: ping/ping_common.c:490
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr ""
+msgstr "=> ຂາດຄວາມສາມາດ cap_net_admin+p ຫຼື cap_net_raw+p (ຕັ້ງແຕ່ Linux 5.17)?"
 
 #: ping/ping_common.c:495
 msgid "WARNING: SO_MARK not supported"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ບໍ່ຮອງຮັບ SO_MARK"
 
 #: ping/ping_common.c:511
 #, c-format
@@ -1108,70 +1238,71 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
+"ບໍ່ສາມາດໃຊ້ flood ໄດ້, ຊ່ວງເວລາຕ່ຳສຸດສຳລັບຜູ້ໃຊ້ຕ້ອງ >= %d ms, ໃຫ້ໃຊ້ -i %s (ຫຼື ສູງກວ່າ)"
 
 #: ping/ping_common.c:515
 #, c-format
 msgid "illegal preload and/or interval: %d"
-msgstr ""
+msgstr "ຄ່າ preload ແລະ/ຫຼື ຊ່ວງເວລາ ບໍ່ຖືກຕ້ອງ: %d"
 
 #: ping/ping_common.c:527
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ບໍ່ຮອງຮັບ SO_TIMESTAMP, ຈະກັບໄປໃຊ້ SIOCGSTAMP ແທນ"
 
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr ""
+msgstr "ຄຳເຕືອນ: tv_usec %ld us ບໍ່ຖືກຕ້ອງ"
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr ""
+msgstr "ຄຳເຕືອນ: tv_sec %ld s ບໍ່ຖືກຕ້ອງ"
 
 #: ping/ping_common.c:784
 #, c-format
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr ""
+msgstr "ຄຳເຕືອນ: ເວລາຂອງມື້ຍ້ອນກັບ (%ld s), ກຳລັງດຳເນີນການແກ້ໄຂ"
 
 #: ping/ping_common.c:837
 #, c-format
 msgid "%d bytes "
-msgstr ""
+msgstr "%d ໄບທ໌ "
 
 #: ping/ping_common.c:839
 #, c-format
 msgid "from %s:"
-msgstr ""
+msgstr "ຈາກ %s:"
 
 #: ping/ping_common.c:845
 #, c-format
 msgid " ident=%d"
-msgstr ""
+msgstr " ident=%d"
 
 #: ping/ping_common.c:848
 #, c-format
 msgid " ttl=%d"
-msgstr ""
+msgstr " ttl=%d"
 
 #: ping/ping_common.c:880
 #, c-format
 msgid " time=%s ms"
-msgstr ""
+msgstr " ເວລາ=%s ms"
 
 #: ping/ping_common.c:884
 #, c-format
 msgid " (DUP!)"
-msgstr ""
+msgstr " (ຊ້ຳ!)"
 
 #: ping/ping_common.c:886
 #, c-format
 msgid " (BAD CHECKSUM!)"
-msgstr ""
+msgstr " (CHECKSUM ບໍ່ຖືກຕ້ອງ!)"
 
 #: ping/ping_common.c:888
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
-msgstr ""
+msgstr " (ທີ່ຢູ່ແຕກຕ່າງກັນ!)"
 
 #: ping/ping_common.c:895
 #, c-format
@@ -1179,110 +1310,112 @@ msgid ""
 "\n"
 "wrong data byte #%d should be 0x%x but was 0x%x"
 msgstr ""
+"\n"
+"ຂໍ້ມູນໄບທ໌ທີ #%d ບໍ່ຖືກຕ້ອງ ຄວນຈະເປັນ 0x%x ແຕ່ເປັນ 0x%x"
 
 #: ping/ping_common.c:932
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
-msgstr ""
+msgstr "%ld/%ld ແພັກເກັດ, ເສຍຫາຍ %d%%"
 
 #: ping/ping_common.c:937
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
+msgstr ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr ""
+msgstr "ເກີນຂີດຈຳກັດ (Overflow) ໃນລະຫວ່າງການສ້າງ JSON"
 
 #: ping/ping_output.c:50
 #, c-format
 msgid "From %s icmp_seq=%u "
-msgstr ""
+msgstr "ຈາກ %s icmp_seq=%u "
 
 #: ping/ping_output.c:56
 #, c-format
 msgid " parse error (%s)"
-msgstr ""
+msgstr " ຂໍ້ຜິດພາດໃນການ parse (%s)"
 
 #: ping/ping_output.c:64
 #, c-format
 msgid " unknown qtype(0x%02x)"
-msgstr ""
+msgstr " ບໍ່ຮູ້ຈັກ qtype(0x%02x)"
 
 #: ping/ping_output.c:76
 #, c-format
 msgid " (truncated)"
-msgstr ""
+msgstr " (ຖືກຕັດຕອນ)"
 
 #: ping/ping_output.c:85
 #, c-format
 msgid "PING %s (%s) "
-msgstr ""
+msgstr "PING %s (%s) "
 
 #: ping/ping_output.c:88
 #, c-format
 msgid ", flow 0x%05x, "
-msgstr ""
+msgstr ", flow 0x%05x, "
 
 #: ping/ping_output.c:96
 #, c-format
 msgid "from %s %s: "
-msgstr ""
+msgstr "ຈາກ %s %s: "
 
 #: ping/ping_output.c:149
 #, c-format
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr ""
+msgstr "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
 
 #: ping/ping_output.c:165
 #, c-format
 msgid "--- %s ping statistics ---\n"
-msgstr ""
+msgstr "--- ສະຖິຕິການ ping ຂອງ %s ---\n"
 
 #: ping/ping_output.c:166
 #, c-format
 msgid "%ld packets transmitted, "
-msgstr ""
+msgstr "ສົ່ງໄປ %ld ແພັກເກັດ, "
 
 #: ping/ping_output.c:167
 #, c-format
 msgid "%ld received"
-msgstr ""
+msgstr "ໄດ້ຮັບ %ld"
 
 #: ping/ping_output.c:169
 #, c-format
 msgid ", +%ld duplicates"
-msgstr ""
+msgstr ", ຊ້ຳ +%ld"
 
 #: ping/ping_output.c:171
 #, c-format
 msgid ", +%ld corrupted"
-msgstr ""
+msgstr ", ເສຍຫາຍ +%ld"
 
 #: ping/ping_output.c:173
 #, c-format
 msgid ", +%ld errors"
-msgstr ""
+msgstr ", ຂໍ້ຜິດພາດ +%ld"
 
 #: ping/ping_output.c:179
 #, c-format
 msgid ", %g%% packet loss"
-msgstr ""
+msgstr ", ແພັກເກັດເສຍຫາຍ %g%%"
 
 #: ping/ping_output.c:181
 #, c-format
 msgid ", time %llums"
-msgstr ""
+msgstr ", ເວລາ %llums"
 
 #: ping/ping_output.c:194
 #, c-format
 msgid "pipe %d"
-msgstr ""
+msgstr "pipe %d"
 
 #: ping/ping_output.c:210
 #, c-format
 msgid "ipg/ewma %s/%s ms"
-msgstr ""
+msgstr "ipg/ewma %s/%s ms"
 
 #: tracepath.c:218
 #, c-format
@@ -1290,6 +1423,8 @@ msgid ""
 "cmsg6:%d\n"
 " "
 msgstr ""
+"cmsg6:%d\n"
+" "
 
 #: tracepath.c:230
 #, c-format
@@ -1297,54 +1432,56 @@ msgid ""
 "cmsg4:%d\n"
 " "
 msgstr ""
+"cmsg4:%d\n"
+" "
 
 #: tracepath.c:235
 #, c-format
 msgid "no info\n"
-msgstr ""
+msgstr "ບໍ່ມີຂໍ້ມູນ\n"
 
 #: tracepath.c:239
 msgid "[LOCALHOST]"
-msgstr ""
+msgstr "[LOCALHOST]"
 
 #: tracepath.c:287
 #, c-format
 msgid "%3lld.%03ldms "
-msgstr ""
+msgstr "%3lld.%03ldms "
 
 #: tracepath.c:291
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr ""
+msgstr "(ເຣົາເຕີທີ່ເສຍນີ້ສົ່ງຂໍ້ມູນ payload ທີ່ຜິດພາດຄືນມາ) "
 
 #: tracepath.c:306
 #, c-format
 msgid "pmtu %d\n"
-msgstr ""
+msgstr "pmtu %d\n"
 
 #: tracepath.c:311
 #, c-format
 msgid "reached\n"
-msgstr ""
+msgstr "ໄປເຖິງແລ້ວ\n"
 
 #: tracepath.c:328
 #, c-format
 msgid "asymm %2d "
-msgstr ""
+msgstr "asymm %2d "
 
 #: tracepath.c:343
 msgid "NET ERROR"
-msgstr ""
+msgstr "ຂໍ້ຜິດພາດເຄືອຂ່າຍ"
 
 #: tracepath.c:388
 #, c-format
 msgid "%2d?: reply received 8)\n"
-msgstr ""
+msgstr "%2d?: ໄດ້ຮັບການຕອບກັບ 8)\n"
 
 #: tracepath.c:394
 #, c-format
 msgid "%2d:  send failed\n"
-msgstr ""
+msgstr "%2d:  ສົ່ງບໍ່ສຳເລັດ\n"
 
 #: tracepath.c:401
 #, c-format
@@ -1366,32 +1503,48 @@ msgid ""
 "\n"
 "For more details see tracepath(8).\n"
 msgstr ""
+"\n"
+"ວິທີໃຊ້\n"
+"  tracepath [ຕົວເລືອກ] <ປາຍທາງ>\n"
+"\n"
+"ຕົວເລືອກ:\n"
+"  -4             ໃຊ້ IPv4\n"
+"  -6             ໃຊ້ IPv6\n"
+"  -b             ສະແດງທັງຊື່ ແລະ IP\n"
+"  -l <ຄວາມຍາວ>    ໃຊ້ແພັກເກັດທີ່ມີ <ຄວາມຍາວ>\n"
+"  -m <hops>      ໃຊ້ <hops> ສູງສຸດ\n"
+"  -n             ບໍ່ມີການແກ້ໄຂຊື່ reverse DNS\n"
+"  -p <ພອດ>       ໃຊ້ <ພອດ> ປາຍທາງ\n"
+"  -V             ສະແດງເວີຊັນແລ້ວອອກ\n"
+"  <ປາຍທາງ>       ຊື່ DNS ຫຼື ທີ່ຢູ່ IP\n"
+"\n"
+"ສຳລັບລາຍລະອຽດເພີ່ມເຕີມ ເບິ່ງໄດ້ທີ່ tracepath(8).\n"
 
 #: tracepath.c:459 tracepath.c:464
 msgid "Only one -4 or -6 option may be specified"
-msgstr ""
+msgstr "ສາມາດກຳນົດໄດ້ພຽງແຕ່ຕົວເລືອກ -4 ຫຼື -6 ຢ່າງໃດຢ່າງໜຶ່ງເທົ່ານັ້ນ"
 
 #: tracepath.c:607
 #, c-format
 msgid "%2d:  no reply\n"
-msgstr ""
+msgstr "%2d:  ບໍ່ມີການຕອບກັບ\n"
 
 #: tracepath.c:614
 #, c-format
 msgid "     Resume: pmtu %d "
-msgstr ""
+msgstr "     ດຳເນີນການຕໍ່: pmtu %d "
 
 #: tracepath.c:616
 #, c-format
 msgid "hops %d "
-msgstr ""
+msgstr "hops %d "
 
 #: tracepath.c:618
 #, c-format
 msgid "back %d "
-msgstr ""
+msgstr "back %d "
 
 #: tracepath.c:623
 #, c-format
 msgid "pktlen must be within: %d < value <= %d"
-msgstr ""
+msgstr "pktlen ຕ້ອງຢູ່ໃນຊ່ວງ: %d < ຄ່າ <= %d"
