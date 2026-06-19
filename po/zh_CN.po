@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-05 14:28+0200\n"
-"PO-Revision-Date: 2026-04-02 23:59+0000\n"
-"Last-Translator: 耗子 <haozi@loli.email>\n"
+"PO-Revision-Date: 2026-06-20 10:10+0000\n"
+"Last-Translator: Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/iputils/iputils/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 2026.6.1\n"
 
 #: arping.c:123
 #, c-format
@@ -1074,7 +1074,7 @@ msgid "%d data bytes\n"
 msgstr "%d 字节的数据\n"
 
 #: ping/ping_common.c:49
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "\n"
 "Usage\n"
@@ -1137,58 +1137,55 @@ msgid ""
 msgstr ""
 "\n"
 "用法\n"
-"  ping [选项] <目标>\n"
+"   ping [选项] <目标>\n"
 "\n"
 "选项：\n"
-"  <目标>             DNS 名称或 IP 地址\n"
-"  -3                 RTT 精度（不对结果时间进行四舍五入）\n"
-"  -a                 使用可听见的 ping\n"
-"  -A                 使用自适应 ping\n"
-"  -B                 固定源地址\n"
-"  -c <次数>          在 <次数> 次回复后停止\n"
-"  -C                 在创建套接字时调用 connect() 系统调用\n"
-"  -D                 打印时间戳\n"
-"  -d                 使用 SO_DEBUG 套接字选项\n"
-"  -e <标识符>        定义 ping 会话标识符，SOCK_RAW 默认为随机，\n"
-"                     SOCK_DGRAM 由内核定义\n"
-"                     隐含使用 SOCK_RAW（仅 IPv4 标识符为 0 时）\n"
-"  -f                 洪泛 ping\n"
-"  -h                 打印帮助并退出\n"
-"  -H                 强制反向 DNS 名称解析（适用于数字\n"
-"                     目标或 -f），覆盖 -n\n"
-"  -I <接口>          接口名称或地址\n"
-"  -i <间隔>          每个数据包之间的发送间隔（秒）\n"
-"  -j                 JSON 输出（实验性）\n"
-"  -L                 抑制多播数据包的回环\n"
-"  -l <预加载>        在等待回复时发送 <预加载> 个数据包\n"
-"  -m <标记>          标记发出的数据包\n"
-"  -M <pmtud 选项>    定义路径 MTU 发现，可为 <do|dont|want|probe>\n"
-"  -n                 不进行反向 DNS 名称解析，覆盖 -H\n"
-"  -O                 报告未完成的回复\n"
-"  -p <模式>          填充字节的内容\n"
-"  -q                 静默输出\n"
-"  -Q <tclass>        使用服务质量 <tclass> 位\n"
-"  -s <大小>          使用 <大小> 作为要发送的数据字节数\n"
-"  -S <大小>          使用 <大小> 作为 SO_SNDBUF 套接字选项值\n"
-"  -t <ttl>           定义生存时间\n"
-"  -U                 打印用户到用户的延迟\n"
-"  -v                 详细输出\n"
-"  -V                 打印版本并退出\n"
-"  -w <截止时间>      回复等待 <截止时间>（秒）\n"
-"  -W <超时>          等待响应的时间\n"
+"   <目标> DNS 名称或 IP 地址\n"
+"   -a 使用声音探测 ping\n"
+"   -A 使用自适应 ping\n"
+"   -B 粘性源地址\n"
+"   -c <count> 在 <count> 个答复后停止\n"
+"   -C 在创建套接字时调用 connect() 系统调用\n"
+"   -D 显示时间戳\n"
+"   -d 使用 SO_DEBUG 套接字选项\n"
+"   -e <identifier> 定义 ping 会话的标识符，默认为随机\n"
+"                      SOCK_RAW 和为 SOCK_DGRAM 定义的内核\n"
+"                      暗示使用 SOCK_RAW（仅适用于 IPv4 标识符 0）\n"
+"   -f 洪水平\n"
+"   -h 显示帮助并退出\n"
+"  -H 强制反向 DNS 名称解析（对于数字很有用）\n"
+"   -I <interface> 接口名称或地址\n"
+"   -i <interval> 发送每个数据包之间的秒数\n"
+"   -L 抑制组播报文环回\n"
+"   -l <preload> 在等待回复时发送 <preload> 数量的包\n"
+"   -m <mark> 标记发出的数据包\n"
+"   -M <pmtud opt> 定义 mtu 发现，可以是 <do|dont|want|probe> 之一\n"
+"   -n 无 DNS 名称解析\n"
+"   -O 报告未完成的答复\n"
+"   -p <pattern> 填充字节的内容\n"
+"   -q 安静输出\n"
+"   -Q <tclass> 使用服务质量 <tclass> 位\n"
+"   -s <size> 使用<size>作为要发送的数据字节数\n"
+"   -S <size> 使用 <size> 作为 SO_SNDBUF 套接字选项值\n"
+"   -t <ttl> 定义生存时间\n"
+"   -U 显示用户到用户的延迟\n"
+"   -v 详细输出\n"
+"   -V 显示版本并退出\n"
+"   -w <deadline> 回复等待 <deadline> 以秒为单位\n"
+"   -W <timeout> 等待响应的时间\n"
 "\n"
 "IPv4 选项：\n"
-"  -4                 使用 IPv4\n"
-"  -b                 允许 ping 广播地址\n"
-"  -R                 记录路由\n"
-"  -T <时间戳>        定义时间戳，可为 <tsonly|tsandaddr|tsprespec>\n"
+"   -4 使用 IPv4\n"
+"   -b 允许 ping 广播\n"
+"   -R 记录路线\n"
+"   -T <timestamp> 定义时间戳，可以是 <tsonly|tsandaddr|tsprespec> 之一\n"
 "\n"
 "IPv6 选项：\n"
-"  -6                 使用 IPv6\n"
-"  -F <流标签>        定义流标签，默认为随机\n"
-"  -N <节点信息选项>  使用 IPv6 节点信息查询，尝试 <help> 作为参数\n"
+"   -6 使用 IPv6\n"
+"   -F <flowlabel> 定义流标签，默认是随机的\n"
+"   -N <nodeinfo opt> 使用 icmp6 节点信息查询，尝试 <help> 作为参数\n"
 "\n"
-"详情请参见 ping(8)。\n"
+"有关详细信息，请参阅 ping(8)。\n"
 
 #: ping/ping_common.c:219
 #, c-format
@@ -1207,7 +1204,7 @@ msgstr "icmp_seq=%lu 未响应\n"
 
 #: ping/ping_common.c:454
 msgid "WARNING: buffer size overflow, reduce packet size or preload"
-msgstr "警告：缓冲区大小溢出，请减小数据包大小或预加载数"
+msgstr ""
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
@@ -1246,27 +1243,27 @@ msgstr "警告：不支持 SO_TIMESTAMP，回退到 SIOCGSTAMP"
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
 msgid "Warning: invalid tv_usec %ld us"
-msgstr "警告：无效的 tv_usec %ld 微秒"
+msgstr ""
 
 #: ping/ping_common.c:781
 #, c-format
 msgid "Warning: invalid tv_sec %ld s"
-msgstr "警告：无效的 tv_sec %ld 秒"
+msgstr ""
 
 #: ping/ping_common.c:784
-#, c-format
+#, c-format, fuzzy
 msgid "Warning: time of day goes back (%ld s), taking countermeasures"
-msgstr "警告：时间回退（%ld 秒），正在采取对策"
+msgstr "警告：一天中的时间返回 （%ldus），采取对策"
 
 #: ping/ping_common.c:837
-#, c-format
+#, c-format, fuzzy
 msgid "%d bytes "
-msgstr "%d 字节 "
+msgstr "%d 字节的数据 "
 
 #: ping/ping_common.c:839
-#, c-format
+#, c-format, fuzzy
 msgid "from %s:"
-msgstr "来自 %s："
+msgstr "来自 %s"
 
 #: ping/ping_common.c:845
 #, c-format
@@ -1319,7 +1316,7 @@ msgstr ", 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%0
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
-msgstr "JSON 构造时溢出"
+msgstr ""
 
 #: ping/ping_output.c:50
 #, c-format
@@ -1327,9 +1324,9 @@ msgid "From %s icmp_seq=%u "
 msgstr "来自 %s icmp_seq=%u "
 
 #: ping/ping_output.c:56
-#, c-format
+#, c-format, fuzzy
 msgid " parse error (%s)"
-msgstr " 解析错误（%s）"
+msgstr " 解析错误 (太短)"
 
 #: ping/ping_output.c:64
 #, c-format
@@ -1357,9 +1354,9 @@ msgid "from %s %s: "
 msgstr "来自 %s %s "
 
 #: ping/ping_output.c:149
-#, c-format
+#, c-format, fuzzy
 msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
-msgstr "rtt 最小/平均/最大/标准差 = %s/%s/%s/%s 毫秒"
+msgstr "rtt 最小/平均/移动平均/最大 = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
 
 #: ping/ping_output.c:165
 #, c-format
@@ -1402,14 +1399,14 @@ msgid ", time %llums"
 msgstr ", 耗时 %llu 毫秒"
 
 #: ping/ping_output.c:194
-#, c-format
+#, c-format, fuzzy
 msgid "pipe %d"
-msgstr "管道 %d"
+msgstr "%s 管道 %d"
 
 #: ping/ping_output.c:210
-#, c-format
+#, c-format, fuzzy
 msgid "ipg/ewma %s/%s ms"
-msgstr "ipg/ewma %s/%s 毫秒"
+msgstr "%sipg/ewma %d.%03d/%d.%03d 毫秒"
 
 #: tracepath.c:218
 #, c-format
