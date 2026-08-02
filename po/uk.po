@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-18 19:07+0200\n"
-"PO-Revision-Date: 2024-09-02 17:04+0000\n"
+"POT-Creation-Date: 2025-09-05 14:28+0200\n"
+"PO-Revision-Date: 2025-09-06 10:28+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.7.1\n"
+"X-Generator: Weblate 5.13.2\n"
 
 #: arping.c:123
 #, c-format
@@ -149,9 +149,9 @@ msgstr "Інтерфейс «%s» є непридатним для аналіз�
 msgid "WARNING: using default broadcast address.\n"
 msgstr "Попередження: використовуємо типову адресу трансляції.\n"
 
-#: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:409 ping/ping.c:456
-#: ping/ping.c:508 ping/ping.c:516 ping/ping.c:560 ping/ping.c:563
-#: ping/ping.c:566 ping/ping.c:580 tracepath.c:474 tracepath.c:477
+#: arping.c:905 arping.c:908 arping.c:911 ping/ping.c:415 ping/ping.c:465
+#: ping/ping.c:517 ping/ping.c:525 ping/ping.c:569 ping/ping.c:572
+#: ping/ping.c:575 ping/ping.c:588 tracepath.c:474 tracepath.c:477
 #: tracepath.c:480 tracepath.c:502
 msgid "invalid argument"
 msgstr "некоректний аргумент"
@@ -295,8 +295,8 @@ msgstr "Помилка кодування IDN: %s"
 msgid "too long scope name"
 msgstr "надто довга назва області"
 
-#: ping/node_info.c:347 ping/node_info.c:389 ping/ping6_common.c:308
-#: ping/ping.c:1068
+#: ping/node_info.c:347 ping/node_info.c:389 ping/ping.c:1073
+#: ping/ping6_common.c:311
 msgid "memory allocation failed"
 msgstr "не вдалося отримати місце у пам'яті"
 
@@ -350,416 +350,121 @@ msgstr ""
 "  subject-name=назва\n"
 "  subject-fqdn=назва\n"
 
-#: ping/ping6_common.c:99 ping/ping.c:756
-#, c-format
-msgid "unknown iface: %s"
-msgstr "невідомий інтерфейс: %s"
-
-#: ping/ping6_common.c:146
-msgid "scope discrepancy among the nodes"
-msgstr "невідповідність областей між вузлами"
-
-#: ping/ping6_common.c:225 ping/ping.c:926
-#, c-format
-msgid "Warning: source address might be selected on device other than: %s"
-msgstr ""
-"Попередження: адресу джерела могло бути вибрано на пристрої, відмінному від "
-"%s"
-
-#: ping/ping6_common.c:266
-#, c-format
-msgid ""
-"minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
-"higher)"
-msgstr ""
-"мінімальний проміжок для трансляційного пінґу для користувача має бути >= %d "
-"мс, скористайтеся -i %s (або більшим значенням)"
-
-#: ping/ping6_common.c:271
-msgid "multicast ping does not fragment"
-msgstr "пінг односпрямованої трансляції не фрагментується"
-
-#: ping/ping6_common.c:330
-msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
-msgstr "Помилка setsockopt(RAW_CHECKSUM) — намагаємося продовжити"
-
-#: ping/ping6_common.c:356
-msgid "can't disable multicast loopback"
-msgstr "неможливо вимкнути зворотну петлю неспрямованої трансляції"
-
-#: ping/ping6_common.c:361
-msgid "can't set multicast hop limit"
-msgstr ""
-"Не вдалося встановити обмеження перестрибувань неспрямованої трансляції"
-
-#: ping/ping6_common.c:364
-msgid "can't set unicast hop limit"
-msgstr ""
-"Не вдалося встановити обмеження перестрибувань односпрямованої трансляції"
-
-#: ping/ping6_common.c:376
-msgid "can't receive hop limit"
-msgstr "не вдалося отримати обмеження перестрибувань"
-
-#: ping/ping6_common.c:390
-msgid "can't set flowlabel"
-msgstr "не вдалося встановити мітку потоку"
-
-#: ping/ping6_common.c:394
-msgid "can't send flowinfo"
-msgstr "не вдалося надіслати відомості щодо потоку"
-
-#: ping/ping6_common.c:397 ping/ping.c:1070
-#, c-format
-msgid "PING %s (%s) "
-msgstr "ПІНГ %s (%s) "
-
-#: ping/ping6_common.c:399
-#, c-format
-msgid ", flow 0x%05x, "
-msgstr ", потік 0x%05x, "
-
-#: ping/ping6_common.c:404 ping/ping.c:1072
-#, c-format
-msgid "from %s %s: "
-msgstr "з %s %s: "
-
-#: ping/ping6_common.c:407
-#, c-format
-msgid "%d data bytes\n"
-msgstr "%d байтів даних\n"
-
-#: ping/ping6_common.c:423
-#, c-format
-msgid "Destination unreachable: "
-msgstr "Призначення недоступне: "
-
-#: ping/ping6_common.c:426
-#, c-format
-msgid "No route"
-msgstr "Немає маршруту"
-
-#: ping/ping6_common.c:429
-#, c-format
-msgid "Administratively prohibited"
-msgstr "Адміністративно заборонено"
-
-#: ping/ping6_common.c:432
-#, c-format
-msgid "Beyond scope of source address"
-msgstr "Поза областю адреси джерела"
-
-#: ping/ping6_common.c:435
-#, c-format
-msgid "Address unreachable"
-msgstr "Недосяжна адреса"
-
-#: ping/ping6_common.c:438
-#, c-format
-msgid "Port unreachable"
-msgstr "Недосяжний порт"
-
-#: ping/ping6_common.c:441
-#, c-format
-msgid "Source address failed ingress/egress policy"
-msgstr "Початкова адреса не відповідає правилам для вхідних-вихідних адрес"
-
-#: ping/ping6_common.c:444
-#, c-format
-msgid "Reject route to destination"
-msgstr "Відкинути маршрут до призначення"
-
-#: ping/ping6_common.c:447
-#, c-format
-msgid "Unknown code %d"
-msgstr "Невідомий код %d"
-
-#: ping/ping6_common.c:452
-#, c-format
-msgid "Packet too big: mtu=%u"
-msgstr "Надто великий пакет: mtu=%u"
-
-#: ping/ping6_common.c:454
-#, c-format
-msgid ", code=%d"
-msgstr ", код=%d"
-
-#: ping/ping6_common.c:457
-#, c-format
-msgid "Time exceeded: "
-msgstr "Перевищено час: "
-
-#: ping/ping6_common.c:459
-#, c-format
-msgid "Hop limit"
-msgstr "Обмеження перестрибувань"
-
-#: ping/ping6_common.c:461
-#, c-format
-msgid "Defragmentation failure"
-msgstr "Помилка під час дефрагментації"
-
-#: ping/ping6_common.c:463
-#, c-format
-msgid "code %d"
-msgstr "код %d"
-
-#: ping/ping6_common.c:466
-#, c-format
-msgid "Parameter problem: "
-msgstr "Проблема з параметрами: "
-
-#: ping/ping6_common.c:468
-#, c-format
-msgid "Wrong header field "
-msgstr "Помилкове поле заголовка "
-
-#: ping/ping6_common.c:470
-#, c-format
-msgid "Unknown header "
-msgstr "Невідомий заголовок "
-
-#: ping/ping6_common.c:472
-#, c-format
-msgid "Unknown option "
-msgstr "Невідомий параметр "
-
-#: ping/ping6_common.c:474
-#, c-format
-msgid "code %d "
-msgstr "код %d "
-
-#: ping/ping6_common.c:475
-#, c-format
-msgid "at %u"
-msgstr "у %u"
-
-#: ping/ping6_common.c:478
-#, c-format
-msgid "Echo request"
-msgstr "Луна-запит"
-
-#: ping/ping6_common.c:481
-#, c-format
-msgid "Echo reply"
-msgstr "Луна-відповідь"
-
-#: ping/ping6_common.c:484
-#, c-format
-msgid "MLD Query"
-msgstr "Запит MLD"
-
-#: ping/ping6_common.c:487
-#, c-format
-msgid "MLD Report"
-msgstr "Звіт MLD"
-
-#: ping/ping6_common.c:490
-#, c-format
-msgid "MLD Reduction"
-msgstr "Спрощення MLD"
-
-#: ping/ping6_common.c:493
-#, c-format
-msgid "unknown icmp type: %u"
-msgstr "невідомий тип icmp: %u"
-
-#: ping/ping6_common.c:547 ping/ping.c:1489
-msgid "local error"
-msgstr "локальна помилка"
-
-#: ping/ping6_common.c:549
-#, c-format
-msgid "local error: message too long, mtu: %u"
-msgstr "локальна помилка: надто велике повідомлення, mtu: %u"
-
-#: ping/ping6_common.c:571 ping/ping.c:1525
-#, c-format
-msgid "From %s icmp_seq=%u "
-msgstr "З %s icmp_seq=%u "
-
-#: ping/ping6_common.c:677 ping/ping.c:1639
-#, c-format
-msgid " icmp_seq=%u"
-msgstr " icmp_seq=%u"
-
-#: ping/ping6_common.c:701 ping/ping6_common.c:762
-#, c-format
-msgid " parse error (too short)"
-msgstr " помилка обробки (надто короткі дані)"
-
-#: ping/ping6_common.c:715 ping/ping6_common.c:771
-#, c-format
-msgid " parse error (truncated)"
-msgstr " помилка обробки (обрізано)"
-
-#: ping/ping6_common.c:775
-#, c-format
-msgid " unexpected error in inet_ntop(%s)"
-msgstr " неочікувана помилка в inet_ntop(%s)"
-
-#: ping/ping6_common.c:784
-#, c-format
-msgid " (truncated)"
-msgstr " (обрізано)"
-
-#: ping/ping6_common.c:803
-#, c-format
-msgid " unknown qtype(0x%02x)"
-msgstr " невідоме значення qtype(0x%02x)"
-
-#: ping/ping6_common.c:807
-#, c-format
-msgid " refused"
-msgstr " відмовлено"
-
-#: ping/ping6_common.c:810
-#, c-format
-msgid " unknown"
-msgstr " невідомий"
-
-#: ping/ping6_common.c:813
-#, c-format
-msgid " unknown code(%02x)"
-msgstr " невідомий код(%02x)"
-
-#: ping/ping6_common.c:815
-#, c-format
-msgid "; seq=%u;"
-msgstr "; посл=%u;"
-
-#: ping/ping6_common.c:856
-#, c-format
-msgid "packet too short: %d bytes"
-msgstr "надто короткий пакет: %d байтів"
-
-#: ping/ping6_common.c:923 ping/ping.c:1768
-#, c-format
-msgid "From %s: "
-msgstr "Від %s: "
-
-#: ping/ping6_common.c:964 ping/ping.c:1873
-msgid "WARNING: failed to install socket filter"
-msgstr "Попередження: не вдалося встановити фільтрування сокетів"
-
-#: ping/ping.c:103 ping/ping.c:733
+#: ping/ping.c:108 ping/ping.c:738
 #, c-format
 msgid "unknown protocol family: %d"
 msgstr "невідоме сімейство протоколів: %d"
 
-#: ping/ping.c:118
+#: ping/ping.c:123
 #, c-format
 msgid "unknown sock type: %d"
 msgstr "невідомий тип sock: %d"
 
-#: ping/ping.c:213
+#: ping/ping.c:218
 msgid "=> missing cap_net_raw+p capability or setuid?"
 msgstr "=> пропущено можливість cap_net_raw+p або setuid?"
 
-#: ping/ping.c:252
+#: ping/ping.c:257
 #, c-format
 msgid "option argument contains garbage: %s"
 msgstr "аргумент параметра містить зайві дані: %s"
 
-#: ping/ping.c:253
+#: ping/ping.c:258
 msgid "this will become fatal error in the future"
 msgstr "у майбутніх версіях це вважатиметься критичною помилкою"
 
-#: ping/ping.c:287
+#: ping/ping.c:292
 #, c-format
 msgid "bad value for flowinfo: %s"
 msgstr "помилкове значення flowinfo: %s"
 
-#: ping/ping.c:290
+#: ping/ping.c:295
 #, c-format
 msgid "flow value is greater than 20 bits: %s"
 msgstr "значення потоку перевищує найбільше 20-бітове значення: %s"
 
-#: ping/ping.c:312
+#: ping/ping.c:317
 #, c-format
 msgid "bad TOS value: %s"
 msgstr "помилкове значення TOS: %s"
 
-#: ping/ping.c:315
+#: ping/ping.c:320
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
 msgstr ""
 "десяткове значення бітів TOS має належати до діапазону від 0 до 255: %d"
 
-#: ping/ping.c:399 ping/ping.c:433
+#: ping/ping.c:405 ping/ping.c:442
 msgid "only one -4 or -6 option may be specified"
 msgstr "можна вказувати лише один із параметрів — -4 або -6"
 
-#: ping/ping.c:414 ping/ping.c:419
+#: ping/ping.c:423 ping/ping.c:428
 msgid "only one of -T or -R may be used"
 msgstr "можна вказувати лише один із параметрів — -T або -R"
 
-#: ping/ping.c:428
+#: ping/ping.c:437
 #, c-format
 msgid "invalid timestamp type: %s"
 msgstr "некоректний тип часової позначки: %s"
 
-#: ping/ping.c:474
+#: ping/ping.c:483
 msgid "bad timing interval"
 msgstr "помилковий часовий інтервал"
 
-#: ping/ping.c:476
+#: ping/ping.c:485
 #, c-format
 msgid "bad timing interval: %s"
 msgstr "помилковий часовий інтервал: %s"
 
-#: ping/ping.c:487
+#: ping/ping.c:496
 #, c-format
 msgid "cannot copy: %s"
 msgstr "не вдалося скопіювати: %s"
 
-#: ping/ping.c:496
+#: ping/ping.c:505
 #, c-format
 msgid "invalid source address: %s"
 msgstr "некоректна адреса джерела: %s"
 
-#: ping/ping.c:510
+#: ping/ping.c:519
 #, c-format
 msgid "cannot set preload to value greater than 3: %d"
 msgstr ""
 "неможливо встановити для попереднього завантаження значення, що перевищує 3: "
 "%d"
 
-#: ping/ping.c:529
+#: ping/ping.c:538
 #, c-format
 msgid "invalid -M argument: %s"
 msgstr "некоректний аргумент -M: %s"
 
-#: ping/ping.c:586
+#: ping/ping.c:594
 msgid "bad linger time"
 msgstr "помилковий час затягування"
 
-#: ping/ping.c:588
+#: ping/ping.c:596
 #, c-format
 msgid "bad linger time: %s"
 msgstr "помилковий час затягування: %s"
 
-#: ping/ping.c:600
+#: ping/ping.c:613
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
 msgstr ""
 "УВАГА: розв'язання зворотним DNS (пошук PTR) вимкнено, можна примусово "
 "увімкнути за допомогою -H"
 
-#: ping/ping.c:619
+#: ping/ping.c:632
 msgid "WARNING: ident 0 => forcing raw socket"
 msgstr "УВАГА: ident 0 => примусово сокет без обробки"
 
-#: ping/ping.c:629
-#, c-format
-msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
-msgstr ""
-
-#: ping/ping.c:673
+#: ping/ping.c:678
 #, c-format
 msgid "invalid -s value: '%d': out of range: 0 <= value <= %d"
 msgstr ""
+"некоректне значення -s: «%d»: поза припустимим діапазоном: 0 <= значення <= "
+"%d"
 
-#: ping/ping.c:701
+#: ping/ping.c:706
 #, c-format
 msgid ""
 "Warning: IPv6 link-local address on ICMP datagram socket may require ifname "
@@ -769,11 +474,16 @@ msgstr ""
 "інтерфейсу або ідентифікатор області => користуйтеся таким: адреса%%<назва "
 "інтерфейсу|ідентифікатор області>"
 
-#: ping/ping.c:878
+#: ping/ping.c:761 ping/ping6_common.c:102
+#, c-format
+msgid "unknown iface: %s"
+msgstr "невідомий інтерфейс: %s"
+
+#: ping/ping.c:883
 msgid "warning: QOS sockopts"
 msgstr "попередження: sockopts QOS"
 
-#: ping/ping.c:889
+#: ping/ping.c:894
 msgid ""
 "Do you want to ping broadcast? Then -b. If not, check your local firewall "
 "rules"
@@ -781,20 +491,27 @@ msgstr ""
 "Хочете надіслати пінг трансляції? Скористайтеся -b. Якщо ні, перевірте, чи "
 "правильно вказано правила вашого локального брандмауера"
 
-#: ping/ping.c:890
+#: ping/ping.c:895
 #, c-format
 msgid "WARNING: pinging broadcast address\n"
 msgstr "УВАГА: перевірка пінгом адреси трансляції\n"
 
-#: ping/ping.c:893 ping/ping.c:1048
+#: ping/ping.c:898 ping/ping.c:1053
 msgid "cannot set broadcasting"
 msgstr "не вдалося встановити трансляцію"
 
-#: ping/ping.c:914
+#: ping/ping.c:919
 msgid "gatifaddrs failed"
 msgstr "помилка gatifaddrs"
 
-#: ping/ping.c:942
+#: ping/ping.c:931 ping/ping6_common.c:228
+#, c-format
+msgid "Warning: source address might be selected on device other than: %s"
+msgstr ""
+"Попередження: адресу джерела могло бути вибрано на пристрої, відмінному від "
+"%s"
+
+#: ping/ping.c:947
 #, c-format
 msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
@@ -803,45 +520,40 @@ msgstr ""
 "мінімальний проміжок для неспрямованого трансляційного пінґу для користувача "
 "має бути >= %d мс, скористайтеся -i %s (або більшим значенням)"
 
-#: ping/ping.c:947
+#: ping/ping.c:952
 msgid "broadcast ping does not fragment"
 msgstr "пінг трансляції не фрагментується"
 
-#: ping/ping.c:977
+#: ping/ping.c:982
 msgid "WARNING: setsockopt(ICMP_FILTER)"
 msgstr "Попередження: setsockopt(ICMP_FILTER)"
 
-#: ping/ping.c:982
+#: ping/ping.c:987
 msgid "WARNING: your kernel is veeery old. No problems."
 msgstr "Попередження: ваше ядро є надто застарілим. Немає проблем."
 
-#: ping/ping.c:986
+#: ping/ping.c:991
 msgid "WARNING: setsockopt(IP_RECVTTL)"
 msgstr "Попередження: setsockopt(IP_RECVTTL)"
 
-#: ping/ping.c:988
+#: ping/ping.c:993
 msgid "WARNING: setsockopt(IP_RETOPTS)"
 msgstr "Попередження: setsockopt(IP_RETOPTS)"
 
-#: ping/ping.c:1054
+#: ping/ping.c:1059
 msgid "cannot disable multicast loopback"
 msgstr "неможливо вимкнути зворотну петлю неспрямованої трансляції"
 
-#: ping/ping.c:1059
+#: ping/ping.c:1064
 msgid "cannot set multicast time-to-live"
 msgstr "не вдалося встановити граничний час існування неспрямованої трансляції"
 
-#: ping/ping.c:1061
+#: ping/ping.c:1066
 msgid "cannot set unicast time-to-live"
 msgstr ""
 "не вдалося встановити граничний час існування односпрямованої трансляції"
 
-#: ping/ping.c:1073
-#, c-format
-msgid "%d(%d) bytes of data.\n"
-msgstr "%d(%d) байтів даних.\n"
-
-#: ping/ping.c:1105
+#: ping/ping.c:1107
 #, c-format
 msgid ""
 "\n"
@@ -850,7 +562,7 @@ msgstr ""
 "\n"
 "NOP"
 
-#: ping/ping.c:1116
+#: ping/ping.c:1118
 #, c-format
 msgid ""
 "\n"
@@ -859,12 +571,12 @@ msgstr ""
 "\n"
 "%cSRR: "
 
-#: ping/ping.c:1154
+#: ping/ping.c:1156
 #, c-format
 msgid "\t(same route)"
 msgstr "\t(той самий маршрут)"
 
-#: ping/ping.c:1159
+#: ping/ping.c:1161
 #, c-format
 msgid ""
 "\n"
@@ -873,7 +585,7 @@ msgstr ""
 "\n"
 "RR: "
 
-#: ping/ping.c:1195
+#: ping/ping.c:1197
 #, c-format
 msgid ""
 "\n"
@@ -882,27 +594,27 @@ msgstr ""
 "\n"
 "TS: "
 
-#: ping/ping.c:1227
+#: ping/ping.c:1229
 #, c-format
 msgid "\t%ld absolute not-standard"
 msgstr "\t%ld абсолютний нестандартний"
 
-#: ping/ping.c:1229
+#: ping/ping.c:1231
 #, c-format
 msgid "\t%ld not-standard"
 msgstr "\t%ld нестандартний"
 
-#: ping/ping.c:1233
+#: ping/ping.c:1235
 #, c-format
 msgid "\t%ld absolute"
 msgstr "\t%ld абсолютний"
 
-#: ping/ping.c:1244
+#: ping/ping.c:1246
 #, c-format
 msgid "Unrecorded hops: %d\n"
 msgstr "Незаписаних перестрибувань: %d\n"
 
-#: ping/ping.c:1248
+#: ping/ping.c:1250
 #, c-format
 msgid ""
 "\n"
@@ -911,235 +623,480 @@ msgstr ""
 "\n"
 "невідомий параметр %x"
 
-#: ping/ping.c:1268
+#: ping/ping.c:1270
 #, c-format
 msgid "Vr HL TOS  Len   ID Flg  off TTL Pro  cks      Src      Dst Data\n"
 msgstr "Vr HL TOS  Дов   Ід Пра  off TTL Про  cks      Дже      При Дані\n"
 
-#: ping/ping.c:1269
+#: ping/ping.c:1271
 #, c-format
 msgid " %1x  %1x  %02x %04x %04x"
 msgstr " %1x  %1x  %02x %04x %04x"
 
-#: ping/ping.c:1271
+#: ping/ping.c:1273
 #, c-format
 msgid "   %1x %04x"
 msgstr "   %1x %04x"
 
-#: ping/ping.c:1273
+#: ping/ping.c:1275
 #, c-format
 msgid "  %02x  %02x %04x"
 msgstr "  %02x  %02x %04x"
 
-#: ping/ping.c:1289
+#: ping/ping.c:1291
 #, c-format
 msgid "Echo Reply\n"
 msgstr "Луна-відповідь\n"
 
-#: ping/ping.c:1295
+#: ping/ping.c:1297
 #, c-format
 msgid "Destination Net Unreachable\n"
 msgstr "Мережа призначення недоступна\n"
 
-#: ping/ping.c:1298
+#: ping/ping.c:1300
 #, c-format
 msgid "Destination Host Unreachable\n"
 msgstr "Вузол призначення недоступний\n"
 
-#: ping/ping.c:1301
+#: ping/ping.c:1303
 #, c-format
 msgid "Destination Protocol Unreachable\n"
 msgstr "Протокол призначення недоступний\n"
 
-#: ping/ping.c:1304
+#: ping/ping.c:1306
 #, c-format
 msgid "Destination Port Unreachable\n"
 msgstr "Порт призначення недоступний\n"
 
-#: ping/ping.c:1307
+#: ping/ping.c:1309
 #, c-format
 msgid "Frag needed and DF set (mtu = %u)\n"
 msgstr "Потрібна фрагментація і встановлено DF (mtu = %u)\n"
 
-#: ping/ping.c:1310
+#: ping/ping.c:1312
 #, c-format
 msgid "Source Route Failed\n"
 msgstr "Помилка маршрутизації до джерела\n"
 
-#: ping/ping.c:1313
+#: ping/ping.c:1315
 #, c-format
 msgid "Destination Net Unknown\n"
 msgstr "Невідома мережа призначення\n"
 
-#: ping/ping.c:1316
+#: ping/ping.c:1318
 #, c-format
 msgid "Destination Host Unknown\n"
 msgstr "Невідомий вузол призначення\n"
 
-#: ping/ping.c:1319
+#: ping/ping.c:1321
 #, c-format
 msgid "Source Host Isolated\n"
 msgstr "Ізольований вузол джерела\n"
 
-#: ping/ping.c:1322
+#: ping/ping.c:1324
 #, c-format
 msgid "Destination Net Prohibited\n"
 msgstr "Заборонена мережа призначення\n"
 
-#: ping/ping.c:1325
+#: ping/ping.c:1327
 #, c-format
 msgid "Destination Host Prohibited\n"
 msgstr "Заборонений вузол призначення\n"
 
-#: ping/ping.c:1328
+#: ping/ping.c:1330
 #, c-format
 msgid "Destination Net Unreachable for Type of Service\n"
 msgstr "Недоступна для типу служби мережа призначення\n"
 
-#: ping/ping.c:1331
+#: ping/ping.c:1333
 #, c-format
 msgid "Destination Host Unreachable for Type of Service\n"
 msgstr "Недоступний для типу служби вузол призначення\n"
 
-#: ping/ping.c:1334
+#: ping/ping.c:1336
 #, c-format
 msgid "Packet filtered\n"
 msgstr "Пакет відфільтровано\n"
 
-#: ping/ping.c:1337
+#: ping/ping.c:1339
 #, c-format
 msgid "Precedence Violation\n"
 msgstr "Порушення першості\n"
 
-#: ping/ping.c:1340
+#: ping/ping.c:1342
 #, c-format
 msgid "Precedence Cutoff\n"
 msgstr "Обрізання першості\n"
 
-#: ping/ping.c:1343
+#: ping/ping.c:1345
 #, c-format
 msgid "Dest Unreachable, Bad Code: %d\n"
 msgstr "Недоступне призначення, помилковий код: %d\n"
 
-#: ping/ping.c:1350
+#: ping/ping.c:1352
 #, c-format
 msgid "Source Quench\n"
 msgstr "Обрив зв'язку з джерелом\n"
 
-#: ping/ping.c:1357
+#: ping/ping.c:1359
 #, c-format
 msgid "Redirect Network"
 msgstr "Переспрямовування мережі"
 
-#: ping/ping.c:1360
+#: ping/ping.c:1362
 #, c-format
 msgid "Redirect Host"
 msgstr "Переспрямовування вузла"
 
-#: ping/ping.c:1363
+#: ping/ping.c:1365
 #, c-format
 msgid "Redirect Type of Service and Network"
 msgstr "Тип переспрямовування служби і мережі"
 
-#: ping/ping.c:1366
+#: ping/ping.c:1368
 #, c-format
 msgid "Redirect Type of Service and Host"
 msgstr "Тип переспрямовування служби і вузла"
 
-#: ping/ping.c:1369
+#: ping/ping.c:1371
 #, c-format
 msgid "Redirect, Bad Code: %d"
 msgstr "Переспрямовування, помилковий код: %d"
 
-#: ping/ping.c:1380
+#: ping/ping.c:1382
 #, c-format
 msgid "(New nexthop: %s)\n"
 msgstr "(Нове наступне перестрибування: %s)\n"
 
-#: ping/ping.c:1386
+#: ping/ping.c:1388
 #, c-format
 msgid "Echo Request\n"
 msgstr "Луна-запит\n"
 
-#: ping/ping.c:1392
+#: ping/ping.c:1394
 #, c-format
 msgid "Time to live exceeded\n"
 msgstr "Перевищено граничний час існування\n"
 
-#: ping/ping.c:1395
+#: ping/ping.c:1397
 #, c-format
 msgid "Frag reassembly time exceeded\n"
 msgstr "Перевищено час повторного збирання фрагментів\n"
 
-#: ping/ping.c:1398
+#: ping/ping.c:1400
 #, c-format
 msgid "Time exceeded, Bad Code: %d\n"
 msgstr "Перевищено обмеження за часом, помилковий код: %d\n"
 
-#: ping/ping.c:1405
+#: ping/ping.c:1407
 #, c-format
 msgid "Parameter problem: pointer = %u\n"
 msgstr "Проблема із параметрами: вказівник = %u\n"
 
-#: ping/ping.c:1411
+#: ping/ping.c:1413
 #, c-format
 msgid "Timestamp\n"
 msgstr "Часова позначка\n"
 
-#: ping/ping.c:1415
+#: ping/ping.c:1417
 #, c-format
 msgid "Timestamp Reply\n"
 msgstr "Відповідь щодо часової позначки\n"
 
-#: ping/ping.c:1419
+#: ping/ping.c:1421
 #, c-format
 msgid "Information Request\n"
 msgstr "Запит щодо відомостей\n"
 
-#: ping/ping.c:1423
+#: ping/ping.c:1425
 #, c-format
 msgid "Information Reply\n"
 msgstr "Відповідь щодо відомостей\n"
 
-#: ping/ping.c:1428
+#: ping/ping.c:1430
 #, c-format
 msgid "Address Mask Request\n"
 msgstr "Запит щодо маски адреси\n"
 
-#: ping/ping.c:1433
+#: ping/ping.c:1435
 #, c-format
 msgid "Address Mask Reply\n"
 msgstr "Відповідь щодо маски адреси\n"
 
-#: ping/ping.c:1437
+#: ping/ping.c:1439
 #, c-format
 msgid "Bad ICMP type: %d\n"
 msgstr "Помилковий тип ICMP: %d\n"
 
-#: ping/ping.c:1491
+#: ping/ping.c:1491 ping/ping6_common.c:540
+msgid "local error"
+msgstr "локальна помилка"
+
+#: ping/ping.c:1493
 #, c-format
 msgid "local error: message too long, mtu=%u"
 msgstr "локальна помилка: надто велике повідомлення, mtu=%u"
 
-#: ping/ping.c:1664
+#: ping/ping.c:1641 ping/ping6_common.c:670
+#, c-format
+msgid " icmp_seq=%u"
+msgstr " icmp_seq=%u"
+
+#: ping/ping.c:1666
 #, c-format
 msgid "packet too short (%d bytes) from %s"
 msgstr "пакет є надто коротким (%d байтів), отримано з %s"
 
-#: ping/ping.c:1743
+#: ping/ping.c:1744
 #, c-format
 msgid "From %s: icmp_seq=%u "
 msgstr "З %s: icmp_seq=%u "
 
-#: ping/ping.c:1746
+#: ping/ping.c:1747
 #, c-format
 msgid "(BAD CHECKSUM)"
 msgstr "(ПОМИЛКОВА КОНТРОЛЬНА СУМА)"
 
-#: ping/ping.c:1770
+#: ping/ping.c:1769 ping/ping6_common.c:915
+#, c-format
+msgid "From %s: "
+msgstr "Від %s: "
+
+#: ping/ping.c:1771
 #, c-format
 msgid "(BAD CHECKSUM)\n"
 msgstr "(ПОМИЛКОВА КОНТРОЛЬНА СУМА)\n"
+
+#: ping/ping.c:1873 ping/ping6_common.c:954
+msgid "WARNING: failed to install socket filter"
+msgstr "Попередження: не вдалося встановити фільтрування сокетів"
+
+#: ping/ping.c:1883
+#, c-format
+msgid "%d(%d) bytes of data.\n"
+msgstr "%d(%d) байтів даних.\n"
+
+#: ping/ping6_common.c:149
+msgid "scope discrepancy among the nodes"
+msgstr "невідповідність областей між вузлами"
+
+#: ping/ping6_common.c:269
+#, c-format
+msgid ""
+"minimal interval for multicast ping for user must be >= %d ms, use -i %s (or "
+"higher)"
+msgstr ""
+"мінімальний проміжок для трансляційного пінґу для користувача має бути >= %d "
+"мс, скористайтеся -i %s (або більшим значенням)"
+
+#: ping/ping6_common.c:274
+msgid "multicast ping does not fragment"
+msgstr "пінг односпрямованої трансляції не фрагментується"
+
+#: ping/ping6_common.c:333
+msgid "setsockopt(RAW_CHECKSUM) failed - try to continue"
+msgstr "Помилка setsockopt(RAW_CHECKSUM) — намагаємося продовжити"
+
+#: ping/ping6_common.c:359
+msgid "can't disable multicast loopback"
+msgstr "неможливо вимкнути зворотну петлю неспрямованої трансляції"
+
+#: ping/ping6_common.c:364
+msgid "can't set multicast hop limit"
+msgstr ""
+"Не вдалося встановити обмеження перестрибувань неспрямованої трансляції"
+
+#: ping/ping6_common.c:367
+msgid "can't set unicast hop limit"
+msgstr ""
+"Не вдалося встановити обмеження перестрибувань односпрямованої трансляції"
+
+#: ping/ping6_common.c:379
+msgid "can't receive hop limit"
+msgstr "не вдалося отримати обмеження перестрибувань"
+
+#: ping/ping6_common.c:393
+msgid "can't set flowlabel"
+msgstr "не вдалося встановити мітку потоку"
+
+#: ping/ping6_common.c:397
+msgid "can't send flowinfo"
+msgstr "не вдалося надіслати відомості щодо потоку"
+
+#: ping/ping6_common.c:416
+#, c-format
+msgid "Destination unreachable: "
+msgstr "Призначення недоступне: "
+
+#: ping/ping6_common.c:419
+#, c-format
+msgid "No route"
+msgstr "Немає маршруту"
+
+#: ping/ping6_common.c:422
+#, c-format
+msgid "Administratively prohibited"
+msgstr "Адміністративно заборонено"
+
+#: ping/ping6_common.c:425
+#, c-format
+msgid "Beyond scope of source address"
+msgstr "Поза областю адреси джерела"
+
+#: ping/ping6_common.c:428
+#, c-format
+msgid "Address unreachable"
+msgstr "Недосяжна адреса"
+
+#: ping/ping6_common.c:431
+#, c-format
+msgid "Port unreachable"
+msgstr "Недосяжний порт"
+
+#: ping/ping6_common.c:434
+#, c-format
+msgid "Source address failed ingress/egress policy"
+msgstr "Початкова адреса не відповідає правилам для вхідних-вихідних адрес"
+
+#: ping/ping6_common.c:437
+#, c-format
+msgid "Reject route to destination"
+msgstr "Відкинути маршрут до призначення"
+
+#: ping/ping6_common.c:440
+#, c-format
+msgid "Unknown code %d"
+msgstr "Невідомий код %d"
+
+#: ping/ping6_common.c:445
+#, c-format
+msgid "Packet too big: mtu=%u"
+msgstr "Надто великий пакет: mtu=%u"
+
+#: ping/ping6_common.c:447
+#, c-format
+msgid ", code=%d"
+msgstr ", код=%d"
+
+#: ping/ping6_common.c:450
+#, c-format
+msgid "Time exceeded: "
+msgstr "Перевищено час: "
+
+#: ping/ping6_common.c:452
+#, c-format
+msgid "Hop limit"
+msgstr "Обмеження перестрибувань"
+
+#: ping/ping6_common.c:454
+#, c-format
+msgid "Defragmentation failure"
+msgstr "Помилка під час дефрагментації"
+
+#: ping/ping6_common.c:456
+#, c-format
+msgid "code %d"
+msgstr "код %d"
+
+#: ping/ping6_common.c:459
+#, c-format
+msgid "Parameter problem: "
+msgstr "Проблема з параметрами: "
+
+#: ping/ping6_common.c:461
+#, c-format
+msgid "Wrong header field "
+msgstr "Помилкове поле заголовка "
+
+#: ping/ping6_common.c:463
+#, c-format
+msgid "Unknown header "
+msgstr "Невідомий заголовок "
+
+#: ping/ping6_common.c:465
+#, c-format
+msgid "Unknown option "
+msgstr "Невідомий параметр "
+
+#: ping/ping6_common.c:467
+#, c-format
+msgid "code %d "
+msgstr "код %d "
+
+#: ping/ping6_common.c:468
+#, c-format
+msgid "at %u"
+msgstr "у %u"
+
+#: ping/ping6_common.c:471
+#, c-format
+msgid "Echo request"
+msgstr "Луна-запит"
+
+#: ping/ping6_common.c:474
+#, c-format
+msgid "Echo reply"
+msgstr "Луна-відповідь"
+
+#: ping/ping6_common.c:477
+#, c-format
+msgid "MLD Query"
+msgstr "Запит MLD"
+
+#: ping/ping6_common.c:480
+#, c-format
+msgid "MLD Report"
+msgstr "Звіт MLD"
+
+#: ping/ping6_common.c:483
+#, c-format
+msgid "MLD Reduction"
+msgstr "Спрощення MLD"
+
+#: ping/ping6_common.c:486
+#, c-format
+msgid "unknown icmp type: %u"
+msgstr "невідомий тип icmp: %u"
+
+#: ping/ping6_common.c:542
+#, c-format
+msgid "local error: message too long, mtu: %u"
+msgstr "локальна помилка: надто велике повідомлення, mtu: %u"
+
+#: ping/ping6_common.c:768
+#, c-format
+msgid " unexpected error in inet_ntop(%s)"
+msgstr " неочікувана помилка в inet_ntop(%s)"
+
+#: ping/ping6_common.c:799
+#, c-format
+msgid " refused"
+msgstr " відмовлено"
+
+#: ping/ping6_common.c:802
+#, c-format
+msgid " unknown"
+msgstr " невідомий"
+
+#: ping/ping6_common.c:805
+#, c-format
+msgid " unknown code(%02x)"
+msgstr " невідомий код(%02x)"
+
+#: ping/ping6_common.c:807
+#, c-format
+msgid "; seq=%u;"
+msgstr "; посл=%u;"
+
+#: ping/ping6_common.c:848
+#, c-format
+msgid "packet too short: %d bytes"
+msgstr "надто короткий пакет: %d байтів"
+
+#: ping/ping6_common.c:959
+#, c-format
+msgid "%d data bytes\n"
+msgstr "%d байтів даних\n"
 
 #: ping/ping_common.c:49
 #, c-format
@@ -1168,6 +1125,7 @@ msgid ""
 "                     destinations or for -f), override -n\n"
 "  -I <interface>     either interface name or address\n"
 "  -i <interval>      seconds between sending each packet\n"
+"  -j                 JSON output (experimental)\n"
 "  -L                 suppress loopback of multicast packets\n"
 "  -l <preload>       send <preload> number of packages while waiting "
 "replies\n"
@@ -1229,12 +1187,13 @@ msgstr ""
 "                       призначень або для -f), має вищий пріоритет за -n\n"
 "  -I <інтерфейс>       назва або адреса інтерфейсу\n"
 "  -i <інтервал>        інтервал між надсиланням послідовних пакетів\n"
+"  -j                 вивести у форматі JSON (експеримент)\n"
 "  -L                   придушити петльовий інтерфейс трансляційних пакетів\n"
 "  -l <кількість>       надіслати <кількість> пакетів під час очікування "
 "відповідей\n"
 "  -m <позначка>        позначати вихідні пакети\n"
-"  -M <пар pmtud>       визначити режим mtu, одне зі значень <do|dont|want|"
-"probe>\n"
+"  -M <пар pmtud>       визначити режим mtu, одне зі значень "
+"<do|dont|want|probe>\n"
 "  -n                   без визначення назви DNS\n"
 "  -O                   звітувати про нестандартні відповіді\n"
 "  -p <взірець>         вміст байта-доповнення\n"
@@ -1255,8 +1214,8 @@ msgstr ""
 "  -4                   скористатися IPv4\n"
 "  -b                   дозволити трансляцію зондування\n"
 "  -R                   записати маршрут\n"
-"  -T <часова позначка> визначити часову позначку, одне зі значень <tsonly|"
-"tsandaddr|tsprespec>\n"
+"  -T <часова позначка> визначити часову позначку, одне зі значень "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "Параметри IPv6:\n"
 "  -6                   скористатися IPv6\n"
@@ -1266,44 +1225,50 @@ msgstr ""
 "\n"
 "Докладніший опис можна знайти у ping(8).\n"
 
-#: ping/ping_common.c:218
+#: ping/ping_common.c:219
 #, c-format
 msgid "patterns must be specified as hex digits: %s"
 msgstr "взірці слід вказувати у форматі шістнадцяткових цифр: %s"
 
-#: ping/ping_common.c:233
+#: ping/ping_common.c:234
 #, c-format
 msgid "PATTERN: 0x"
 msgstr "ВЗІРЕЦЬ: 0x"
 
-#: ping/ping_common.c:353
+#: ping/ping_common.c:355
 #, c-format
 msgid "no answer yet for icmp_seq=%lu\n"
 msgstr "відповідь для icmp_seq=%lu ще не отримано\n"
 
-#: ping/ping_common.c:457
+#: ping/ping_common.c:454
+msgid "WARNING: buffer size overflow, reduce packet size or preload"
+msgstr ""
+"УВАГА: перевищення розміру буфера, зменште розмір пакета або завантажуйте "
+"попередньо"
+
+#: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
 msgstr ""
 "Попередження: ймовірно, rcvbuf недостатньо для зберігання попереднього "
 "завантаження"
 
-#: ping/ping_common.c:476
+#: ping/ping_common.c:487
 #, c-format
 msgid "WARNING: failed to set mark: %u"
 msgstr "Попередження: не вдалося встановити позначку: %u"
 
-#: ping/ping_common.c:479
+#: ping/ping_common.c:490
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
 msgstr ""
 "=> пропущено можливість cap_net_admin+p або cap_net_raw+p (з часу Linux "
 "5.17)?"
 
-#: ping/ping_common.c:484
+#: ping/ping_common.c:495
 msgid "WARNING: SO_MARK not supported"
 msgstr "Попередження: підтримки SO_MARK не передбачено"
 
-#: ping/ping_common.c:500
+#: ping/ping_common.c:511
 #, c-format
 msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
@@ -1312,78 +1277,73 @@ msgstr ""
 "неможливо переповнити; мінімальний проміжок для користувача має бути >= %d "
 "мс, скористайтеся -i %s (або більшим значенням)"
 
-#: ping/ping_common.c:504
+#: ping/ping_common.c:515
 #, c-format
 msgid "illegal preload and/or interval: %d"
 msgstr "некоректне попереднє завантаження і/або інтервал: %d"
 
-#: ping/ping_common.c:516
+#: ping/ping_common.c:527
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
 msgstr ""
 "Попередження: немає підтримки SO_TIMESTAMP, повертаємося до резервного "
 "SIOCGSTAMP"
 
-#: ping/ping_common.c:759
+#: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
-msgid "Warning: time of day goes back (%ldus), taking countermeasures"
-msgstr "Попередження: відставання часу дня (%ldмкс), вживаємо контрзаходів"
+msgid "Warning: invalid tv_usec %ld us"
+msgstr "Увага! Некоректне значення tv_usec %ld мкс"
 
-#: ping/ping_common.c:809
+#: ping/ping_common.c:781
 #, c-format
-msgid "%d bytes from %s:"
-msgstr "%d байтів з %s:"
+msgid "Warning: invalid tv_sec %ld s"
+msgstr "Увага! Некоректне значення tv_sec %ld с"
 
-#: ping/ping_common.c:815
+#: ping/ping_common.c:784
+#, c-format
+msgid "Warning: time of day goes back (%ld s), taking countermeasures"
+msgstr "Попередження: відставання часу дня (%ld с), вживаємо контрзаходів"
+
+#: ping/ping_common.c:837
+#, c-format
+msgid "%d bytes "
+msgstr "%d байтів "
+
+#: ping/ping_common.c:839
+#, c-format
+msgid "from %s:"
+msgstr "від %s:"
+
+#: ping/ping_common.c:845
 #, c-format
 msgid " ident=%d"
 msgstr " ідентифікатор=%d"
 
-#: ping/ping_common.c:818
+#: ping/ping_common.c:848
 #, c-format
 msgid " ttl=%d"
 msgstr " ttl=%d"
 
-#: ping/ping_common.c:821
+#: ping/ping_common.c:880
 #, c-format
-msgid " (truncated)\n"
-msgstr " (обрізано)\n"
+msgid " time=%s ms"
+msgstr " час=%s мс"
 
-#: ping/ping_common.c:826 ping/ping_common.c:836
-#, c-format
-msgid " time=%ld.%03ld ms"
-msgstr " час=%ld.%03ld мс"
-
-#: ping/ping_common.c:828
-#, c-format
-msgid " time=%ld ms"
-msgstr " час=%ld мс"
-
-#: ping/ping_common.c:830
-#, c-format
-msgid " time=%ld.%01ld ms"
-msgstr " час=%ld.%01ld мс"
-
-#: ping/ping_common.c:833
-#, c-format
-msgid " time=%ld.%02ld ms"
-msgstr " час=%ld.%02ld мс"
-
-#: ping/ping_common.c:841
+#: ping/ping_common.c:884
 #, c-format
 msgid " (DUP!)"
-msgstr " (DUP!)"
+msgstr " (ДУБЛЮВАННЯ!)"
 
-#: ping/ping_common.c:843
+#: ping/ping_common.c:886
 #, c-format
 msgid " (BAD CHECKSUM!)"
 msgstr " (ПОМИЛКОВА КОНТРОЛЬНА СУМА!)"
 
-#: ping/ping_common.c:845
+#: ping/ping_common.c:888
 #, c-format
 msgid " (DIFFERENT ADDRESS!)"
 msgstr " (інша адреса)"
 
-#: ping/ping_common.c:852
+#: ping/ping_common.c:895
 #, c-format
 msgid ""
 "\n"
@@ -1392,70 +1352,109 @@ msgstr ""
 "\n"
 "помилковий байт даних %d — має бути 0x%x, але маємо 0x%x"
 
-#: ping/ping_common.c:895
-#, c-format
-msgid "--- %s ping statistics ---\n"
-msgstr "--- Статистика пінгування %s ---\n"
-
-#: ping/ping_common.c:896
-#, c-format
-msgid "%ld packets transmitted, "
-msgstr "Передано %ld пакетів, "
-
-#: ping/ping_common.c:897
-#, c-format
-msgid "%ld received"
-msgstr "отримано %ld"
-
-#: ping/ping_common.c:899
-#, c-format
-msgid ", +%ld duplicates"
-msgstr ", +%ld дублікатів"
-
-#: ping/ping_common.c:901
-#, c-format
-msgid ", +%ld corrupted"
-msgstr ", +%ld пошкоджено"
-
-#: ping/ping_common.c:903
-#, c-format
-msgid ", +%ld errors"
-msgstr ", +%ld помилок"
-
-#: ping/ping_common.c:909
-#, c-format
-msgid ", %g%% packet loss"
-msgstr ", втрачено %g%% пакетів"
-
-#: ping/ping_common.c:911
-#, c-format
-msgid ", time %llums"
-msgstr ", час %llu мс"
-
-#: ping/ping_common.c:931
-#, c-format
-msgid "rtt min/avg/max/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld ms"
-msgstr "rtt мін/сер/макс/mdev = %ld.%03ld/%lu.%03ld/%ld.%03ld/%ld.%03ld мс"
-
-#: ping/ping_common.c:939
-#, c-format
-msgid "%spipe %d"
-msgstr "%sканал %d"
-
-#: ping/ping_common.c:946
-#, c-format
-msgid "%sipg/ewma %d.%03d/%d.%03d ms"
-msgstr "%sipg/ewma %d.%03d/%d.%03d мс"
-
-#: ping/ping_common.c:964
+#: ping/ping_common.c:932
 #, c-format
 msgid "%ld/%ld packets, %d%% loss"
 msgstr "%ld з %ld пакетів, втрачено %d%%"
 
-#: ping/ping_common.c:969
+#: ping/ping_common.c:937
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 msgstr ", мін/сер/ewma/макс = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld мс"
+
+#: ping/ping_json.c:17
+msgid "Overflow during JSON construction"
+msgstr "Переповнення під час побудови JSON"
+
+#: ping/ping_output.c:50
+#, c-format
+msgid "From %s icmp_seq=%u "
+msgstr "З %s icmp_seq=%u "
+
+#: ping/ping_output.c:56
+#, c-format
+msgid " parse error (%s)"
+msgstr " помилка обробки (%s)"
+
+#: ping/ping_output.c:64
+#, c-format
+msgid " unknown qtype(0x%02x)"
+msgstr " невідоме значення qtype(0x%02x)"
+
+#: ping/ping_output.c:76
+#, c-format
+msgid " (truncated)"
+msgstr " (обрізано)"
+
+#: ping/ping_output.c:85
+#, c-format
+msgid "PING %s (%s) "
+msgstr "ПІНГ %s (%s) "
+
+#: ping/ping_output.c:88
+#, c-format
+msgid ", flow 0x%05x, "
+msgstr ", потік 0x%05x, "
+
+#: ping/ping_output.c:96
+#, c-format
+msgid "from %s %s: "
+msgstr "з %s %s: "
+
+#: ping/ping_output.c:149
+#, c-format
+msgid "rtt min/avg/max/mdev = %s/%s/%s/%s ms"
+msgstr "rtt мін/сер/макс/mdev = %s/%s/%s/%s мс"
+
+#: ping/ping_output.c:165
+#, c-format
+msgid "--- %s ping statistics ---\n"
+msgstr "--- Статистика пінгування %s ---\n"
+
+#: ping/ping_output.c:166
+#, c-format
+msgid "%ld packets transmitted, "
+msgstr "Надіслано %ld пакетів, "
+
+#: ping/ping_output.c:167
+#, c-format
+msgid "%ld received"
+msgstr "отримано %ld"
+
+#: ping/ping_output.c:169
+#, c-format
+msgid ", +%ld duplicates"
+msgstr ", +%ld дублікатів"
+
+#: ping/ping_output.c:171
+#, c-format
+msgid ", +%ld corrupted"
+msgstr ", +%ld пошкоджено"
+
+#: ping/ping_output.c:173
+#, c-format
+msgid ", +%ld errors"
+msgstr ", +%ld помилок"
+
+#: ping/ping_output.c:179
+#, c-format
+msgid ", %g%% packet loss"
+msgstr ", втрачено %g%% пакетів"
+
+#: ping/ping_output.c:181
+#, c-format
+msgid ", time %llums"
+msgstr ", час %llu мс"
+
+#: ping/ping_output.c:194
+#, c-format
+msgid "pipe %d"
+msgstr "канал %d"
+
+#: ping/ping_output.c:210
+#, c-format
+msgid "ipg/ewma %s/%s ms"
+msgstr "ipg/ewma %s/%s мс"
 
 #: tracepath.c:218
 #, c-format
@@ -1591,6 +1590,22 @@ msgid "pktlen must be within: %d < value <= %d"
 msgstr "pktlen має задовольняти таку нерівністю: %d < значення <= %d"
 
 #, c-format
+#~ msgid " parse error (truncated)"
+#~ msgstr " помилка обробки (обрізано)"
+
+#, c-format
+#~ msgid "%d bytes from %s:"
+#~ msgstr "%d байтів з %s:"
+
+#, c-format
+#~ msgid " (truncated)\n"
+#~ msgstr " (обрізано)\n"
+
+#, c-format
+#~ msgid "IPv4-Mapped-in-IPv6 address, using IPv4 %s"
+#~ msgstr "Адреса IPv4 пов'язана із IPv6, використовуємо IPv4 %s"
+
+#, c-format
 #~ msgid "local error: %s"
 #~ msgstr "локальна помилка: %s"
 
@@ -1657,10 +1672,6 @@ msgstr "pktlen має задовольняти таку нерівністю: %d
 #, c-format
 #~ msgid "  %.4f ms"
 #~ msgstr "  %.4f мс"
-
-#, c-format
-#~ msgid " from %s"
-#~ msgstr " від %s"
 
 #, c-format
 #~ msgid ", %d hops max, %d byte packets\n"
@@ -1762,9 +1773,6 @@ msgstr "pktlen має задовольняти таку нерівністю: %d
 
 #~ msgid "arping: too many interfaces!?\n"
 #~ msgstr "arping: забагато інтерфейсів!?\n"
-
-#~ msgid "arping: invalid source %s\n"
-#~ msgstr "arping: некоректне джерело %s\n"
 
 #~ msgid "ping: IP_OPTIONS (fallback to icmp tstamps)"
 #~ msgstr ""

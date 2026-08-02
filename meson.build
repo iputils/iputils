@@ -8,7 +8,7 @@ project('iputils', 'c',
 		'localstatedir=var',
 	],
 	meson_version : '>=0.44', # >=0.58 is required for 'meson dist'
-	version : '20240905') # keep in sync with: git describe | awk -F- '{print $1}'
+	version : '20250605') # keep in sync with: git describe | awk -F- '{print $1}'
 
 cc = meson.get_compiler('c')
 
@@ -143,7 +143,7 @@ endif
 foreach h : [
 	'error.h',
 ]
-	if cc.has_header(h)
+	if cc.has_header(h) and cc.has_function('error')
 		conf.set('HAVE_' + h.to_upper().underscorify(), 1,
 			description : 'Define if ' + h + ' can be included.')
 	endif

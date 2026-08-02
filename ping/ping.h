@@ -126,13 +126,25 @@ int ping4_send_probe(struct ping_rts *rts, socket_st *, void *packet, unsigned p
 int ping4_receive_error_msg(struct ping_rts *, socket_st *);
 int ping4_parse_reply(struct ping_rts *, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
 void ping4_install_filter(struct ping_rts *rts, socket_st *);
+int ping4_data_bytes(struct ping_rts *rts);
+void ping4_print_data_bytes(struct ping_rts *rts, int bytes);
+char *ping4_source(struct ping_rts *rts);
+char *ping4_target(struct ping_rts *rts);
 
 typedef struct ping_func_set_st {
 	int (*send_probe)(struct ping_rts *rts, socket_st *, void *packet, unsigned packet_size);
 	int (*receive_error_msg)(struct ping_rts *rts, socket_st *sock);
 	int (*parse_reply)(struct ping_rts *rts, socket_st *, struct msghdr *msg, int len, void *addr, struct timeval *);
 	void (*install_filter)(struct ping_rts *rts, socket_st *);
+	int (*ping_data_bytes)(struct ping_rts *rts);
+	void (*ping_print_data_bytes)(struct ping_rts *rts, int bytes);
+	char *(*ping_source)(struct ping_rts *rts);
+	char *(*ping_target)(struct ping_rts *rts);
 } ping_func_set_st;
+
+/* late include as dependent on ping_rts */
+#include "ping_json.h"
+#include "ping_output.h"
 
 /* Node Information query */
 struct ping_ni {
@@ -155,7 +167,7 @@ struct ping_ni {
 /*ping runtime state */
 struct ping_rts {
 	unsigned int mark;
-	unsigned char outpack[MAXPACKET];
+	unsigned char outpack[MAXPACKET] __attribute__ ((aligned));
 
 	struct rcvd_table rcvd_tbl;
 
@@ -176,7 +188,7 @@ struct ping_rts {
 	int interval;			/* interval between packets (msec) */
 	int preload;
 	int deadline;			/* time to die */
-	int lingertime;
+	uint32_t lingertime;
 	struct timespec start_time, cur_time;
 	volatile int exiting;
 	volatile int status_snapshot;
@@ -194,7 +206,7 @@ struct ping_rts {
 	long tmax;			/* maximum round trip time */
 	double tsum;			/* sum of all times, for doing average */
 	double tsum2;
-	int rtt;
+	uint64_t rtt;                   /* Exponential weight moving average calculated in fixed point */
 	int rtt_addend;
 	uint16_t acked;
 	int pipesize;
@@ -232,6 +244,10 @@ struct ping_rts {
 	size_t cmsglen;
 	struct ping_ni ni;
 
+	struct ping_json_buffer json_packet;
+	struct ping_json_buffer json_stats;
+	struct ping_json_buffer json_error;
+
 	/* boolean option bits */
 	unsigned int
 		opt_adaptive:1,
@@ -251,6 +267,7 @@ struct ping_rts {
 		opt_ptimeofday:1,
 		opt_rtt_precision:1,
 		opt_quiet:1,
+		opt_json:1,
 		opt_rroute:1,
 		opt_so_debug:1,
 		opt_so_dontroute:1,
@@ -413,7 +430,7 @@ extern void common_options(int ch);
 extern int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 			     int cc, uint16_t seq, int hops,
 			     int csfailed, struct timeval *tv, char *from,
-			     void (*pr_reply)(uint8_t *ptr, int cc), int multicast,
+			     void (*pr_reply)(struct ping_rts *rts, uint8_t *ptr, int cc), int multicast,
 			     int wrong_source);
 extern void print_timestamp(struct ping_rts *rts);
 void fill(struct ping_rts *rts, char *patp, unsigned char *packet, unsigned packet_size);
@@ -428,6 +445,9 @@ int ping6_send_probe(struct ping_rts *rts, socket_st *sockets, void *packet, uns
 int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sockets);
 int ping6_parse_reply(struct ping_rts *rts, socket_st *, struct msghdr *msg, int cc, void *addr, struct timeval *);
 void ping6_install_filter(struct ping_rts *rts, socket_st *sockets);
+void ping6_print_data_bytes(struct ping_rts *rts, int bytes __attribute__((__unused__)));
+char *ping6_source(struct ping_rts *rts);
+char *ping6_target(struct ping_rts *rts);
 int ntohsp(uint16_t *p);
 
 /* IPv6 node information query */

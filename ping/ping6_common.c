@@ -78,7 +78,10 @@ ping_func_set_st ping6_func_set = {
 	.send_probe = ping6_send_probe,
 	.receive_error_msg = ping6_receive_error_msg,
 	.parse_reply = ping6_parse_reply,
-	.install_filter = ping6_install_filter
+	.install_filter = ping6_install_filter,
+	.ping_print_data_bytes = ping6_print_data_bytes,
+	.ping_source = ping6_source,
+	.ping_target = ping6_target,
 };
 
 #ifndef SCOPE_DELIMITER
@@ -394,17 +397,7 @@ int ping6_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			error(2, errno, _("can't send flowinfo"));
 	}
 
-	printf(_("PING %s (%s) "), rts->hostname, pr_raw_addr(rts, &rts->whereto6, sizeof rts->whereto6));
-	if (rts->flowlabel)
-		printf(_(", flow 0x%05x, "), (unsigned)ntohl(rts->flowlabel));
-	if (rts->device || rts->opt_strictsource) {
-		int saved_opt_numeric = rts->opt_numeric;
-
-		rts->opt_numeric = 1;
-		printf(_("from %s %s: "), pr_addr(rts, &rts->source6, sizeof rts->source6), rts->device ? rts->device : "");
-		rts->opt_numeric = saved_opt_numeric;
-	}
-	printf(_("%d data bytes\n"), rts->datalen);
+	ping_print_packet(rts, &ping6_func_set);
 
 	setup(rts, sock);
 
@@ -568,7 +561,7 @@ int ping6_receive_error_msg(struct ping_rts *rts, socket_st *sock)
 			write_stdout("\bE", 2);
 		} else {
 			print_timestamp(rts);
-			printf(_("From %s icmp_seq=%u "), pr_addr(rts, sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
+			ping_print_error_packet(rts, pr_addr(rts, sin6, sizeof *sin6), ntohs(icmph.icmp6_seq));
 			print_icmp(e->ee_type, e->ee_code, e->ee_info);
 			putchar('\n');
 			fflush(stdout);
@@ -670,11 +663,11 @@ int ping6_send_probe(struct ping_rts *rts, socket_st *sock, void *packet, unsign
 	return (cc == len ? 0 : cc);
 }
 
-void pr_echo_reply(uint8_t *_icmph, int cc __attribute__((__unused__)))
+void pr_echo_reply(struct ping_rts *rts, uint8_t *_icmph, int cc __attribute__((__unused__)))
 {
 	struct icmp6_hdr *icmph = (struct icmp6_hdr *)_icmph;
 
-	printf(_(" icmp_seq=%u"), ntohs(icmph->icmp6_seq));
+	ping_print_uint(rts, _(" icmp_seq=%u"), "seq", ntohs(icmph->icmp6_seq));
 }
 
 static void putchar_safe(char c)
@@ -686,7 +679,7 @@ static void putchar_safe(char c)
 }
 
 static
-void pr_niquery_reply_name(struct ni_hdr *nih, int len)
+void pr_niquery_reply_name(struct ping_rts *rts, struct ni_hdr *nih, int len)
 {
 	uint8_t *h = (uint8_t *)(nih + 1);
 	uint8_t *p = h + 4;
@@ -698,7 +691,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 	len -= sizeof(struct ni_hdr) + 4;
 
 	if (len < 0) {
-		printf(_(" parse error (too short)"));
+		ping_print_error_parse(rts, "too short");
 		return;
 	}
 	while (p < end) {
@@ -712,7 +705,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 
 		ret = dn_expand(h, end, p, buf, sizeof(buf));
 		if (ret < 0) {
-			printf(_(" parse error (truncated)"));
+			ping_print_error_parse(rts, "truncated");
 			break;
 		}
 		if (p + ret < end && *(p + ret) == '\0')
@@ -731,7 +724,7 @@ void pr_niquery_reply_name(struct ni_hdr *nih, int len)
 }
 
 static
-void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
+void pr_niquery_reply_addr(struct ping_rts *rts, struct ni_hdr *nih, int len)
 {
 	uint8_t *h = (uint8_t *)(nih + 1);
 	uint8_t *p;
@@ -759,7 +752,7 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 	}
 	p = h;
 	if (len < 0) {
-		printf(_(" parse error (too short)"));
+		ping_print_error_parse(rts, "too short");
 		return;
 	}
 
@@ -768,12 +761,11 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 			putchar(',');
 
 		if (p + sizeof(uint32_t) + aflen > end) {
-			printf(_(" parse error (truncated)"));
+			ping_print_error_parse(rts, "truncated");
 			break;
 		}
 		if (!inet_ntop(af, p + sizeof(uint32_t), buf, sizeof(buf)))
-			printf(_(" unexpected error in inet_ntop(%s)"),
-			       strerror(errno));
+			printf(_(" unexpected error in inet_ntop(%s)"), strerror(errno));
 		else
 			printf(" %s", buf);
 		p += sizeof(uint32_t) + aflen;
@@ -781,11 +773,11 @@ void pr_niquery_reply_addr(struct ni_hdr *nih, int len)
 		continued = 1;
 	}
 	if (truncated)
-		printf(_(" (truncated)"));
+		ping_print_truncated(rts);
 }
 
 static
-void pr_niquery_reply(uint8_t *_nih, int len)
+void pr_niquery_reply(struct ping_rts *rts, uint8_t *_nih, int len)
 {
 	struct ni_hdr *nih = (struct ni_hdr *)_nih;
 
@@ -793,14 +785,14 @@ void pr_niquery_reply(uint8_t *_nih, int len)
 	case IPUTILS_NI_ICMP6_SUCCESS:
 		switch (ntohs(nih->ni_qtype)) {
 		case IPUTILS_NI_QTYPE_DNSNAME:
-			pr_niquery_reply_name(nih, len);
+			pr_niquery_reply_name(rts, nih, len);
 			break;
 		case IPUTILS_NI_QTYPE_IPV4ADDR:
 		case IPUTILS_NI_QTYPE_IPV6ADDR:
-			pr_niquery_reply_addr(nih, len);
+			pr_niquery_reply_addr(rts, nih, len);
 			break;
 		default:
-			printf(_(" unknown qtype(0x%02x)"), ntohs(nih->ni_qtype));
+			ping_print_error_qtype(rts, ntohs(nih->ni_qtype));
 		}
 		break;
 	case IPUTILS_NI_ICMP6_REFUSED:
@@ -853,7 +845,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 	icmph = (struct icmp6_hdr *)buf;
 	if (cc < 8) {
 		if (rts->opt_verbose)
-			error(0, 0, _("packet too short: %d bytes"), cc);
+			ping_error(rts, 0, 0, _("packet too short: %d bytes"), cc);
 		return 1;
 	}
 
@@ -929,10 +921,8 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 		if (rts->opt_flood)
 			fflush(stdout);
 	}
-	if (!rts->opt_flood) {
-		putchar('\n');
-		fflush(stdout);
-	}
+	if (!rts->opt_flood)
+		ping_finish_line(rts);
 	return 0;
 }
 
@@ -962,4 +952,19 @@ void ping6_install_filter(struct ping_rts *rts, socket_st *sock)
 
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter)))
 		error(0, errno, _("WARNING: failed to install socket filter"));
+}
+
+void ping6_print_data_bytes(struct ping_rts *rts, int bytes __attribute__((__unused__)))
+{
+	printf(_("%d data bytes\n"), rts->datalen);
+}
+
+char *ping6_source(struct ping_rts *rts)
+{
+	return pr_addr(rts, &rts->source6, sizeof(rts->source6));
+}
+
+char *ping6_target(struct ping_rts *rts)
+{
+	return pr_raw_addr(rts, &rts->whereto6, sizeof(rts->whereto6));
 }
