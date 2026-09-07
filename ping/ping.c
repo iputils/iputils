@@ -668,7 +668,7 @@ main(int argc, char **argv)
 	else if (hints.ai_family == AF_INET6)
 		max_s = ICMPV6_MAX_DATALEN;
 
-	/* Force limit on IPv4/IPv6 adresses */
+	/* Force limit on IPv4/IPv6 addresses */
 	if (inet_pton(AF_INET, target, buf))
 		max_s = ICMP_MAX_DATALEN - get_ipv4_optlen(&rts);
 	else if (inet_pton(AF_INET6, target, buf))
