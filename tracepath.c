@@ -730,6 +730,10 @@ int main(int argc, char **argv)
 		ctl.targetlen = ctl.ai->ai_addrlen;
 		break;
 	}
+
+	if (ctl.socket_fd == 0)
+		error(1, 0, "getaddrinfo() results were not IPV4 or IPV6");
+
 	if (ctl.socket_fd < 0)
 		error(1, errno, "socket/connect");
 
