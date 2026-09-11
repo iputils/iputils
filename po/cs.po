@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-19 19:59+0200\n"
-"PO-Revision-Date: 2026-08-02 00:07+0000\n"
-"Last-Translator: Petr Vorel <petr.vorel@gmail.com>\n"
+"PO-Revision-Date: 2026-09-12 19:17+0000\n"
+"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/cs/>\n"
 "Language: cs\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 
 #: arping.c:123
 #, c-format
@@ -1438,27 +1438,27 @@ msgstr "ipg/ klouz.prům. %s/%s ms"
 #: tracepath.c:267
 #, c-format
 msgid "<Malformed interface information extension>\n"
-msgstr ""
+msgstr "<Nesprávně formulované rozšíření informací o rozhraní>\n"
 
 #: tracepath.c:276
 #, c-format
 msgid "Unable to read the ICMP extension header\n"
-msgstr ""
+msgstr "Nebylo možné číst záhlaví ICMP rozšíření\n"
 
 #: tracepath.c:282
 #, c-format
 msgid "Invalid extension version\n"
-msgstr ""
+msgstr "Neplatná verze rozšíření\n"
 
 #: tracepath.c:295
 #, c-format
 msgid "Invalid object length\n"
-msgstr ""
+msgstr "Neplatná délka objektu\n"
 
 #: tracepath.c:304
 #, c-format
 msgid "<unknown object class number (%u)>\n"
-msgstr ""
+msgstr "<neznámé číslo (%u) třídy objektu>\n"
 
 #: tracepath.c:402
 #, c-format
@@ -1519,7 +1519,7 @@ msgstr "CHYBA SÍTĚ"
 #: tracepath.c:543
 #, c-format
 msgid "ICMP extension is invalid\n"
-msgstr ""
+msgstr "ICMP rozšíření není platné\n"
 
 #: tracepath.c:592
 #, c-format
@@ -1532,7 +1532,7 @@ msgid "%2d:  send failed\n"
 msgstr "%2d: odeslání se nezdařilo\n"
 
 #: tracepath.c:605
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1579,9 +1579,9 @@ msgid "%2d:  no reply\n"
 msgstr "%2d: žádná odpověď\n"
 
 #: tracepath.c:829
-#, fuzzy, c-format
+#, c-format
 msgid "     Too many hops: pmtu %d\n"
-msgstr "     Obnoveno: PMTU %d "
+msgstr "     Příliš mnoho přeskoků: pmtu %d\n"
 
 #: tracepath.c:834
 #, c-format
