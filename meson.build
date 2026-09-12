@@ -219,7 +219,9 @@ if build_arping == true
 	endif
 endif
 
-if build_mans == true or build_html_mans == true
+build_doc = build_html_mans.enable_if(build_mans.enabled())
+xsltproc = find_program('xsltproc', required : build_doc)
+if xsltproc.found()
 	subdir ('doc')
 
 	if meson.version().version_compare('>=0.48.0')
@@ -231,9 +233,16 @@ if run_tests
 	subdir('test')
 endif
 
+if build_doc.enabled()
+	doc_str = 'enabled'
+elif build_doc.disabled()
+	doc_str = 'disabled'
+else
+	doc_str = 'auto'
+endif
 output = '\n\nAPPLICATIONS (build)\n'
-output += 'man: ' + build_mans.to_string() + '\n'
-output += 'HTML man: ' + build_html_mans.to_string() + '\n'
+output += 'man: ' + doc_str + '\n'
+output += 'HTML man: ' + doc_str + '\n'
 output += 'arping: ' + build_arping.to_string()
 output += ' (capability or suid: ' + setcap_arping.to_string() + ')\n'
 output += 'clockdiff: ' + build_clockdiff.to_string()

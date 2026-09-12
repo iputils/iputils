@@ -45,7 +45,6 @@ else
 	warning('Will not attempt to use pre-generated man pages (meson <0.58.0)')
 endif
 
-xsltproc = find_program('xsltproc', required : build_mans or build_html_mans)
 xsltproc_args = [
 	'--nonet',
 	'--stringparam', 'man.output.quietly', '1',
