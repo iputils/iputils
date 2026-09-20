@@ -748,7 +748,7 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 
 int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 		      int cc, uint16_t seq, int hops,
-		      int csfailed, struct timeval *tv, char *from,
+		      int csfailed, struct timeval *tv, struct pr_addr out,
 		      void (*pr_reply)(struct ping_rts *rts, uint8_t *icmph, int cc), int multicast,
 		      int wrong_source)
 {
@@ -835,8 +835,12 @@ restamp:
 
 		print_timestamp(rts);
 		ping_print_int(rts, _("%d bytes "), "bytes", cc);
-		// TODO: split host IP address and name into separate attributes in JSON?
-		ping_print_str(rts, _("from %s:"), "host", from);
+
+		// TODO: move into ping/ping_output.c
+		if (rts->opt_json)
+			construct_json_host(rts, out.name, out.addr);
+		else
+			printf(_("from %s:"), pr_addr_format(&out));
 
 		if (pr_reply)
 			pr_reply(rts, icmph, cc);

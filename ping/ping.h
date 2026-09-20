@@ -413,8 +413,19 @@ static inline int disable_capability_admin(void)	{ return modify_capability(0); 
 #endif
 extern void drop_capabilities(void);
 
+/* store getnameinfo() results */
+struct pr_addr {
+	/* hostname (can be empty) */
+	char name[NI_MAXHOST];
+	/* ascii host address */
+	char addr[NI_MAXHOST];
+};
+
 char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen);
+struct pr_addr pr_addr_split(struct ping_rts *rts, void *sa, socklen_t salen);
 char *pr_raw_addr(struct ping_rts *rts, void *sa, socklen_t salen);
+char *pr_addr_format(struct pr_addr *out);
+
 char *str_interval(int interval);
 
 int is_ours(struct ping_rts *rts, socket_st *sock, uint16_t id);
@@ -429,7 +440,7 @@ extern void status(struct ping_rts *rts);
 extern void common_options(int ch);
 extern int gather_statistics(struct ping_rts *rts, uint8_t *icmph, int icmplen,
 			     int cc, uint16_t seq, int hops,
-			     int csfailed, struct timeval *tv, char *from,
+			     int csfailed, struct timeval *tv, struct pr_addr out,
 			     void (*pr_reply)(struct ping_rts *rts, uint8_t *ptr, int cc), int multicast,
 			     int wrong_source);
 extern void print_timestamp(struct ping_rts *rts);

@@ -1703,7 +1703,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 			wrong_source = 1;
 		if (gather_statistics(rts, (uint8_t *)icp, sizeof(*icp), cc,
 				      ntohs(icp->un.echo.sequence),
-				      reply_ttl, csfailed, tv, pr_addr(rts, from, sizeof *from),
+				      reply_ttl, csfailed, tv, pr_addr_split(rts, from, sizeof *from),
 				      pr_echo_reply, rts->multicast, wrong_source)) {
 			fflush(stdout);
 			return 0;
@@ -1790,6 +1790,45 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 }
 
 /*
+ * _pr_addr_split --
+ *
+ * Return an ascii host address optionally with a hostname (separated).
+ */
+struct pr_addr _pr_addr_split(struct ping_rts *rts, void *sa,
+                           socklen_t salen, int resolve_name)
+{
+	static struct pr_addr out = {0};
+	static struct sockaddr_storage last_sa = {0};
+	static socklen_t last_salen = 0;
+
+	if (salen == last_salen && !memcmp(sa, &last_sa, salen))
+		return out;
+
+	memcpy(&last_sa, sa, (last_salen = salen));
+
+	rts->in_pr_addr = !setjmp(rts->pr_addr_jmp);
+
+	getnameinfo(sa, salen, out.addr, sizeof(out.addr), NULL, 0, getnameinfo_flags | NI_NUMERICHOST);
+	if (!rts->exiting && resolve_name && (rts->opt_force_lookup || !rts->opt_numeric))
+		getnameinfo(sa, salen, out.name, sizeof(out.name), NULL, 0, getnameinfo_flags);
+
+	rts->in_pr_addr = 0;
+
+	return out;
+}
+
+/*
+ * pr_addr_split --
+ *
+ * Return an ascii host address with a hostname (separated).
+ */
+struct pr_addr pr_addr_split(struct ping_rts *rts, void *sa,
+                           socklen_t salen)
+{
+	return _pr_addr_split(rts, sa, salen, 1);
+}
+
+/*
  * pr_addr --
  *
  * Return an ascii host address with reverse name resolution.
@@ -1804,7 +1843,6 @@ char *pr_addr(struct ping_rts *rts, void *sa, socklen_t salen)
  *
  * Return an ascii host address.  Reverse name resolution is not performed.
  */
-
 char *pr_raw_addr(struct ping_rts *rts, void *sa, socklen_t salen)
 {
 	return _pr_addr(rts, sa, salen, 0);
@@ -1817,31 +1855,20 @@ char *pr_raw_addr(struct ping_rts *rts, void *sa, socklen_t salen)
  */
 char *_pr_addr(struct ping_rts *rts, void *sa, socklen_t salen, int resolve_name)
 {
+	struct pr_addr out = _pr_addr_split(rts, sa, salen, resolve_name);
+	return pr_addr_format(&out);
+}
+
+char *pr_addr_format(struct pr_addr *out)
+{
 	static char buffer[4096] = "";
-	static struct sockaddr_storage last_sa = {0};
-	static socklen_t last_salen = 0;
-	char name[NI_MAXHOST] = "";
-	char address[NI_MAXHOST] = "";
 
-	if (salen == last_salen && !memcmp(sa, &last_sa, salen))
-		return buffer;
-
-	memcpy(&last_sa, sa, (last_salen = salen));
-
-	rts->in_pr_addr = !setjmp(rts->pr_addr_jmp);
-
-	getnameinfo(sa, salen, address, sizeof address, NULL, 0, getnameinfo_flags | NI_NUMERICHOST);
-	if (!rts->exiting && resolve_name && (rts->opt_force_lookup || !rts->opt_numeric))
-		getnameinfo(sa, salen, name, sizeof name, NULL, 0, getnameinfo_flags);
-
-	if (*name && strncmp(name, address, NI_MAXHOST))
-		snprintf(buffer, sizeof buffer, "%s (%s)", name, address);
+	if (*out->name && strncmp(out->name, out->addr, NI_MAXHOST))
+		snprintf(buffer, sizeof buffer, "%s (%s)", out->name, out->addr);
 	else
-		snprintf(buffer, sizeof buffer, "%s", address);
+		snprintf(buffer, sizeof buffer, "%s", out->addr);
 
-	rts->in_pr_addr = 0;
-
-	return (buffer);
+	return buffer;
 }
 
 void ping4_install_filter(struct ping_rts *rts, socket_st *sock)
