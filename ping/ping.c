@@ -1683,7 +1683,7 @@ int ping4_parse_reply(struct ping_rts *rts, struct socket_st *sock,
 					continue;
 				memcpy(&reply_ttl, CMSG_DATA(cmsgh), sizeof(reply_ttl));
 			} else if (cmsgh->cmsg_type == IP_RETOPTS) {
-				opts = (uint8_t *)CMSG_DATA(cmsgh);
+				opts = (uint8_t *)CMSG_DATA(cmsgh) - CMSG_LEN(0);
 				olen = cmsgh->cmsg_len;
 			}
 		}
