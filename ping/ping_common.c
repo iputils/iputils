@@ -692,9 +692,9 @@ int main_loop(struct ping_rts *rts, ping_func_set_st *fset, socket_st *sock,
 				 * on the socket, try to read the error queue.
 				 * Otherwise, give up.
 				 */
-				if ((errno == EAGAIN && !recv_error) ||
-				    errno == EINTR)
-					break;
+				if ((errno == EINTR && !recv_error) ||
+					(errno == EAGAIN && !recv_error))
+					continue;
 				recv_error = 0;
 				if (!fset->receive_error_msg(rts, sock)) {
 					if (errno) {
