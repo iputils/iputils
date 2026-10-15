@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-19 19:59+0200\n"
-"PO-Revision-Date: 2025-09-25 07:53+0000\n"
-"Last-Translator: Ricky Tigg <ricky.tigg@gmail.com>\n"
+"PO-Revision-Date: 2026-10-16 17:18+0000\n"
+"Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/fi/>\n"
 "Language: fi\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.13.3\n"
+"X-Generator: Weblate 2026.10.1\n"
 
 #: arping.c:123
 #, c-format
@@ -1428,27 +1428,27 @@ msgstr "ipg/ewma %s/%s ms"
 #: tracepath.c:267
 #, c-format
 msgid "<Malformed interface information extension>\n"
-msgstr ""
+msgstr "<Virheellinen rajapintatietolaajennus>\n"
 
 #: tracepath.c:276
 #, c-format
 msgid "Unable to read the ICMP extension header\n"
-msgstr ""
+msgstr "ICMP-laajennusotsikon lukeminen epäonnistui\n"
 
 #: tracepath.c:282
 #, c-format
 msgid "Invalid extension version\n"
-msgstr ""
+msgstr "Virheellinen laajennusversio\n"
 
 #: tracepath.c:295
 #, c-format
 msgid "Invalid object length\n"
-msgstr ""
+msgstr "Virheellinen objektin pituus\n"
 
 #: tracepath.c:304
 #, c-format
 msgid "<unknown object class number (%u)>\n"
-msgstr ""
+msgstr "<tuntematon olioluokkanumero (%u)>\n"
 
 #: tracepath.c:402
 #, c-format
@@ -1509,7 +1509,7 @@ msgstr "Verkkovirhe"
 #: tracepath.c:543
 #, c-format
 msgid "ICMP extension is invalid\n"
-msgstr ""
+msgstr "ICMP-laajennus on virheellinen\n"
 
 #: tracepath.c:592
 #, c-format
@@ -1522,7 +1522,7 @@ msgid "%2d:  send failed\n"
 msgstr "%2d: lähetys epäonnistui\n"
 
 #: tracepath.c:605
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage\n"
@@ -1569,9 +1569,9 @@ msgid "%2d:  no reply\n"
 msgstr "%2d:  ei vastausta\n"
 
 #: tracepath.c:829
-#, fuzzy, c-format
+#, c-format
 msgid "     Too many hops: pmtu %d\n"
-msgstr "     Jatkaa: pmtu %d "
+msgstr "     Liian monta hyppyä: pmtu %d\n"
 
 #: tracepath.c:834
 #, c-format
