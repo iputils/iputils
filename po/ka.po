@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-19 19:59+0200\n"
-"PO-Revision-Date: 2026-08-21 05:18+0000\n"
+"PO-Revision-Date: 2026-10-16 20:45+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ka/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.10.1\n"
 
 #: arping.c:123
 #, c-format
@@ -52,8 +52,8 @@ msgstr ""
 "  -V               ვერსიის დაბეჭდვა და გასვლა\n"
 "  -c <რაოდენობა>   რამდენი პაკეტი გაიგზავნოს\n"
 "  -w <დრო>         რამდენ ხანს დაველოდო პასუხის\n"
-"  -i <ინტერვალი>   პაკეტებს შორის ინტერვალის დაყენება (ნაგულისხმევი: 1 "
-"წამი)\n"
+"  -i <ინტერვალი>   პაკეტებს შორის ინტერვალის დაყენება (ნაგულისხმევი: 1 წამი)"
+"\n"
 "  -l <მოწყობილობა> გამოყენებადი ქსელის ინტერფეისის სახელი"
 
 #: arping.c:142
@@ -387,8 +387,7 @@ msgstr "TOS-ის არასწორი მნიშვნელობა: %
 #: ping/ping.c:320
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr ""
-"TOS-ის ბიტების რიცხვის მთელი მნიშვნელობა 0-255 დიაპაზონში უნდა იყოს: %d"
+msgstr "TOS-ის ბიტების რიცხვის მთელი მნიშვნელობა 0-255 დიაპაზონში უნდა იყოს: %d"
 
 #: ping/ping.c:405 ping/ping.c:442
 msgid "only one -4 or -6 option may be specified"
@@ -1266,8 +1265,8 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"ფლუდის მოწყობა შეუძლებელია. მომხმარებლისთვის მინიმალური ინტერვალი უნდა იყოს "
-">= %d მწმ. გამოიყენეთ -i %s (ან უფრო მაღალი)"
+"ფლუდის მოწყობა შეუძლებელია. მომხმარებლისთვის მინიმალური ინტერვალი უნდა იყოს >"
+"= %d მწმ. გამოიყენეთ -i %s (ან უფრო მაღალი)"
 
 #: ping/ping_common.c:515
 #, c-format
@@ -1276,8 +1275,7 @@ msgstr "არასწორი წინასწარი ჩატვირ�
 
 #: ping/ping_common.c:527
 msgid "Warning: no SO_TIMESTAMP support, falling back to SIOCGSTAMP"
-msgstr ""
-"გაფრთხილება: SO_TIMESTAMP-ის მხარდაჭერის გარეშე. SIOCGSTAMP-ზე გადართვა"
+msgstr "გაფრთხილება: SO_TIMESTAMP-ის მხარდაჭერის გარეშე. SIOCGSTAMP-ზე გადართვა"
 
 #: ping/ping_common.c:771 ping/ping_common.c:776
 #, c-format
