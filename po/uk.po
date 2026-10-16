@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-19 19:59+0200\n"
-"PO-Revision-Date: 2026-08-02 00:08+0000\n"
+"PO-Revision-Date: 2026-10-16 20:43+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/uk/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.10.1\n"
 
 #: arping.c:123
 #, c-format
@@ -54,8 +54,8 @@ msgstr ""
 "  -V            вивести дані щодо версії і завершити роботу\n"
 "  -c <к-ть>     кількість пакетів, які слід надіслати\n"
 "  -w <час>      гранична тривалість очікування на відповідь\n"
-"  -i <інтервал> встановити інтервал між пакетами (типове значення: 1 "
-"секунда)\n"
+"  -i <інтервал> встановити інтервал між пакетами (типове значення: 1 секунда)"
+"\n"
 "  -I <пристрій> пристрій ethernet, яким слід скористатися"
 
 #: arping.c:142
@@ -245,8 +245,8 @@ msgstr ""
 "  -V            вивести дані щодо версії і завершити роботу\n"
 "  <призначення> DNS-назва або IP-адреса\n"
 "\n"
-"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо "
-"clockdiff(8).\n"
+"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо clockdiff(8)"
+".\n"
 
 #: clockdiff.c:598
 msgid "measure: unknown failure"
@@ -391,8 +391,7 @@ msgstr "помилкове значення TOS: %s"
 #: ping/ping.c:320
 #, c-format
 msgid "the decimal value of TOS bits must be in range 0-255: %d"
-msgstr ""
-"десяткове значення бітів TOS має належати до діапазону від 0 до 255: %d"
+msgstr "десяткове значення бітів TOS має належати до діапазону від 0 до 255: %d"
 
 #: ping/ping.c:405 ping/ping.c:442
 msgid "only one -4 or -6 option may be specified"
@@ -903,8 +902,7 @@ msgstr "неможливо вимкнути зворотну петлю несп
 
 #: ping/ping6_common.c:364
 msgid "can't set multicast hop limit"
-msgstr ""
-"Не вдалося встановити обмеження перестрибувань неспрямованої трансляції"
+msgstr "Не вдалося встановити обмеження перестрибувань неспрямованої трансляції"
 
 #: ping/ping6_common.c:367
 msgid "can't set unicast hop limit"
@@ -1192,8 +1190,8 @@ msgstr ""
 "  -l <кількість>       надіслати <кількість> пакетів під час очікування "
 "відповідей\n"
 "  -m <позначка>        позначати вихідні пакети\n"
-"  -M <пар pmtud>       визначити режим mtu, одне зі значень <do|dont|want|"
-"probe>\n"
+"  -M <пар pmtud>       визначити режим mtu, одне зі значень "
+"<do|dont|want|probe>\n"
 "  -n                   без визначення назви DNS\n"
 "  -O                   звітувати про нестандартні відповіді\n"
 "  -p <взірець>         вміст байта-доповнення\n"
@@ -1214,8 +1212,8 @@ msgstr ""
 "  -4                   скористатися IPv4\n"
 "  -b                   дозволити трансляцію зондування\n"
 "  -R                   записати маршрут\n"
-"  -T <часова позначка> визначити часову позначку, одне зі значень <tsonly|"
-"tsandaddr|tsprespec>\n"
+"  -T <часова позначка> визначити часову позначку, одне зі значень "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "Параметри IPv6:\n"
 "  -6                   скористатися IPv6\n"
@@ -1261,8 +1259,8 @@ msgstr "Попередження: не вдалося встановити по�
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
 msgstr ""
-"=> пропущено можливість cap_net_admin+p або cap_net_raw+p (з часу Linux "
-"5.17)?"
+"=> пропущено можливість cap_net_admin+p або cap_net_raw+p (з часу Linux 5.17)"
+"?"
 
 #: ping/ping_common.c:495
 msgid "WARNING: SO_MARK not supported"
@@ -1588,8 +1586,8 @@ msgstr ""
 "  -V             вивести дані щодо версії і завершити роботу\n"
 "  <призначення>  назва DNS або IP-адреса\n"
 "\n"
-"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо "
-"tracepath(8).\n"
+"Щоб дізнатися більше, ознайомтеся зі сторінкою підручника щодо tracepath(8)"
+".\n"
 
 #: tracepath.c:664 tracepath.c:669
 msgid "Only one -4 or -6 option may be specified"
