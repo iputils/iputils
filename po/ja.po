@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: iputils 20161105\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-19 19:59+0200\n"
-"PO-Revision-Date: 2026-08-02 00:06+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2026-10-16 20:43+0000\n"
+"Last-Translator: Tomohiro KATO <tomop@teamgedoh.net>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
 "iputils/iputils/ja/>\n"
 "Language: ja\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.10.1\n"
 
 #: arping.c:123
 #, c-format
@@ -164,8 +164,8 @@ msgstr "デバイス %s は使用不能です。"
 #: arping.c:979
 msgid "Suitable device could not be determined. Please, use option -I."
 msgstr ""
-"arping: 適切なデバイスを検出できませんでした。-I オプションを使用してくださ"
-"い。"
+"arping: 適切なデバイスを検出できませんでした。-I オプションを使用してください"
+"。"
 
 #: arping.c:999
 msgid "WARNING: interface is ignored"
@@ -178,8 +178,7 @@ msgstr "警告: setsockopt(SO_DONTROUTE)"
 #: arping.c:1042
 #, c-format
 msgid "Interface \"%s\" is not ARPable (no ll address)\n"
-msgstr ""
-"インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)\n"
+msgstr "インタフェース \"%s\" ではARPを利用できません (llアドレスがありません)\n"
 
 #: arping.c:1051
 #, c-format
@@ -1266,8 +1265,8 @@ msgstr "警告: マーク %u の設定に失敗しました"
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
 msgstr ""
-"=> cap_net_admin+p or cap_net_raw+p (Linux 5.17以降) ケーパビリティが未セッ"
-"ト?"
+"=> cap_net_admin+p or cap_net_raw+p (Linux 5.17以降) ケーパビリティが未"
+"セット?"
 
 #: ping/ping_common.c:495
 msgid "WARNING: SO_MARK not supported"
