@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-19 19:59+0200\n"
-"PO-Revision-Date: 2026-10-05 23:18+0000\n"
+"PO-Revision-Date: 2026-10-16 20:46+0000\n"
 "Last-Translator: Andrei Stepanov <adem4ik@gmail.com>\n"
 "Language-Team: Russian <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ru/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.10\n"
+"X-Generator: Weblate 2026.10.1\n"
 
 #: arping.c:123
 #, c-format
@@ -55,8 +55,8 @@ msgstr ""
 "  -V            вывести версию и выйти\n"
 "  -c <число>    сколько пакетов отправить\n"
 "  -w <таймаут>  сколько ждать ответа\n"
-"  -i <интервал> установить интервал между пакетами (по умолчанию: 1 "
-"секунда)\n"
+"  -i <интервал> установить интервал между пакетами (по умолчанию: 1 секунда)"
+"\n"
 "  -I <устройство> используемое ethernet-устройство"
 
 #: arping.c:142
@@ -1203,8 +1203,8 @@ msgstr ""
 "  -4                 использовать IPv4\n"
 "  -b                 разрешить ping широковещательного адреса\n"
 "  -R                 записывать маршрут\n"
-"  -T <временная метка> определить временную метку, может быть <tsonly|"
-"tsandaddr|tsprespec>\n"
+"  -T <временная метка> определить временную метку, может быть "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "IPv6 параметры:\n"
 "  -6                 использовать IPv6\n"
@@ -1236,8 +1236,7 @@ msgstr ""
 
 #: ping/ping_common.c:468
 msgid "WARNING: probably, rcvbuf is not enough to hold preload"
-msgstr ""
-"ПРЕДУПРЕЖДЕНИЕ: вероятно, rcvbuf недостаточен для хранения предзагрузки"
+msgstr "ПРЕДУПРЕЖДЕНИЕ: вероятно, rcvbuf недостаточен для хранения предзагрузки"
 
 #: ping/ping_common.c:487
 #, c-format
@@ -1261,8 +1260,8 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"нельзя использовать flood, минимальный интервал для пользователя должен быть "
-">= %d мс, используйте -i %s (или больше)"
+"нельзя использовать flood, минимальный интервал для пользователя должен "
+"быть >= %d мс, используйте -i %s (или больше)"
 
 #: ping/ping_common.c:515
 #, c-format
@@ -1501,8 +1500,7 @@ msgstr "%3lld.%03ld мс "
 #: tracepath.c:475
 #, c-format
 msgid "(This broken router returned corrupted payload) "
-msgstr ""
-"(Этот неисправный маршрутизатор вернул повреждённую полезную нагрузку) "
+msgstr "(Этот неисправный маршрутизатор вернул повреждённую полезную нагрузку) "
 
 #: tracepath.c:493
 #, c-format
