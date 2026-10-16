@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: iputils\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-19 19:59+0200\n"
-"PO-Revision-Date: 2026-08-30 05:18+0000\n"
+"PO-Revision-Date: 2026-10-16 20:44+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/iputils/"
 "iputils/ko/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.10.1\n"
 
 #: arping.c:123
 #, c-format
@@ -440,8 +440,7 @@ msgstr "나쁜 체류시간: %s"
 
 #: ping/ping.c:613
 msgid "WARNING: reverse DNS resolution (PTR lookup) disabled, enforce with -H"
-msgstr ""
-"경고: 역방향 DNS 확인 (PTR 조회)은 비활성화 되었고, -H와 함께 강제합니다"
+msgstr "경고: 역방향 DNS 확인 (PTR 조회)은 비활성화 되었고, -H와 함께 강제합니다"
 
 #: ping/ping.c:632
 msgid "WARNING: ident 0 => forcing raw socket"
@@ -502,8 +501,8 @@ msgid ""
 "minimal interval for broadcast ping for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"사용자의 브로드캐스팅 핑을 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 이"
-"상)를 사용합니다"
+"사용자의 브로드캐스팅 핑을 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 "
+"이상)를 사용합니다"
 
 #: ping/ping.c:952
 msgid "broadcast ping does not fragment"
@@ -1171,8 +1170,8 @@ msgstr ""
 "  -l <preload>       send <preload> number of packages while waiting "
 "replies\n"
 "  -m <mark>          tag the packets going out\n"
-"  -M <pmtud opt>     define path MTU discovery, can be one of <do|dont|want|"
-"probe>\n"
+"  -M <pmtud opt>     define path MTU discovery, can be one of "
+"<do|dont|want|probe>\n"
 "  -n                 no reverse DNS name resolution, override -H\n"
 "  -O                 report outstanding replies\n"
 "  -p <pattern>       contents of padding byte\n"
@@ -1191,8 +1190,8 @@ msgstr ""
 "  -4                 use IPv4\n"
 "  -b                 allow pinging broadcast\n"
 "  -R                 record route\n"
-"  -T <timestamp>     define timestamp, can be one of <tsonly|tsandaddr|"
-"tsprespec>\n"
+"  -T <timestamp>     define timestamp, can be one of "
+"<tsonly|tsandaddr|tsprespec>\n"
 "\n"
 "IPv6 옵션:\n"
 "  -6                 use IPv6\n"
@@ -1232,8 +1231,7 @@ msgstr "경고: 표시 설정에 실패함: %u"
 #: ping/ping_common.c:490
 msgid ""
 "=> missing cap_net_admin+p or cap_net_raw+p (since Linux 5.17) capability?"
-msgstr ""
-"=> 누락된 cap_net_admin+p 또는 cap_net_raw+p (리눅스 5.17 이후에) 기능?"
+msgstr "=> 누락된 cap_net_admin+p 또는 cap_net_raw+p (리눅스 5.17 이후에) 기능?"
 
 #: ping/ping_common.c:495
 msgid "WARNING: SO_MARK not supported"
@@ -1245,8 +1243,8 @@ msgid ""
 "cannot flood, minimal interval for user must be >= %d ms, use -i %s (or "
 "higher)"
 msgstr ""
-"넘쳐흐를 수 없고, 사용자를 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 이"
-"상)를 사용합니다"
+"넘쳐흐를 수 없고, 사용자를 위한 최소 허용 간격은 %d ms이며, -i %s (또는 그 "
+"이상)를 사용합니다"
 
 #: ping/ping_common.c:515
 #, c-format
@@ -1329,8 +1327,7 @@ msgstr "%ld/%ld 패킷, %d%% 손실"
 #: ping/ping_common.c:937
 #, c-format
 msgid ", min/avg/ewma/max = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
-msgstr ""
-", 최소/평균/지수가중평균/최대 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
+msgstr ", 최소/평균/지수가중평균/최대 = %ld.%03ld/%lu.%03ld/%d.%03d/%ld.%03ld ms"
 
 #: ping/ping_json.c:17
 msgid "Overflow during JSON construction"
