@@ -8,6 +8,7 @@
 #include "ping.h"
 #include <stdarg.h>
 #include <stdbool.h>
+#include <time.h>
 
 void ping_print_int(struct ping_rts *rts, char *msg, char *json_key, int json_val)
 {
@@ -155,7 +156,9 @@ inline void ping_print_finish(struct ping_rts *rts)
 {
 	bool comma = 0;
 
-	struct timespec tv = rts->cur_time;
+	struct timespec tv;
+
+	clock_gettime(CLOCK_MONOTONIC_RAW, &tv);
 
 	tssub(&tv, &rts->start_time);
 
