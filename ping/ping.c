@@ -1024,7 +1024,7 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 		}
 	}
 	if (rts->opt_sourceroute) {
-		int i;
+		int i, rc, errno_save;
 		memset(rspace, 0, sizeof(rspace));
 		rspace[0] = IPOPT_NOOP;
 		rspace[1 + IPOPT_OPTVAL] = rts->opt_so_dontroute ? IPOPT_SSRR : IPOPT_LSRR;
@@ -1035,8 +1035,12 @@ int ping4_run(struct ping_rts *rts, int argc, char **argv, struct addrinfo *ai,
 			*tmp_rspace = rts->route[i];
 		}
 
-		if (setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + rts->nroute * 4) < 0)
-			error(2, errno, "record route");
+		enable_capability_raw();
+		rc = setsockopt(sock->fd, IPPROTO_IP, IP_OPTIONS, rspace, 4 + rts->nroute * 4);
+		errno_save = errno;
+		disable_capability_raw();
+		if (rc < 0)
+			error(2, errno_save, "source route");
 	}
 
 	rts->optlen = get_ipv4_optlen(rts);
