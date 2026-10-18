@@ -43,7 +43,7 @@
 #include "iputils_common.h"
 
 #ifdef USE_IDN
-# define getnameinfo_flags	NI_IDN
+# define getnameinfo_flags	IPUTILS_NI_IDN
 #else
 # define getnameinfo_flags	0
 #endif
@@ -632,7 +632,7 @@ int main(int argc, char **argv)
 		.ai_socktype = SOCK_DGRAM,
 		.ai_protocol = IPPROTO_UDP,
 #ifdef USE_IDN
-		.ai_flags = AI_IDN | AI_CANONNAME,
+		.ai_flags = IPUTILS_AI_IDN | AI_CANONNAME,
 #endif
 	};
 	struct addrinfo *result;

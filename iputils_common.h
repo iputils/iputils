@@ -38,14 +38,20 @@
 # include <idn2.h>
 
 # include <netdb.h>
-# ifndef AI_IDN
-#  define AI_IDN		0x0040
+# ifdef AI_IDN
+#  define IPUTILS_AI_IDN AI_IDN
+# else
+#  define IPUTILS_AI_IDN 0
 # endif
-# ifndef AI_CANONIDN
-#  define AI_CANONIDN		0x0080
+# ifdef AI_CANONIDN
+#  define IPUTILS_AI_CANONIDN AI_CANONIDN
+# else
+#  define IPUTILS_AI_CANONIDN 0
 # endif
-# ifndef NI_IDN
-#  define NI_IDN 32
+# ifdef NI_IDN
+#  define IPUTILS_NI_IDN NI_IDN
+# else
+#  define IPUTILS_NI_IDN 0
 # endif
 #endif /* #ifdef USE_IDN */
 

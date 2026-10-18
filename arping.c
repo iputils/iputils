@@ -951,7 +951,7 @@ int main(int argc, char **argv)
 			.ai_family = AF_INET,
 			.ai_socktype = SOCK_RAW,
 #ifdef USE_IDN
-			.ai_flags = AI_IDN | AI_CANONIDN
+			.ai_flags = IPUTILS_AI_IDN | IPUTILS_AI_CANONIDN
 #endif
 		};
 		struct addrinfo *result;
