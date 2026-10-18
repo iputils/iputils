@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <ifaddrs.h>
 #include <linux/if_ether.h>
+#include <linux/if_link.h>
 #include <linux/if_packet.h>
 #include <linux/rtnetlink.h>
 #include <netdb.h>
@@ -609,6 +610,84 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 	return 0;
 }
 
+#ifdef HAVE_IFLA_ALT_IFNAME
+static int ifindex_from_altname(const char *name)
+{
+	struct {
+		struct nlmsghdr nlh;
+		struct ifinfomsg ifi;
+		struct rtattr altname;
+		char name[128]; /* ALTIFNAMSIZ */
+	} request = {0};
+	struct sockaddr_nl kernel = { .nl_family = AF_NETLINK };
+	struct sockaddr_nl peer = {0};
+	struct iovec iov;
+	struct msghdr msg = {0};
+	char response[8192];
+	struct nlmsghdr *nh;
+	ssize_t received;
+	int remaining;
+	int fd;
+	int ret = 0;
+	size_t name_len = strnlen(name, sizeof(request.name));
+
+	if (name_len >= sizeof(request.name))
+		return 0;
+
+	request.nlh.nlmsg_len = NLMSG_LENGTH(sizeof(request.ifi)) +
+		RTA_LENGTH(name_len + 1);
+	request.nlh.nlmsg_type = RTM_GETLINK;
+	request.nlh.nlmsg_flags = NLM_F_REQUEST;
+	request.nlh.nlmsg_seq = 1;
+	request.ifi.ifi_family = AF_UNSPEC;
+	request.altname.rta_len = RTA_LENGTH(name_len + 1);
+	request.altname.rta_type = IFLA_ALT_IFNAME;
+	memcpy(RTA_DATA(&request.altname), name, name_len + 1);
+
+	fd = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE);
+	if (fd < 0)
+		return 0;
+
+	iov.iov_base = &request;
+	iov.iov_len = request.nlh.nlmsg_len;
+	msg.msg_name = &kernel;
+	msg.msg_namelen = sizeof(kernel);
+	msg.msg_iov = &iov;
+	msg.msg_iovlen = 1;
+	if (sendmsg(fd, &msg, 0) < 0)
+		goto out;
+
+	iov.iov_base = response;
+	iov.iov_len = sizeof(response);
+	msg.msg_name = &peer;
+	msg.msg_namelen = sizeof(peer);
+	msg.msg_flags = 0;
+	do {
+		received = recvmsg(fd, &msg, 0);
+	} while (received < 0 && errno == EINTR);
+	if (received < 0 || (msg.msg_flags & MSG_TRUNC))
+		goto out;
+
+	remaining = received;
+	for (nh = (struct nlmsghdr *)response; NLMSG_OK(nh, remaining);
+	     nh = NLMSG_NEXT(nh, remaining)) {
+		if (nh->nlmsg_seq != request.nlh.nlmsg_seq)
+			continue;
+		if (nh->nlmsg_type == RTM_NEWLINK) {
+			struct ifinfomsg *ifi = NLMSG_DATA(nh);
+
+			ret = ifi->ifi_index;
+			break;
+		}
+		if (nh->nlmsg_type == NLMSG_ERROR)
+			break;
+	}
+ out:
+	close(fd);
+	return ret;
+}
+#endif
+
 /*
  * check_device()
  *
@@ -630,8 +709,17 @@ static int check_ifflags(struct run_state const *const ctl, unsigned int ifflags
 static int check_device(struct run_state *ctl)
 {
 	int rc;
+	int requested_ifindex = ctl->device.ifindex;
 	struct ifaddrs *ifa;
 	int n = 0;
+
+	if (ctl->device.name && !requested_ifindex) {
+		requested_ifindex = if_nametoindex(ctl->device.name);
+#ifdef HAVE_IFLA_ALT_IFNAME
+		if (!requested_ifindex)
+			requested_ifindex = ifindex_from_altname(ctl->device.name);
+#endif
+	}
 
 	rc = getifaddrs(&ctl->ifa0);
 	if (rc) {
@@ -644,8 +732,14 @@ static int check_device(struct run_state *ctl)
 			continue;
 		if (ifa->ifa_addr->sa_family != AF_PACKET)
 			continue;
-		if (ctl->device.name && ifa->ifa_name && strcmp(ifa->ifa_name, ctl->device.name))
-			continue;
+		if (ctl->device.name && ifa->ifa_name) {
+			if (requested_ifindex) {
+				if (((struct sockaddr_ll *)ifa->ifa_addr)->sll_ifindex != requested_ifindex)
+					continue;
+			} else if (strcmp(ifa->ifa_name, ctl->device.name)) {
+				continue;
+			}
+		}
 
 		if (check_ifflags(ctl, ifa->ifa_flags) < 0)
 			continue;
