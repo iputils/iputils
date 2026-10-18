@@ -18,11 +18,11 @@ option('BUILD_PING', type : 'boolean', value : true,
 option('BUILD_TRACEPATH', type : 'boolean', value : true,
         description : 'Build tracepath')
 
-option('BUILD_MANS', type : 'boolean', value : true,
-	description : 'Build manuals')
+option('BUILD_MANS', type : 'feature', value : 'auto',
+	description : 'Build manuals if able')
 
-option('BUILD_HTML_MANS', type : 'boolean', value : false,
-	description : 'Build html manuals')
+option('BUILD_HTML_MANS', type : 'feature', value : 'auto',
+	description : 'Build HTML manuals if able')
 
 option('NO_SETCAP_OR_SUID', type : 'boolean', value : true,
        description : 'Disable setting setcap or setuid with build-aux/setcap-setuid.sh')
