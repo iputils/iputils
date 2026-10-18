@@ -44,11 +44,8 @@ sub get_target
 			ai_family   => AF_INET,
 			ai_protocol => IPPROTO_UDP,
 
-			# getaddrinfo_flags: USE_IDN=true adds AI_IDN | AI_CANONIDN, but
-			# they aren't supported by musl (via Alpine):
-			# Your vendor has not defined Socket macro AI_IDN and AI_CANONIDN, used at
-			# builddir/meson-private/dist-unpack/iputils-20250605/test/ping/ping-01-basics.t line 43
-			ai_flags    => AI_CANONNAME | AI_CANONIDN,
+			# This lookup only tests localhost; IDN flags are unnecessary here.
+			ai_flags    => AI_CANONNAME,
 		};
 		my ($err, @res) = getaddrinfo($target, undef, $hints);
 		die "getaddrinfo error: $err\n" if $err;

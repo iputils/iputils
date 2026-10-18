@@ -42,8 +42,8 @@
 #include "iputils_ni.h"
 
 #ifdef USE_IDN
-# define getaddrinfo_flags (AI_CANONNAME | AI_IDN | AI_CANONIDN)
-# define getnameinfo_flags NI_IDN
+# define getaddrinfo_flags (AI_CANONNAME | IPUTILS_AI_IDN | IPUTILS_AI_CANONIDN)
+# define getnameinfo_flags IPUTILS_NI_IDN
 #else
 # define getaddrinfo_flags (AI_CANONNAME)
 # define getnameinfo_flags 0
