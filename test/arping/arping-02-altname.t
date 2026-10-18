@@ -11,6 +11,11 @@ $ENV{LANG} = 'C';
 
 my $arping = $ARGV[0] // 'arping';
 
+my $run_status = system('sh', '-c', '"$1" -V >/dev/null 2>&1', 'sh', $arping);
+if ($run_status != -1 && ($run_status >> 8) == 126) {
+    plan skip_all => 'host cannot execute the built arping binary';
+}
+
 if (system('unshare', '-Urn', 'true') != 0) {
     plan skip_all => 'unprivileged user and network namespaces are unavailable';
 }
