@@ -37,8 +37,12 @@ if meson.version().version_compare('>=0.58.0')
 		endif
 	endforeach
 	if generated_docs_exist
-		install_man(out_man_pages)
-	        install_data(out_html_pages, install_dir : join_paths(get_option('datadir'), meson.project_name()))
+		if build_mans
+			install_man(out_man_pages)
+		endif
+		if build_html_mans
+			install_data(out_html_pages, install_dir : join_paths(get_option('datadir'), meson.project_name()))
+		endif
 		subdir_done()
 	endif
 else
