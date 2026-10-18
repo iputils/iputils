@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ $# -eq 1 ] && [ "$1" = "--help" ]; then
+	meson configure
+	exit $?
+fi
 DIR=builddir
 
 echo "Using './$DIR' as the directory for build output"
