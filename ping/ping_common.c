@@ -474,14 +474,20 @@ void sock_setmark(struct ping_rts *rts, int fd)
 #ifdef SO_MARK
 	int ret;
 	int errno_save;
+	int cap_admin_enabled;
 
 	if (!rts->opt_mark)
 		return;
 
-	enable_capability_admin();
+	cap_admin_enabled = enable_capability_admin() == 0;
+	if (!cap_admin_enabled)
+		enable_capability_raw();
 	ret = setsockopt(fd, SOL_SOCKET, SO_MARK, &(rts->mark), sizeof(rts->mark));
 	errno_save = errno;
-	disable_capability_admin();
+	if (cap_admin_enabled)
+		disable_capability_admin();
+	else
+		disable_capability_raw();
 
 	if (ret == -1) {
 		ping_error(rts, 0, errno_save, _("WARNING: failed to set mark: %u"), rts->mark);
