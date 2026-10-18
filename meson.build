@@ -19,6 +19,9 @@ add_project_arguments(
 )
 
 conf = configuration_data()
+if cc.has_header_symbol('linux/if_link.h', 'IFLA_ALT_IFNAME')
+	conf.set('HAVE_IFLA_ALT_IFNAME', 1)
+endif
 conf.set_quoted('PACKAGE_NAME', meson.project_name())
 
 build_arping = get_option('BUILD_ARPING')

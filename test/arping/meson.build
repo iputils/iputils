@@ -3,6 +3,11 @@
 
 message('Build directory is: ' + meson.current_build_dir())
 
-foreach t : ['arping-01-basic.t']
+arping_tests = ['arping-01-basic.t']
+if conf.has('HAVE_IFLA_ALT_IFNAME')
+  arping_tests += ['arping-02-altname.t']
+endif
+
+foreach t : arping_tests
   test(t, find_program(t), args: arping)
 endforeach
