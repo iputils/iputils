@@ -247,7 +247,8 @@ static inline int disable_capability_raw(struct run_state *ctl)
 
 static int send_pack(struct run_state *ctl)
 {
-	int err;
+	ssize_t err;
+	ssize_t len;
 	struct timespec now;
 	unsigned char buf[256];
 	struct arphdr *ah = (struct arphdr *)buf;
@@ -289,14 +290,21 @@ static int send_pack(struct run_state *ctl)
 	p += 4;
 
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	err = sendto(ctl->socketfd, buf, p - buf, 0, (struct sockaddr *)HE, sll_len(ah->ar_hln));
-	if (err == p - buf) {
-		ctl->last = now;
-		ctl->sent++;
-		if (!ctl->unicasting)
-			ctl->brd_sent++;
+	len = p - buf;
+	err = sendto(ctl->socketfd, buf, len, 0, (struct sockaddr *)HE,
+		     sll_len(ah->ar_hln));
+	if (err < 0)
+		return -1;
+	if (err != len) {
+		errno = EIO;
+		return -1;
 	}
-	return err;
+
+	ctl->last = now;
+	ctl->sent++;
+	if (!ctl->unicasting)
+		ctl->brd_sent++;
+	return 0;
 }
 
 static int finish(struct run_state *ctl)
@@ -701,6 +709,7 @@ static void find_broadcast_address(struct run_state *ctl)
 static int event_loop(struct run_state *ctl)
 {
 	int exit_loop = 0;
+	int send_error = 0;
 	ssize_t s;
 	enum {
 		POLLFD_SIGNAL = 0,
@@ -781,7 +790,11 @@ static int event_loop(struct run_state *ctl)
 	/* socket */
 	pfds[POLLFD_SOCKET].fd = ctl->socketfd;
 	pfds[POLLFD_SOCKET].events = POLLIN | POLLERR | POLLHUP;
-	send_pack(ctl);
+	if (send_pack(ctl) < 0) {
+		error(0, errno, "sendto");
+		send_error = 1;
+		exit_loop = 1;
+	}
 
 	while (!exit_loop) {
 		int ret;
@@ -802,7 +815,7 @@ static int event_loop(struct run_state *ctl)
 			continue;
 		}
 
-		for (i = 0; i < POLLFD_COUNT; i++) {
+		for (i = 0; i < POLLFD_COUNT && !send_error; i++) {
 			if (pfds[i].revents == 0)
 				continue;
 			switch (i) {
@@ -829,7 +842,11 @@ static int event_loop(struct run_state *ctl)
 					exit_loop = 1;
 					continue;
 				}
-				send_pack(ctl);
+				if (send_pack(ctl) < 0) {
+					error(0, errno, "sendto");
+					send_error = 1;
+					exit_loop = 1;
+				}
 				break;
 			case POLLFD_TIMEOUT:
 				exit_loop = 1;
@@ -857,7 +874,7 @@ static int event_loop(struct run_state *ctl)
 	close(tfd);
 	freeifaddrs(ctl->ifa0);
 
-	return finish(ctl);
+	return send_error ? 1 : finish(ctl);
 }
 
 int main(int argc, char **argv)
