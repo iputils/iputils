@@ -245,7 +245,10 @@ static inline int disable_capability_raw(struct run_state *ctl)
 	return modify_capability_raw(ctl, 0);
 }
 
-static int send_pack(struct run_state *ctl)
+static int exit_loop;
+static int send_error;
+
+static void send_pack(struct run_state *ctl)
 {
 	ssize_t err;
 	ssize_t len;
@@ -293,18 +296,19 @@ static int send_pack(struct run_state *ctl)
 	len = p - buf;
 	err = sendto(ctl->socketfd, buf, len, 0, (struct sockaddr *)HE,
 		     sll_len(ah->ar_hln));
-	if (err < 0)
-		return -1;
 	if (err != len) {
-		errno = EIO;
-		return -1;
+		if (err >= 0)
+			errno = EIO;
+		error(0, errno, "sendto");
+		send_error = 1;
+		exit_loop = 1;
+		return;
 	}
 
 	ctl->last = now;
 	ctl->sent++;
 	if (!ctl->unicasting)
 		ctl->brd_sent++;
-	return 0;
 }
 
 static int finish(struct run_state *ctl)
@@ -708,8 +712,6 @@ static void find_broadcast_address(struct run_state *ctl)
 
 static int event_loop(struct run_state *ctl)
 {
-	int exit_loop = 0;
-	int send_error = 0;
 	ssize_t s;
 	enum {
 		POLLFD_SIGNAL = 0,
@@ -790,11 +792,9 @@ static int event_loop(struct run_state *ctl)
 	/* socket */
 	pfds[POLLFD_SOCKET].fd = ctl->socketfd;
 	pfds[POLLFD_SOCKET].events = POLLIN | POLLERR | POLLHUP;
-	if (send_pack(ctl) < 0) {
-		error(0, errno, "sendto");
-		send_error = 1;
-		exit_loop = 1;
-	}
+	exit_loop = 0;
+	send_error = 0;
+	send_pack(ctl);
 
 	while (!exit_loop) {
 		int ret;
@@ -842,11 +842,7 @@ static int event_loop(struct run_state *ctl)
 					exit_loop = 1;
 					continue;
 				}
-				if (send_pack(ctl) < 0) {
-					error(0, errno, "sendto");
-					send_error = 1;
-					exit_loop = 1;
-				}
+				send_pack(ctl);
 				break;
 			case POLLFD_TIMEOUT:
 				exit_loop = 1;
