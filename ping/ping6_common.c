@@ -859,7 +859,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      ntohs(icmph->icmp6_seq),
-				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
+				      hops, 0, tv, pr_addr_split(rts, from, sizeof *from),
 				      pr_echo_reply,
 				      rts->multicast, wrong_source)) {
 			fflush(stdout);
@@ -872,7 +872,7 @@ int ping6_parse_reply(struct ping_rts *rts, socket_st *sock,
 			return 1;
 		if (gather_statistics(rts, (uint8_t *)icmph, sizeof(*icmph), cc,
 				      seq,
-				      hops, 0, tv, pr_addr(rts, from, sizeof *from),
+				      hops, 0, tv, pr_addr_split(rts, from, sizeof *from),
 				      pr_niquery_reply,
 				      rts->multicast, 0))
 			return 0;

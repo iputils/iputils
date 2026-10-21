@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * Copyright (c) 2024 Georg Pfuetzenreuter <mail+ip@georg-pfuetzenreuter.net>
+ * Copyright (c) Iputils Project, 2026
  */
 
 #ifndef IPUTILS_PING_JSON_H
@@ -22,6 +23,7 @@ struct ping_json_buffer {
 
 void construct_json(struct ping_rts *rts, enum PING_JSON_TYPE ptype, char *key, ...);
 void construct_json_error(struct ping_rts *rts, int errnum, char *errmsg);
+void construct_json_host(struct ping_rts *rts, char *rdns, char *ip);
 void construct_json_statistics(struct ping_rts *rts, struct timespec tv, char *rttmin, char *rttavg, char *rttmax, char *rttmdev);
 void construct_json_statistics_flood(struct ping_rts *rts, char *ipg, char *ewma);
 void print_json_packet(struct ping_rts *rts);

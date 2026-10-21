@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /*
  * Copyright (c) 2024-2025 Georg Pfuetzenreuter <mail+ip@georg-pfuetzenreuter.net>
+ * Copyright (c) Iputils Project, 2026
  */
 
 #include "ping.h"
@@ -140,6 +141,32 @@ void construct_json(struct ping_rts *rts, enum PING_JSON_TYPE ptype, char *key, 
 	va_end(ap);
 }
 
+void construct_json_host(struct ping_rts *rts, char *rdns, char *ip)
+{
+	if (!rts->opt_json)
+		return;
+
+	if (*rts->json_packet.object)
+		json_continue(&rts->json_packet);
+	else
+		json_start_object(&rts->json_packet);
+
+	struct ping_json_buffer json_host;
+
+	json_start_object(&json_host);
+
+	json_kv_str_continue(&json_host, "arg", rts->hostname);
+	if (*rdns)
+		json_kv_str_continue(&json_host, "rdns", rdns);
+	json_kv_str(&json_host, "ip", ip);
+
+	json_kv_object(&rts->json_packet, "host", &json_host);
+
+	/* reset object for next */
+	*json_host.object = '\0';
+	json_host.size = 0;
+}
+
 void construct_json_statistics(struct ping_rts *rts, struct timespec tv, char *rttmin, char *rttavg, char *rttmax, char *rttmdev)
 {
 	if (!rts->opt_json)
@@ -150,7 +177,6 @@ void construct_json_statistics(struct ping_rts *rts, struct timespec tv, char *r
 	else
 		json_start_object(&rts->json_stats);
 
-	json_kv_str_continue(&rts->json_stats, "host", rts->hostname);
 	json_kv_int_continue(&rts->json_stats, "transmitted", rts->ntransmitted);
 	json_kv_int_continue(&rts->json_stats, "received", rts->nreceived);
 	json_kv_int_continue(&rts->json_stats, "duplicates", rts->nrepeats);
