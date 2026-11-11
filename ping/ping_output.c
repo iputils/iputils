@@ -174,7 +174,8 @@ inline void ping_print_finish(struct ping_rts *rts)
 
 		if (rts->ntransmitted) {
 #ifdef USE_IDN
-			setlocale(LC_ALL, "C");
+			/* Keep decimal formatting stable without disabling translations. */
+			setlocale(LC_NUMERIC, "C");
 #endif
 			printf(_(", %g%% packet loss"),
 			(float)((((long long)(rts->ntransmitted - rts->nreceived)) * 100.0) / rts->ntransmitted));
